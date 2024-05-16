@@ -1,0 +1,19 @@
+{
+  "name": "ts-topology",
+  "description": "The official TypeScript implementation of Topology Protocol",
+  "version": "0.0.1",
+  "license": "MIT",
+  "homepage": "https://topology.gg/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/topology-foundation/ts-topology.git"
+  },
+  "bugs": {
+    "url": "https://github.com/topology-foundation/ts-topology/issues"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "workspaces": ["packages/*"],
+  "private": true
+}
