@@ -2,10 +2,14 @@
   "name": "@topologygg/network",
   "version": "0.0.1",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "start": "ts-node src/listener.ts"
+    "start": "ts-node ./src/index.ts",
+    "build": "tsc"
   },
   "devDependencies": {
+    "@swc/core": "^1.5.7",
+    "@types/node": "^20.12.12",
     "typescript": "^5.4.5"
   },
   "dependencies": {

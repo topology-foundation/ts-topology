@@ -23,7 +23,7 @@ const createNode = async () => {
   return node;
 };
 
-(async () => {
+async function run() {
   const [node1, node2] = await Promise.all([createNode(), createNode()]);
 
   node1.addEventListener("peer:discovery", (evt) =>
@@ -32,4 +32,6 @@ const createNode = async () => {
   node2.addEventListener("peer:discovery", (evt) =>
     console.log("Discovered:", evt.detail.id.toString()),
   );
-})();
+}
+
+export default run;
