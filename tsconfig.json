@@ -1,37 +1,19 @@
 {
   "compilerOptions": {
     "strict": true,
-
-    "outDir": "dist",
     "allowJs": true,
-    "checkJs": true,
-
     "target": "ES2022",
     "module": "ES2022",
 
     "esModuleInterop": true,
     "moduleResolution": "node",
 
-    "noEmit": false,
-    "noEmitOnError": true,
-    "emitDeclarationOnly": false,
     "declaration": true,
     "declarationMap": true,
-    "incremental": true,
     "composite": true,
-    "isolatedModules": true,
-    "removeComments": false,
-    "sourceMap": true,
 
-    "verbatimModuleSyntax": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "stripInternal": true,
-    "resolveJsonModule": true,
-    "baseUrl": ".",
-    "paths": {
-      "@topologygg/network": ["packages/network"]
-    }
+    "resolveJsonModule": true
   }
 }
