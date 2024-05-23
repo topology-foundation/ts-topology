@@ -2,7 +2,19 @@
   "name": "@topologygg/node",
   "version": "0.0.1",
   "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "ts-node ./src/index.ts",
+    "clean": "rm -rf dist/ node_modules/",
+    "build": "tsc -b"
+  },
   "devDependencies": {
+    "@swc/core": "^1.5.7",
+    "@types/node": "^20.12.12",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@topologygg/network": "0.0.1"
   }
 }

@@ -5,7 +5,7 @@ import { mplex } from "@libp2p/mplex";
 import { tcp } from "@libp2p/tcp";
 import { createLibp2p } from "libp2p";
 
-const createNode = async () => {
+export const createP2pNode = async () => {
   const node = await createLibp2p({
     addresses: {
       listen: ["/ip4/0.0.0.0/tcp/0"],
@@ -22,16 +22,3 @@ const createNode = async () => {
 
   return node;
 };
-
-async function run() {
-  const [node1, node2] = await Promise.all([createNode(), createNode()]);
-
-  node1.addEventListener("peer:discovery", (evt) =>
-    console.log("Discovered:", evt.detail.id.toString()),
-  );
-  node2.addEventListener("peer:discovery", (evt) =>
-    console.log("Discovered:", evt.detail.id.toString()),
-  );
-}
-
-export default run;
