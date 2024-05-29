@@ -14,9 +14,9 @@ export class GCounter {
     return this._global_counter;
   }
 
-  increment(node_id: string): void {
-    this._global_counter += 1;
-    this._counts[node_id] += 1;
+  increment(node_id: string, amount: number): void {
+    this._global_counter += amount;
+    this._counts[node_id] += amount;
   }
 
   counts(): { string: number } {

@@ -22,12 +22,12 @@ export class PNCounter {
     return this._decrements;
   }
 
-  increment(node_id: string): void {
-    this._increments.increment(node_id);
+  increment(node_id: string, amount: number): void {
+    this._increments.increment(node_id, amount);
   }
 
-  decrement(node_id: string): void {
-    this._decrements.increment(node_id);
+  decrement(node_id: string, amount: number): void {
+    this._decrements.increment(node_id, amount);
   }
 
   compare(peer_counter: PNCounter): boolean {
