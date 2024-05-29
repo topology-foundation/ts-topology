@@ -25,11 +25,11 @@ export class GCounter {
 
   compare(peer_counter: GCounter): boolean {
     for (let key in Object.keys(this._counts)) {
-      if (this._counts[key] <= peer_counter.counts()[key]) {
-        return true;
+      if (this._counts[key] > peer_counter.counts()[key]) {
+        return false;
       }
     }
-    return false;
+    return true;
   }
 
   merge(peer_counter: GCounter): void {
