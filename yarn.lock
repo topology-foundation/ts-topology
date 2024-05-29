@@ -382,7 +382,7 @@
   dependencies:
     "@swc/counter" "^0.1.3"
 
-"@topologygg/crdt@file:/Users/droak/code/topology/ts-topology/packages/crdt":
+"@topologygg/crdt@0.0.1", "@topologygg/crdt@file:/Users/droak/code/topology/ts-topology/packages/crdt":
   version "0.0.1"
   resolved "file:packages/crdt"
 

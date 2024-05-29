@@ -5,7 +5,7 @@ export class GCounter {
   // we map the counter with the node id
   private _counts: { [node_id: string]: number };
 
-  constructor(counts: { string: number }) {
+  constructor(counts: { [node_id: string]: number }) {
     this._global_counter = Object.values(counts).reduce((a, b) => a + b, 0);
     this._counts = counts;
   }
