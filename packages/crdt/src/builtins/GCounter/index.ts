@@ -3,7 +3,7 @@ export class GCounter {
   private _global_counter: number;
   // instead of standard incremental id for replicas
   // we map the counter with the node id
-  private _counts: { string: number };
+  private _counts: { [node_id: string]: number };
 
   constructor(counts: { string: number }) {
     this._global_counter = Object.values(counts).reduce((a, b) => a + b, 0);
@@ -19,7 +19,7 @@ export class GCounter {
     this._counts[node_id] += amount;
   }
 
-  counts(): { string: number } {
+  counts(): { [node_key: string]: number } {
     return this._counts;
   }
 
@@ -33,7 +33,7 @@ export class GCounter {
   }
 
   merge(peer_counter: GCounter): void {
-    let temp: { string: number } = Object.assign(
+    let temp: { [node_key: string]: number } = Object.assign(
       {},
       this._counts,
       peer_counter.counts(),
