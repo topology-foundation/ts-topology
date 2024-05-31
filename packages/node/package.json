@@ -3,6 +3,14 @@
   "version": "0.0.1",
   "license": "MIT",
   "type": "module",
+  "types": "./dist/src/index.d.ts",
+  "files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
   "scripts": {
     "start": "ts-node ./src/index.ts",
     "clean": "rm -rf dist/ node_modules/",

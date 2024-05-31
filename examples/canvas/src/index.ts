@@ -1,3 +1,5 @@
+import { start } from "@topologygg/node";
+
 const render = (canvas: [number, number, number][][]) => {
   const canvas_element = <HTMLDivElement>document.getElementById("canvas");
   canvas_element.style.display = "inline-grid";
@@ -17,6 +19,7 @@ const render = (canvas: [number, number, number][][]) => {
 };
 
 const init = () => {
+  // TODO: get this from the node
   let pixels: [number, number, number][][] = [
     [
       [123, 142, 152],
@@ -29,7 +32,13 @@ const init = () => {
       [13, 142, 12],
     ],
   ];
+
+  // TODO: add pixel clicker
+  //  - paint pixel when clicked
+  //  - color = [random(0, 255), random(0, 255), random(0, 255)]
+
   render(pixels);
+  start();
 };
 
 init();
