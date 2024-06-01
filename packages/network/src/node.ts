@@ -1,13 +1,14 @@
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
-import { mdns } from "@libp2p/mdns";
-import { tcp } from "@libp2p/tcp";
+import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
+import { webRTC } from "@libp2p/webrtc";
+import { webSockets } from "@libp2p/websockets";
+import * as filters from "@libp2p/websockets/filters";
 import { createLibp2p } from "libp2p";
 
 // Missing QUIC
 // https://github.com/libp2p/js-libp2p/issues/1459
 enum TransportsEnum {
-  TCP,
   WebRTC,
   WebSockets,
   WebTransport,
@@ -49,14 +50,22 @@ export interface P2pNodeConfig {
 export const createP2pNode = async () => {
   const node = await createLibp2p({
     addresses: {
-      listen: ["/ip4/0.0.0.0/tcp/0"],
+      listen: ["/webrtc"],
     },
-    transports: [tcp()],
-    streamMuxers: [yamux()],
     connectionEncryption: [noise()],
-    peerDiscovery: [
-      mdns({
-        interval: 20e3,
+    connectionGater: {
+      denyDialMultiaddr: () => {
+        // allow usage in local networks
+        // it'll send multiple errors in the console
+        return false;
+      },
+    },
+    streamMuxers: [yamux()],
+    transports: [
+      webSockets({ filter: filters.all }),
+      webRTC(),
+      circuitRelayTransport({
+        discoverRelays: 1,
       }),
     ],
   });

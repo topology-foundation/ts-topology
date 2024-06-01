@@ -18,7 +18,7 @@ const render = (canvas: [number, number, number][][]) => {
   }
 };
 
-const init = () => {
+async function init() {
   // TODO: get this from the node
   let pixels: [number, number, number][][] = [
     [
@@ -38,7 +38,8 @@ const init = () => {
   //  - color = [random(0, 255), random(0, 255), random(0, 255)]
 
   render(pixels);
-  start();
-};
+  const peerId = await start();
+  console.log(peerId);
+}
 
 init();
