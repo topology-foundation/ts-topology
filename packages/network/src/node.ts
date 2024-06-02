@@ -1,7 +1,6 @@
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
-import { echo } from "@libp2p/echo";
 import { identify } from "@libp2p/identify";
 import { webRTC } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
@@ -56,7 +55,6 @@ export const createP2pNode = async () => {
     connectionEncryption: [noise()],
     services: {
       identify: identify(),
-      echo: echo(),
     },
     streamMuxers: [yamux()],
     transports: [

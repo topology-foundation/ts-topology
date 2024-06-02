@@ -231,15 +231,6 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/echo@^1.0.7":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@libp2p/echo/-/echo-1.0.7.tgz#433f4975b3c0e25b0037af6be957089984233203"
-  integrity sha512-8hds9gYRloZzbHo6aWOuLPWJJuI0oInA1YhGQtlgT4PupI9LwVuB/6TSWXECH6tpfJzBCBE9aTN+rhG/XqG3+g==
-  dependencies:
-    "@libp2p/interface" "^1.4.0"
-    "@libp2p/interface-internal" "^1.2.2"
-    it-pipe "^3.0.1"
-
 "@libp2p/identify@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@libp2p/identify/-/identify-2.0.2.tgz#a11c566dbbcdfda15a1e3762e6b8e88188c4f48b"
