@@ -1,6 +1,8 @@
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
+import { echo } from "@libp2p/echo";
+import { identify } from "@libp2p/identify";
 import { webRTC } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
@@ -11,7 +13,6 @@ import { createLibp2p } from "libp2p";
 enum TransportsEnum {
   WebRTC,
   WebSockets,
-  WebTransport,
 }
 
 enum ConnectionEncryptionEnum {
@@ -53,12 +54,9 @@ export const createP2pNode = async () => {
       listen: ["/webrtc"],
     },
     connectionEncryption: [noise()],
-    connectionGater: {
-      denyDialMultiaddr: () => {
-        // allow usage in local networks
-        // it'll send multiple errors in the console
-        return false;
-      },
+    services: {
+      identify: identify(),
+      echo: echo(),
     },
     streamMuxers: [yamux()],
     transports: [
