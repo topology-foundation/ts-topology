@@ -23,9 +23,7 @@
     "start": "tsx ./src/index.ts"
   },
   "devDependencies": {
-    "@swc/core": "^1.5.7",
     "@types/node": "^20.12.12",
-    "ts-node": "^10.9.2",
     "tsx": "^4.11.0",
     "typescript": "^5.4.5"
   },
