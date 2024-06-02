@@ -4,7 +4,12 @@
   "license": "MIT",
   "type": "module",
   "types": "./dist/src/index.d.ts",
-  "files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
+  "files": [
+    "src",
+    "dist",
+    "!dist/test",
+    "!**/*.tsbuildinfo"
+  ],
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -12,9 +17,10 @@
     }
   },
   "scripts": {
-    "start": "ts-node ./src/index.ts",
+    "build": "tsc -b",
     "clean": "rm -rf dist/ node_modules/",
-    "build": "tsc -b"
+    "relay": "ts-node ./src/run_relay.ts",
+    "start": "ts-node ./src/index.ts"
   },
   "devDependencies": {
     "@swc/core": "^1.5.7",
