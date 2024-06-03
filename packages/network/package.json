@@ -21,11 +21,13 @@
     "clean": "rm -rf dist/ node_modules/"
   },
   "devDependencies": {
+    "@libp2p/interface": "^1.4.0",
     "@types/node": "^20.12.12",
-    "typescript": "^5.4.5",
-    "react-native-webrtc": "^118.0.7"
+    "react-native-webrtc": "^118.0.7",
+    "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@chainsafe/libp2p-gossipsub": "^13.0.0",
     "@chainsafe/libp2p-noise": "^15.0.0",
     "@chainsafe/libp2p-yamux": "^6.0.2",
     "@libp2p/circuit-relay-v2": "^1.0.24",

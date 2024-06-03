@@ -1,7 +1,22 @@
-import { createP2pNode } from "@topologygg/network";
+import {
+  TopologyNetworkNode,
+  TopologyNetworkNodeConfig,
+} from "@topologygg/network";
 
-export async function start(): Promise<string> {
-  const node = await createP2pNode();
+export interface TopologyNodeConfig {
+  networkConfig: TopologyNetworkNodeConfig;
+}
 
-  return node.peerId.toString();
+export class TopologyNode {
+  private _config: TopologyNodeConfig;
+  private _networkNode: TopologyNetworkNode;
+
+  constructor(config: TopologyNodeConfig) {
+    this._config = config;
+    this._networkNode = new TopologyNetworkNode(config.networkConfig);
+  }
+
+  async start(): Promise<void> {
+    await this._networkNode.start();
+  }
 }

@@ -13,33 +13,46 @@ const render = (canvas: [number, number, number][][]) => {
       pixel.style.width = "25px";
       pixel.style.height = "25px";
       pixel.style.backgroundColor = `rgb(${canvas[x][y][0]}, ${canvas[x][y][1]}, ${canvas[x][y][2]})`;
+      pixel.style.cursor = "pointer";
+      pixel.addEventListener("click", () => paint_pixel(pixel));
       canvas_element.appendChild(pixel);
     }
   }
 };
 
+const random_int = (max: number) => Math.floor(Math.random() * max);
+
+async function paint_pixel(pixel: HTMLDivElement) {
+  const rgb = pixel.style.backgroundColor
+    .replace("rgb(", "")
+    .replace(")", "")
+    .trim()
+    .split(",")
+    .map((n) => parseInt(n, 10));
+  // sum to current rgb in the future, for now just replace with random_int
+  pixel.style.backgroundColor = `rgb(${random_int(256)}, ${random_int(256)}, ${random_int(256)})`;
+}
+
 async function init() {
   // TODO: get this from the node
   let pixels: [number, number, number][][] = [
     [
-      [123, 142, 152],
-      [123, 14, 152],
-      [12, 142, 152],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
     ],
     [
-      [123, 142, 15],
-      [12, 12, 152],
-      [13, 142, 12],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
     ],
   ];
 
-  // TODO: add pixel clicker
-  //  - paint pixel when clicked
-  //  - color = [random(0, 255), random(0, 255), random(0, 255)]
-
   render(pixels);
-  const peerId = await start();
-  console.log(peerId);
+
+  // TODO: new way of interacting
+  // const peerId = await start();
+  // console.log(peerId);
 }
 
 init();
