@@ -35,8 +35,7 @@ async function paint_pixel(pixel: HTMLDivElement) {
     [random_int(256), random_int(256), random_int(256)],
   );
 
-  const pixelCRO = canvasCRO.pixel(x, y);
-  const [r, g, b] = pixelCRO.color();
+  const [r, g, b] = canvasCRO.pixel(x, y).color();
 
   pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 }
