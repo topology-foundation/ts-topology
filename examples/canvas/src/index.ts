@@ -9,7 +9,9 @@ const render = () => {
   canvas_element.style.display = "inline-grid";
 
   // TODO: adjust this to depend on the width x height
-  canvas_element.style.gridTemplateColumns = "1fr 50px";
+  canvas_element.style.gridTemplateColumns = Array(canvas.length)
+    .fill("1fr")
+    .join(" ");
 
   for (let x = 0; x < canvas.length; x++) {
     for (let y = 0; y < canvas[x].length; y++) {
@@ -44,13 +46,27 @@ async function init() {
   const node = new TopologyNode();
   await node.start();
 
-  canvasCRO = new Canvas(5, 10);
+  let create_button = <HTMLButtonElement>document.getElementById("create");
+  create_button.addEventListener("click", () => {
+    canvasCRO = new Canvas(5, 10);
+    // node.createObject(canvasCRO);
+    render();
+  });
 
-  // create cro within the node
-  // node.createObject(canvas);
-  // subscribe to existing cro
-
-  render();
+  let connect_button = <HTMLButtonElement>document.getElementById("connect");
+  connect_button.addEventListener("click", () => {
+    canvasCRO = new Canvas(5, 10);
+    let croId = (<HTMLSpanElement>document.getElementById("canvasId"))
+      .innerText;
+    try {
+      let obj = node.getObject(croId);
+      if (!obj) throw "not found";
+      canvasCRO = <Canvas>obj;
+      render();
+    } catch (e) {
+      console.error("Error while connecting with CRO", croId);
+    }
+  });
 }
 
 init();
