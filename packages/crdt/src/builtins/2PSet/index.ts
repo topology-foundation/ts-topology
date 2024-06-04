@@ -30,15 +30,15 @@ export class TwoPSet<T> {
     return this._removes;
   }
 
-  compare(peer_set: TwoPSet<T>): boolean {
+  compare(peerSet: TwoPSet<T>): boolean {
     return (
-      this._adds.compare(peer_set.adds()) &&
-      this._removes.compare(peer_set.removes())
+      this._adds.compare(peerSet.adds()) &&
+      this._removes.compare(peerSet.removes())
     );
   }
 
-  merge(peer_set: TwoPSet<T>): void {
-    this._adds.merge(peer_set.adds());
-    this._removes.merge(peer_set.removes());
+  merge(peerSet: TwoPSet<T>): void {
+    this._adds.merge(peerSet.adds());
+    this._removes.merge(peerSet.removes());
   }
 }

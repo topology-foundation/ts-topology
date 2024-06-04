@@ -17,6 +17,26 @@
   resolved "https://registry.yarnpkg.com/@chainsafe/is-ip/-/is-ip-2.0.2.tgz#7311e7403f11d8c5cfa48111f56fcecaac37c9f6"
   integrity sha512-ndGqEMG1W5WkGagaqOZHpPU172AGdxr+LD15sv3WIUvT5oCFUrG1Y0CW/v2Egwj4JXEvSibaIIIqImsm98y1nA==
 
+"@chainsafe/libp2p-gossipsub@^13.0.0":
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/libp2p-gossipsub/-/libp2p-gossipsub-13.0.0.tgz#b1dfa5c2d455d77ab8dfc97f5eb8961861bb623e"
+  integrity sha512-2q+v429uZjMl6N3d+j9QCMj8YO0aiYvLSN1t0aTdpMXQHCHLJaaT9PtNn845B1Li7/uZjYESmikgVt8r7keH0w==
+  dependencies:
+    "@libp2p/crypto" "^4.0.1"
+    "@libp2p/interface" "^1.1.2"
+    "@libp2p/interface-internal" "^1.0.7"
+    "@libp2p/peer-id" "^4.0.5"
+    "@libp2p/pubsub" "^9.0.8"
+    "@multiformats/multiaddr" "^12.1.14"
+    denque "^2.1.0"
+    it-length-prefixed "^9.0.4"
+    it-pipe "^3.0.1"
+    it-pushable "^3.2.3"
+    multiformats "^13.0.1"
+    protons-runtime "5.4.0"
+    uint8arraylist "^2.4.8"
+    uint8arrays "^5.0.1"
+
 "@chainsafe/libp2p-noise@^15.0.0":
   version "15.0.0"
   resolved "https://registry.yarnpkg.com/@chainsafe/libp2p-noise/-/libp2p-noise-15.0.0.tgz#c3f38a31d03d96b475f7e35b592a22f5fe9269a0"
@@ -148,7 +168,7 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/crypto@^4.0.0", "@libp2p/crypto@^4.1.2":
+"@libp2p/crypto@^4.0.0", "@libp2p/crypto@^4.0.1", "@libp2p/crypto@^4.1.2":
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/@libp2p/crypto/-/crypto-4.1.2.tgz#10981aad6fdd2259db9b6202914ba9b74b7382da"
   integrity sha512-mlCbqF/HLLBTp3DtQ6pL02BTE+/Jqujq15yG2bEf+3ai7HU7DpgQlh9i76rQIuEgJ1tMI2c87xqSTyz7uhBqEQ==
@@ -162,7 +182,26 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/interface-internal@^1.2.2":
+"@libp2p/identify@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@libp2p/identify/-/identify-2.0.2.tgz#a11c566dbbcdfda15a1e3762e6b8e88188c4f48b"
+  integrity sha512-5KGfZ9JNbvog8CCGabrYcK4uW+bSozaQ6jDXfl+jBlnjAkEjv9vEF8sUrk079diJO5m5bv96CJTt4enAkgSl9A==
+  dependencies:
+    "@libp2p/interface" "^1.4.0"
+    "@libp2p/interface-internal" "^1.2.2"
+    "@libp2p/peer-id" "^4.1.2"
+    "@libp2p/peer-record" "^7.0.18"
+    "@multiformats/multiaddr" "^12.2.3"
+    "@multiformats/multiaddr-matcher" "^1.2.1"
+    it-drain "^3.0.7"
+    it-parallel "^3.0.7"
+    it-protobuf-stream "^1.1.3"
+    protons-runtime "^5.4.0"
+    uint8arraylist "^2.4.8"
+    uint8arrays "^5.1.0"
+    wherearewe "^2.0.1"
+
+"@libp2p/interface-internal@^1.0.7", "@libp2p/interface-internal@^1.2.2":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@libp2p/interface-internal/-/interface-internal-1.2.2.tgz#bd254ade1d21d0cf78345fb5fc7e8b0e676d6ccf"
   integrity sha512-JoQeYf7MhBEuBBiLgDFrBLddzxzc6pjqeorIaClPu82meL3/k3PwEReiH2zMat31hVC5wdNMvDK8fG/oMzOmQQ==
@@ -172,7 +211,7 @@
     "@multiformats/multiaddr" "^12.2.3"
     uint8arraylist "^2.4.8"
 
-"@libp2p/interface@^1.0.0", "@libp2p/interface@^1.1.3", "@libp2p/interface@^1.4.0":
+"@libp2p/interface@^1.0.0", "@libp2p/interface@^1.1.2", "@libp2p/interface@^1.1.3", "@libp2p/interface@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@libp2p/interface/-/interface-1.4.0.tgz#19066f29c21e6ad0d7237997f13f785e3a4fd056"
   integrity sha512-XkbZ0NfLVnxvWgo1nVyMwCUYDQbFYFvYPA6KUPLV7/XgcxBapVZT5sJ9hgQ4kTsqSBbjQl6YDXDxCclAPZDNTQ==
@@ -245,7 +284,7 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/peer-id@^4.0.0", "@libp2p/peer-id@^4.1.2":
+"@libp2p/peer-id@^4.0.0", "@libp2p/peer-id@^4.0.5", "@libp2p/peer-id@^4.1.2":
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/@libp2p/peer-id/-/peer-id-4.1.2.tgz#41f309087bf8a449f4ab7730f8bc21f7b5d4d461"
   integrity sha512-kJmomQLUAbp6MazpAugjiOfEvzTG8aMfUoF4zmUU4b/8wA+fe8mpvPoPTvqgM13XuMB1QzG0SRF1ozQXoRxyWw==
@@ -284,6 +323,25 @@
     mortice "^3.0.4"
     multiformats "^13.1.0"
     protons-runtime "^5.4.0"
+    uint8arraylist "^2.4.8"
+    uint8arrays "^5.1.0"
+
+"@libp2p/pubsub@^9.0.8":
+  version "9.0.19"
+  resolved "https://registry.yarnpkg.com/@libp2p/pubsub/-/pubsub-9.0.19.tgz#18b04311246dc67cf0a1d689c4bcbda7644c846e"
+  integrity sha512-oIwitpk9Bq1Qna4HAAQy0uGWOc2Qlf1CUj4v51yrdcHo7e03hJYhgHZ+kEYgDC0QzsTrzfrvMCDvLxFiaw7O4Q==
+  dependencies:
+    "@libp2p/crypto" "^4.1.2"
+    "@libp2p/interface" "^1.4.0"
+    "@libp2p/interface-internal" "^1.2.2"
+    "@libp2p/peer-collections" "^5.2.2"
+    "@libp2p/peer-id" "^4.1.2"
+    "@libp2p/utils" "^5.4.2"
+    it-length-prefixed "^9.0.4"
+    it-pipe "^3.0.1"
+    it-pushable "^3.2.3"
+    multiformats "^13.1.0"
+    p-queue "^8.0.1"
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
@@ -401,7 +459,7 @@
   dependencies:
     "@multiformats/multiaddr" "^12.0.0"
 
-"@multiformats/multiaddr@^12.0.0", "@multiformats/multiaddr@^12.2.3":
+"@multiformats/multiaddr@^12.0.0", "@multiformats/multiaddr@^12.1.14", "@multiformats/multiaddr@^12.2.3":
   version "12.2.3"
   resolved "https://registry.yarnpkg.com/@multiformats/multiaddr/-/multiaddr-12.2.3.tgz#b669bb39fa6999f9a35d03471c702630771a624e"
   integrity sha512-qUP24ZgYXnyZs0lpYBvPg8Jyn3KFOJFH3a3tAcupulYIVQpR+3/fbaAZp4dYUJxBIDTOfEIpvPKm0DOFxbCDKw==
@@ -442,9 +500,11 @@
 "@topologygg/network@^0.0.1", "@topologygg/network@file:../../packages/network":
   version "0.0.1"
   dependencies:
+    "@chainsafe/libp2p-gossipsub" "^13.0.0"
     "@chainsafe/libp2p-noise" "^15.0.0"
     "@chainsafe/libp2p-yamux" "^6.0.2"
     "@libp2p/circuit-relay-v2" "^1.0.24"
+    "@libp2p/identify" "^2.0.2"
     "@libp2p/mplex" "^10.0.23"
     "@libp2p/webrtc" "^4.0.33"
     "@libp2p/websockets" "^8.0.24"
@@ -1251,6 +1311,11 @@ delay@^6.0.0:
   resolved "https://registry.yarnpkg.com/delay/-/delay-6.0.0.tgz#43749aefdf6cabd9e17b0d00bd3904525137e607"
   integrity sha512-2NJozoOHQ4NuZuVIr5CWd0iiLVIRSDepakaovIN+9eIDHEhdCAEvSy2cuf1DCrPPQLvHmbqTHODlhHg8UCy4zw==
 
+denque@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/denque/-/denque-2.1.0.tgz#e93e1a6569fb5e66f16a3c2a2964617d349d6ab1"
+  integrity sha512-HVQE3AAb/pxF8fQAoiqpvg9i3evqug3hoiwakOyZAwJm+6vZehbkYXZ0l4JxS+I3QxM97v5aaRNhj8v5oBhekw==
+
 depd@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/depd/-/depd-2.0.0.tgz#b696163cc757560d09cf22cc8fad1571b79e76df"
@@ -1919,7 +1984,7 @@ it-byte-stream@^1.0.0:
     it-stream-types "^2.0.1"
     uint8arraylist "^2.4.8"
 
-it-drain@^3.0.5:
+it-drain@^3.0.5, it-drain@^3.0.7:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/it-drain/-/it-drain-3.0.7.tgz#671a5d0220802c5bce9e68fc2b07088540fbc674"
   integrity sha512-vy6S1JKjjHSIFHgBpLpD1zhkCRl3z1zYWUxE14+kAYf+BL9ssWSFImJfhl361IIcwr0ofw8etzg11VqqB+ntUA==
@@ -2282,6 +2347,11 @@ multiformats@^13.0.0, multiformats@^13.1.0:
   resolved "https://registry.yarnpkg.com/multiformats/-/multiformats-13.1.0.tgz#5aa9d2175108a448fc3bdb54ba8a3d0b6cab3ac3"
   integrity sha512-HzdtdBwxsIkzpeXzhQ5mAhhuxcHbjEHH+JQoxt7hG/2HGFjjwyolLo7hbaexcnhoEuV4e0TNJ8kkpMjiEYY4VQ==
 
+multiformats@^13.0.1:
+  version "13.1.1"
+  resolved "https://registry.yarnpkg.com/multiformats/-/multiformats-13.1.1.tgz#b22ce4df26330d2cf0d69f5bdcbc9a787095a6e5"
+  integrity sha512-JiptvwMmlxlzIlLLwhCi/srf/nk409UL0eUBr0kioRJq15hqqKyg68iftrBvhCRjR6Rw4fkNnSc4ZJXJDuta/Q==
+
 multiformats@^9.4.2:
   version "9.9.0"
   resolved "https://registry.yarnpkg.com/multiformats/-/multiformats-9.9.0.tgz#c68354e7d21037a8f1f8833c8ccd68618e8f1d37"
@@ -2554,7 +2624,7 @@ progress-events@^1.0.0:
   resolved "https://registry.yarnpkg.com/progress-events/-/progress-events-1.0.0.tgz#34f5e8fdb5dae3561837b22672d1e02277bb2109"
   integrity sha512-zIB6QDrSbPfRg+33FZalluFIowkbV5Xh1xSuetjG+rlC5he6u2dc6VQJ0TbMdlN3R1RHdpOqxEFMKTnQ+itUwA==
 
-protons-runtime@^5.0.0, protons-runtime@^5.4.0:
+protons-runtime@5.4.0, protons-runtime@^5.0.0, protons-runtime@^5.4.0:
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/protons-runtime/-/protons-runtime-5.4.0.tgz#2751ce22cae6c35eebba89acfd9d783419ae3726"
   integrity sha512-XfA++W/WlQOSyjUyuF5lgYBfXZUEMP01Oh1C2dSwZAlF2e/ZrMRPfWonXj6BGM+o8Xciv7w0tsRMKYwYEuQvaw==

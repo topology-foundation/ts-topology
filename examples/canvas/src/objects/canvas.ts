@@ -1,14 +1,20 @@
+import { TopologyObject } from "@topologygg/node/dist/src/object";
 import { Pixel } from "./pixel";
 
-export class Canvas {
-  private _width: number;
-  private _height: number;
+export class Canvas extends TopologyObject {
+  private static _width: number;
+  private static _height: number;
   private _canvas: Pixel[][];
 
   constructor(width: number, height: number) {
+    super();
+    Canvas.init(width, height);
+    this._canvas = Array(width).fill(Array(height).fill(new Pixel()));
+  }
+
+  static init(width: number, height: number) {
     this._width = width;
     this._height = height;
-    this._canvas = Array(width).fill(Array(height).fill(new Pixel()));
   }
 
   splash(
@@ -17,13 +23,13 @@ export class Canvas {
     size: [number, number],
     rgb: [number, number, number],
   ): void {
-    if (offset[0] < 0 || this._width < offset[0]) return;
-    if (offset[1] < 0 || this._height < offset[1]) return;
+    if (offset[0] < 0 || Canvas._width < offset[0]) return;
+    if (offset[1] < 0 || Canvas._height < offset[1]) return;
 
-    for (let x = offset[0]; x < this._width || x < offset[0] + size[0]; x++) {
+    for (let x = offset[0]; x < Canvas._width || x < offset[0] + size[0]; x++) {
       for (
         let y = offset[1];
-        y < this._height || y < offset[1] + size[1];
+        y < Canvas._height || y < offset[1] + size[1];
         y++
       ) {
         this._canvas[x][y].paint(node_id, rgb);
@@ -32,14 +38,14 @@ export class Canvas {
   }
 
   paint(
-    node_id: string,
+    nodeId: string,
     offset: [number, number],
     rgb: [number, number, number],
   ): void {
     if (offset[0] < 0 || this._canvas.length < offset[0]) return;
     if (offset[1] < 0 || this._canvas[offset[0]].length < offset[1]) return;
 
-    this._canvas[offset[0]][offset[1]].paint(node_id, rgb);
+    this._canvas[offset[0]][offset[1]].paint(nodeId, rgb);
   }
 
   canvas(): [number, number, number][][] {
@@ -50,9 +56,9 @@ export class Canvas {
     return this._canvas[x][y];
   }
 
-  merge(peer_canvas: Canvas): void {
+  merge(peerCanvas: Canvas): void {
     this._canvas.forEach((row, x) =>
-      row.forEach((pixel, y) => pixel.merge(peer_canvas.pixel(x, y))),
+      row.forEach((pixel, y) => pixel.merge(peerCanvas.pixel(x, y))),
     );
   }
 }

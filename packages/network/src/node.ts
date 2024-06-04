@@ -9,52 +9,16 @@ import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
 import { Libp2p, createLibp2p } from "libp2p";
 
-// Missing QUIC
-// https://github.com/libp2p/js-libp2p/issues/1459
-enum TransportsEnum {
-  WebRTC,
-  WebSockets,
-}
-
-enum ConnectionEncryptionEnum {
-  Noise,
-  Plaintext, // useful for testing (shouldn't be used in prod)
-}
-
-enum MuxersEnum {
-  // Mplex, (deprecated https://libp2p.github.io/js-libp2p/modules/_libp2p_mplex.html)
-  Yamux,
-}
-
-enum PeerDiscoveryEnum {
-  Bootstrap,
-  KademliaDHT,
-  MDNS,
-  Discv5,
-}
-
-enum PubSubEnum {
-  GossipSub,
-  FloodSub, // useful for testing (shouldn't be used in prod)
-}
-
-// Maybe add peer/content routing in config
-// TODO: add sub-options in the configs
-export interface TopologyNetworkNodeConfig {
-  addresses?: string[];
-  transports?: TransportsEnum[];
-  muxers?: MuxersEnum[];
-  connectionEncryption?: ConnectionEncryptionEnum[];
-  peerDiscovery?: PeerDiscoveryEnum[];
-  pubSub?: PubSubEnum[]; // probably not configurable like this
-}
+export interface TopologyNetworkNodeConfig {}
 
 export class TopologyNetworkNode {
-  private _config: TopologyNetworkNodeConfig;
+  private _config?: TopologyNetworkNodeConfig;
   private _node?: Libp2p;
   private _pubsub?: PubSub<GossipsubEvents>;
 
-  constructor(config: TopologyNetworkNodeConfig) {
+  peer_id: string = "";
+
+  constructor(config?: TopologyNetworkNodeConfig) {
     this._config = config;
   }
 
@@ -77,6 +41,14 @@ export class TopologyNetworkNode {
         }),
       ],
     });
+
+    this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
+    this.peer_id = this._node.peerId.toString();
+
+    console.log(
+      "topology::network::start: Successfuly started topology network w/ peer_id",
+      this.peer_id,
+    );
   }
 
   subscribe(topic: string) {
@@ -117,5 +89,19 @@ export class TopologyNetworkNode {
     }
   }
 
-  async sendMessage() {}
+  async sendMessage<T>(topic: string, message: T) {
+    try {
+      // TODO: decode message into uint8array
+      await this._pubsub?.publish(topic, message as Uint8Array);
+
+      // avoiding DoSing the browser
+      // console.log("topology::network::sendMessage: Successfuly sent message to topic", topic)
+    } catch (e) {
+      console.error("topology::network::sendMessage:", e);
+    }
+  }
+
+  pubSubEventListener() {
+    return this._pubsub?.addEventListener;
+  }
 }

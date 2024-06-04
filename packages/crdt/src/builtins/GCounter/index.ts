@@ -1,47 +1,47 @@
 /// GCounter with support for state and op changes
 export class GCounter {
-  private _global_counter: number;
+  private _globalCounter: number;
   // instead of standard incremental id for replicas
   // we map the counter with the node id
-  private _counts: { [node_id: string]: number };
+  private _counts: { [nodeId: string]: number };
 
-  constructor(counts: { [node_id: string]: number }) {
-    this._global_counter = Object.values(counts).reduce((a, b) => a + b, 0);
+  constructor(counts: { [nodeId: string]: number }) {
+    this._globalCounter = Object.values(counts).reduce((a, b) => a + b, 0);
     this._counts = counts;
   }
 
   value(): number {
-    return this._global_counter;
+    return this._globalCounter;
   }
 
-  increment(node_id: string, amount: number): void {
-    this._global_counter += amount;
-    this._counts[node_id] += amount;
+  increment(nodeId: string, amount: number): void {
+    this._globalCounter += amount;
+    this._counts[nodeId] += amount;
   }
 
-  counts(): { [node_key: string]: number } {
+  counts(): { [nodeKey: string]: number } {
     return this._counts;
   }
 
-  compare(peer_counter: GCounter): boolean {
+  compare(peerCounter: GCounter): boolean {
     for (let key in Object.keys(this._counts)) {
-      if (this._counts[key] > peer_counter.counts()[key]) {
+      if (this._counts[key] > peerCounter.counts()[key]) {
         return false;
       }
     }
     return true;
   }
 
-  merge(peer_counter: GCounter): void {
-    let temp: { [node_key: string]: number } = Object.assign(
+  merge(peerCounter: GCounter): void {
+    let temp: { [nodeKey: string]: number } = Object.assign(
       {},
       this._counts,
-      peer_counter.counts(),
+      peerCounter.counts(),
     );
     Object.keys(temp).forEach((key) => {
       this._counts[key] = Math.max(
         this._counts[key],
-        peer_counter.counts()[key],
+        peerCounter.counts()[key],
       );
     });
   }

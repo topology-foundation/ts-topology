@@ -22,23 +22,23 @@ export class PNCounter {
     return this._decrements;
   }
 
-  increment(node_id: string, amount: number): void {
-    this._increments.increment(node_id, amount);
+  increment(nodeId: string, amount: number): void {
+    this._increments.increment(nodeId, amount);
   }
 
-  decrement(node_id: string, amount: number): void {
-    this._decrements.increment(node_id, amount);
+  decrement(nodeId: string, amount: number): void {
+    this._decrements.increment(nodeId, amount);
   }
 
-  compare(peer_counter: PNCounter): boolean {
+  compare(peerCounter: PNCounter): boolean {
     return (
-      this._increments.compare(peer_counter.increments()) &&
-      this._decrements.compare(peer_counter.decrements())
+      this._increments.compare(peerCounter.increments()) &&
+      this._decrements.compare(peerCounter.decrements())
     );
   }
 
-  merge(peer_counter: PNCounter): void {
-    this._increments.merge(peer_counter.increments());
-    this._decrements.merge(peer_counter.decrements());
+  merge(peerCounter: PNCounter): void {
+    this._increments.merge(peerCounter.increments());
+    this._decrements.merge(peerCounter.decrements());
   }
 }

@@ -1,4 +1,4 @@
-import { start } from "@topologygg/node";
+import { TopologyNode } from "@topologygg/node";
 
 const render = (canvas: [number, number, number][][]) => {
   const canvas_element = <HTMLDivElement>document.getElementById("canvas");
@@ -50,9 +50,9 @@ async function init() {
 
   render(pixels);
 
-  // TODO: new way of interacting
-  // const peerId = await start();
-  // console.log(peerId);
+  const node = new TopologyNode();
+  await node.start();
+  node.subscribe("canvas-example");
 }
 
 init();

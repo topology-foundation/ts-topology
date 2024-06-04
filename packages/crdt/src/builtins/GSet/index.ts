@@ -18,11 +18,11 @@ export class GSet<T> {
     return this._set;
   }
 
-  compare(peer_set: GSet<T>): boolean {
-    return this._set === peer_set.set();
+  compare(peerSet: GSet<T>): boolean {
+    return this._set === peerSet.set();
   }
 
-  merge(peer_set: GSet<T>): void {
-    this._set = new Set<T>([...this._set, ...peer_set.set()]);
+  merge(peerSet: GSet<T>): void {
+    this._set = new Set<T>([...this._set, ...peerSet.set()]);
   }
 }
