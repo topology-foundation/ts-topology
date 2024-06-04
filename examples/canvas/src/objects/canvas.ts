@@ -1,4 +1,4 @@
-import { TopologyObject } from "@topologygg/node/dist/src/object";
+import { TopologyObject } from "@topologygg/object";
 import { Pixel } from "./pixel";
 
 export class Canvas extends TopologyObject {
@@ -7,12 +7,12 @@ export class Canvas extends TopologyObject {
   private _canvas: Pixel[][];
 
   constructor(width: number, height: number) {
-    super();
-    Canvas.init(width, height);
+    super("");
+    Canvas._init(width, height);
     this._canvas = Array(width).fill(Array(height).fill(new Pixel()));
   }
 
-  static init(width: number, height: number) {
+  private static _init(width: number, height: number) {
     this._width = width;
     this._height = height;
   }

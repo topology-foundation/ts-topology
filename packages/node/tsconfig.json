@@ -9,6 +9,9 @@
     },
     {
       "path": "../network"
+    },
+    {
+      "path": "../object"
     }
   ],
   "include": ["src/**/*.ts"]

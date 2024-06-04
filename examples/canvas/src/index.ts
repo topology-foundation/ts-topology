@@ -1,6 +1,10 @@
 import { TopologyNode } from "@topologygg/node";
+import { Canvas } from "./objects/canvas";
 
-const render = (canvas: [number, number, number][][]) => {
+let canvasCRO: Canvas;
+
+const render = () => {
+  const canvas = canvasCRO.canvas();
   const canvas_element = <HTMLDivElement>document.getElementById("canvas");
   canvas_element.style.display = "inline-grid";
 
@@ -10,6 +14,7 @@ const render = (canvas: [number, number, number][][]) => {
   for (let x = 0; x < canvas.length; x++) {
     for (let y = 0; y < canvas[x].length; y++) {
       let pixel = document.createElement("div");
+      pixel.id = `${x}-${y}`;
       pixel.style.width = "25px";
       pixel.style.height = "25px";
       pixel.style.backgroundColor = `rgb(${canvas[x][y][0]}, ${canvas[x][y][1]}, ${canvas[x][y][2]})`;
@@ -23,36 +28,30 @@ const render = (canvas: [number, number, number][][]) => {
 const random_int = (max: number) => Math.floor(Math.random() * max);
 
 async function paint_pixel(pixel: HTMLDivElement) {
-  const rgb = pixel.style.backgroundColor
-    .replace("rgb(", "")
-    .replace(")", "")
-    .trim()
-    .split(",")
-    .map((n) => parseInt(n, 10));
-  // sum to current rgb in the future, for now just replace with random_int
-  pixel.style.backgroundColor = `rgb(${random_int(256)}, ${random_int(256)}, ${random_int(256)})`;
+  const [x, y] = pixel.id.split("-").map((v) => parseInt(v, 10));
+  canvasCRO.paint(
+    "",
+    [x, y],
+    [random_int(256), random_int(256), random_int(256)],
+  );
+
+  const pixelCRO = canvasCRO.pixel(x, y);
+  const [r, g, b] = pixelCRO.color();
+
+  pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 }
 
 async function init() {
-  // TODO: get this from the node
-  let pixels: [number, number, number][][] = [
-    [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-    ],
-    [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-    ],
-  ];
-
-  render(pixels);
-
   const node = new TopologyNode();
   await node.start();
-  node.subscribe("canvas-example");
+
+  canvasCRO = new Canvas(5, 10);
+
+  // create cro within the node
+  // node.createObject(canvas);
+  // subscribe to existing cro
+
+  render();
 }
 
 init();

@@ -1,0 +1,11 @@
+{
+  "imports": ["./pixel.json"],
+  "fns": [
+    "fn splash(string, [u64][u64], [u64][u64], [u64, u64, u64]): void",
+    "fn paint(string, [u64][u64], [u64, u64, u64]): void",
+    "fn canvas(): [u64, u64, u64][][]",
+    "fn pixel(u64, u64): Pixel"
+  ],
+  "vm": "wasm",
+  "bytecode": []
+}

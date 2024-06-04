@@ -1,11 +1,13 @@
 import { GCounter } from "@topologygg/crdt";
+import { TopologyObject } from "@topologygg/object";
 
-export class Pixel {
+export class Pixel extends TopologyObject {
   private _red: GCounter;
   private _green: GCounter;
   private _blue: GCounter;
 
   constructor() {
+    super("");
     this._red = new GCounter({});
     this._green = new GCounter({});
     this._blue = new GCounter({});

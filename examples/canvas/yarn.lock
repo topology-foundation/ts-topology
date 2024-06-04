@@ -515,6 +515,15 @@
   dependencies:
     "@topologygg/crdt" "^0.0.1"
     "@topologygg/network" "^0.0.1"
+    "@topologygg/object" "^0.0.1"
+
+"@topologygg/object@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@topologygg/object/-/object-0.0.1.tgz#0ee2d31a506778bf40fa5298295c1a35e864cead"
+  integrity sha512-YpuWCl9wMdPvvucfswGk+1MrwaVOdo4XkdWgnbrRJ2nbyg7pNgoc5bHWGPXbTlSpGIVQDXOaWYn09YDZ/wRZXg==
+
+"@topologygg/object@file:../../packages/object":
+  version "0.0.1"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.11"

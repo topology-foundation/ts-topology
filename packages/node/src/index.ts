@@ -2,7 +2,8 @@ import {
   TopologyNetworkNode,
   TopologyNetworkNodeConfig,
 } from "@topologygg/network";
-import { TopologyObject, TopologyObjectStore } from "./object";
+import { TopologyObject } from "@topologygg/object";
+import { TopologyObjectStore } from "./store";
 
 export interface TopologyNodeConfig {
   networkConfig?: TopologyNetworkNodeConfig;
@@ -21,12 +22,15 @@ export class TopologyNode {
 
   async start(): Promise<void> {
     await this._networkNode.start();
+
+    /*
     this._networkNode.pubSubEventListener()?.("message", (message) => {
       const object = this._objectStore.get(message.detail.topic);
 
       // TODO: handle messages
       return;
     });
+    */
   }
 
   createObject() {

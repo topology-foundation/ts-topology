@@ -1,0 +1,10 @@
+{
+  "imports": [],
+  "fns": [
+    "fn color(): [u64, u64, u64]",
+    "fn paint(string, [u64, u64, u64]): void",
+    "fn counters(): [topology::builtin::GCounter, topology::builtin::GCounter, topology::builtin::GCounter]"
+  ],
+  "vm": "wasm",
+  "bytecode": []
+}

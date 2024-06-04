@@ -427,7 +427,7 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/pubsub@^9.0.19", "@libp2p/pubsub@^9.0.8":
+"@libp2p/pubsub@^9.0.8":
   version "9.0.19"
   resolved "https://registry.yarnpkg.com/@libp2p/pubsub/-/pubsub-9.0.19.tgz#18b04311246dc67cf0a1d689c4bcbda7644c846e"
   integrity sha512-oIwitpk9Bq1Qna4HAAQy0uGWOc2Qlf1CUj4v51yrdcHo7e03hJYhgHZ+kEYgDC0QzsTrzfrvMCDvLxFiaw7O4Q==

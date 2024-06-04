@@ -1,5 +1,5 @@
 {
-  "name": "@topologygg/node",
+  "name": "@topologygg/object",
   "version": "0.0.1",
   "license": "MIT",
   "type": "module",
@@ -18,18 +18,11 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "clean": "rm -rf dist/ node_modules/",
-    "relay": "tsx ./src/run_relay.ts",
-    "start": "tsx ./src/index.ts"
+    "clean": "rm -rf dist/ node_modules/"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
-    "tsx": "^4.11.0",
     "typescript": "^5.4.5"
   },
-  "dependencies": {
-    "@topologygg/crdt": "^0.0.1",
-    "@topologygg/network": "^0.0.1",
-    "@topologygg/object": "^0.0.1"
-  }
+  "dependencies": {}
 }
