@@ -25,7 +25,8 @@ export class TopologyNode {
 
     /*
     this._networkNode.pubSubEventListener()?.("message", (message) => {
-      const object = this._objectStore.get(message.detail.topic);
+      // const object = this._objectStore.get(message.detail.topic);
+      console.log(message.detail);
 
       // TODO: handle messages
       return;
@@ -33,14 +34,25 @@ export class TopologyNode {
     */
   }
 
-  createObject() {
-    // TODO: generate from blueprint
-    const croId = "";
-    this._networkNode.subscribe(croId);
-    // this._objectStore.put(croId, new TopologyObject());
+  createObject(object: TopologyObject) {
+    object.init();
+    const objectId = object.getObjectId();
+    this._networkNode.subscribe(objectId);
+    this._objectStore.put(objectId, object);
   }
 
-  getObject(croId: string): TopologyObject | undefined {
-    return this._objectStore.get(croId);
+  getObject(objectId: string): TopologyObject | undefined {
+    // TODO fetch it from the network
+    this._networkNode.subscribe(objectId);
+
+    const message = new TextEncoder().encode("quack");
+    this._networkNode.sendMessage(objectId, message);
+
+    return this._objectStore.get(objectId);
+  }
+
+  sendObjectUpdate(objectId: string) {
+    const message = new TextEncoder().encode("quack");
+    this._networkNode.sendMessage(objectId, message);
   }
 }

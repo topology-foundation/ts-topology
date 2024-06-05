@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require("webpack");
 
 module.exports = {
   mode: "production",
@@ -21,10 +22,13 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".js"],
     fallback: {
+      crypto: require.resolve("crypto-browserify"),
       dgram: false,
       os: false,
       net: false,
       path: false,
+      stream: require.resolve("stream-browserify"),
+      vm: require.resolve("vm-browserify"),
     },
   },
   output: {
@@ -37,4 +41,9 @@ module.exports = {
     maxEntrypointSize: 512000,
     maxAssetSize: 512000,
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      process: "process/browser",
+    }),
+  ],
 };

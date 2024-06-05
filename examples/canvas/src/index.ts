@@ -1,6 +1,7 @@
 import { TopologyNode } from "@topologygg/node";
 import { Canvas } from "./objects/canvas";
 
+const node = new TopologyNode();
 let canvasCRO: Canvas;
 
 const render = () => {
@@ -36,35 +37,43 @@ async function paint_pixel(pixel: HTMLDivElement) {
     [x, y],
     [random_int(256), random_int(256), random_int(256)],
   );
-
   const [r, g, b] = canvasCRO.pixel(x, y).color();
-
   pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+  node.sendObjectUpdate(canvasCRO.getObjectId());
 }
 
 async function init() {
-  const node = new TopologyNode();
   await node.start();
 
   let create_button = <HTMLButtonElement>document.getElementById("create");
   create_button.addEventListener("click", () => {
     canvasCRO = new Canvas(5, 10);
-    // node.createObject(canvasCRO);
+
+    // TODO: need to pass abi
+    node.createObject(canvasCRO);
+
+    (<HTMLSpanElement>document.getElementById("canvasId")).innerText =
+      canvasCRO.getObjectId();
+    node.sendObjectUpdate(canvasCRO.getObjectId());
+
     render();
   });
 
   let connect_button = <HTMLButtonElement>document.getElementById("connect");
   connect_button.addEventListener("click", () => {
-    canvasCRO = new Canvas(5, 10);
-    let croId = (<HTMLSpanElement>document.getElementById("canvasId"))
-      .innerText;
+    let croId = (<HTMLInputElement>document.getElementById("canvasIdInput"))
+      .value;
     try {
-      let obj = node.getObject(croId);
-      if (!obj) throw "not found";
-      canvasCRO = <Canvas>obj;
+      //
+      canvasCRO = new Canvas(5, 10);
+      <Canvas>node.getObject(croId);
+
+      (<HTMLSpanElement>document.getElementById("canvasId")).innerText = croId;
+      node.sendObjectUpdate(croId);
       render();
     } catch (e) {
-      console.error("Error while connecting with CRO", croId);
+      console.error("Error while connecting with CRO", croId, e);
     }
   });
 }

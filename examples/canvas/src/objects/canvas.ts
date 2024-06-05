@@ -7,7 +7,7 @@ export class Canvas extends TopologyObject {
   private _canvas: Pixel[][];
 
   constructor(width: number, height: number) {
-    super("");
+    super();
     Canvas._init(width, height);
     this._canvas = Array(width).fill(Array(height).fill(new Pixel()));
   }

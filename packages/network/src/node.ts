@@ -4,10 +4,12 @@ import { yamux } from "@chainsafe/libp2p-yamux";
 import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
 import { identify } from "@libp2p/identify";
 import { PubSub } from "@libp2p/interface";
+import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
 import { Libp2p, createLibp2p } from "libp2p";
+import { multiaddr } from "multiaddr";
 
 export interface TopologyNetworkNodeConfig {}
 
@@ -16,7 +18,7 @@ export class TopologyNetworkNode {
   private _node?: Libp2p;
   private _pubsub?: PubSub<GossipsubEvents>;
 
-  peer_id: string = "";
+  peerId: string = "";
 
   constructor(config?: TopologyNetworkNodeConfig) {
     this._config = config;
@@ -28,6 +30,12 @@ export class TopologyNetworkNode {
         listen: ["/webrtc"],
       },
       connectionEncryption: [noise()],
+      connectionGater: {
+        denyDialMultiaddr: () => {
+          return false;
+        },
+      },
+      peerDiscovery: [pubsubPeerDiscovery()],
       services: {
         identify: identify(),
         pubsub: gossipsub(),
@@ -42,13 +50,25 @@ export class TopologyNetworkNode {
       ],
     });
 
+    await this._node.dial([
+      multiaddr(
+        "/ip4/127.0.0.1/tcp/50000/ws/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+      ),
+    ]);
+
     this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
-    this.peer_id = this._node.peerId.toString();
+    this.peerId = this._node.peerId.toString();
 
     console.log(
       "topology::network::start: Successfuly started topology network w/ peer_id",
-      this.peer_id,
+      this.peerId,
     );
+
+    this._pubsub.addEventListener("message", (e) => {
+      if (e.detail.topic === "_peer-discovery._p2p._pubsub") return;
+      const message = new TextDecoder().decode(e.detail.data);
+      console.log(e.detail.topic, message);
+    });
   }
 
   subscribe(topic: string) {
@@ -89,13 +109,15 @@ export class TopologyNetworkNode {
     }
   }
 
-  async sendMessage<T>(topic: string, message: T) {
+  async sendMessage(topic: string, message: Uint8Array) {
     try {
-      // TODO: decode message into uint8array
-      await this._pubsub?.publish(topic, message as Uint8Array);
+      await this._pubsub?.publish(topic, message);
 
-      // avoiding DoSing the browser
-      // console.log("topology::network::sendMessage: Successfuly sent message to topic", topic)
+      // comment to avoid DoSing browser's console
+      console.log(
+        "topology::network::sendMessage: Successfuly sent message to topic",
+        topic,
+      );
     } catch (e) {
       console.error("topology::network::sendMessage:", e);
     }

@@ -7,7 +7,7 @@ export class Pixel extends TopologyObject {
   private _blue: GCounter;
 
   constructor() {
-    super("");
+    super();
     this._red = new GCounter({});
     this._green = new GCounter({});
     this._blue = new GCounter({});
