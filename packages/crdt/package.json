@@ -2,6 +2,10 @@
   "name": "@topologygg/crdt",
   "version": "0.0.2",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/topology-foundation/ts-topology.git"
+  },
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "files": [
