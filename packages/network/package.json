@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@libp2p/interface": "^1.4.0",
-    "@types/node": "^20.12.12",
+    "@types/node": "^20.14.2",
     "react-native-webrtc": "^118.0.7",
     "typescript": "^5.4.5"
   },
