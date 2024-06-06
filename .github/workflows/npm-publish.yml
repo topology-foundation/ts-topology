@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org"
-      - run: npm ci
-      - run: npm publish --provenance --workspace packages --access public
+      - run: yarn install --frozen-lockfile
+      - run: yarn publish --provenance --workspace packages --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
