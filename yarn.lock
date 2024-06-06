@@ -707,14 +707,14 @@ datastore-core@^9.2.9:
     it-sort "^3.0.4"
     it-take "^3.0.4"
 
-debug@4.3.4, debug@^4.3.4:
+debug@4.3.4:
   version "4.3.4"
   resolved "https://registry.npmjs.org/debug/-/debug-4.3.4.tgz"
   integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
   dependencies:
     ms "2.1.2"
 
-debug@^4.3.1:
+debug@^4.3.1, debug@^4.3.4:
   version "4.3.5"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.5.tgz#e83444eceb9fedd4a1da56d671ae2446a01a6e1e"
   integrity sha512-pt0bNEmneDIvdL1Xsd9oDQ/wrQRkXDT4AUWlNZNPKvW5x/jyO9VFXkJUP07vQ2upmw5PlaITaPKc31jK13V+jg==
@@ -1364,6 +1364,15 @@ react-native-webrtc@^118.0.7:
   version "118.0.7"
   resolved "https://registry.yarnpkg.com/react-native-webrtc/-/react-native-webrtc-118.0.7.tgz#8984810f02fff26e2c3784c854e1d4380d092917"
   integrity sha512-odgd4CNSGQmI8n/pEbxlUtJBTJ8uqE51B1/NUEAvO1AQbeXsyFNHEG0H2T27eMefo5u0GKcRpNkZpXi6fctTkQ==
+  dependencies:
+    base64-js "1.5.1"
+    debug "4.3.4"
+    event-target-shim "6.0.2"
+
+react-native-webrtc@^124.0.0:
+  version "124.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-webrtc/-/react-native-webrtc-124.0.0.tgz#9a56e57d3de438ff295baf17b44ca251841f8f02"
+  integrity sha512-XG7/EAdzgpBOaHc7Jv856pV5aUV/cOBoSgoOmx/nib67VnbF21E/lHGDwlQ286yT5W0dxNtmhJ1P9EEhCLz05g==
   dependencies:
     base64-js "1.5.1"
     debug "4.3.4"
