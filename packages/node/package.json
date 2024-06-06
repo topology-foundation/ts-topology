@@ -19,6 +19,7 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rm -rf dist/ node_modules/",
+    "node": "tsx ./src/run_node.ts",
     "relay": "tsx ./src/run_relay.ts",
     "start": "tsx ./src/index.ts"
   },

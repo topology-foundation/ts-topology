@@ -49,14 +49,10 @@ async function init() {
   let create_button = <HTMLButtonElement>document.getElementById("create");
   create_button.addEventListener("click", () => {
     canvasCRO = new Canvas(5, 10);
-
-    // TODO: need to pass abi
     node.createObject(canvasCRO);
 
     (<HTMLSpanElement>document.getElementById("canvasId")).innerText =
       canvasCRO.getObjectId();
-    node.sendObjectUpdate(canvasCRO.getObjectId());
-
     render();
   });
 
@@ -65,7 +61,7 @@ async function init() {
     let croId = (<HTMLInputElement>document.getElementById("canvasIdInput"))
       .value;
     try {
-      //
+      // TODO don't create a new canvas
       canvasCRO = new Canvas(5, 10);
       <Canvas>node.getObject(croId);
 

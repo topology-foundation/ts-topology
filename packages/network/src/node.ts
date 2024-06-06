@@ -3,7 +3,7 @@ import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
 import { identify } from "@libp2p/identify";
-import { PubSub } from "@libp2p/interface";
+import { EventHandler, PubSub } from "@libp2p/interface";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
@@ -50,6 +50,7 @@ export class TopologyNetworkNode {
       ],
     });
 
+    // bootstrap
     await this._node.dial([
       multiaddr(
         "/ip4/127.0.0.1/tcp/50000/ws/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
@@ -63,12 +64,6 @@ export class TopologyNetworkNode {
       "topology::network::start: Successfuly started topology network w/ peer_id",
       this.peerId,
     );
-
-    this._pubsub.addEventListener("message", (e) => {
-      if (e.detail.topic === "_peer-discovery._p2p._pubsub") return;
-      const message = new TextDecoder().decode(e.detail.data);
-      console.log(e.detail.topic, message);
-    });
   }
 
   subscribe(topic: string) {
@@ -111,9 +106,9 @@ export class TopologyNetworkNode {
 
   async sendMessage(topic: string, message: Uint8Array) {
     try {
+      if (this._pubsub?.getSubscribers(topic)?.length === 0) return;
       await this._pubsub?.publish(topic, message);
 
-      // comment to avoid DoSing browser's console
       console.log(
         "topology::network::sendMessage: Successfuly sent message to topic",
         topic,
@@ -123,7 +118,10 @@ export class TopologyNetworkNode {
     }
   }
 
-  pubSubEventListener() {
-    return this._pubsub?.addEventListener;
+  addPubsubEventListener(
+    type: keyof GossipsubEvents,
+    event: EventHandler<CustomEvent<any>>,
+  ) {
+    this._pubsub?.addEventListener(type, event);
   }
 }
