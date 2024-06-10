@@ -25,16 +25,18 @@
     "clean": "rm -rf dist/ node_modules/",
     "node": "tsx ./src/run_node.ts",
     "relay": "tsx ./src/run_relay.ts",
-    "start": "tsx ./src/index.ts"
+    "start": "tsx ./src/index.ts",
+    "test": "vitest"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",
     "tsx": "^4.12.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
   },
   "dependencies": {
-    "@topologygg/crdt": "^0.0.1",
-    "@topologygg/network": "^0.0.1",
-    "@topologygg/object": "^0.0.1"
+    "@topology-foundation/crdt": "^0.0.1",
+    "@topology-foundation/network": "^0.0.1",
+    "@topology-foundation/object": "^0.0.1"
   }
 }

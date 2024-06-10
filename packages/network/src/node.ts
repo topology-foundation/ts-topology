@@ -3,13 +3,14 @@ import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
 import { identify } from "@libp2p/identify";
-import { EventHandler, PubSub } from "@libp2p/interface";
+import { EventHandler, PubSub, Stream } from "@libp2p/interface";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
 import { Libp2p, createLibp2p } from "libp2p";
 import { multiaddr } from "multiaddr";
+import { stringToStream } from "./stream";
 
 export interface TopologyNetworkNodeConfig {}
 
@@ -51,6 +52,7 @@ export class TopologyNetworkNode {
     });
 
     // bootstrap
+    // TODO: use another technique instead of dial
     await this._node.dial([
       multiaddr(
         "/ip4/127.0.0.1/tcp/50000/ws/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
@@ -104,18 +106,24 @@ export class TopologyNetworkNode {
     }
   }
 
-  async sendMessage(topic: string, message: Uint8Array) {
+  async broadcastMessage(topic: string, message: Uint8Array) {
     try {
       if (this._pubsub?.getSubscribers(topic)?.length === 0) return;
       await this._pubsub?.publish(topic, message);
 
       console.log(
-        "topology::network::sendMessage: Successfuly sent message to topic",
+        "topology::network::broadcastMessage: Successfuly broadcasted message to topic",
         topic,
       );
     } catch (e) {
-      console.error("topology::network::sendMessage:", e);
+      console.error("topology::network::broadcastMessage:", e);
     }
+  }
+
+  async sendMessage(peerId: string, protocols: string[], message: string) {
+    const connection = await this._node?.dial([multiaddr(peerId)]);
+    const stream: Stream = (await connection?.newStream(protocols)) as Stream;
+    stringToStream(stream, message);
   }
 
   addPubsubEventListener(

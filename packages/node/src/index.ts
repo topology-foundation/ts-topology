@@ -26,7 +26,8 @@ export class TopologyNode {
     this._networkNode.addPubsubEventListener("message", (e) => {
       if (e.detail.topic === "_peer-discovery._p2p._pubsub") return;
 
-      const message = new TextDecoder().decode(e.detail.data);
+      const message = JSON.parse(new TextDecoder().decode(e.detail.data));
+
       console.log(e.detail.topic, message);
     });
   }
@@ -44,15 +45,24 @@ export class TopologyNode {
     let object = this._objectStore.get(objectId);
     if (!object) {
       // TODO reimplement the logic to use direct connection + protobufs
-      const message = new TextEncoder().encode("fetch_object");
-      await this._networkNode.sendMessage(objectId, message);
+      // {
+      //   type: "{fetch_object|object|custom}"
+      //   data: "......"
+      // }
+
+      const message = "fetch_object";
+      await this._networkNode.sendMessage(
+        objectId,
+        ["/topology/message/0.0.1"],
+        message,
+      );
     }
 
     return object;
   }
 
   sendObjectUpdate(objectId: string) {
-    const message = new TextEncoder().encode("quack");
-    this._networkNode.sendMessage(objectId, message);
+    const message = "object_update";
+    this._networkNode.sendMessage(objectId, [], message);
   }
 }

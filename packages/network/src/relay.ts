@@ -11,6 +11,10 @@ import { createLibp2p } from "libp2p";
 
 import relayerJson from "./peer-id-relayer";
 
+// TODO:
+//  - remove the peer-id-relayer in favor of static configs
+//  - create a "relay" mode that can be activated in the main node.ts logic
+//  - improve the circuit-relay setup
 export const createRelayNode = async () => {
   const idRelayer = await createFromJSON(relayerJson);
   const node = await createLibp2p({
