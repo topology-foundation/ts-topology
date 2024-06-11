@@ -3,7 +3,7 @@ import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
 import { identify } from "@libp2p/identify";
-import { EventHandler, PubSub, Stream } from "@libp2p/interface";
+import { EventHandler, PubSub, Stream, StreamHandler } from "@libp2p/interface";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
@@ -126,10 +126,27 @@ export class TopologyNetworkNode {
     stringToStream(stream, message);
   }
 
+  async sendMessageRandomTopicPeer(
+    topic: string,
+    protocols: string[],
+    message: string,
+  ) {
+    const peers = this._pubsub?.getSubscribers(topic);
+    if (!peers) return;
+    const peerId = peers[Math.floor(Math.random() * peers.length)].toString();
+    const connection = await this._node?.dial([multiaddr(peerId)]);
+    const stream: Stream = (await connection?.newStream(protocols)) as Stream;
+    stringToStream(stream, message);
+  }
+
   addPubsubEventListener(
     type: keyof GossipsubEvents,
     event: EventHandler<CustomEvent<any>>,
   ) {
     this._pubsub?.addEventListener(type, event);
+  }
+
+  addMessageHandler(protocol: string | string[], handler: StreamHandler) {
+    this._node?.handle(protocol, handler);
   }
 }

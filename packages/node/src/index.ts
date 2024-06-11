@@ -1,9 +1,13 @@
 import {
   TopologyNetworkNode,
   TopologyNetworkNodeConfig,
+  streamToString,
+  stringToStream,
 } from "@topologygg/network";
 import { TopologyObject } from "@topologygg/object";
 import { TopologyObjectStore } from "./store";
+import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
+import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 
 export interface TopologyNodeConfig {
   networkConfig?: TopologyNetworkNodeConfig;
@@ -30,6 +34,37 @@ export class TopologyNode {
 
       console.log(e.detail.topic, message);
     });
+
+    this._networkNode.addMessageHandler(
+      ["/topology/message/0.0.1"],
+      async ({ stream }) => {
+        let input = await streamToString(stream);
+        if (!input) return;
+
+        const message = JSON.parse(input);
+        switch (message["type"]) {
+          case "object_fetch": {
+            const objectId = uint8ArrayToString(message["data"]);
+            const object = await this.getObject(objectId);
+            const object_message = `{
+              type: "object",
+              data: ${uint8ArrayFromString(JSON.stringify(object))}
+            }`;
+            stringToStream(stream, object_message);
+            break;
+          }
+          case "object": {
+            const object: TopologyObject = JSON.parse(
+              uint8ArrayToString(message["data"]),
+            );
+            this._objectStore.put(object.getObjectId(), object);
+          }
+          default: {
+            return;
+          }
+        }
+      },
+    );
   }
 
   createObject(object: TopologyObject) {
@@ -39,30 +74,33 @@ export class TopologyNode {
     this._objectStore.put(objectId, object);
   }
 
-  /// TODO: separate fetching the object from the network and fetching from the objectStore
-  async getObject(objectId: string) {
+  /// Subscribe to the object's PubSub group
+  /// and fetch it from a peer
+  async subscribeObject(objectId: string) {
     this._networkNode.subscribe(objectId);
-    let object = this._objectStore.get(objectId);
-    if (!object) {
-      // TODO reimplement the logic to use direct connection + protobufs
-      // {
-      //   type: "{fetch_object|object|custom}"
-      //   data: "......"
-      // }
+    const message = `{
+      type: "object_fetch",
+      data: ${uint8ArrayFromString(objectId)}
+    }`;
 
-      const message = "fetch_object";
-      await this._networkNode.sendMessage(
-        objectId,
-        ["/topology/message/0.0.1"],
-        message,
-      );
-    }
+    await this._networkNode.sendMessageRandomTopicPeer(
+      objectId,
+      ["/topology/message/0.0.1"],
+      message,
+    );
+  }
 
-    return object;
+  /// Get the object from the local Object Store
+  async getObject(objectId: string) {
+    return this._objectStore.get(objectId);
   }
 
   sendObjectUpdate(objectId: string) {
-    const message = "object_update";
-    this._networkNode.sendMessage(objectId, [], message);
+    // not dialed, emitted through pubsub
+    const message = `{
+      type: "object_update",
+      data: []
+    }`;
+    this._networkNode.broadcastMessage(objectId, uint8ArrayFromString(message));
   }
 }

@@ -43,6 +43,7 @@ export async function streamToString(stream: Stream) {
     (source) => map(source, (buf) => uint8ArrayToString(buf.subarray())),
     async function (source) {
       for await (const msg of source) {
+        // one-line json obj
         return msg.toString().replace("\n", "");
       }
     },
