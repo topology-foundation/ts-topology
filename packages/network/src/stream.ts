@@ -27,8 +27,8 @@ import { pipe } from "it-pipe";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 
-export function stringToStream(stream: Stream, input: string) {
-  return pipe(
+export async function stringToStream(stream: Stream, input: string) {
+  await pipe(
     input,
     (source) => map(source, (string) => uint8ArrayFromString(string)),
     (source) => lp.encode(source),
@@ -42,10 +42,11 @@ export async function streamToString(stream: Stream) {
     (source) => lp.decode(source),
     (source) => map(source, (buf) => uint8ArrayToString(buf.subarray())),
     async function (source) {
+      let output: string[] = [];
       for await (const msg of source) {
-        // one-line json obj
-        return msg.toString().replace("\n", "");
+        output.push(msg.toString().replace("\n", ""));
       }
+      return output.join("").trim();
     },
   );
 }

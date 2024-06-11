@@ -66,6 +66,10 @@ export class TopologyNetworkNode {
       "topology::network::start: Successfuly started topology network w/ peer_id",
       this.peerId,
     );
+
+    this._node.addEventListener("peer:connect", (evt) => {
+      console.log("topology::network::peer::connect: ", evt.detail.toString());
+    });
   }
 
   subscribe(topic: string) {
@@ -78,6 +82,7 @@ export class TopologyNetworkNode {
 
     try {
       this._pubsub?.subscribe(topic);
+      this._pubsub?.getPeers();
       console.log(
         "topology::network::subscribe: Successfuly subscribed the topic",
         topic,
@@ -121,9 +126,17 @@ export class TopologyNetworkNode {
   }
 
   async sendMessage(peerId: string, protocols: string[], message: string) {
-    const connection = await this._node?.dial([multiaddr(peerId)]);
-    const stream: Stream = (await connection?.newStream(protocols)) as Stream;
-    stringToStream(stream, message);
+    try {
+      const connection = await this._node?.dial([multiaddr(`/p2p/${peerId}`)]);
+      const stream = <Stream>await connection?.newStream(protocols);
+      stringToStream(stream, message);
+
+      console.log(
+        `topology::network::sendMessage: Successfuly sent message to peer: ${peerId} with message: ${message}`,
+      );
+    } catch (e) {
+      console.error("topology::network::sendMessage:", e);
+    }
   }
 
   async sendMessageRandomTopicPeer(
@@ -131,12 +144,21 @@ export class TopologyNetworkNode {
     protocols: string[],
     message: string,
   ) {
-    const peers = this._pubsub?.getSubscribers(topic);
-    if (!peers) return;
-    const peerId = peers[Math.floor(Math.random() * peers.length)].toString();
-    const connection = await this._node?.dial([multiaddr(peerId)]);
-    const stream: Stream = (await connection?.newStream(protocols)) as Stream;
-    stringToStream(stream, message);
+    try {
+      const peers = this._pubsub?.getSubscribers(topic);
+      if (!peers || peers.length === 0) throw Error("Topic wo/ peers");
+      const peerId = peers[Math.floor(Math.random() * peers.length)];
+
+      const connection = await this._node?.dial(peerId);
+      const stream: Stream = (await connection?.newStream(protocols)) as Stream;
+      stringToStream(stream, message);
+
+      console.log(
+        `topology::network::sendMessageRandomTopicPeer: Successfuly sent message to peer: ${peerId} with message: ${message}`,
+      );
+    } catch (e) {
+      console.error("topology::network::sendMessageRandomTopicPeer:", e);
+    }
   }
 
   addPubsubEventListener(

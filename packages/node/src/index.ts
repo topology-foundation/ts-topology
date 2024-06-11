@@ -30,9 +30,8 @@ export class TopologyNode {
     this._networkNode.addPubsubEventListener("message", (e) => {
       if (e.detail.topic === "_peer-discovery._p2p._pubsub") return;
 
-      const message = JSON.parse(new TextDecoder().decode(e.detail.data));
-
-      console.log(e.detail.topic, message);
+      // const message = JSON.parse(new TextDecoder().decode(e.detail.data));
+      // console.log(e.detail.topic, message);
     });
 
     this._networkNode.addMessageHandler(
@@ -44,20 +43,27 @@ export class TopologyNode {
         const message = JSON.parse(input);
         switch (message["type"]) {
           case "object_fetch": {
-            const objectId = uint8ArrayToString(message["data"]);
-            const object = await this.getObject(objectId);
+            const objectId = uint8ArrayToString(
+              new Uint8Array(message["data"]),
+            );
+            const object = <TopologyObject>await this.getObject(objectId);
             const object_message = `{
-              type: "object",
-              data: ${uint8ArrayFromString(JSON.stringify(object))}
+              "type": "object",
+              "data": [${uint8ArrayFromString(JSON.stringify(object))}]
             }`;
-            stringToStream(stream, object_message);
+            await this._networkNode.sendMessage(
+              message["sender"],
+              [<string>stream.protocol],
+              object_message,
+            );
+            // await stringToStream(stream, object_message);
             break;
           }
           case "object": {
-            const object: TopologyObject = JSON.parse(
-              uint8ArrayToString(message["data"]),
+            const object = JSON.parse(
+              uint8ArrayToString(new Uint8Array(message["data"])),
             );
-            this._objectStore.put(object.getObjectId(), object);
+            this._objectStore.put(object["id"], object);
           }
           default: {
             return;
@@ -79,8 +85,9 @@ export class TopologyNode {
   async subscribeObject(objectId: string) {
     this._networkNode.subscribe(objectId);
     const message = `{
-      type: "object_fetch",
-      data: ${uint8ArrayFromString(objectId)}
+      "type": "object_fetch",
+      "sender": "${this._networkNode.peerId}",
+      "data": [${uint8ArrayFromString(objectId)}]
     }`;
 
     await this._networkNode.sendMessageRandomTopicPeer(
@@ -98,8 +105,8 @@ export class TopologyNode {
   sendObjectUpdate(objectId: string) {
     // not dialed, emitted through pubsub
     const message = `{
-      type: "object_update",
-      data: []
+      "type": "object_update",
+      "data": []
     }`;
     this._networkNode.broadcastMessage(objectId, uint8ArrayFromString(message));
   }

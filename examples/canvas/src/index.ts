@@ -1,11 +1,13 @@
 import { TopologyNode } from "@topology-foundation/node";
-import { Canvas } from "./objects/canvas";
+import { Canvas, ICanvas } from "./objects/canvas";
+import { TopologyObject } from "@topology-foundation/object";
+import { Pixel } from "./objects/pixel";
 
 const node = new TopologyNode();
 let canvasCRO: Canvas;
 
 const render = () => {
-  const canvas = canvasCRO.canvas();
+  const canvas = canvasCRO.canvas;
   const canvas_element = <HTMLDivElement>document.getElementById("canvas");
   canvas_element.style.display = "inline-grid";
 
@@ -20,7 +22,7 @@ const render = () => {
       pixel.id = `${x}-${y}`;
       pixel.style.width = "25px";
       pixel.style.height = "25px";
-      pixel.style.backgroundColor = `rgb(${canvas[x][y][0]}, ${canvas[x][y][1]}, ${canvas[x][y][2]})`;
+      pixel.style.backgroundColor = `rgb(${canvas[x][y].color()[0]}, ${canvas[x][y].color()[1]}, ${canvas[x][y].color()[2]})`;
       pixel.style.cursor = "pointer";
       pixel.addEventListener("click", () => paint_pixel(pixel));
       canvas_element.appendChild(pixel);
@@ -62,10 +64,15 @@ async function init() {
       .value;
     try {
       // TODO don't create a new canvas
-      canvasCRO = new Canvas(5, 10);
-      //await node.sub
+      // canvasCRO = new Canvas(5, 10);
+
       await node.subscribeObject(croId);
-      canvasCRO = <Canvas>await node.getObject(croId);
+
+      let object = (await node.getObject(croId)) as Canvas;
+      console.log(object);
+
+      canvasCRO = object;
+      console.log(canvasCRO);
 
       (<HTMLSpanElement>document.getElementById("canvasId")).innerText = croId;
       node.sendObjectUpdate(croId);

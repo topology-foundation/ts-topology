@@ -1,48 +1,50 @@
+export interface IGCounter {
+  globalCounter: number;
+  counts: { [nodeKey: string]: number };
+  value(): number;
+  increment(nodeId: string, amount: number): void;
+  compare(peerCounter: IGCounter): boolean;
+  merge(peerCounter: IGCounter): void;
+}
+
 /// GCounter with support for state and op changes
-export class GCounter {
-  private _globalCounter: number;
+export class GCounter implements IGCounter {
+  globalCounter: number;
   // instead of standard incremental id for replicas
   // we map the counter with the node id
-  private _counts: { [nodeId: string]: number };
+  counts: { [nodeId: string]: number };
 
   constructor(counts: { [nodeId: string]: number }) {
-    this._globalCounter = Object.values(counts).reduce((a, b) => a + b, 0);
-    this._counts = counts;
+    this.globalCounter = Object.values(counts).reduce((a, b) => a + b, 0);
+    this.counts = counts;
   }
 
   value(): number {
-    return this._globalCounter;
+    return this.globalCounter;
   }
 
   increment(nodeId: string, amount: number): void {
-    this._globalCounter += amount;
-    this._counts[nodeId] += amount;
+    this.globalCounter += amount;
+    this.counts[nodeId] += amount;
   }
 
-  counts(): { [nodeKey: string]: number } {
-    return this._counts;
-  }
-
-  compare(peerCounter: GCounter): boolean {
-    for (let key in Object.keys(this._counts)) {
-      if (this._counts[key] > peerCounter.counts()[key]) {
+  compare(peerCounter: IGCounter): boolean {
+    for (let key in Object.keys(this.counts)) {
+      if (this.counts[key] > peerCounter.counts[key]) {
         return false;
       }
     }
     return true;
   }
 
-  merge(peerCounter: GCounter): void {
+  merge(peerCounter: IGCounter): void {
     let temp: { [nodeKey: string]: number } = Object.assign(
       {},
-      this._counts,
-      peerCounter.counts(),
+      this.counts,
+      peerCounter.counts,
     );
     Object.keys(temp).forEach((key) => {
-      this._counts[key] = Math.max(
-        this._counts[key],
-        peerCounter.counts()[key],
-      );
+      this.counts[key] = Math.max(this.counts[key], peerCounter.counts[key]);
     });
   }
 }

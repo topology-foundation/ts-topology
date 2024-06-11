@@ -1,40 +1,50 @@
-import { GCounter } from "@topology-foundation/crdt";
+import { GCounter, IGCounter } from "@topology-foundation/crdt";
 import { TopologyObject } from "@topology-foundation/object";
 
-export class Pixel extends TopologyObject {
-  private _red: GCounter;
-  private _green: GCounter;
-  private _blue: GCounter;
+export interface IPixel {
+  red: IGCounter;
+  green: IGCounter;
+  blue: IGCounter;
+  color(): [number, number, number];
+  paint(nodeId: string, rgb: [number, number, number]): void;
+  counters(): [IGCounter, IGCounter, IGCounter];
+  merge(peerPixel: IPixel): void;
+}
+
+export class Pixel extends TopologyObject implements IPixel {
+  red: IGCounter;
+  green: IGCounter;
+  blue: IGCounter;
 
   constructor() {
     super();
-    this._red = new GCounter({});
-    this._green = new GCounter({});
-    this._blue = new GCounter({});
+    this.red = new GCounter({});
+    this.green = new GCounter({});
+    this.blue = new GCounter({});
   }
 
   color(): [number, number, number] {
     return [
-      this._red.value() % 256,
-      this._green.value() % 256,
-      this._blue.value() % 256,
+      this.red.value() % 256,
+      this.green.value() % 256,
+      this.blue.value() % 256,
     ];
   }
 
   paint(nodeId: string, rgb: [number, number, number]): void {
-    this._red.increment(nodeId, rgb[0]);
-    this._green.increment(nodeId, rgb[1]);
-    this._blue.increment(nodeId, rgb[2]);
+    this.red.increment(nodeId, rgb[0]);
+    this.green.increment(nodeId, rgb[1]);
+    this.blue.increment(nodeId, rgb[2]);
   }
 
-  counters(): [GCounter, GCounter, GCounter] {
-    return [this._red, this._green, this._blue];
+  counters(): [IGCounter, IGCounter, IGCounter] {
+    return [this.red, this.green, this.blue];
   }
 
   merge(peerPixel: Pixel): void {
     let peerCounters = peerPixel.counters();
-    this._red.merge(peerCounters[0]);
-    this._green.merge(peerCounters[1]);
-    this._blue.merge(peerCounters[2]);
+    this.red.merge(peerCounters[0]);
+    this.green.merge(peerCounters[1]);
+    this.blue.merge(peerCounters[2]);
   }
 }
