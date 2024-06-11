@@ -1,5 +1,5 @@
-import { GCounter } from "@topologygg/crdt";
-import { TopologyObject } from "@topologygg/object";
+import { GCounter } from "@topology-foundation/crdt";
+import { TopologyObject } from "@topology-foundation/object";
 
 export class Pixel extends TopologyObject {
   private _red: GCounter;

@@ -1,4 +1,4 @@
-import { TopologyNode } from "@topologygg/node";
+import { TopologyNode } from "@topology-foundation/node";
 import { Canvas } from "./objects/canvas";
 
 const node = new TopologyNode();
@@ -57,13 +57,15 @@ async function init() {
   });
 
   let connect_button = <HTMLButtonElement>document.getElementById("connect");
-  connect_button.addEventListener("click", () => {
+  connect_button.addEventListener("click", async () => {
     let croId = (<HTMLInputElement>document.getElementById("canvasIdInput"))
       .value;
     try {
       // TODO don't create a new canvas
       canvasCRO = new Canvas(5, 10);
-      <Canvas>node.getObject(croId);
+      //await node.sub
+      await node.subscribeObject(croId);
+      canvasCRO = <Canvas>await node.getObject(croId);
 
       (<HTMLSpanElement>document.getElementById("canvasId")).innerText = croId;
       node.sendObjectUpdate(croId);

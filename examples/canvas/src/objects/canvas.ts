@@ -1,4 +1,4 @@
-import { TopologyObject } from "@topologygg/object";
+import { TopologyObject } from "@topology-foundation/object";
 import { Pixel } from "./pixel";
 
 export class Canvas extends TopologyObject {
