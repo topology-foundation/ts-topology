@@ -31,7 +31,6 @@ export class TopologyNode {
       if (e.detail.topic === "_peer-discovery._p2p._pubsub") return;
 
       // const message = JSON.parse(new TextDecoder().decode(e.detail.data));
-      // console.log(e.detail.topic, message);
     });
 
     this._networkNode.addMessageHandler(
@@ -46,7 +45,7 @@ export class TopologyNode {
             const objectId = uint8ArrayToString(
               new Uint8Array(message["data"]),
             );
-            const object = <TopologyObject>await this.getObject(objectId);
+            const object = <TopologyObject>this.getObject(objectId);
             const object_message = `{
               "type": "object",
               "data": [${uint8ArrayFromString(JSON.stringify(object))}]
@@ -73,8 +72,11 @@ export class TopologyNode {
     );
   }
 
+  getPeerId() {
+    return this._networkNode.peerId;
+  }
+
   createObject(object: TopologyObject) {
-    object.init();
     const objectId = object.getObjectId();
     this._networkNode.subscribe(objectId);
     this._objectStore.put(objectId, object);
@@ -98,16 +100,20 @@ export class TopologyNode {
   }
 
   /// Get the object from the local Object Store
-  async getObject(objectId: string) {
+  getObject(objectId: string) {
     return this._objectStore.get(objectId);
   }
 
-  sendObjectUpdate(objectId: string) {
+  updateObject(object: TopologyObject) {
+    this._objectStore.put(object.getObjectId(), object);
     // not dialed, emitted through pubsub
     const message = `{
       "type": "object_update",
       "data": []
     }`;
-    this._networkNode.broadcastMessage(objectId, uint8ArrayFromString(message));
+    this._networkNode.broadcastMessage(
+      object.getObjectId(),
+      uint8ArrayFromString(message),
+    );
   }
 }

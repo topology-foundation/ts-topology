@@ -2,6 +2,7 @@ import { TopologyNode } from "@topology-foundation/node";
 import { Canvas, ICanvas } from "./objects/canvas";
 import { TopologyObject } from "@topology-foundation/object";
 import { Pixel } from "./objects/pixel";
+import { GCounter } from "@topology-foundation/crdt";
 
 const node = new TopologyNode();
 let canvasCRO: Canvas;
@@ -42,7 +43,7 @@ async function paint_pixel(pixel: HTMLDivElement) {
   const [r, g, b] = canvasCRO.pixel(x, y).color();
   pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 
-  node.sendObjectUpdate(canvasCRO.getObjectId());
+  node.updateObject(canvasCRO);
 }
 
 async function init() {
@@ -50,7 +51,7 @@ async function init() {
 
   let create_button = <HTMLButtonElement>document.getElementById("create");
   create_button.addEventListener("click", () => {
-    canvasCRO = new Canvas(5, 10);
+    canvasCRO = new Canvas(node.getPeerId(), 5, 10);
     node.createObject(canvasCRO);
 
     (<HTMLSpanElement>document.getElementById("canvasId")).innerText =
@@ -68,14 +69,20 @@ async function init() {
 
       await node.subscribeObject(croId);
 
-      let object = (await node.getObject(croId)) as Canvas;
-      console.log(object);
+      let object: any = node.getObject(croId);
+      object["canvas"] = object["canvas"].map((x: any) =>
+        x.map((y: any) => {
+          y["red"] = Object.assign(new GCounter({}), y["red"]);
+          y["green"] = Object.assign(new GCounter({}), y["green"]);
+          y["blue"] = Object.assign(new GCounter({}), y["blue"]);
+          return Object.assign(new Pixel(node.getPeerId()), y);
+        }),
+      );
 
-      canvasCRO = object;
-      console.log(canvasCRO);
+      canvasCRO = Object.assign(new Canvas(node.getPeerId(), 0, 0), object);
 
       (<HTMLSpanElement>document.getElementById("canvasId")).innerText = croId;
-      node.sendObjectUpdate(croId);
+      // node.sendObjectUpdate(croId);
       render();
     } catch (e) {
       console.error("Error while connecting with CRO", croId, e);

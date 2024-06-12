@@ -25,11 +25,13 @@ export class Canvas extends TopologyObject implements ICanvas {
   height: number;
   canvas: IPixel[][];
 
-  constructor(width: number, height: number) {
-    super();
+  constructor(peerId: string, width: number, height: number) {
+    super(peerId);
     this.width = width;
     this.height = height;
-    this.canvas = Array(width).fill(Array(height).fill(new Pixel()));
+    this.canvas = Array.from(new Array(width), () =>
+      Array.from(new Array(height), () => new Pixel(peerId)),
+    );
   }
 
   splash(
@@ -58,12 +60,6 @@ export class Canvas extends TopologyObject implements ICanvas {
 
     this.canvas[offset[0]][offset[1]].paint(nodeId, rgb);
   }
-
-  /*
-  canvas(): [number, number, number][][] {
-    return this._canvas.map((row) => row.map((pixel) => pixel.color()));
-  }
-  */
 
   pixel(x: number, y: number): IPixel {
     return this.canvas[x][y];

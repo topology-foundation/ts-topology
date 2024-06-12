@@ -16,8 +16,8 @@ export class Pixel extends TopologyObject implements IPixel {
   green: IGCounter;
   blue: IGCounter;
 
-  constructor() {
-    super();
+  constructor(peerId: string) {
+    super(peerId);
     this.red = new GCounter({});
     this.green = new GCounter({});
     this.blue = new GCounter({});
