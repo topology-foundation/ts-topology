@@ -1,15 +1,15 @@
 import { TopologyNode } from "@topology-foundation/node";
 import { Canvas, ICanvas } from "./objects/canvas";
-import { TopologyObject } from "@topology-foundation/object";
 import { Pixel } from "./objects/pixel";
 import { GCounter } from "@topology-foundation/crdt";
 
 const node = new TopologyNode();
-let canvasCRO: Canvas;
+let canvasCRO: ICanvas;
 
 const render = () => {
   const canvas = canvasCRO.canvas;
   const canvas_element = <HTMLDivElement>document.getElementById("canvas");
+  canvas_element.innerHTML = "";
   canvas_element.style.display = "inline-grid";
 
   // TODO: adjust this to depend on the width x height
@@ -35,15 +35,19 @@ const random_int = (max: number) => Math.floor(Math.random() * max);
 
 async function paint_pixel(pixel: HTMLDivElement) {
   const [x, y] = pixel.id.split("-").map((v) => parseInt(v, 10));
-  canvasCRO.paint(
-    "",
-    [x, y],
-    [random_int(256), random_int(256), random_int(256)],
-  );
+  const painting: [number, number, number] = [
+    random_int(256),
+    random_int(256),
+    random_int(256),
+  ];
+  canvasCRO.paint(node.getPeerId(), [x, y], painting);
   const [r, g, b] = canvasCRO.pixel(x, y).color();
   pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 
-  node.updateObject(canvasCRO);
+  node.updateObject(
+    canvasCRO,
+    `paint(${node.getPeerId()}, ${[x, y]}, ${painting})`,
+  );
 }
 
 async function init() {
@@ -64,10 +68,8 @@ async function init() {
     let croId = (<HTMLInputElement>document.getElementById("canvasIdInput"))
       .value;
     try {
-      // TODO don't create a new canvas
-      // canvasCRO = new Canvas(5, 10);
-
       await node.subscribeObject(croId);
+      // TODO remove the need to click to time for subscribe and fetch
 
       let object: any = node.getObject(croId);
       object["canvas"] = object["canvas"].map((x: any) =>
@@ -82,7 +84,6 @@ async function init() {
       canvasCRO = Object.assign(new Canvas(node.getPeerId(), 0, 0), object);
 
       (<HTMLSpanElement>document.getElementById("canvasId")).innerText = croId;
-      // node.sendObjectUpdate(croId);
       render();
     } catch (e) {
       console.error("Error while connecting with CRO", croId, e);

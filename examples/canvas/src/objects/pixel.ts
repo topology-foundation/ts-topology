@@ -1,7 +1,7 @@
 import { GCounter, IGCounter } from "@topology-foundation/crdt";
 import { TopologyObject } from "@topology-foundation/object";
 
-export interface IPixel {
+export interface IPixel extends TopologyObject {
   red: IGCounter;
   green: IGCounter;
   blue: IGCounter;

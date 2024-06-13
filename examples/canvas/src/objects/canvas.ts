@@ -1,7 +1,7 @@
 import { TopologyObject } from "@topology-foundation/object";
 import { IPixel, Pixel } from "./pixel";
 
-export interface ICanvas {
+export interface ICanvas extends TopologyObject {
   width: number;
   height: number;
   canvas: IPixel[][];

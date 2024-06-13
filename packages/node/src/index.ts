@@ -2,7 +2,6 @@ import {
   TopologyNetworkNode,
   TopologyNetworkNodeConfig,
   streamToString,
-  stringToStream,
 } from "@topologygg/network";
 import { TopologyObject } from "@topologygg/object";
 import { TopologyObjectStore } from "./store";
@@ -30,6 +29,7 @@ export class TopologyNode {
     this._networkNode.addPubsubEventListener("message", (e) => {
       if (e.detail.topic === "_peer-discovery._p2p._pubsub") return;
 
+      // send the events to the app handler
       // const message = JSON.parse(new TextDecoder().decode(e.detail.data));
     });
 
@@ -104,12 +104,12 @@ export class TopologyNode {
     return this._objectStore.get(objectId);
   }
 
-  updateObject(object: TopologyObject) {
+  updateObject(object: TopologyObject, update_data: string) {
     this._objectStore.put(object.getObjectId(), object);
     // not dialed, emitted through pubsub
     const message = `{
       "type": "object_update",
-      "data": []
+      "data": [${uint8ArrayFromString(update_data)}]
     }`;
     this._networkNode.broadcastMessage(
       object.getObjectId(),
