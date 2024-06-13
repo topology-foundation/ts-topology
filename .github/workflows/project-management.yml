@@ -12,4 +12,4 @@ jobs:
       - uses: actions/add-to-project@v1.0.1
         with:
           project-url: https://github.com/orgs/topology-foundation/projects/1
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.TOPOLOGY_APP_TOKEN }}
