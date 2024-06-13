@@ -3,7 +3,21 @@ on:
   release:
     types: [published]
 jobs:
-  publish:
+  publish-npm:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+      - run: yarn install --frozen-lockfile
+      - run: npm publish --provenance --workspace packages --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-gh:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
