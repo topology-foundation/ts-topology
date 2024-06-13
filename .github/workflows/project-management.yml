@@ -1,7 +1,9 @@
 name: Add issues to Project Management dashboard
 on:
-  workflow_dispatch:
   issues:
+    types:
+      - opened
+  pull_request:
     types:
       - opened
 jobs:
