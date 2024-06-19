@@ -11,11 +11,22 @@
   "bugs": {
     "url": "https://github.com/topology-foundation/ts-topology/issues"
   },
+  "scripts": {
+    "release": "release-it",
+    "test": "vitest"
+  },
   "devDependencies": {
+    "@release-it-plugins/workspaces": "^4.2.0",
     "@types/node": "^20.14.2",
+    "release-it": "^17.3.0",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },
   "workspaces": ["packages/*"],
-  "private": true
+  "private": true,
+  "release-it": {
+    "plugins": {
+      "@release-it-plugins/workspaces": true
+    }
+  }
 }
