@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
+    "build": "webpack",
     "clean": "rm -rf dist/ node_modules/",
-    "start": "ts-node ./src/index.ts",
     "dev": "webpack-dev-server --hot",
-    "build": "webpack"
+    "start": "ts-node ./src/index.ts"
   },
   "dependencies": {
     "@topology-foundation/crdt": "file:../../packages/crdt",

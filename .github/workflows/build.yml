@@ -1,0 +1,60 @@
+name: Build Packages
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  build-crdt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          cd packages/crdt
+          yarn install --frozen-lockfile
+          yarn build
+
+  build-network:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          cd packages/network
+          yarn install --frozen-lockfile
+          yarn build
+
+  build-node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          cd packages/node
+          yarn install --frozen-lockfile
+          yarn build
+
+  build-object:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          cd packages/object
+          yarn install --frozen-lockfile
+          yarn build
+
+  build-example-canvas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          # needs to build dist beforehand
+          cd packages/node
+          yarn install --frozen-lockfile
+          yarn build
+          cd ../../examples/canvas
+          yarn install --frozen-lockfile
+          yarn build

@@ -1,4 +1,4 @@
-import { createRelayNode } from "@topologygg/network";
+import { createRelayNode } from "@topology-foundation/network";
 
 export async function start() {
   const node = await createRelayNode();
