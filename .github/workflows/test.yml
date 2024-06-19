@@ -9,30 +9,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cd packages/crdt
-      - run: yarn install --frozen-lockfile
-      - run: yarn test
+      - shell: bash
+        run: |
+          cd packages/crdt
+          yarn install --frozen-lockfile
+          yarn test
 
   test-network:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cd packages/network
-      - run: yarn install --frozen-lockfile
-      - run: yarn test
+      - shell: bash
+        run: |
+          cd packages/network
+          yarn install --frozen-lockfile
+          yarn test
 
   test-node:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cd packages/node
-      - run: yarn install --frozen-lockfile
-      - run: yarn test
+      - shell: bash
+        run: |
+          cd packages/node
+          yarn install --frozen-lockfile
+          yarn test
 
   test-object:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cd packages/object
-      - run: yarn install --frozen-lockfile
-      - run: yarn test
+      - shell: bash
+        run: |
+          cd packages/object
+          yarn install --frozen-lockfile
+          yarn test
