@@ -5,42 +5,11 @@ on:
   pull_request:
     branches: [main]
 jobs:
-  test-crdt:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - shell: bash
         run: |
-          cd packages/crdt
-          yarn install --frozen-lockfile
-          yarn test
-
-  test-network:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - shell: bash
-        run: |
-          cd packages/network
-          yarn install --frozen-lockfile
-          yarn test
-
-  test-node:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - shell: bash
-        run: |
-          cd packages/node
-          yarn install --frozen-lockfile
-          yarn test
-
-  test-object:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - shell: bash
-        run: |
-          cd packages/object
           yarn install --frozen-lockfile
           yarn test
