@@ -8,7 +8,12 @@
   },
   "type": "module",
   "types": "./dist/src/index.d.ts",
-  "files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
+  "files": [
+    "src",
+    "dist",
+    "!dist/test",
+    "!**/*.tsbuildinfo"
+  ],
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -22,7 +27,7 @@
   },
   "devDependencies": {
     "@libp2p/interface": "^1.4.0",
-    "react-native-webrtc": "^124.0.0"
+    "react-native-webrtc": "^124.0.1"
   },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^13.0.0",
