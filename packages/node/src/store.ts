@@ -1,4 +1,4 @@
-import { TopologyObject } from "@topologygg/object";
+import { TopologyObject } from "@topology-foundation/object";
 
 export class TopologyObjectStore {
   // TODO: should be abstracted in handling multible types of storage

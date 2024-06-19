@@ -8,12 +8,7 @@
   },
   "type": "module",
   "types": "./dist/src/index.d.ts",
-  "files": [
-    "src",
-    "dist",
-    "!dist/test",
-    "!**/*.tsbuildinfo"
-  ],
+  "files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -22,10 +17,7 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "clean": "rm -rf dist/ node_modules/"
-  },
-  "devDependencies": {
-    "@types/node": "^20.14.2",
-    "typescript": "^5.4.5"
+    "clean": "rm -rf dist/ node_modules/",
+    "test": "vitest"
   }
 }

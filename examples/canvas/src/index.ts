@@ -12,7 +12,6 @@ const render = () => {
   canvas_element.innerHTML = "";
   canvas_element.style.display = "inline-grid";
 
-  // TODO: adjust this to depend on the width x height
   canvas_element.style.gridTemplateColumns = Array(canvas.length)
     .fill("1fr")
     .join(" ");

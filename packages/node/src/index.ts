@@ -2,8 +2,8 @@ import {
   TopologyNetworkNode,
   TopologyNetworkNodeConfig,
   streamToString,
-} from "@topologygg/network";
-import { TopologyObject } from "@topologygg/object";
+} from "@topology-foundation/network";
+import { TopologyObject } from "@topology-foundation/object";
 import { TopologyObjectStore } from "./store";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";

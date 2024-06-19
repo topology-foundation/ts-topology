@@ -8,12 +8,7 @@
   },
   "type": "module",
   "types": "./dist/src/index.d.ts",
-  "files": [
-    "src",
-    "dist",
-    "!dist/test",
-    "!**/*.tsbuildinfo"
-  ],
+  "files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -22,13 +17,12 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "clean": "rm -rf dist/ node_modules/"
+    "clean": "rm -rf dist/ node_modules/",
+    "test": "vitest"
   },
   "devDependencies": {
     "@libp2p/interface": "^1.4.0",
-    "@types/node": "^20.14.2",
-    "react-native-webrtc": "^124.0.0",
-    "typescript": "^5.4.5"
+    "react-native-webrtc": "^124.0.0"
   },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^13.0.0",
