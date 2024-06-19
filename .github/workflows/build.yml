@@ -51,6 +51,10 @@ jobs:
       - uses: actions/checkout@v4
       - shell: bash
         run: |
-          cd examples/canvas
+          # needs to build dist beforehand
+          cd packages/node
+          yarn install --frozen-lockfile
+          yarn build
+          cd ../../examples/canvas
           yarn install --frozen-lockfile
           yarn build
