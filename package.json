@@ -22,16 +22,15 @@
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "private": true,
   "release-it": {
     "plugins": {
-      "@release-it-plugins/workspaces": true
+      "@release-it-plugins/workspaces": {
+        "publish": false
+      }
     },
     "npm": false,
-    "npm.publish": false,
     "git": {
       "commitMessage": "chore: release v${version}"
     },
