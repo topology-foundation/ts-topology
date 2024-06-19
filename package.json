@@ -22,7 +22,9 @@
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "private": true,
   "release-it": {
     "plugins": {
