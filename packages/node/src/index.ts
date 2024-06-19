@@ -1,3 +1,5 @@
+import { GossipsubMessage } from "@chainsafe/libp2p-gossipsub";
+import { EventHandler, StreamHandler } from "@libp2p/interface";
 import {
   TopologyNetworkNode,
   TopologyNetworkNodeConfig,
@@ -26,8 +28,9 @@ export class TopologyNode {
   async start(): Promise<void> {
     await this._networkNode.start();
 
-    this._networkNode.addPubsubEventListener("message", (e) => {
-      if (e.detail.topic === "_peer-discovery._p2p._pubsub") return;
+    this._networkNode.addGroupMessageHandler((e) => {
+      if (e.detail.msg.topic === "_peer-discovery._p2p._pubsub") return;
+      console.log(e, e.detail);
 
       // send the events to the app handler
       // const message = JSON.parse(new TextDecoder().decode(e.detail.data));
@@ -92,7 +95,7 @@ export class TopologyNode {
       "data": [${uint8ArrayFromString(objectId)}]
     }`;
 
-    await this._networkNode.sendMessageRandomTopicPeer(
+    await this._networkNode.sendGroupMessageRandomPeer(
       objectId,
       ["/topology/message/0.0.1"],
       message,
@@ -115,5 +118,15 @@ export class TopologyNode {
       object.getObjectId(),
       uint8ArrayFromString(message),
     );
+  }
+
+  addCustomGroupMessageHandler(
+    handler: EventHandler<CustomEvent<GossipsubMessage>>,
+  ) {
+    this._networkNode.addGroupMessageHandler(handler);
+  }
+
+  addCustomMessageHandler(protocol: string | string[], handler: StreamHandler) {
+    this._networkNode.addMessageHandler(protocol, handler);
   }
 }

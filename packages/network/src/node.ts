@@ -1,4 +1,8 @@
-import { GossipsubEvents, gossipsub } from "@chainsafe/libp2p-gossipsub";
+import {
+  GossipsubEvents,
+  GossipsubMessage,
+  gossipsub,
+} from "@chainsafe/libp2p-gossipsub";
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
@@ -8,8 +12,8 @@ import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
+import { multiaddr } from "@multiformats/multiaddr";
 import { Libp2p, createLibp2p } from "libp2p";
-import { multiaddr } from "multiaddr";
 import { stringToStream } from "./stream";
 
 export interface TopologyNetworkNodeConfig {}
@@ -139,13 +143,13 @@ export class TopologyNetworkNode {
     }
   }
 
-  async sendMessageRandomTopicPeer(
-    topic: string,
+  async sendGroupMessageRandomPeer(
+    group: string,
     protocols: string[],
     message: string,
   ) {
     try {
-      const peers = this._pubsub?.getSubscribers(topic);
+      const peers = this._pubsub?.getSubscribers(group);
       if (!peers || peers.length === 0) throw Error("Topic wo/ peers");
       const peerId = peers[Math.floor(Math.random() * peers.length)];
 
@@ -161,11 +165,8 @@ export class TopologyNetworkNode {
     }
   }
 
-  addPubsubEventListener(
-    type: keyof GossipsubEvents,
-    event: EventHandler<CustomEvent<any>>,
-  ) {
-    this._pubsub?.addEventListener(type, event);
+  addGroupMessageHandler(handler: EventHandler<CustomEvent<GossipsubMessage>>) {
+    this._pubsub?.addEventListener("gossipsub:message", handler);
   }
 
   addMessageHandler(protocol: string | string[], handler: StreamHandler) {
