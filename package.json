@@ -28,9 +28,8 @@
     "plugins": {
       "@release-it-plugins/workspaces": true
     },
-    "npm": {
-      "publish": false
-    },
+    "npm": false,
+    "npm.publish": false,
     "git": {
       "commitMessage": "chore: release v${version}"
     },
