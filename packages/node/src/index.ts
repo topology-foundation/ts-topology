@@ -30,8 +30,7 @@ export class TopologyNode {
 
     this._networkNode.addGroupMessageHandler((e) => {
       if (e.detail.msg.topic === "_peer-discovery._p2p._pubsub") return;
-      console.log(e, e.detail);
-
+      // TODO: add base handler here after July demo
       // send the events to the app handler
       // const message = JSON.parse(new TextDecoder().decode(e.detail.data));
     });
