@@ -1,9 +1,18 @@
 const path = require("path");
 const webpack = require("webpack");
+const fs = require("fs");
 
 module.exports = {
   mode: "production",
   entry: path.resolve(__dirname, "./src/index.ts"),
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "public"),
+    },
+    compress: true,
+    hot: true,
+    port: 3000,
+  },
   module: {
     rules: [
       {

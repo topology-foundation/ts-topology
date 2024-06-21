@@ -60,7 +60,7 @@ export class TopologyNetworkNode {
     // Oak's server
     await this._node.dial([
       multiaddr(
-        "/ip4/94.130.27.52/tcp/50000/ws/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+        "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
       ),
     ]);
 
