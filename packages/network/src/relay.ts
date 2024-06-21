@@ -20,7 +20,7 @@ export const createRelayNode = async () => {
   const node = await createLibp2p({
     peerId: idRelayer,
     addresses: {
-      listen: ["/ip4/127.0.0.1/tcp/50000/ws"],
+      listen: ["/ip4/0.0.0.0/tcp/50000/ws"],
     },
     connectionEncryption: [noise()],
     connectionManager: {
