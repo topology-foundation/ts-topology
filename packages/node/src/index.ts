@@ -119,6 +119,14 @@ export class TopologyNode {
     );
   }
 
+  addCustomGroup(group: string) {
+    this._networkNode.subscribe(group);
+  }
+
+  sendGroupMessage(group: string, message: Uint8Array) {
+    this._networkNode.broadcastMessage(group, message);
+  }
+
   addCustomGroupMessageHandler(
     handler: EventHandler<CustomEvent<GossipsubMessage>>,
   ) {
