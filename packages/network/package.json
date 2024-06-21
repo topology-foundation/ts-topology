@@ -8,12 +8,7 @@
   },
   "type": "module",
   "types": "./dist/src/index.d.ts",
-  "files": [
-    "src",
-    "dist",
-    "!dist/test",
-    "!**/*.tsbuildinfo"
-  ],
+  "files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -40,8 +35,8 @@
     "@libp2p/pubsub-peer-discovery": "^10.0.2",
     "@libp2p/webrtc": "^4.0.33",
     "@libp2p/websockets": "^8.0.24",
+    "@multiformats/multiaddr": "^12.3.0",
     "it-pipe": "^3.0.1",
-    "libp2p": "^1.6.0",
-    "multiaddr": "^10.0.1"
+    "libp2p": "^1.6.0"
   }
 }

@@ -2,6 +2,7 @@ import { TopologyNode } from "@topology-foundation/node";
 import { Canvas, ICanvas } from "./objects/canvas";
 import { Pixel } from "./objects/pixel";
 import { GCounter } from "@topology-foundation/crdt";
+import { handleCanvasMessages } from "./handlers";
 
 const node = new TopologyNode();
 let canvasCRO: ICanvas;
@@ -45,12 +46,17 @@ async function paint_pixel(pixel: HTMLDivElement) {
 
   node.updateObject(
     canvasCRO,
-    `paint(${node.getPeerId()}, ${[x, y]}, ${painting})`,
+    `paint(${node.getPeerId()}, [${[x, y]}], [${painting}])`,
   );
 }
 
 async function init() {
   await node.start();
+
+  node.addCustomGroupMessageHandler((e) => {
+    handleCanvasMessages(canvasCRO, e);
+    if (canvasCRO) render();
+  });
 
   let create_button = <HTMLButtonElement>document.getElementById("create");
   create_button.addEventListener("click", () => {
