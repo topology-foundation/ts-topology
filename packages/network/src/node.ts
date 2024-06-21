@@ -57,9 +57,10 @@ export class TopologyNetworkNode {
 
     // bootstrap
     // TODO: use another technique instead of dial
+    // Oak's server
     await this._node.dial([
       multiaddr(
-        "/ip4/127.0.0.1/tcp/50000/ws/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+        "/ip4/94.130.27.52/tcp/50000/ws/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
       ),
     ]);
 
