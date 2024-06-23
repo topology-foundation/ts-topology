@@ -132,6 +132,12 @@ export class TopologyNetworkNode {
     }
   }
 
+  getAllPeers() {
+    const peers = this._node?.getPeers();
+    if (!peers) return [];
+    return peers.map((peer) => peer.toString());
+  }
+
   getGroupPeers(group: string) {
     const peers = this._pubsub?.getSubscribers(group);
     if (!peers) return [];
