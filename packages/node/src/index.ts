@@ -101,6 +101,10 @@ export class TopologyNode {
     );
   }
 
+  getPeersPerGroup(group: string) {
+    return this._networkNode.getGroupPeers(group);
+  }
+
   /// Get the object from the local Object Store
   getObject(objectId: string) {
     return this._objectStore.get(objectId);

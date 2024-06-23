@@ -132,6 +132,12 @@ export class TopologyNetworkNode {
     }
   }
 
+  getGroupPeers(group: string) {
+    const peers = this._pubsub?.getSubscribers(group);
+    if (!peers) return [];
+    return peers.map((peer) => peer.toString());
+  }
+
   async broadcastMessage(topic: string, message: Uint8Array) {
     try {
       if (this._pubsub?.getSubscribers(topic)?.length === 0) return;
