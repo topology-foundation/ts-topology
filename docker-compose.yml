@@ -1,0 +1,25 @@
+services:
+  proxy:
+    image: valian/docker-nginx-auto-ssl
+    restart: on-failure
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ssl_data:/etc/resty-auto-ssl
+    environment:
+      FORCE_HTTPS: true
+      SITES: relay.domain.com=relay:50000
+    depends_on:
+      - relay
+
+  relay:
+    build:
+      context: packages/node
+      dockerfile: Dockerfile
+    ports:
+      - 50000:50000
+    command: relay
+
+volumes:
+  ssl_data:
