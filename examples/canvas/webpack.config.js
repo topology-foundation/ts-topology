@@ -10,6 +10,7 @@ module.exports = {
       directory: path.join(__dirname, "public"),
     },
     compress: true,
+    disableHostCheck: true,
     hot: true,
     port: 3000,
   },
