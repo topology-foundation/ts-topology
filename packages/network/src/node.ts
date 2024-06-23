@@ -9,12 +9,13 @@ import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
 import { identify } from "@libp2p/identify";
 import { EventHandler, PubSub, Stream, StreamHandler } from "@libp2p/interface";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
-import { webRTC } from "@libp2p/webrtc";
+import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
-import * as filters from "@libp2p/websockets/filters";
 import { multiaddr } from "@multiformats/multiaddr";
 import { Libp2p, createLibp2p } from "libp2p";
 import { stringToStream } from "./stream";
+import { webTransport } from "@libp2p/webtransport";
+import { bootstrap } from "@libp2p/bootstrap";
 
 export interface TopologyNetworkNodeConfig {}
 
@@ -40,29 +41,44 @@ export class TopologyNetworkNode {
           return false;
         },
       },
-      peerDiscovery: [pubsubPeerDiscovery()],
+      peerDiscovery: [
+        pubsubPeerDiscovery({
+          interval: 10_000,
+          listenOnly: false,
+        }),
+        bootstrap({
+          list: [
+            "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+          ],
+        }),
+      ],
       services: {
         identify: identify(),
-        pubsub: gossipsub(),
+        pubsub: gossipsub({
+          allowPublishToZeroTopicPeers: true,
+        }),
       },
       streamMuxers: [yamux()],
       transports: [
-        webSockets({ filter: filters.all }),
-        webRTC(),
-        circuitRelayTransport({
-          discoverRelays: 1,
+        circuitRelayTransport(),
+        webRTC({
+          rtcConfiguration: {
+            iceServers: [
+              {
+                // STUN servers help the browser discover its own public IPs
+                urls: [
+                  "stun:stun.l.google.com:19302",
+                  "stun:global.stun.twilio.com:3478",
+                ],
+              },
+            ],
+          },
         }),
+        webRTCDirect(),
+        webSockets(),
+        webTransport(),
       ],
     });
-
-    // bootstrap
-    // TODO: use another technique instead of dial
-    // Oak's server
-    await this._node.dial([
-      multiaddr(
-        "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-      ),
-    ]);
 
     this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
     this.peerId = this._node.peerId.toString();
