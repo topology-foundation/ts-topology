@@ -101,6 +101,10 @@ export class TopologyNode {
     );
   }
 
+  getPeers() {
+    return this._networkNode.getAllPeers();
+  }
+
   getPeersPerGroup(group: string) {
     return this._networkNode.getGroupPeers(group);
   }

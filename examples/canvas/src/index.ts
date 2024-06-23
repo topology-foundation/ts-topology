@@ -6,8 +6,24 @@ import { handleCanvasMessages } from "./handlers";
 
 const node = new TopologyNode();
 let canvasCRO: ICanvas;
+let peers: string[] = [];
+let discoveryPeers: string[] = [];
+let objectPeers: string[] = [];
 
 const render = () => {
+  const peers_element = <HTMLDivElement>document.getElementById("peers");
+  peers_element.innerHTML = "[" + peers.join(", ") + "]";
+
+  const discovery_element = <HTMLDivElement>(
+    document.getElementById("discovery_peers")
+  );
+  discovery_element.innerHTML = "[" + discoveryPeers.join(", ") + "]";
+
+  const object_element = <HTMLDivElement>(
+    document.getElementById("object_peers")
+  );
+  object_element.innerHTML = "[" + objectPeers.join(", ") + "]";
+
   const canvas = canvasCRO.canvas;
   const canvas_element = <HTMLDivElement>document.getElementById("canvas");
   canvas_element.innerHTML = "";
@@ -55,7 +71,10 @@ async function init() {
 
   node.addCustomGroupMessageHandler((e) => {
     handleCanvasMessages(canvasCRO, e);
-    if (canvasCRO) render();
+    peers = node.getPeers();
+    discoveryPeers = node.getPeersPerGroup("_peer-discovery._p2p._pubsub");
+    objectPeers = node.getPeersPerGroup(canvasCRO.getObjectId());
+    render();
   });
 
   let create_button = <HTMLButtonElement>document.getElementById("create");
