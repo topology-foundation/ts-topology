@@ -8,12 +8,7 @@
   },
   "type": "module",
   "types": "./dist/src/index.d.ts",
-  "files": [
-    "src",
-    "dist",
-    "!dist/test",
-    "!**/*.tsbuildinfo"
-  ],
+  "files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -30,7 +25,9 @@
     "test": "vitest"
   },
   "devDependencies": {
+    "@types/node": "^20.14.2",
     "tsx": "^4.15.6",
+    "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },
   "dependencies": {
