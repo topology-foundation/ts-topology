@@ -6,10 +6,10 @@ import { identify } from "@libp2p/identify";
 import { createFromJSON } from "@libp2p/peer-id-factory";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webSockets } from "@libp2p/websockets";
-import * as filters from "@libp2p/websockets/filters";
 import { createLibp2p } from "libp2p";
 
 import relayerJson from "./peer-id-relayer";
+import { autoNAT } from "@libp2p/autonat";
 
 // TODO:
 //  - remove the peer-id-relayer in favor of static configs
@@ -20,24 +20,18 @@ export const createRelayNode = async () => {
   const node = await createLibp2p({
     peerId: idRelayer,
     addresses: {
-      listen: ["/ip4/0.0.0.0/tcp/50000/ws"],
+      listen: ["/ip4/0.0.0.0/tcp/50000/ws", "/ip4/0.0.0.0/tcp/50001"],
     },
     connectionEncryption: [noise()],
-    connectionManager: {
-      minConnections: 0,
-    },
     peerDiscovery: [pubsubPeerDiscovery()],
     services: {
+      autonat: autoNAT(),
       identify: identify(),
       pubsub: gossipsub(),
-      relay: circuitRelayServer({
-        reservations: {
-          maxReservations: Infinity,
-        },
-      }),
+      relay: circuitRelayServer(),
     },
     streamMuxers: [yamux()],
-    transports: [webSockets({ filter: filters.all })],
+    transports: [webSockets()],
   });
 
   // Log a message when a remote peer connects to us
