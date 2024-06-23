@@ -1,7 +1,7 @@
 services:
   proxy:
     image: valian/docker-nginx-auto-ssl
-    # restart: on-failure
+    restart: on-failure
     ports:
       - 80:80
       - 443:443
