@@ -24,6 +24,7 @@ const render = () => {
   );
   object_element.innerHTML = "[" + objectPeers.join(", ") + "]";
 
+  if (!canvasCRO) return;
   const canvas = canvasCRO.canvas;
   const canvas_element = <HTMLDivElement>document.getElementById("canvas");
   canvas_element.innerHTML = "";
@@ -73,7 +74,9 @@ async function init() {
     handleCanvasMessages(canvasCRO, e);
     peers = node.getPeers();
     discoveryPeers = node.getPeersPerGroup("_peer-discovery._p2p._pubsub");
-    objectPeers = node.getPeersPerGroup(canvasCRO.getObjectId());
+    if (canvasCRO) {
+      objectPeers = node.getPeersPerGroup(canvasCRO.getObjectId());
+    }
     render();
   });
 
