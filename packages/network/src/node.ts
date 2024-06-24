@@ -33,7 +33,10 @@ export class TopologyNetworkNode {
   async start() {
     this._node = await createLibp2p({
       addresses: {
-        listen: ["/webrtc"],
+        listen: [
+          "/webrtc",
+          "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP/p2p-circuit",
+        ],
       },
       connectionEncryption: [noise()],
       connectionGater: {
