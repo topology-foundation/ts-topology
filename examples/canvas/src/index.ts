@@ -4,6 +4,14 @@ import { Pixel } from "./objects/pixel";
 import { GCounter } from "@topology-foundation/crdt";
 import { handleCanvasMessages } from "./handlers";
 
+// all libp2p debug logs
+localStorage.setItem("debug", "libp2p:*"); // then refresh the page to ensure the libraries can read this when spinning up.
+// networking debug logs
+localStorage.setItem(
+  "debug",
+  "libp2p:websockets,libp2p:webtransport,libp2p:kad-dht,libp2p:dialer",
+);
+
 const node = new TopologyNode();
 let canvasCRO: ICanvas;
 let peers: string[] = [];

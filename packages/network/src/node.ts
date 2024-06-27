@@ -6,6 +6,7 @@ import {
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
+import { dcutr } from "@libp2p/dcutr";
 import { identify } from "@libp2p/identify";
 import { EventHandler, PubSub, Stream, StreamHandler } from "@libp2p/interface";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
@@ -16,6 +17,8 @@ import { Libp2p, createLibp2p } from "libp2p";
 import { stringToStream } from "./stream";
 import { webTransport } from "@libp2p/webtransport";
 import { bootstrap } from "@libp2p/bootstrap";
+import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
+import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 
 export interface TopologyNetworkNodeConfig {}
 
@@ -34,7 +37,8 @@ export class TopologyNetworkNode {
     this._node = await createLibp2p({
       addresses: {
         listen: [
-          "/webrtc",
+          // disabled to test connections through relay
+          // "/webrtc",
           "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP/p2p-circuit",
         ],
       },
@@ -46,8 +50,7 @@ export class TopologyNetworkNode {
       },
       peerDiscovery: [
         pubsubPeerDiscovery({
-          interval: 10_000,
-          listenOnly: false,
+          interval: 5_000,
         }),
         bootstrap({
           list: [
@@ -60,10 +63,13 @@ export class TopologyNetworkNode {
         pubsub: gossipsub({
           allowPublishToZeroTopicPeers: true,
         }),
+        dcutr: dcutr(),
       },
       streamMuxers: [yamux()],
       transports: [
-        circuitRelayTransport(),
+        circuitRelayTransport({
+          discoverRelays: 1,
+        }),
         webRTC({
           rtcConfiguration: {
             iceServers: [
@@ -86,14 +92,35 @@ export class TopologyNetworkNode {
     this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
     this.peerId = this._node.peerId.toString();
 
+    this._pubsub.subscribe("topology::object::announcements");
+    this._pubsub?.addEventListener("gossipsub:message", async (message) => {
+      console.log(message.detail.msg);
+      if (message.detail.msg.topic != "topology::object::announcements") return;
+      const group = uint8ArrayToString(new Uint8Array(message.detail.msg.data));
+      console.log("announcing group", group);
+      if (!this._pubsub?.getTopics().includes(group)) return;
+      console.log("dialing", message.detail.propagationSource.toString());
+      await this._node?.dial([
+        multiaddr(`/p2p/${message.detail.propagationSource.toString()}`),
+      ]);
+    });
+
     console.log(
       "topology::network::start: Successfuly started topology network w/ peer_id",
       this.peerId,
     );
 
-    this._node.addEventListener("peer:connect", (evt) => {
-      console.log("topology::network::peer::connect: ", evt.detail.toString());
-    });
+    // TODO remove this or add better logger
+    // we need to keep it now for debugging
+    this._node.addEventListener("peer:connect", (e) =>
+      console.log("peer:connect", e.detail),
+    );
+    this._node.addEventListener("peer:discovery", (e) =>
+      console.log("peer:discovery", e.detail),
+    );
+    this._node.addEventListener("peer:identify", (e) =>
+      console.log("peer:identify", e.detail),
+    );
   }
 
   subscribe(topic: string) {
@@ -106,6 +133,10 @@ export class TopologyNetworkNode {
 
     try {
       this._pubsub?.subscribe(topic);
+      this.broadcastMessage(
+        "topology::object::announcements",
+        uint8ArrayFromString(topic),
+      ).then();
       this._pubsub?.getPeers();
       console.log(
         "topology::network::subscribe: Successfuly subscribed the topic",
