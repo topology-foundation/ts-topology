@@ -27,7 +27,9 @@ export const createRelayNode = async () => {
     services: {
       autonat: autoNAT(),
       identify: identify(),
-      pubsub: gossipsub(),
+      pubsub: gossipsub({
+        runOnTransientConnection: true,
+      }),
       relay: circuitRelayServer(),
     },
     streamMuxers: [yamux()],

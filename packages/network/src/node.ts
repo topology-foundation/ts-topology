@@ -62,6 +62,7 @@ export class TopologyNetworkNode {
         identify: identify(),
         pubsub: gossipsub({
           allowPublishToZeroTopicPeers: true,
+          runOnTransientConnection: true,
         }),
         dcutr: dcutr(),
       },
