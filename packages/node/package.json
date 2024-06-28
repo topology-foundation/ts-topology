@@ -8,12 +8,7 @@
   },
   "type": "module",
   "types": "./dist/src/index.d.ts",
-  "files": [
-    "src",
-    "dist",
-    "!dist/test",
-    "!**/*.tsbuildinfo"
-  ],
+  "files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -24,7 +19,7 @@
     "build": "tsc -b",
     "clean": "rm -rf dist/ node_modules/",
     "node": "tsx ./src/run_node.ts",
-    "node-ethcc": "tsx ./src/run_counter_splash.ts",
+    "node-ethcc": "tsx --max-old-space-size=8192 ./src/run_counter_splash.ts",
     "prepack": "tsc -b",
     "relay": "tsx ./src/run_relay.ts",
     "start": "tsx ./src/index.ts",
