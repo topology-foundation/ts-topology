@@ -1,3 +1,3 @@
-export { TopologyNetworkNodeConfig, TopologyNetworkNode } from "./node";
-export { stringToStream, streamToString } from "./stream";
-export { createRelayNode } from "./relay";
+export { TopologyNetworkNodeConfig, TopologyNetworkNode } from "./node.ts";
+export { stringToStream, streamToString } from "./stream.ts";
+export { createRelayNode } from "./relay.ts";
