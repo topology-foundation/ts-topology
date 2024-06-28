@@ -2,7 +2,7 @@ import * as crypto from "crypto";
 
 export abstract class TopologyObject {
   private abi?: string;
-  private id?: string;
+  id?: string;
 
   constructor(peerId: string) {
     this.abi = "";
