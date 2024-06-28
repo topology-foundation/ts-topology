@@ -8,7 +8,7 @@ import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webSockets } from "@libp2p/websockets";
 import { createLibp2p } from "libp2p";
 
-import relayerJson from "./peer-id-relayer.ts";
+import relayerJson from "./peer-id-relayer.js";
 import { autoNAT } from "@libp2p/autonat";
 
 // TODO:
