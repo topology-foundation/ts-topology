@@ -24,6 +24,7 @@
     "build": "tsc -b",
     "clean": "rm -rf dist/ node_modules/",
     "node": "tsx ./src/run_node.ts",
+    "node-ethcc": "tsx ./src/run_counter_splash.ts",
     "prepack": "tsc -b",
     "relay": "tsx ./src/run_relay.ts",
     "start": "tsx ./src/index.ts",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.2",
+    "node-datachannel": "^0.9.2",
     "tsx": "^4.15.6",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
