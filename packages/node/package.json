@@ -1,6 +1,6 @@
 {
   "name": "@topology-foundation/node",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -37,8 +37,8 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
-    "@topology-foundation/crdt": "0.0.9",
-    "@topology-foundation/network": "0.0.9",
-    "@topology-foundation/object": "0.0.9"
+    "@topology-foundation/crdt": "0.0.10",
+    "@topology-foundation/network": "0.0.10",
+    "@topology-foundation/object": "0.0.10"
   }
 }
