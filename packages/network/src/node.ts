@@ -14,7 +14,7 @@ import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import { multiaddr } from "@multiformats/multiaddr";
 import { Libp2p, createLibp2p } from "libp2p";
-import { stringToStream } from "./stream";
+import { stringToStream } from "./stream.js";
 import { webTransport } from "@libp2p/webtransport";
 import { bootstrap } from "@libp2p/bootstrap";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";

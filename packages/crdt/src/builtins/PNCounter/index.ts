@@ -1,4 +1,4 @@
-import { GCounter } from "../GCounter";
+import { GCounter } from "../GCounter/index.js";
 
 /// State-based PNCounter
 export class PNCounter {
