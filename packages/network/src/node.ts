@@ -50,7 +50,8 @@ export class TopologyNetworkNode {
       },
       peerDiscovery: [
         pubsubPeerDiscovery({
-          interval: 5_000,
+          interval: 10_000,
+          // topics: ["topology::discovery"],
         }),
         bootstrap({
           list: [
@@ -69,7 +70,7 @@ export class TopologyNetworkNode {
       streamMuxers: [yamux()],
       transports: [
         circuitRelayTransport({
-          discoverRelays: 1,
+          discoverRelays: 0,
         }),
         webRTC({
           rtcConfiguration: {
@@ -105,6 +106,8 @@ export class TopologyNetworkNode {
         multiaddr(`/p2p/${message.detail.propagationSource.toString()}`),
       ]);
     });
+    this._node.addEventListener("peer:connect", (e) => console.log(e));
+    this._node.addEventListener("connection:open", (e) => console.log(e));
 
     console.log(
       "topology::network::start: Successfuly started topology network w/ peer_id",
@@ -196,7 +199,9 @@ export class TopologyNetworkNode {
   async sendMessage(peerId: string, protocols: string[], message: string) {
     try {
       const connection = await this._node?.dial([multiaddr(`/p2p/${peerId}`)]);
-      const stream = <Stream>await connection?.newStream(protocols);
+      const stream = <Stream>await connection?.newStream(protocols, {
+        runOnTransientConnection: true,
+      });
       stringToStream(stream, message);
 
       console.log(
@@ -218,7 +223,9 @@ export class TopologyNetworkNode {
       const peerId = peers[Math.floor(Math.random() * peers.length)];
 
       const connection = await this._node?.dial(peerId);
-      const stream: Stream = (await connection?.newStream(protocols)) as Stream;
+      const stream: Stream = (await connection?.newStream(protocols, {
+        runOnTransientConnection: true,
+      })) as Stream;
       stringToStream(stream, message);
 
       console.log(

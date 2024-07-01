@@ -23,13 +23,16 @@ export const createRelayNode = async () => {
       listen: ["/ip4/0.0.0.0/tcp/50000/ws", "/ip4/0.0.0.0/tcp/50001"],
     },
     connectionEncryption: [noise()],
-    peerDiscovery: [pubsubPeerDiscovery()],
+    peerDiscovery: [
+      pubsubPeerDiscovery({
+        interval: 10_000,
+        // topics: ["topology::discovery"],
+      }),
+    ],
     services: {
       autonat: autoNAT(),
       identify: identify(),
-      pubsub: gossipsub({
-        runOnTransientConnection: true,
-      }),
+      pubsub: gossipsub(),
       relay: circuitRelayServer(),
     },
     streamMuxers: [yamux()],
