@@ -26,7 +26,7 @@ export const createRelayNode = async () => {
     peerDiscovery: [
       pubsubPeerDiscovery({
         interval: 10_000,
-        // topics: ["topology::discovery"],
+        topics: ["topology::discovery"],
       }),
     ],
     services: {

@@ -4,7 +4,6 @@ import { ICanvas } from "./objects/canvas";
 // TODO: this should be superseded by wasm and main ts-topology library
 export const handleCanvasMessages = (canvas: ICanvas, e: any) => {
   if (e.detail.msg.topic === "_peer-discovery._p2p._pubsub") return;
-  if (e.detail.msg.topic === "topology::object::announcements") return;
   const input = uint8ArrayToString(e.detail.msg.data);
   const message = JSON.parse(input);
   switch (message["type"]) {
