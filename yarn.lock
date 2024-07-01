@@ -40,13 +40,13 @@
   resolved "https://registry.yarnpkg.com/@chainsafe/is-ip/-/is-ip-2.0.2.tgz#7311e7403f11d8c5cfa48111f56fcecaac37c9f6"
   integrity sha512-ndGqEMG1W5WkGagaqOZHpPU172AGdxr+LD15sv3WIUvT5oCFUrG1Y0CW/v2Egwj4JXEvSibaIIIqImsm98y1nA==
 
-"@chainsafe/libp2p-gossipsub@^13.0.0":
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/libp2p-gossipsub/-/libp2p-gossipsub-13.0.0.tgz#b1dfa5c2d455d77ab8dfc97f5eb8961861bb623e"
-  integrity sha512-2q+v429uZjMl6N3d+j9QCMj8YO0aiYvLSN1t0aTdpMXQHCHLJaaT9PtNn845B1Li7/uZjYESmikgVt8r7keH0w==
+"@chainsafe/libp2p-gossipsub@^13.1.0":
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/libp2p-gossipsub/-/libp2p-gossipsub-13.1.0.tgz#b0c2d84c334dc1bcbd67cb379c7f0a0feca6a4c1"
+  integrity sha512-Wk1O6ZT/L0o+p9vlAB4qxDa9pAwTh5yxPrQbyc98wvKbrnPhAfZbjMfhCBOEvFKzMkEFDsTd3TGPjP8TTtNtQw==
   dependencies:
     "@libp2p/crypto" "^4.0.1"
-    "@libp2p/interface" "^1.1.2"
+    "@libp2p/interface" "^1.5.0"
     "@libp2p/interface-internal" "^1.0.7"
     "@libp2p/peer-id" "^4.0.5"
     "@libp2p/pubsub" "^9.0.8"
@@ -368,7 +368,7 @@
     it-pushable "^3.1.3"
     uint8arraylist "^2.4.3"
 
-"@libp2p/interface@^1.0.0", "@libp2p/interface@^1.0.1", "@libp2p/interface@^1.1.2", "@libp2p/interface@^1.1.3", "@libp2p/interface@^1.4.0", "@libp2p/interface@^1.5.0":
+"@libp2p/interface@^1.0.0", "@libp2p/interface@^1.0.1", "@libp2p/interface@^1.1.3", "@libp2p/interface@^1.4.0", "@libp2p/interface@^1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@libp2p/interface/-/interface-1.5.0.tgz#306197f30a43d966dcda71a2522877e7d6fc6506"
   integrity sha512-SivVvZ+7r7Vgnv+Y88nGZTpG449PYZAPgfLhVqTXn6T4NAFt47InzC7UMFnVqSQuT21YmI9DoeaVXH73CsHNrg==
