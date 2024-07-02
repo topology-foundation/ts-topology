@@ -62,7 +62,7 @@ export class TopologyNetworkNode {
         identify: identify(),
         pubsub: gossipsub({
           allowPublishToZeroTopicPeers: true,
-          runOnTransientConnection: true,
+          // runOnTransientConnection: true,
         }),
         dcutr: dcutr(),
       },
@@ -181,7 +181,7 @@ export class TopologyNetworkNode {
     try {
       const connection = await this._node?.dial([multiaddr(`/p2p/${peerId}`)]);
       const stream = <Stream>await connection?.newStream(protocols, {
-        runOnTransientConnection: true,
+        // runOnTransientConnection: true,
       });
       stringToStream(stream, message);
 
@@ -205,7 +205,7 @@ export class TopologyNetworkNode {
 
       const connection = await this._node?.dial(peerId);
       const stream: Stream = (await connection?.newStream(protocols, {
-        runOnTransientConnection: true,
+        // runOnTransientConnection: true,
       })) as Stream;
       stringToStream(stream, message);
 

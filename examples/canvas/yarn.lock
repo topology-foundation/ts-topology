@@ -624,11 +624,11 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/fnv1a/-/fnv1a-3.1.0.tgz#f8e46597298f6fd4c12dc901cdd4e73beb4d24fa"
   integrity sha512-KV321z5m/0nuAg83W1dPLy85HpHDk7Sdi4fJbwvacWsEhAh+rZUW4ZfGcXmUIvjZg4ss2bcwNlRhJ7GBEUG08w==
 
-"@topology-foundation/crdt@0.0.10", "@topology-foundation/crdt@file:../../packages/crdt":
-  version "0.0.10"
+"@topology-foundation/crdt@0.0.11", "@topology-foundation/crdt@file:../../packages/crdt":
+  version "0.0.11"
 
-"@topology-foundation/network@0.0.10", "@topology-foundation/network@file:../../packages/network":
-  version "0.0.10"
+"@topology-foundation/network@0.0.11", "@topology-foundation/network@file:../../packages/network":
+  version "0.0.11"
   dependencies:
     "@chainsafe/libp2p-gossipsub" "^13.0.0"
     "@chainsafe/libp2p-noise" "^15.0.0"
@@ -648,20 +648,20 @@
     libp2p "^1.6.0"
 
 "@topology-foundation/node@file:../../packages/node":
-  version "0.0.10"
+  version "0.0.11"
   dependencies:
     "@libp2p/dcutr" "^1.1.0"
-    "@topology-foundation/crdt" "0.0.10"
-    "@topology-foundation/network" "0.0.10"
-    "@topology-foundation/object" "0.0.10"
+    "@topology-foundation/crdt" "0.0.11"
+    "@topology-foundation/network" "0.0.11"
+    "@topology-foundation/object" "0.0.11"
 
-"@topology-foundation/object@0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@topology-foundation/object/-/object-0.0.10.tgz#04bb130d923b9c5a08d0222f05ce21b2c13c270d"
-  integrity sha512-XlvnBTIDV/00rdtJ/ZZXGNdw34flSI5SkjpAiw304RF62IiMGH/hEvdfw9A24rTjF2YmzZz0a94ExLxTDBkeTA==
+"@topology-foundation/object@0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@topology-foundation/object/-/object-0.0.11.tgz#eefc084ad1231d01340e31a400223944178ae207"
+  integrity sha512-zIXzu6U1FYwEXBqCht/JBo71RNC5tL2wJbo5qI6WeotHpNYLpcCM/X0y7M+fvKQtdyb/vJRf2FjwIjqA1knI9g==
 
 "@topology-foundation/object@file:../../packages/object":
-  version "0.0.10"
+  version "0.0.11"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.11"
