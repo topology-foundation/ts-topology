@@ -7,6 +7,9 @@ module.exports = {
   entry: path.resolve(__dirname, "./src/index.ts"),
   devServer: {
     allowedHosts: "all",
+    client: {
+      overlay: false,
+    },
     static: {
       directory: path.join(__dirname, "public"),
     },

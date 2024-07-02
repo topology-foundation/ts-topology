@@ -37,6 +37,7 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
+    "@libp2p/dcutr": "^1.1.0",
     "@topology-foundation/crdt": "0.0.10",
     "@topology-foundation/network": "0.0.10",
     "@topology-foundation/object": "0.0.10"

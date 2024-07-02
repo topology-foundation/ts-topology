@@ -6,6 +6,7 @@ import {
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
+import { dcutr } from "@libp2p/dcutr";
 import { identify } from "@libp2p/identify";
 import { EventHandler, PubSub, Stream, StreamHandler } from "@libp2p/interface";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
@@ -16,6 +17,8 @@ import { Libp2p, createLibp2p } from "libp2p";
 import { stringToStream } from "./stream.js";
 import { webTransport } from "@libp2p/webtransport";
 import { bootstrap } from "@libp2p/bootstrap";
+import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
+import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 
 export interface TopologyNetworkNodeConfig {}
 
@@ -47,7 +50,7 @@ export class TopologyNetworkNode {
       peerDiscovery: [
         pubsubPeerDiscovery({
           interval: 10_000,
-          listenOnly: false,
+          topics: ["topology::discovery"],
         }),
         bootstrap({
           list: [
@@ -59,11 +62,16 @@ export class TopologyNetworkNode {
         identify: identify(),
         pubsub: gossipsub({
           allowPublishToZeroTopicPeers: true,
+          runOnTransientConnection: true,
         }),
+        dcutr: dcutr(),
       },
       streamMuxers: [yamux()],
       transports: [
-        circuitRelayTransport(),
+        circuitRelayTransport({
+          discoverRelays: 2,
+          reservationConcurrency: 1,
+        }),
         webRTC({
           rtcConfiguration: {
             iceServers: [
@@ -91,9 +99,17 @@ export class TopologyNetworkNode {
       this.peerId,
     );
 
-    this._node.addEventListener("peer:connect", (evt) => {
-      console.log("topology::network::peer::connect: ", evt.detail.toString());
-    });
+    // TODO remove this or add better logger
+    // we need to keep it now for debugging
+    this._node.addEventListener("peer:connect", (e) =>
+      console.log("peer:connect", e.detail),
+    );
+    this._node.addEventListener("peer:discovery", (e) =>
+      console.log("peer:discovery", e.detail),
+    );
+    this._node.addEventListener("peer:identify", (e) =>
+      console.log("peer:identify", e.detail),
+    );
   }
 
   subscribe(topic: string) {
@@ -164,7 +180,9 @@ export class TopologyNetworkNode {
   async sendMessage(peerId: string, protocols: string[], message: string) {
     try {
       const connection = await this._node?.dial([multiaddr(`/p2p/${peerId}`)]);
-      const stream = <Stream>await connection?.newStream(protocols);
+      const stream = <Stream>await connection?.newStream(protocols, {
+        runOnTransientConnection: true,
+      });
       stringToStream(stream, message);
 
       console.log(
@@ -186,7 +204,9 @@ export class TopologyNetworkNode {
       const peerId = peers[Math.floor(Math.random() * peers.length)];
 
       const connection = await this._node?.dial(peerId);
-      const stream: Stream = (await connection?.newStream(protocols)) as Stream;
+      const stream: Stream = (await connection?.newStream(protocols, {
+        runOnTransientConnection: true,
+      })) as Stream;
       stringToStream(stream, message);
 
       console.log(

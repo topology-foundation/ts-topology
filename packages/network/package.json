@@ -37,6 +37,7 @@
     "@libp2p/autonat": "^1.0.0",
     "@libp2p/bootstrap": "^10.1.0",
     "@libp2p/circuit-relay-v2": "^1.0.24",
+    "@libp2p/dcutr": "^1.1.0",
     "@libp2p/identify": "^2.0.2",
     "@libp2p/interface-pubsub": "^4.0.1",
     "@libp2p/pubsub-peer-discovery": "^10.0.2",
