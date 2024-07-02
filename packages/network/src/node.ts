@@ -10,15 +10,12 @@ import { dcutr } from "@libp2p/dcutr";
 import { identify } from "@libp2p/identify";
 import { EventHandler, PubSub, Stream, StreamHandler } from "@libp2p/interface";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
-import { webRTC, webRTCDirect } from "@libp2p/webrtc";
+import { webRTC } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import { multiaddr } from "@multiformats/multiaddr";
 import { Libp2p, createLibp2p } from "libp2p";
 import { stringToStream } from "./stream.js";
-import { webTransport } from "@libp2p/webtransport";
 import { bootstrap } from "@libp2p/bootstrap";
-import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
-import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 
 export interface TopologyNetworkNodeConfig {}
 
@@ -36,10 +33,7 @@ export class TopologyNetworkNode {
   async start() {
     this._node = await createLibp2p({
       addresses: {
-        listen: [
-          "/webrtc",
-          "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP/p2p-circuit",
-        ],
+        listen: ["/webrtc"],
       },
       connectionEncryption: [noise()],
       connectionGater: {
@@ -62,7 +56,6 @@ export class TopologyNetworkNode {
         identify: identify(),
         pubsub: gossipsub({
           allowPublishToZeroTopicPeers: true,
-          // runOnTransientConnection: true,
         }),
         dcutr: dcutr(),
       },
@@ -85,9 +78,7 @@ export class TopologyNetworkNode {
             ],
           },
         }),
-        webRTCDirect(),
         webSockets(),
-        webTransport(),
       ],
     });
 
@@ -180,9 +171,7 @@ export class TopologyNetworkNode {
   async sendMessage(peerId: string, protocols: string[], message: string) {
     try {
       const connection = await this._node?.dial([multiaddr(`/p2p/${peerId}`)]);
-      const stream = <Stream>await connection?.newStream(protocols, {
-        // runOnTransientConnection: true,
-      });
+      const stream = <Stream>await connection?.newStream(protocols);
       stringToStream(stream, message);
 
       console.log(
@@ -204,9 +193,7 @@ export class TopologyNetworkNode {
       const peerId = peers[Math.floor(Math.random() * peers.length)];
 
       const connection = await this._node?.dial(peerId);
-      const stream: Stream = (await connection?.newStream(protocols, {
-        // runOnTransientConnection: true,
-      })) as Stream;
+      const stream: Stream = (await connection?.newStream(protocols)) as Stream;
       stringToStream(stream, message);
 
       console.log(
