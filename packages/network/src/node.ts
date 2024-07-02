@@ -69,7 +69,8 @@ export class TopologyNetworkNode {
       streamMuxers: [yamux()],
       transports: [
         circuitRelayTransport({
-          discoverRelays: 0,
+          discoverRelays: 2,
+          reservationConcurrency: 1,
         }),
         webRTC({
           rtcConfiguration: {
