@@ -10,12 +10,13 @@ import { dcutr } from "@libp2p/dcutr";
 import { identify } from "@libp2p/identify";
 import { EventHandler, PubSub, Stream, StreamHandler } from "@libp2p/interface";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
-import { webRTC } from "@libp2p/webrtc";
+import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import { multiaddr } from "@multiformats/multiaddr";
 import { Libp2p, createLibp2p } from "libp2p";
 import { stringToStream } from "./stream.js";
 import { bootstrap } from "@libp2p/bootstrap";
+import { webTransport } from "@libp2p/webtransport";
 
 export interface TopologyNetworkNodeConfig {}
 
@@ -78,7 +79,9 @@ export class TopologyNetworkNode {
             ],
           },
         }),
+        webRTCDirect(),
         webSockets(),
+        webTransport(),
       ],
     });
 
