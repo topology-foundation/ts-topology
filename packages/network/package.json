@@ -31,8 +31,8 @@
     "react-native-webrtc": "^124.0.1"
   },
   "dependencies": {
-    "@chainsafe/libp2p-gossipsub": "^13.0.0",
-    "@chainsafe/libp2p-noise": "^15.0.0",
+    "@chainsafe/libp2p-gossipsub": "^13.1.0",
+    "@chainsafe/libp2p-noise": "^15.1.0",
     "@chainsafe/libp2p-yamux": "^6.0.2",
     "@libp2p/autonat": "^1.0.0",
     "@libp2p/bootstrap": "^10.1.0",
