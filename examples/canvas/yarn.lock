@@ -17,7 +17,7 @@
   resolved "https://registry.yarnpkg.com/@chainsafe/is-ip/-/is-ip-2.0.2.tgz#7311e7403f11d8c5cfa48111f56fcecaac37c9f6"
   integrity sha512-ndGqEMG1W5WkGagaqOZHpPU172AGdxr+LD15sv3WIUvT5oCFUrG1Y0CW/v2Egwj4JXEvSibaIIIqImsm98y1nA==
 
-"@chainsafe/libp2p-gossipsub@^13.0.0":
+"@chainsafe/libp2p-gossipsub@^13.1.0":
   version "13.1.0"
   resolved "https://registry.yarnpkg.com/@chainsafe/libp2p-gossipsub/-/libp2p-gossipsub-13.1.0.tgz#b0c2d84c334dc1bcbd67cb379c7f0a0feca6a4c1"
   integrity sha512-Wk1O6ZT/L0o+p9vlAB4qxDa9pAwTh5yxPrQbyc98wvKbrnPhAfZbjMfhCBOEvFKzMkEFDsTd3TGPjP8TTtNtQw==
@@ -37,7 +37,7 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.0.1"
 
-"@chainsafe/libp2p-noise@^15.0.0":
+"@chainsafe/libp2p-noise@^15.0.0", "@chainsafe/libp2p-noise@^15.1.0":
   version "15.1.0"
   resolved "https://registry.yarnpkg.com/@chainsafe/libp2p-noise/-/libp2p-noise-15.1.0.tgz#f30caa146d3d11c6dfd6da3c4510b664f8b0881c"
   integrity sha512-84S/Uk7ZZRYpSlE5d1odMmQTl5g5Da8etgcf4QI7arTAHkvBs3il7yGHIPt4wV4EV0qIMG+XjdGIYihRXfI2/w==
@@ -624,14 +624,14 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/fnv1a/-/fnv1a-3.1.0.tgz#f8e46597298f6fd4c12dc901cdd4e73beb4d24fa"
   integrity sha512-KV321z5m/0nuAg83W1dPLy85HpHDk7Sdi4fJbwvacWsEhAh+rZUW4ZfGcXmUIvjZg4ss2bcwNlRhJ7GBEUG08w==
 
-"@topology-foundation/crdt@0.0.11", "@topology-foundation/crdt@file:../../packages/crdt":
-  version "0.0.11"
+"@topology-foundation/crdt@0.0.12", "@topology-foundation/crdt@file:../../packages/crdt":
+  version "0.0.12"
 
-"@topology-foundation/network@0.0.11", "@topology-foundation/network@file:../../packages/network":
-  version "0.0.11"
+"@topology-foundation/network@0.0.12", "@topology-foundation/network@file:../../packages/network":
+  version "0.0.12"
   dependencies:
-    "@chainsafe/libp2p-gossipsub" "^13.0.0"
-    "@chainsafe/libp2p-noise" "^15.0.0"
+    "@chainsafe/libp2p-gossipsub" "^13.1.0"
+    "@chainsafe/libp2p-noise" "^15.1.0"
     "@chainsafe/libp2p-yamux" "^6.0.2"
     "@libp2p/autonat" "^1.0.0"
     "@libp2p/bootstrap" "^10.1.0"
@@ -648,20 +648,20 @@
     libp2p "^1.6.0"
 
 "@topology-foundation/node@file:../../packages/node":
-  version "0.0.11"
+  version "0.0.12"
   dependencies:
     "@libp2p/dcutr" "^1.1.0"
-    "@topology-foundation/crdt" "0.0.11"
-    "@topology-foundation/network" "0.0.11"
-    "@topology-foundation/object" "0.0.11"
+    "@topology-foundation/crdt" "0.0.12"
+    "@topology-foundation/network" "0.0.12"
+    "@topology-foundation/object" "0.0.12"
 
-"@topology-foundation/object@0.0.11":
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@topology-foundation/object/-/object-0.0.11.tgz#eefc084ad1231d01340e31a400223944178ae207"
-  integrity sha512-zIXzu6U1FYwEXBqCht/JBo71RNC5tL2wJbo5qI6WeotHpNYLpcCM/X0y7M+fvKQtdyb/vJRf2FjwIjqA1knI9g==
+"@topology-foundation/object@0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@topology-foundation/object/-/object-0.0.12.tgz#af8e7852ca959b5db36a8147dc9741baf3a6eadd"
+  integrity sha512-RCu9gbVoqhYQpCZtwlxp9055M4ZJAXoixQc0ZUZaap1iTFc7mtN4RByQdW71iWIl3l9DWNEjNA8cBu+jbR/sEw==
 
 "@topology-foundation/object@file:../../packages/object":
-  version "0.0.11"
+  version "0.0.12"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.11"
