@@ -8,12 +8,7 @@
   },
   "type": "module",
   "types": "./dist/src/index.d.ts",
-  "files": [
-    "src",
-    "dist",
-    "!dist/test",
-    "!**/*.tsbuildinfo"
-  ],
+  "files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -39,7 +34,6 @@
     "@libp2p/dcutr": "^1.1.0",
     "@topology-foundation/crdt": "0.0.14",
     "@topology-foundation/network": "0.0.14",
-    "@topology-foundation/object": "0.0.14",
-    "node-datachannel": "^0.10.0"
+    "@topology-foundation/object": "0.0.14"
   }
 }
