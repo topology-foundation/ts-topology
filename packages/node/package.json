@@ -8,12 +8,7 @@
   },
   "type": "module",
   "types": "./dist/src/index.d.ts",
-  "files": [
-    "src",
-    "dist",
-    "!dist/test",
-    "!**/*.tsbuildinfo"
-  ],
+  "files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -31,7 +26,6 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.2",
-    "node-datachannel": "^0.10.0",
     "tsx": "^4.16.0",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
@@ -40,6 +34,7 @@
     "@libp2p/dcutr": "^1.1.0",
     "@topology-foundation/crdt": "0.0.13",
     "@topology-foundation/network": "0.0.13",
-    "@topology-foundation/object": "0.0.13"
+    "@topology-foundation/object": "0.0.13",
+    "node-datachannel": "^0.10.0"
   }
 }
