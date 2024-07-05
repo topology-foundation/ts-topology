@@ -66,19 +66,7 @@ export class TopologyNetworkNode {
           discoverRelays: 2,
           reservationConcurrency: 1,
         }),
-        webRTC({
-          rtcConfiguration: {
-            iceServers: [
-              {
-                // STUN servers help the browser discover its own public IPs
-                urls: [
-                  "stun:stun.l.google.com:19302",
-                  "stun:global.stun.twilio.com:3478",
-                ],
-              },
-            ],
-          },
-        }),
+        webRTC(),
         webRTCDirect(),
         webSockets(),
         webTransport(),
