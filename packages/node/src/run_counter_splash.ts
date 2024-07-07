@@ -8,13 +8,6 @@ export async function start() {
 
   let canvas = new Canvas(node.getPeerId(), 3000, 4000);
   canvas.id = "topology::counter_splash";
-  fs.writeFile("./object.json", JSON.stringify(canvas), (err: any) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log("File has been created");
-  });
   node.createObject(canvas);
 }
 
