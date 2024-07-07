@@ -86,19 +86,28 @@ export class TopologyNode {
 
   /// Subscribe to the object's PubSub group
   /// and fetch it from a peer
-  async subscribeObject(objectId: string) {
+  async subscribeObject(objectId: string, fetch = false, peerId = "") {
     this._networkNode.subscribe(objectId);
+    if (!fetch) return;
     const message = `{
       "type": "object_fetch",
       "sender": "${this._networkNode.peerId}",
       "data": [${uint8ArrayFromString(objectId)}]
     }`;
 
-    await this._networkNode.sendGroupMessageRandomPeer(
-      objectId,
-      ["/topology/message/0.0.1"],
-      message,
-    );
+    if (peerId === "") {
+      await this._networkNode.sendGroupMessageRandomPeer(
+        objectId,
+        ["/topology/message/0.0.1"],
+        message,
+      );
+    } else {
+      await this._networkNode.sendMessage(
+        peerId,
+        ["/topology/message/0.0.1"],
+        message,
+      );
+    }
   }
 
   getPeers() {
