@@ -8,7 +8,7 @@ import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webSockets } from "@libp2p/websockets";
 import { createLibp2p } from "libp2p";
 
-import relayerJson from "./peer-id-relayer";
+import relayerJson from "./peer-id-relayer.js";
 import { autoNAT } from "@libp2p/autonat";
 
 // TODO:
@@ -23,7 +23,12 @@ export const createRelayNode = async () => {
       listen: ["/ip4/0.0.0.0/tcp/50000/ws", "/ip4/0.0.0.0/tcp/50001"],
     },
     connectionEncryption: [noise()],
-    peerDiscovery: [pubsubPeerDiscovery()],
+    peerDiscovery: [
+      pubsubPeerDiscovery({
+        interval: 10_000,
+        topics: ["topology::discovery"],
+      }),
+    ],
     services: {
       autonat: autoNAT(),
       identify: identify(),

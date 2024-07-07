@@ -6,6 +6,7 @@ import {
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
+import { dcutr } from "@libp2p/dcutr";
 import { identify } from "@libp2p/identify";
 import { EventHandler, PubSub, Stream, StreamHandler } from "@libp2p/interface";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
@@ -13,9 +14,9 @@ import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import { multiaddr } from "@multiformats/multiaddr";
 import { Libp2p, createLibp2p } from "libp2p";
-import { stringToStream } from "./stream";
-import { webTransport } from "@libp2p/webtransport";
+import { stringToStream } from "./stream.js";
 import { bootstrap } from "@libp2p/bootstrap";
+import { webTransport } from "@libp2p/webtransport";
 
 export interface TopologyNetworkNodeConfig {}
 
@@ -33,10 +34,7 @@ export class TopologyNetworkNode {
   async start() {
     this._node = await createLibp2p({
       addresses: {
-        listen: [
-          "/webrtc",
-          "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP/p2p-circuit",
-        ],
+        listen: ["/webrtc"],
       },
       connectionEncryption: [noise()],
       connectionGater: {
@@ -47,10 +45,11 @@ export class TopologyNetworkNode {
       peerDiscovery: [
         pubsubPeerDiscovery({
           interval: 10_000,
-          listenOnly: false,
+          topics: ["topology::discovery"],
         }),
         bootstrap({
           list: [
+            "/ip4/127.0.0.1/tcp/50000/ws/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
             "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
           ],
         }),
@@ -60,10 +59,14 @@ export class TopologyNetworkNode {
         pubsub: gossipsub({
           allowPublishToZeroTopicPeers: true,
         }),
+        dcutr: dcutr(),
       },
       streamMuxers: [yamux()],
       transports: [
-        circuitRelayTransport(),
+        circuitRelayTransport({
+          discoverRelays: 2,
+          reservationConcurrency: 1,
+        }),
         webRTC({
           rtcConfiguration: {
             iceServers: [
@@ -91,9 +94,17 @@ export class TopologyNetworkNode {
       this.peerId,
     );
 
-    this._node.addEventListener("peer:connect", (evt) => {
-      console.log("topology::network::peer::connect: ", evt.detail.toString());
-    });
+    // TODO remove this or add better logger
+    // we need to keep it now for debugging
+    this._node.addEventListener("peer:connect", (e) =>
+      console.log("peer:connect", e.detail),
+    );
+    this._node.addEventListener("peer:discovery", (e) =>
+      console.log("peer:discovery", e.detail),
+    );
+    this._node.addEventListener("peer:identify", (e) =>
+      console.log("peer:identify", e.detail),
+    );
   }
 
   subscribe(topic: string) {

@@ -1,7 +1,7 @@
 {
   "name": "ts-topology",
   "description": "The official TypeScript implementation of Topology Protocol",
-  "version": "0.0.7",
+  "version": "0.0.17",
   "license": "MIT",
   "homepage": "https://topology.gg/",
   "repository": {
@@ -18,7 +18,7 @@
   "devDependencies": {
     "@release-it-plugins/workspaces": "^4.2.0",
     "@types/node": "^20.14.2",
-    "release-it": "^17.3.0",
+    "release-it": "^17.4.1",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },

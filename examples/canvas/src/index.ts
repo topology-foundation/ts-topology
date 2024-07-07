@@ -73,7 +73,7 @@ async function init() {
   node.addCustomGroupMessageHandler((e) => {
     handleCanvasMessages(canvasCRO, e);
     peers = node.getPeers();
-    discoveryPeers = node.getPeersPerGroup("_peer-discovery._p2p._pubsub");
+    discoveryPeers = node.getPeersPerGroup("topology::discovery");
     if (canvasCRO) {
       objectPeers = node.getPeersPerGroup(canvasCRO.getObjectId());
     }
