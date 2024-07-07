@@ -39,6 +39,7 @@ export class TopologyNode {
       ["/topology/message/0.0.1"],
       async ({ stream }) => {
         let input = await streamToString(stream);
+        console.log("Received message: ", input);
         if (!input) return;
 
         const message = JSON.parse(input);
