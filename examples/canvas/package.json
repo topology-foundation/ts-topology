@@ -9,9 +9,9 @@
     "start": "ts-node ./src/index.ts"
   },
   "dependencies": {
-    "@topology-foundation/crdt": "file:../../packages/crdt", 
-    "@topology-foundation/network": "file:../../packages/network", 
-    "@topology-foundation/node": "file:../../packages/node", 
+    "@topology-foundation/crdt": "file:../../packages/crdt",
+    "@topology-foundation/network": "file:../../packages/network",
+    "@topology-foundation/node": "file:../../packages/node",
     "@topology-foundation/object": "file:../../packages/object",
     "crypto-browserify": "^3.12.0",
     "process": "^0.11.10",

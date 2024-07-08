@@ -8,7 +8,7 @@ const node = new TopologyNode();
 let canvasCRO: ICanvas;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
-let objectPeers: string[] = []; 
+let objectPeers: string[] = [];
 
 const render = () => {
   const peers_element = <HTMLDivElement>document.getElementById("peers");
@@ -89,7 +89,7 @@ async function init() {
       canvasCRO.getObjectId();
     render();
   });
-  
+
   let connect_button = <HTMLButtonElement>document.getElementById("connect");
   connect_button.addEventListener("click", async () => {
     let croId = (<HTMLInputElement>document.getElementById("canvasIdInput"))
