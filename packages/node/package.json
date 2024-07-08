@@ -1,6 +1,6 @@
 {
   "name": "@topology-foundation/node",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -37,8 +37,8 @@
   },
   "dependencies": {
     "@libp2p/dcutr": "^1.1.0",
-    "@topology-foundation/crdt": "0.0.1",
-    "@topology-foundation/network": "0.0.1",
-    "@topology-foundation/object": "0.0.1"
+    "@topology-foundation/crdt": "0.0.2",
+    "@topology-foundation/network": "0.0.2",
+    "@topology-foundation/object": "0.0.2"
   }
 }
