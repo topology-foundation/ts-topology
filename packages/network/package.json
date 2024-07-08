@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@libp2p/interface": "^1.4.0",
-    "react-native-webrtc": "^124.0.1"
+    "react-native-webrtc": "^124.0.3"
   },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^13.1.0",
