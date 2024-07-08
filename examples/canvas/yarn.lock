@@ -630,11 +630,11 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/fnv1a/-/fnv1a-3.1.0.tgz#f8e46597298f6fd4c12dc901cdd4e73beb4d24fa"
   integrity sha512-KV321z5m/0nuAg83W1dPLy85HpHDk7Sdi4fJbwvacWsEhAh+rZUW4ZfGcXmUIvjZg4ss2bcwNlRhJ7GBEUG08w==
 
-"@topology-foundation/crdt@0.0.15", "@topology-foundation/crdt@file:../../packages/crdt":
-  version "0.0.15"
+"@topology-foundation/crdt@0.0.14", "@topology-foundation/crdt@file:../../packages/crdt":
+  version "0.0.14"
 
-"@topology-foundation/network@0.0.15", "@topology-foundation/network@file:../../packages/network":
-  version "0.0.15"
+"@topology-foundation/network@0.0.14", "@topology-foundation/network@file:../../packages/network":
+  version "0.0.14"
   dependencies:
     "@chainsafe/libp2p-gossipsub" "^13.1.0"
     "@chainsafe/libp2p-noise" "^15.1.0"
@@ -654,20 +654,20 @@
     libp2p "^1.6.0"
 
 "@topology-foundation/node@file:../../packages/node":
-  version "0.0.15"
+  version "0.0.14"
   dependencies:
     "@libp2p/dcutr" "^1.1.0"
-    "@topology-foundation/crdt" "0.0.15"
-    "@topology-foundation/network" "0.0.15"
-    "@topology-foundation/object" "0.0.15"
+    "@topology-foundation/crdt" "0.0.14"
+    "@topology-foundation/network" "0.0.14"
+    "@topology-foundation/object" "0.0.14"
 
-"@topology-foundation/object@0.0.15":
-  version "0.0.15"
-  resolved "https://registry.npmjs.org/@topology-foundation/object/-/object-0.0.15.tgz#f3e1ac4faf9e69c58c26faca83b4b1c7e581d784"
-  integrity sha512-4aROQkMP1xsG1q/aQduIsAQMn8R+HKYjUqHq01RRTdLmVwmzKumuClKIK/Pr0tIVCUPLEqTKKCLRaHAUFXh9qQ==
+"@topology-foundation/object@0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@topology-foundation/object/-/object-0.0.14.tgz#8a1e6425eb74d86ef1167c8159c5a4e5ddb744db"
+  integrity sha512-N8vvjMMrtFKqBc43T5EGWNzfNVatcVzj2Mv4Ntg9Kw6L9EhA6W4YyWFnR3DIZ1tN5KCBEMYsUrZKCuDYHXZ5/A==
 
 "@topology-foundation/object@file:../../packages/object":
-  version "0.0.15"
+  version "0.0.14"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.11"
@@ -3583,8 +3583,16 @@ stream-browserify@^3.0.0:
     inherits "~2.0.4"
     readable-stream "^3.5.0"
 
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
-  name string-width-cjs
+"string-width-cjs@npm:string-width@^4.2.0":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
+
+string-width@^4.1.0:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -3616,8 +3624,14 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-  name strip-ansi-cjs
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
+
+strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
