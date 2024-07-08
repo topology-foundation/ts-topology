@@ -1,6 +1,6 @@
 {
   "name": "ts-topology-examples-canvas",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "build": "webpack",
