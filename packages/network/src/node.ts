@@ -9,6 +9,7 @@ import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
 import { dcutr } from "@libp2p/dcutr";
 import { identify } from "@libp2p/identify";
 import { EventHandler, PubSub, Stream, StreamHandler } from "@libp2p/interface";
+import { mdns } from "@libp2p/mdns";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
@@ -43,6 +44,9 @@ export class TopologyNetworkNode {
         },
       },
       peerDiscovery: [
+        mdns({
+          interval: 10_000,
+        }),
         pubsubPeerDiscovery({
           interval: 10_000,
           topics: ["topology::discovery"],
