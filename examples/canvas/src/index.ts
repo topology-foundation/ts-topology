@@ -95,7 +95,7 @@ async function init() {
     let croId = (<HTMLInputElement>document.getElementById("canvasIdInput"))
       .value;
     try {
-      await node.subscribeObject(croId);
+      await node.subscribeObject(croId, true);
       // TODO remove the need to click to time for subscribe and fetch
 
       let object: any = node.getObject(croId);
