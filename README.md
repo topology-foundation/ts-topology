@@ -42,6 +42,7 @@ Install the dependecies of every package of the project.
 To run the exemple-canvas run:
 
 ```sh
+>cd examples/canvas
 # this will execute "webpack serve" 
 > yarn dev
 ```

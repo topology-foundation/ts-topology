@@ -58,3 +58,12 @@ jobs:
           cd ../../examples/canvas
           yarn install --frozen-lockfile
           yarn build
+  
+  build-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          docker compose build 
+          
