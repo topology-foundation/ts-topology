@@ -1,12 +1,14 @@
 # ts-topology
 The official TypeScript implementation of Topology Protocol
 
-### Development
+## Introducion
+
+## Development
 
 To build and run this project you'll need to have [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#debian-stable) installed.
 If you don't have yarn installed, go ahead and install the latest version.
 
-#### Build Project
+### Build Project
 Install the dependecies of every package of the project.
 
 ```sh
@@ -38,14 +40,25 @@ Install the dependecies of every package of the project.
 
 ```
 
-#### Run Project
-To run the exemple-canvas run:
+### Run Project
+To run the exemple-canvas execute:
 
 ```sh
+
 >cd examples/canvas
 # this will execute "webpack serve" 
 > yarn dev
+
 ```
 
-This command will ... TODO
+This command will create a development server for the project at http://localhost:3000/.
+
+
+
+## Example
+For a better undestandability of this project we explain using an example.
+
+
+
+
 
