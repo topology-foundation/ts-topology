@@ -65,4 +65,5 @@ jobs:
      - uses: actions/checkout@v4
      - shell: bash
        run: |
+        # build docker images
         docker compose build
