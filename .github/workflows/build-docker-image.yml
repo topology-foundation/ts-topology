@@ -1,9 +1,9 @@
 name: Build Docker Image
 on:
   push:
-    branches: [main]
+    branches: [release]
   pull_request:
-    branches: [main]
+    branches: [release]
 env:
   IMAGE: ghcr.io/${{ github.repository }}
 jobs:
