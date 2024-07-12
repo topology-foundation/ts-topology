@@ -38,9 +38,9 @@ jobs:
           context: ./packages/node
           file: ./packages/node/Dockerfile
           platform: $ {{ matrix.platform }}
-          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
       - name: Export digest
         run: |
           mkdir -p /tmp/digests
