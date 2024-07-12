@@ -58,5 +58,3 @@ jobs:
           cd ../../examples/canvas
           yarn install --frozen-lockfile
           yarn build
-
-        
