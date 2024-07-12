@@ -37,7 +37,7 @@ jobs:
         with:
           context: ./packages/node
           file: ./packages/node/Dockerfile
-          platform: $ {{ matrix.platform }}
+          platforms: $ {{ matrix.platform }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
