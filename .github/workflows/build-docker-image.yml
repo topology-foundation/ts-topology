@@ -7,7 +7,7 @@ on:
 env:
   IMAGE: ghcr.io/${{ github.repository }}
 jobs:
-  build-and-push-image:
+  build:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
