@@ -66,6 +66,32 @@ export class TopologyNode {
             );
             this._objectStore.put(object["id"], object);
           }
+          case "object_sync": {
+            const objectId = uint8ArrayToString(
+              new Uint8Array(message["data"]),
+            );
+            const object = <TopologyObject>this.getObject(objectId);
+            const object_message = `{
+              "type": "object_merge",
+              "data": [${uint8ArrayFromString(JSON.stringify(object))}]
+            }`;
+            await this._networkNode.sendMessage(
+              message["sender"],
+              [<string>stream.protocol],
+              object_message,
+            );
+            break;
+          }
+          case "object_merge": {
+            const object = JSON.parse(
+              uint8ArrayToString(new Uint8Array(message["data"])),
+            );
+            const local = this._objectStore.get(object["id"]);
+            if (local) {
+              local.merge(object);
+              this._objectStore.put(object["id"], local);
+            }
+          }
           default: {
             return;
           }
@@ -86,19 +112,50 @@ export class TopologyNode {
 
   /// Subscribe to the object's PubSub group
   /// and fetch it from a peer
-  async subscribeObject(objectId: string) {
+  async subscribeObject(objectId: string, fetch = false, peerId = "") {
     this._networkNode.subscribe(objectId);
+    if (!fetch) return;
     const message = `{
       "type": "object_fetch",
       "sender": "${this._networkNode.peerId}",
       "data": [${uint8ArrayFromString(objectId)}]
     }`;
 
-    await this._networkNode.sendGroupMessageRandomPeer(
-      objectId,
-      ["/topology/message/0.0.1"],
-      message,
-    );
+    if (peerId === "") {
+      await this._networkNode.sendGroupMessageRandomPeer(
+        objectId,
+        ["/topology/message/0.0.1"],
+        message,
+      );
+    } else {
+      await this._networkNode.sendMessage(
+        peerId,
+        ["/topology/message/0.0.1"],
+        message,
+      );
+    }
+  }
+
+  async syncObject(objectId: string, peerId = "") {
+    const message = `{
+      "type": "object_sync",
+      "sender": "${this._networkNode.peerId}",
+      "data": [${uint8ArrayFromString(objectId)}]
+    }`;
+
+    if (peerId === "") {
+      await this._networkNode.sendGroupMessageRandomPeer(
+        objectId,
+        ["/topology/message/0.0.1"],
+        message,
+      );
+    } else {
+      await this._networkNode.sendMessage(
+        peerId,
+        ["/topology/message/0.0.1"],
+        message,
+      );
+    }
   }
 
   getPeers() {
