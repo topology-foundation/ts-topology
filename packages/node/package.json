@@ -30,7 +30,7 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@types/node": "^20.14.2",
+    "@types/node": "^20.14.10",
     "tsx": "^4.16.0",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
