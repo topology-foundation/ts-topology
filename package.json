@@ -23,7 +23,8 @@
     "vitest": "^2.0.0"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "private": true,
   "release-it": {
