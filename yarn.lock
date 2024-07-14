@@ -3294,10 +3294,10 @@ react-native-webrtc@^118.0.7:
     debug "4.3.4"
     event-target-shim "6.0.2"
 
-react-native-webrtc@^124.0.1:
-  version "124.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-webrtc/-/react-native-webrtc-124.0.1.tgz#553ab6e5d67d94c536582ecbe24ef180b4037388"
-  integrity sha512-ne1AXNvpa3yC31SkzrtsqHhq7fjp10QTcl2xCGkVDOhzZtaf/2+c35xs1ps5zjUTIsx+XKh3mjAN7DKqteFDvg==
+react-native-webrtc@^124.0.3:
+  version "124.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-webrtc/-/react-native-webrtc-124.0.3.tgz#8cc8ee3b56d327631aac4ddb4e40d72f3621f6da"
+  integrity sha512-uU+FxcAlBjLQ1EZnw3q+nje8xw+7hwZ7yDpSK4f1OJ25LrLA6fAjgxHCtMn9D20D9tR4+pRkBugBzkfqmboIFg==
   dependencies:
     base64-js "1.5.1"
     debug "4.3.4"
