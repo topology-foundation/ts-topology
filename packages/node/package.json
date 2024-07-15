@@ -23,10 +23,11 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rm -rf dist/ node_modules/",
+    "cli": "tsx ./src/index.ts",
     "node": "tsx ./src/run_node.ts",
+    "prebuild": "node -p \"'export const VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
     "prepack": "tsc -b",
     "relay": "tsx ./src/run_relay.ts",
-    "start": "tsx ./src/index.ts",
     "test": "vitest"
   },
   "devDependencies": {
@@ -38,6 +39,7 @@
   "dependencies": {
     "@topology-foundation/crdt": "0.0.20",
     "@topology-foundation/network": "0.0.20",
-    "@topology-foundation/object": "0.0.20"
+    "@topology-foundation/object": "0.0.20",
+    "commander": "^12.1.0"
   }
 }
