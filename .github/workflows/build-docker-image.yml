@@ -1,9 +1,7 @@
 name: Build Docker Image
 on:
-  push:
-    branches: [release]
-  pull_request:
-    branches: [release]
+  release:
+    types: [published]
 env:
   IMAGE: ghcr.io/${{ github.repository }}
 jobs:
@@ -37,6 +35,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.IMAGE }}
+          tags: |
+            type=raw, value=${{ github.event.release.tag_name }}
       - name: Build and push Docker image
         id: build
         uses: docker/build-push-action@v6
