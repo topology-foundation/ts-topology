@@ -31,12 +31,11 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
-    "tsx": "^4.16.0",
+    "tsx": "4.15.7",
     "typescript": "^5.4.5",
     "vitest": "^2.0.2"
   },
   "dependencies": {
-    "@libp2p/dcutr": "^1.1.0",
     "@topology-foundation/crdt": "0.0.20",
     "@topology-foundation/network": "0.0.20",
     "@topology-foundation/object": "0.0.20"

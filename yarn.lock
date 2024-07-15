@@ -652,7 +652,7 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/webrtc@^4.0.33":
+"@libp2p/webrtc@^4.1.1":
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@libp2p/webrtc/-/webrtc-4.1.1.tgz#36300d83d1ee0416dbbd24b127a41693abf55b3c"
   integrity sha512-yDuDbM79opMoRUCmrcyuYUeb1QUu0+TZs12W0dog/SZl3KTmou937y3qR5Ru3GwWySHHbQBEHQEA92pH/TmLLA==
@@ -683,7 +683,7 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/websockets@^8.0.24":
+"@libp2p/websockets@^8.1.1":
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/@libp2p/websockets/-/websockets-8.1.1.tgz#09d8e7dbdbee41ad0c341d290688c50ca6e3faf7"
   integrity sha512-Iwh+bZnDlft5rVEfJCddtUFRYRT2OARUm60UuD10bYndwnJM3f/kMWXPo0EoE3nULpejOS5VCcR6/Ipm3PIUiw==
@@ -701,7 +701,7 @@
     wherearewe "^2.0.1"
     ws "^8.17.0"
 
-"@libp2p/webtransport@^4.0.32":
+"@libp2p/webtransport@^4.1.1":
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@libp2p/webtransport/-/webtransport-4.1.1.tgz#791da4d720f6387e99d2b65c587a9cca132b03b0"
   integrity sha512-bissN51kOnSDOazoPfvOTPRr7tOGp8VeqzYbnbynGHbbB+LcgTUGkHzjAdYcbcF/vgz0ITrLYPUQaPaoPHrwag==
@@ -1069,9 +1069,9 @@
     "@libp2p/interface-pubsub" "^4.0.1"
     "@libp2p/mdns" "^10.1.1"
     "@libp2p/pubsub-peer-discovery" "^10.0.2"
-    "@libp2p/webrtc" "^4.0.33"
-    "@libp2p/websockets" "^8.0.24"
-    "@libp2p/webtransport" "^4.0.32"
+    "@libp2p/webrtc" "^4.1.1"
+    "@libp2p/websockets" "^8.1.1"
+    "@libp2p/webtransport" "^4.1.1"
     "@multiformats/multiaddr" "^12.3.0"
     it-pipe "^3.0.1"
     libp2p "^1.6.0"
@@ -1079,7 +1079,6 @@
 "@topology-foundation/node@file:packages/node":
   version "0.0.20"
   dependencies:
-    "@libp2p/dcutr" "^1.1.0"
     "@topology-foundation/crdt" "0.0.20"
     "@topology-foundation/network" "0.0.20"
     "@topology-foundation/object" "0.0.20"
@@ -2588,7 +2587,7 @@ es-module-lexer@^1.2.1:
   resolved "https://registry.yarnpkg.com/es-module-lexer/-/es-module-lexer-1.5.4.tgz#a8efec3a3da991e60efa6b633a7cad6ab8d26b78"
   integrity sha512-MVNK56NiMrOwitFB7cqDwq0CQutbw+0BvLshJSse0MUNU+y1FC3bUS/AQg7oUng+/wKrrki7JfmwtVHkVfPLlw==
 
-esbuild@^0.21.3, esbuild@~0.21.5:
+esbuild@^0.21.3, esbuild@~0.21.4:
   version "0.21.5"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.21.5.tgz#9ca301b120922959b766360d8ac830da0d02997d"
   integrity sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw==
@@ -5749,12 +5748,12 @@ tslib@^2.0.0, tslib@^2.0.1, tslib@^2.1.0, tslib@^2.4.0, tslib@^2.6.1:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.3.tgz#0438f810ad7a9edcde7a241c3d80db693c8cbfe0"
   integrity sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==
 
-tsx@^4.16.0:
-  version "4.16.2"
-  resolved "https://registry.yarnpkg.com/tsx/-/tsx-4.16.2.tgz#8722be119ae226ef0b4c6210d5ee90f3ba823f19"
-  integrity sha512-C1uWweJDgdtX2x600HjaFaucXTilT7tgUZHbOE4+ypskZ1OP8CRCSDkCxG6Vya9EwaFIVagWwpaVAn5wzypaqQ==
+tsx@4.15.7:
+  version "4.15.7"
+  resolved "https://registry.yarnpkg.com/tsx/-/tsx-4.15.7.tgz#69d7499196a323507c4051d2ba10753edcc057e5"
+  integrity sha512-u3H0iSFDZM3za+VxkZ1kywdCeHCn+8/qHQS1MNoO2sONDgD95HlWtt8aB23OzeTmFP9IU4/8bZUdg58Uu5J4cg==
   dependencies:
-    esbuild "~0.21.5"
+    esbuild "~0.21.4"
     get-tsconfig "^4.7.5"
   optionalDependencies:
     fsevents "~2.3.3"

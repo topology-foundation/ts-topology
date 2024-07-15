@@ -482,7 +482,7 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/webrtc@^4.0.33":
+"@libp2p/webrtc@^4.1.1":
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@libp2p/webrtc/-/webrtc-4.1.1.tgz#36300d83d1ee0416dbbd24b127a41693abf55b3c"
   integrity sha512-yDuDbM79opMoRUCmrcyuYUeb1QUu0+TZs12W0dog/SZl3KTmou937y3qR5Ru3GwWySHHbQBEHQEA92pH/TmLLA==
@@ -513,7 +513,7 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/websockets@^8.0.24":
+"@libp2p/websockets@^8.1.1":
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/@libp2p/websockets/-/websockets-8.1.1.tgz#09d8e7dbdbee41ad0c341d290688c50ca6e3faf7"
   integrity sha512-Iwh+bZnDlft5rVEfJCddtUFRYRT2OARUm60UuD10bYndwnJM3f/kMWXPo0EoE3nULpejOS5VCcR6/Ipm3PIUiw==
@@ -531,7 +531,7 @@
     wherearewe "^2.0.1"
     ws "^8.17.0"
 
-"@libp2p/webtransport@^4.0.32":
+"@libp2p/webtransport@^4.1.1":
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@libp2p/webtransport/-/webtransport-4.1.1.tgz#791da4d720f6387e99d2b65c587a9cca132b03b0"
   integrity sha512-bissN51kOnSDOazoPfvOTPRr7tOGp8VeqzYbnbynGHbbB+LcgTUGkHzjAdYcbcF/vgz0ITrLYPUQaPaoPHrwag==
@@ -630,11 +630,11 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/fnv1a/-/fnv1a-3.1.0.tgz#f8e46597298f6fd4c12dc901cdd4e73beb4d24fa"
   integrity sha512-KV321z5m/0nuAg83W1dPLy85HpHDk7Sdi4fJbwvacWsEhAh+rZUW4ZfGcXmUIvjZg4ss2bcwNlRhJ7GBEUG08w==
 
-"@topology-foundation/crdt@0.0.14", "@topology-foundation/crdt@file:../../packages/crdt":
-  version "0.0.14"
+"@topology-foundation/crdt@0.0.15", "@topology-foundation/crdt@file:../../packages/crdt":
+  version "0.0.15"
 
-"@topology-foundation/network@0.0.14", "@topology-foundation/network@file:../../packages/network":
-  version "0.0.14"
+"@topology-foundation/network@0.0.15", "@topology-foundation/network@file:../../packages/network":
+  version "0.0.15"
   dependencies:
     "@chainsafe/libp2p-gossipsub" "^13.1.0"
     "@chainsafe/libp2p-noise" "^15.1.0"
@@ -646,28 +646,27 @@
     "@libp2p/identify" "^2.0.2"
     "@libp2p/interface-pubsub" "^4.0.1"
     "@libp2p/pubsub-peer-discovery" "^10.0.2"
-    "@libp2p/webrtc" "^4.0.33"
-    "@libp2p/websockets" "^8.0.24"
-    "@libp2p/webtransport" "^4.0.32"
+    "@libp2p/webrtc" "^4.1.1"
+    "@libp2p/websockets" "^8.1.1"
+    "@libp2p/webtransport" "^4.1.1"
     "@multiformats/multiaddr" "^12.3.0"
     it-pipe "^3.0.1"
     libp2p "^1.6.0"
 
 "@topology-foundation/node@file:../../packages/node":
-  version "0.0.14"
+  version "0.0.15"
   dependencies:
-    "@libp2p/dcutr" "^1.1.0"
-    "@topology-foundation/crdt" "0.0.14"
-    "@topology-foundation/network" "0.0.14"
-    "@topology-foundation/object" "0.0.14"
+    "@topology-foundation/crdt" "0.0.15"
+    "@topology-foundation/network" "0.0.15"
+    "@topology-foundation/object" "0.0.15"
 
-"@topology-foundation/object@0.0.14":
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/@topology-foundation/object/-/object-0.0.14.tgz#8a1e6425eb74d86ef1167c8159c5a4e5ddb744db"
-  integrity sha512-N8vvjMMrtFKqBc43T5EGWNzfNVatcVzj2Mv4Ntg9Kw6L9EhA6W4YyWFnR3DIZ1tN5KCBEMYsUrZKCuDYHXZ5/A==
+"@topology-foundation/object@0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@topology-foundation/object/-/object-0.0.15.tgz#f3e1ac4faf9e69c58c26faca83b4b1c7e581d784"
+  integrity sha512-4aROQkMP1xsG1q/aQduIsAQMn8R+HKYjUqHq01RRTdLmVwmzKumuClKIK/Pr0tIVCUPLEqTKKCLRaHAUFXh9qQ==
 
 "@topology-foundation/object@file:../../packages/object":
-  version "0.0.14"
+  version "0.0.15"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.11"
