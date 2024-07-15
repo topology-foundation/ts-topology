@@ -36,7 +36,8 @@ jobs:
         with:
           images: ${{ env.IMAGE }}
           tags: |
-            type=raw, value=${{ github.event.release.tag_name }}
+            ${{ github.event.release.tag_name }}
+            latest
       - name: Build and push Docker image
         id: build
         uses: docker/build-push-action@v6
@@ -45,6 +46,8 @@ jobs:
           file: ./packages/node/Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ${{ env.IMAGE }}:${{ github.event.release.tag_name }}-latest
           outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
       - name: Export digest
         run: |
