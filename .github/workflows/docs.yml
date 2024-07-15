@@ -13,8 +13,8 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
       - run: |
-          yarn
-          yarn docs
+          cd packages/node && yarn && yarn build
+          cd ../.. && yarn docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
