@@ -47,6 +47,6 @@
     "@libp2p/webtransport": "^4.1.1",
     "@multiformats/multiaddr": "^12.3.0",
     "it-pipe": "^3.0.1",
-    "libp2p": "^1.6.0"
+    "libp2p": "^1.8.1"
   }
 }
