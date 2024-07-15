@@ -1,11 +1,12 @@
-import { Command } from "commander";
-import { VERSION } from "../version";
+import { Command, Option } from "commander";
+import { VERSION } from "../version.js";
 
 export const program = new Command();
-
 program.version(VERSION);
-program.command("start").action(async () => {
-  // const { start } = await import("./run_node");
-  // await start();
-  console.log("start");
-});
+
+program.addOption(new Option("-c, --config <file>", "config file"));
+program.addOption(
+  new Option("-m, --mode <mode>", "mode to run in")
+    .default("node")
+    .choices(["node", "relay"]),
+);
