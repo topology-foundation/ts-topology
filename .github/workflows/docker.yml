@@ -2,6 +2,8 @@ name: Build Docker Image
 on:
   release:
     types: [published]
+permissions:
+  packages: write
 env:
   IMAGE: ghcr.io/${{ github.repository }}
 jobs:
@@ -90,7 +92,7 @@ jobs:
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.IMAGE }}@sha256:%s ' *)          
+            $(printf '${{ env.IMAGE }}@sha256:%s ' *)
       - name: Inspect image
         run: |
           docker buildx imagetools inspect ${{ env.IMAGE }}:${{ steps.meta.outputs.version }}
