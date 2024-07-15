@@ -47,8 +47,9 @@ jobs:
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: |
-            ${{ env.IMAGE }}:${{ github.event.release.tag_name }}-latest
-          outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
+            ${{ env.IMAGE }}:${{ github.event.release.tag_name }}
+            ${{ env.IMAGE }}:latest
+          outputs: type=image,name=${{ env.IMAGE }},name-canonical=true,push=true
       - name: Export digest
         run: |
           mkdir -p /tmp/digests
