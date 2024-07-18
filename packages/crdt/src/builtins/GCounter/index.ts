@@ -1,14 +1,5 @@
-export interface IGCounter {
-  globalCounter: number;
-  counts: { [nodeKey: string]: number };
-  value(): number;
-  increment(nodeId: string, amount: number): void;
-  compare(peerCounter: IGCounter): boolean;
-  merge(peerCounter: IGCounter): void;
-}
-
 /// GCounter with support for state and op changes
-export class GCounter implements IGCounter {
+export class GCounter {
   globalCounter: number;
   // instead of standard incremental id for replicas
   // we map the counter with the node id
@@ -28,7 +19,7 @@ export class GCounter implements IGCounter {
     this.counts[nodeId] += amount;
   }
 
-  compare(peerCounter: IGCounter): boolean {
+  compare(peerCounter: GCounter): boolean {
     for (let key in Object.keys(this.counts)) {
       if (this.counts[key] > peerCounter.counts[key]) {
         return false;
@@ -37,7 +28,7 @@ export class GCounter implements IGCounter {
     return true;
   }
 
-  merge(peerCounter: IGCounter): void {
+  merge(peerCounter: GCounter): void {
     let temp: { [nodeKey: string]: number } = Object.assign(
       {},
       this.counts,
