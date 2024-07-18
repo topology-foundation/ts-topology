@@ -18,7 +18,11 @@ import { stringToStream } from "./stream.js";
 import { bootstrap } from "@libp2p/bootstrap";
 import { webTransport } from "@libp2p/webtransport";
 
-export interface TopologyNetworkNodeConfig {}
+// snake_casing to match the JSON config
+export interface TopologyNetworkNodeConfig {
+  addresses: string[];
+  bootstrap_peers: string[];
+}
 
 export class TopologyNetworkNode {
   private _config?: TopologyNetworkNodeConfig;
@@ -34,7 +38,7 @@ export class TopologyNetworkNode {
   async start() {
     this._node = await createLibp2p({
       addresses: {
-        listen: ["/webrtc"],
+        listen: this._config ? this._config.addresses : ["/webrtc"],
       },
       connectionEncryption: [noise()],
       connectionGater: {
@@ -48,9 +52,11 @@ export class TopologyNetworkNode {
           topics: ["topology::discovery"],
         }),
         bootstrap({
-          list: [
-            "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-          ],
+          list: this._config
+            ? this._config.bootstrap_peers
+            : [
+                "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+              ],
         }),
       ],
       services: {
