@@ -9,16 +9,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
+        uses: actions/setup-node@v4
       - run: |
-          yarn
-          yarn docs
+          cd packages/node && yarn && yarn build
+          cd ../.. && yarn docs
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./docs
   deploy:
@@ -30,4 +28,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
