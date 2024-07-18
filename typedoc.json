@@ -1,0 +1,7 @@
+{
+  "entryPoints": ["packages/*"],
+  "entryPointStrategy": "packages",
+  "includeVersion": true,
+  "name": "Topology Protocol",
+  "readme": "README.md"
+}

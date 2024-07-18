@@ -10,8 +10,9 @@ import { TopologyObjectStore } from "./store";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 
+// snake_casing to match the JSON config
 export interface TopologyNodeConfig {
-  networkConfig?: TopologyNetworkNodeConfig;
+  network_config?: TopologyNetworkNodeConfig;
 }
 
 export class TopologyNode {
@@ -21,7 +22,7 @@ export class TopologyNode {
 
   constructor(config?: TopologyNodeConfig) {
     this._config = config;
-    this._networkNode = new TopologyNetworkNode(config?.networkConfig);
+    this._networkNode = new TopologyNetworkNode(config?.network_config);
     this._objectStore = new TopologyObjectStore();
   }
 

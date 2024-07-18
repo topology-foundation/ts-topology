@@ -10,17 +10,20 @@ import { createLibp2p } from "libp2p";
 
 import relayerJson from "./peer-id-relayer.js";
 import { autoNAT } from "@libp2p/autonat";
+import { TopologyNetworkNodeConfig } from "./node.js";
 
 // TODO:
 //  - remove the peer-id-relayer in favor of static configs
 //  - create a "relay" mode that can be activated in the main node.ts logic
 //  - improve the circuit-relay setup
-export const createRelayNode = async () => {
+export const createRelayNode = async (config?: TopologyNetworkNodeConfig) => {
   const idRelayer = await createFromJSON(relayerJson);
   const node = await createLibp2p({
     peerId: idRelayer,
     addresses: {
-      listen: ["/ip4/0.0.0.0/tcp/50000/ws", "/ip4/0.0.0.0/tcp/50001"],
+      listen: config
+        ? config.addresses
+        : ["/ip4/0.0.0.0/tcp/50000/ws", "/ip4/0.0.0.0/tcp/50001"],
     },
     connectionEncryption: [noise()],
     peerDiscovery: [
