@@ -1,6 +1,6 @@
 {
   "name": "@topology-foundation/crdt",
-  "version": "0.0.20",
+  "version": "0.0.22-2",
   "license": "MIT",
   "repository": {
     "type": "git",
