@@ -1,3 +1,2 @@
 #!/bin/bash
-yarn
-exec yarn run "$@"
+exec yarn cli "$@"

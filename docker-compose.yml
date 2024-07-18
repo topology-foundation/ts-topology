@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 50000:50000
-    command: relay
+    command: -m relay
 
 volumes:
   ssl_data:
