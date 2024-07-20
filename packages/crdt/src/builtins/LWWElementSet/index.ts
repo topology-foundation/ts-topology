@@ -1,5 +1,3 @@
-import { GSet } from "../GSet/index.js";
-
 interface Element {
     bias: Bias,
     timestamp: number
