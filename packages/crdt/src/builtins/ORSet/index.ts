@@ -14,6 +14,17 @@ export class ORSet<T> {
         this._tombstone = tombstone;
     }
 
+    lookup(element: T): boolean {
+        for(let elem of this._elements) {
+            if(elem.element === element) {
+                if(!this._tombstone.has(elem)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     add(element: T): void {
         let tag = uuidv4();
         this._elements.add({ element, tag });
@@ -45,9 +56,21 @@ export class ORSet<T> {
 
     //check if its this way
     merge(peerSet: ORSet<T>): void {
-        this._elements = new Set<ElementTuple<T>>([...this._elements, ...peerSet.elements()]);
+        
+        // E \ peerSet.T
+        this._elements.forEach( elem => {
+            if(peerSet.tombstone().has(elem)) {
+                this._elements.delete(elem);
+            }
+        });
+
+        // peerSet.E \ T 
+        peerSet.elements().forEach( elem => {
+            if(!this._tombstone.has(elem)) {
+                this._elements.add(elem);
+            }
+        });
+
         this._tombstone = new Set<ElementTuple<T>>([...this._tombstone, ...peerSet.tombstone()]);
     }
-
-
 }
