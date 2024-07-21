@@ -57,13 +57,13 @@ async function paint_pixel(pixel: HTMLDivElement) {
     random_int(256),
     random_int(256),
   ];
-  canvasCRO.paint(node.getPeerId(), [x, y], painting);
+  canvasCRO.paint(node.networkNode.peerId, [x, y], painting);
   const [r, g, b] = canvasCRO.pixel(x, y).color();
   pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 
   node.updateObject(
     canvasCRO,
-    `paint(${node.getPeerId()}, [${[x, y]}], [${painting}])`,
+    `paint(${node.networkNode.peerId}, [${[x, y]}], [${painting}])`,
   );
 }
 
@@ -72,17 +72,17 @@ async function init() {
 
   node.addCustomGroupMessageHandler((e) => {
     handleCanvasMessages(canvasCRO, e);
-    peers = node.getPeers();
-    discoveryPeers = node.getPeersPerGroup("topology::discovery");
+    peers = node.networkNode.getAllPeers();
+    discoveryPeers = node.networkNode.getGroupPeers("topology::discovery");
     if (canvasCRO) {
-      objectPeers = node.getPeersPerGroup(canvasCRO.getObjectId());
+      objectPeers = node.networkNode.getGroupPeers(canvasCRO.getObjectId());
     }
     render();
   });
 
   let create_button = <HTMLButtonElement>document.getElementById("create");
   create_button.addEventListener("click", () => {
-    canvasCRO = new Canvas(node.getPeerId(), 5, 10);
+    canvasCRO = new Canvas(node.networkNode.peerId, 5, 10);
     node.createObject(canvasCRO);
 
     (<HTMLSpanElement>document.getElementById("canvasId")).innerText =
@@ -104,11 +104,14 @@ async function init() {
           y["red"] = Object.assign(new GCounter({}), y["red"]);
           y["green"] = Object.assign(new GCounter({}), y["green"]);
           y["blue"] = Object.assign(new GCounter({}), y["blue"]);
-          return Object.assign(new Pixel(node.getPeerId()), y);
+          return Object.assign(new Pixel(node.networkNode.peerId), y);
         }),
       );
 
-      canvasCRO = Object.assign(new Canvas(node.getPeerId(), 0, 0), object);
+      canvasCRO = Object.assign(
+        new Canvas(node.networkNode.peerId, 0, 0),
+        object,
+      );
 
       (<HTMLSpanElement>document.getElementById("canvasId")).innerText = croId;
       render();
