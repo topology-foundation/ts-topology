@@ -16,16 +16,20 @@ async function startRelay(config?: TopologyNodeConfig) {
   }
 }
 
-program.parse(process.argv);
-const opts = program.opts();
+const run = () => {
+  program.parse(process.argv);
+  const opts = program.opts();
 
-let config: TopologyNodeConfig | undefined;
-if (opts.config) {
-  config = JSON.parse(fs.readFileSync(opts.config, "utf8"));
-}
+  let config: TopologyNodeConfig | undefined;
+  if (opts.config) {
+    config = JSON.parse(fs.readFileSync(opts.config, "utf8"));
+  }
 
-if (opts.mode === "node") {
-  startNode(config);
-} else if (opts.mode === "relay") {
-  startRelay(config);
-}
+  if (opts.mode === "node") {
+    startNode(config);
+  } else if (opts.mode === "relay") {
+    startRelay(config);
+  }
+};
+
+run();

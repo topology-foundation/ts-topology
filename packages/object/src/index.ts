@@ -1,6 +1,7 @@
 import * as crypto from "crypto";
 
 export abstract class TopologyObject {
+  // TODO generate functions from the abi
   private abi?: string;
   private id?: string;
 

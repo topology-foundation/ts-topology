@@ -9,6 +9,9 @@ import { TopologyObject } from "@topology-foundation/object";
 import { TopologyObjectStore } from "./store";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
+import { OPERATIONS } from "./operations.js";
+
+export * from "./operations.js";
 
 // snake_casing to match the JSON config
 export interface TopologyNodeConfig {
@@ -17,26 +20,20 @@ export interface TopologyNodeConfig {
 
 export class TopologyNode {
   private _config?: TopologyNodeConfig;
-  private _networkNode: TopologyNetworkNode;
   private _objectStore: TopologyObjectStore;
+
+  networkNode: TopologyNetworkNode;
 
   constructor(config?: TopologyNodeConfig) {
     this._config = config;
-    this._networkNode = new TopologyNetworkNode(config?.network_config);
+    this.networkNode = new TopologyNetworkNode(config?.network_config);
     this._objectStore = new TopologyObjectStore();
   }
 
   async start(): Promise<void> {
-    await this._networkNode.start();
+    await this.networkNode.start();
 
-    this._networkNode.addGroupMessageHandler((e) => {
-      if (e.detail.msg.topic === "_peer-discovery._p2p._pubsub") return;
-      // TODO: add base handler here after July demo
-      // send the events to the app handler
-      // const message = JSON.parse(new TextDecoder().decode(e.detail.data));
-    });
-
-    this._networkNode.addMessageHandler(
+    this.networkNode.addMessageHandler(
       ["/topology/message/0.0.1"],
       async ({ stream }) => {
         let input = await streamToString(stream);
@@ -53,7 +50,7 @@ export class TopologyNode {
               "type": "object",
               "data": [${uint8ArrayFromString(JSON.stringify(object))}]
             }`;
-            await this._networkNode.sendMessage(
+            await this.networkNode.sendMessage(
               message["sender"],
               [<string>stream.protocol],
               object_message,
@@ -76,7 +73,7 @@ export class TopologyNode {
               "type": "object_merge",
               "data": [${uint8ArrayFromString(JSON.stringify(object))}]
             }`;
-            await this._networkNode.sendMessage(
+            await this.networkNode.sendMessage(
               message["sender"],
               [<string>stream.protocol],
               object_message,
@@ -101,35 +98,31 @@ export class TopologyNode {
     );
   }
 
-  getPeerId() {
-    return this._networkNode.peerId;
-  }
-
   createObject(object: TopologyObject) {
     const objectId = object.getObjectId();
-    this._networkNode.subscribe(objectId);
+    this.networkNode.subscribe(objectId);
     this._objectStore.put(objectId, object);
   }
 
   /// Subscribe to the object's PubSub group
   /// and fetch it from a peer
   async subscribeObject(objectId: string, fetch = false, peerId = "") {
-    this._networkNode.subscribe(objectId);
+    this.networkNode.subscribe(objectId);
     if (!fetch) return;
     const message = `{
       "type": "object_fetch",
-      "sender": "${this._networkNode.peerId}",
+      "sender": "${this.networkNode.peerId}",
       "data": [${uint8ArrayFromString(objectId)}]
     }`;
 
     if (peerId === "") {
-      await this._networkNode.sendGroupMessageRandomPeer(
+      await this.networkNode.sendGroupMessageRandomPeer(
         objectId,
         ["/topology/message/0.0.1"],
         message,
       );
     } else {
-      await this._networkNode.sendMessage(
+      await this.networkNode.sendMessage(
         peerId,
         ["/topology/message/0.0.1"],
         message,
@@ -140,31 +133,23 @@ export class TopologyNode {
   async syncObject(objectId: string, peerId = "") {
     const message = `{
       "type": "object_sync",
-      "sender": "${this._networkNode.peerId}",
+      "sender": "${this.networkNode.peerId}",
       "data": [${uint8ArrayFromString(objectId)}]
     }`;
 
     if (peerId === "") {
-      await this._networkNode.sendGroupMessageRandomPeer(
+      await this.networkNode.sendGroupMessageRandomPeer(
         objectId,
         ["/topology/message/0.0.1"],
         message,
       );
     } else {
-      await this._networkNode.sendMessage(
+      await this.networkNode.sendMessage(
         peerId,
         ["/topology/message/0.0.1"],
         message,
       );
     }
-  }
-
-  getPeers() {
-    return this._networkNode.getAllPeers();
-  }
-
-  getPeersPerGroup(group: string) {
-    return this._networkNode.getGroupPeers(group);
   }
 
   /// Get the object from the local Object Store
@@ -179,27 +164,27 @@ export class TopologyNode {
       "type": "object_update",
       "data": [${uint8ArrayFromString(update_data)}]
     }`;
-    this._networkNode.broadcastMessage(
+    this.networkNode.broadcastMessage(
       object.getObjectId(),
       uint8ArrayFromString(message),
     );
   }
 
   addCustomGroup(group: string) {
-    this._networkNode.subscribe(group);
+    this.networkNode.subscribe(group);
   }
 
   sendGroupMessage(group: string, message: Uint8Array) {
-    this._networkNode.broadcastMessage(group, message);
+    this.networkNode.broadcastMessage(group, message);
   }
 
   addCustomGroupMessageHandler(
     handler: EventHandler<CustomEvent<GossipsubMessage>>,
   ) {
-    this._networkNode.addGroupMessageHandler(handler);
+    this.networkNode.addGroupMessageHandler(handler);
   }
 
   addCustomMessageHandler(protocol: string | string[], handler: StreamHandler) {
-    this._networkNode.addMessageHandler(protocol, handler);
+    this.networkNode.addMessageHandler(protocol, handler);
   }
 }
