@@ -5,10 +5,15 @@ import {
 } from "@chainsafe/libp2p-gossipsub";
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
-import { circuitRelayTransport } from "@libp2p/circuit-relay-v2";
+import {
+  circuitRelayServer,
+  circuitRelayTransport,
+} from "@libp2p/circuit-relay-v2";
+import { generateKeyPairFromSeed } from "@libp2p/crypto/keys";
 import { dcutr } from "@libp2p/dcutr";
 import { identify } from "@libp2p/identify";
 import { EventHandler, PubSub, Stream, StreamHandler } from "@libp2p/interface";
+import { createFromPrivKey } from "@libp2p/peer-id-factory";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
@@ -17,11 +22,15 @@ import { Libp2p, createLibp2p } from "libp2p";
 import { stringToStream } from "./stream.js";
 import { bootstrap } from "@libp2p/bootstrap";
 import { webTransport } from "@libp2p/webtransport";
+import { autoNAT } from "@libp2p/autonat";
+import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 
 // snake_casing to match the JSON config
 export interface TopologyNetworkNodeConfig {
-  addresses: string[];
-  bootstrap_peers: string[];
+  addresses?: string[];
+  bootstrap?: boolean;
+  bootstrap_peers?: string[];
+  private_key_seed?: string;
 }
 
 export class TopologyNetworkNode {
@@ -36,9 +45,22 @@ export class TopologyNetworkNode {
   }
 
   async start() {
+    let privateKey;
+    if (this._config?.private_key_seed) {
+      let tmp = this._config.private_key_seed.padEnd(32, "0");
+      privateKey = await generateKeyPairFromSeed(
+        "Ed25519",
+        uint8ArrayFromString(tmp),
+      );
+    }
+
     this._node = await createLibp2p({
+      peerId: privateKey ? await createFromPrivKey(privateKey) : undefined,
       addresses: {
-        listen: this._config ? this._config.addresses : ["/webrtc"],
+        listen:
+          this._config && this._config.addresses
+            ? this._config.addresses
+            : ["/webrtc"],
       },
       connectionEncryption: [noise()],
       connectionGater: {
@@ -52,19 +74,21 @@ export class TopologyNetworkNode {
           topics: ["topology::discovery"],
         }),
         bootstrap({
-          list: this._config
-            ? this._config.bootstrap_peers
-            : [
-                "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-              ],
+          list:
+            this._config && this._config.bootstrap_peers
+              ? this._config.bootstrap_peers
+              : [
+                  "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+                ],
         }),
       ],
       services: {
+        autonat: autoNAT(),
+        dcutr: dcutr(),
         identify: identify(),
         pubsub: gossipsub({
           allowPublishToZeroTopicPeers: true,
         }),
-        dcutr: dcutr(),
       },
       streamMuxers: [yamux()],
       transports: [
@@ -78,6 +102,15 @@ export class TopologyNetworkNode {
         webTransport(),
       ],
     });
+
+    if (this._config?.bootstrap)
+      this._node.services.relay = circuitRelayServer();
+
+    if (!this._config?.bootstrap) {
+      for (const addr of this._config?.bootstrap_peers || []) {
+        this._node.dial(multiaddr(addr));
+      }
+    }
 
     this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
     this.peerId = this._node.peerId.toString();

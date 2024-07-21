@@ -8,14 +8,6 @@ async function startNode(config?: TopologyNodeConfig) {
   node.start();
 }
 
-async function startRelay(config?: TopologyNodeConfig) {
-  const node = await createRelayNode(config?.network_config);
-  console.log("peer_id:", node.peerId.toString());
-  for (let ma of node.getMultiaddrs()) {
-    console.log(ma);
-  }
-}
-
 const run = () => {
   program.parse(process.argv);
   const opts = program.opts();
@@ -25,11 +17,7 @@ const run = () => {
     config = JSON.parse(fs.readFileSync(opts.config, "utf8"));
   }
 
-  if (opts.mode === "node") {
-    startNode(config);
-  } else if (opts.mode === "relay") {
-    startRelay(config);
-  }
+  startNode(config);
 };
 
 run();
