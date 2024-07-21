@@ -1,6 +1,5 @@
 import { program } from "./cli";
 import { TopologyNode, TopologyNodeConfig } from ".";
-import { createRelayNode } from "@topology-foundation/network";
 import fs from "fs";
 
 async function startNode(config?: TopologyNodeConfig) {
