@@ -1,5 +1,5 @@
-/* Object and P2P Network messages */
-export enum MESSAGES {
+/* Object and P2P Network operations */
+export enum OPERATIONS {
   // TODO: Confirm if this needs a network message
   // who to send to?
   /* Create a new CRO */
