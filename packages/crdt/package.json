@@ -25,8 +25,5 @@
     "clean": "rm -rf dist/ node_modules/",
     "prepack": "tsc -b",
     "test": "vitest"
-  },
-  "dependencies": {
-    "uuid": "^10.0.0"
   }
 }

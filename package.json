@@ -19,6 +19,7 @@
   "devDependencies": {
     "@release-it-plugins/workspaces": "^4.2.0",
     "@types/node": "^20.14.10",
+    "@types/uuid": "^10.0.0",
     "release-it": "^17.6.0",
     "typedoc": "^0.26.4",
     "typescript": "^5.4.5",
