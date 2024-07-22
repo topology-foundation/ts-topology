@@ -1,5 +1,5 @@
 {
-  "name": "topology-example",
+  "name": "topology-example-chat",
   "version": "1.0.0",
   "description": "Topology Protocol Chat Exmaple",
   "main": "src/index.ts",
