@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Topology Protocol Chat Exmaple",
   "main": "src/index.ts",
-  "repository": "https://github.com/JanLewDev/TopologyExample.git",
-  "author": "Jan Lewandowski",
+  "repository": "https://github.com/topology-foundation/ts-topology.git",
   "license": "MIT",
   "dependencies": {
     "@topology-foundation/crdt": "0.0.22",
