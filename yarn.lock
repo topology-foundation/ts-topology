@@ -700,15 +700,15 @@
     wherearewe "^2.0.1"
     ws "^8.17.0"
 
-"@libp2p/webtransport@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@libp2p/webtransport/-/webtransport-4.1.1.tgz#791da4d720f6387e99d2b65c587a9cca132b03b0"
-  integrity sha512-bissN51kOnSDOazoPfvOTPRr7tOGp8VeqzYbnbynGHbbB+LcgTUGkHzjAdYcbcF/vgz0ITrLYPUQaPaoPHrwag==
+"@libp2p/webtransport@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@libp2p/webtransport/-/webtransport-4.1.2.tgz#c0c4ca0107f19f4fba3afec79cce3132769b771e"
+  integrity sha512-TAKb+dKxVxA8mNFsqio/gJSkK2jvZbKZECSZnHWMehpzQ8x8FFfGSK5ogy99Y1LhuC206e4YaDY/FocrFgNcfA==
   dependencies:
     "@chainsafe/libp2p-noise" "^15.0.0"
-    "@libp2p/interface" "^1.6.0"
-    "@libp2p/peer-id" "^4.2.0"
-    "@libp2p/utils" "^5.4.5"
+    "@libp2p/interface" "^1.6.1"
+    "@libp2p/peer-id" "^4.2.1"
+    "@libp2p/utils" "^5.4.6"
     "@multiformats/multiaddr" "^12.2.3"
     "@multiformats/multiaddr-matcher" "^1.2.1"
     it-stream-types "^2.0.1"
