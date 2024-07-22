@@ -27,7 +27,6 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@topology-foundation/crdt": "^0.0.22-2",
     "uuid": "^10.0.0"
   }
 }
