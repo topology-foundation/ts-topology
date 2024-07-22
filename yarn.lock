@@ -682,13 +682,13 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/websockets@^8.1.1":
-  version "8.1.1"
-  resolved "https://registry.yarnpkg.com/@libp2p/websockets/-/websockets-8.1.1.tgz#09d8e7dbdbee41ad0c341d290688c50ca6e3faf7"
-  integrity sha512-Iwh+bZnDlft5rVEfJCddtUFRYRT2OARUm60UuD10bYndwnJM3f/kMWXPo0EoE3nULpejOS5VCcR6/Ipm3PIUiw==
+"@libp2p/websockets@^8.1.2":
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@libp2p/websockets/-/websockets-8.1.2.tgz#1cbabca6a9f0a70758f11800e617f3307afa3c67"
+  integrity sha512-URq0udV+QDRzB31uNKfH/PAte4gdP5pYiZSJZvJ99YZudERTjjjU0+ElqEy3qwm6MX6w1bgf/muld6X0cGWfBg==
   dependencies:
-    "@libp2p/interface" "^1.6.0"
-    "@libp2p/utils" "^5.4.5"
+    "@libp2p/interface" "^1.6.1"
+    "@libp2p/utils" "^5.4.6"
     "@multiformats/mafmt" "^12.1.6"
     "@multiformats/multiaddr" "^12.2.3"
     "@multiformats/multiaddr-to-uri" "^10.0.1"
