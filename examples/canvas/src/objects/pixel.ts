@@ -1,20 +1,20 @@
-import { GCounter, IGCounter } from "@topology-foundation/crdt";
+import { GCounter } from "@topology-foundation/crdt";
 import { TopologyObject } from "@topology-foundation/object";
 
 export interface IPixel extends TopologyObject {
-  red: IGCounter;
-  green: IGCounter;
-  blue: IGCounter;
+  red: GCounter;
+  green: GCounter;
+  blue: GCounter;
   color(): [number, number, number];
   paint(nodeId: string, rgb: [number, number, number]): void;
-  counters(): [IGCounter, IGCounter, IGCounter];
+  counters(): [GCounter, GCounter, GCounter];
   merge(peerPixel: IPixel): void;
 }
 
 export class Pixel extends TopologyObject implements IPixel {
-  red: IGCounter;
-  green: IGCounter;
-  blue: IGCounter;
+  red: GCounter;
+  green: GCounter;
+  blue: GCounter;
 
   constructor(peerId: string) {
     super(peerId);
@@ -37,7 +37,7 @@ export class Pixel extends TopologyObject implements IPixel {
     this.blue.increment(nodeId, rgb[2]);
   }
 
-  counters(): [IGCounter, IGCounter, IGCounter] {
+  counters(): [GCounter, GCounter, GCounter] {
     return [this.red, this.green, this.blue];
   }
 

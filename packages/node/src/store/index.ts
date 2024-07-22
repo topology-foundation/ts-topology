@@ -1,7 +1,7 @@
 import { TopologyObject } from "@topology-foundation/object";
 
 export class TopologyObjectStore {
-  // TODO: should be abstracted in handling multible types of storage
+  // TODO: should be abstracted in handling multiple types of storage
   private _store: Map<string, TopologyObject>;
 
   constructor() {

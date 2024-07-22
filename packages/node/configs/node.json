@@ -2,7 +2,8 @@
   "network_config": {
     "addresses": ["/webrtc"],
     "bootstrap_peers": [
-      "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP"
-    ]
+      "/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ"
+    ],
+    "private_key_seed": "node"
   }
 }
