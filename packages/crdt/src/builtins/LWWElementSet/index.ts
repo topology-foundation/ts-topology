@@ -37,11 +37,11 @@ export class LWWElementSet<T> {
         this._adds.set(element, { timestamp, bias });
     }
 
-    adds(): Map<T, Element> {
+    getAdds(): Map<T, Element> {
         return this._adds;
     }
 
-    removes(): Map<T, Element> {
+    getRemoves(): Map<T, Element> {
         return this._removes;
     }
 

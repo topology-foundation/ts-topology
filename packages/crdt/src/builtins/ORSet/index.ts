@@ -15,9 +15,9 @@ export class ORSet<T> {
     }
 
     lookup(element: T): boolean {
-        for(let elem of this._elements) {
-            if(elem.element === element) {
-                if(!this._tombstone.has(elem)) {
+        for (let elem of this._elements) {
+            if (elem.element === element) {
+                if (!this._tombstone.has(elem)) {
                     return true;
                 }
             }
@@ -31,19 +31,19 @@ export class ORSet<T> {
     }
 
     remove(element: T): void {
-        for(let tuple of this._elements.values()) {
-            if(tuple.element === element) {
+        for (let tuple of this._elements.values()) {
+            if (tuple.element === element) {
                 this._tombstone.add(tuple); //adds element to the tombstone
                 this._elements.delete(tuple); //removes element from the elements
             }
         }
     }
 
-    elements(): Set<ElementTuple<T>> {
+    getElements(): Set<ElementTuple<T>> {
         return this._elements;
     }
 
-    tombstone(): Set<ElementTuple<T>> {
+    getTombstone(): Set<ElementTuple<T>> {
         return this._tombstone;
     }
 
@@ -56,21 +56,21 @@ export class ORSet<T> {
 
     //check if its this way
     merge(peerSet: ORSet<T>): void {
-        
+
         // E \ peerSet.T
-        this._elements.forEach( elem => {
-            if(peerSet.tombstone().has(elem)) {
+        this._elements.forEach(elem => {
+            if (peerSet.getTombstone().has(elem)) {
                 this._elements.delete(elem);
             }
         });
 
         // peerSet.E \ T 
-        peerSet.elements().forEach( elem => {
-            if(!this._tombstone.has(elem)) {
+        peerSet.getElements().forEach(elem => {
+            if (!this._tombstone.has(elem)) {
                 this._elements.add(elem);
             }
         });
 
-        this._tombstone = new Set<ElementTuple<T>>([...this._tombstone, ...peerSet.tombstone()]);
+        this._tombstone = new Set<ElementTuple<T>>([...this._tombstone, ...peerSet.getTombstone()]);
     }
 }
