@@ -69,6 +69,6 @@ jobs:
           cd packages/node
           yarn install --frozen-lockfile
           yarn build
-          cd ../../examples/canvas
+          cd ../../examples/chat
           yarn install --frozen-lockfile
           yarn build
