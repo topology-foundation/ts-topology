@@ -351,13 +351,13 @@
     protons-runtime "^5.4.0"
     uint8arraylist "^2.4.8"
 
-"@libp2p/bootstrap@^10.1.0":
-  version "10.1.1"
-  resolved "https://registry.yarnpkg.com/@libp2p/bootstrap/-/bootstrap-10.1.1.tgz#cc8d9ed18ce1fc7af7f4b6d222390c83b39834b6"
-  integrity sha512-pm7LyIQnKjGjmLq89IvwRWJIkB90bUspVl3WMTq7boPeZ3Keo+RlNFSJHL5YtDZa/Jvu/iQR+SVxSmjrKdzn8w==
+"@libp2p/bootstrap@^10.1.2":
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/@libp2p/bootstrap/-/bootstrap-10.1.2.tgz#dae2a2061af16755a14879b58a3f5930466e1a42"
+  integrity sha512-FTM4hZTSiIBOtB9CtCQfpFfwWJva6+l3phR9eRa5gvsEdJdiUCFKe6VFHqwnsnRN1hobcLUWYi2AN6+0OdPdXw==
   dependencies:
-    "@libp2p/interface" "^1.6.0"
-    "@libp2p/peer-id" "^4.2.0"
+    "@libp2p/interface" "^1.6.1"
+    "@libp2p/peer-id" "^4.2.1"
     "@multiformats/mafmt" "^12.1.6"
     "@multiformats/multiaddr" "^12.2.3"
 
@@ -414,15 +414,15 @@
     protons-runtime "^5.4.0"
     uint8arraylist "^2.4.8"
 
-"@libp2p/identify@^2.0.2":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@libp2p/identify/-/identify-2.1.1.tgz#f01ea4ff5faa3545358354766509a08717356637"
-  integrity sha512-vNaz2sKJh7wzNdDnkDn9RBPL7WhotGd78ogkDmr3N5J8V50wSXjA556tHa8eO5dqtyTTHZ0TTa6C0BPW/vxGng==
+"@libp2p/identify@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@libp2p/identify/-/identify-2.1.2.tgz#85a69eb341d893a767d81b3b6138790278109fb9"
+  integrity sha512-neLNz6WhYAxDHgsb/LGyZF9i+nE4E+dk30/5gFxc/876oVwgc1IqSs2eEEEx9t0l2ToeHADScBM+bHrFsLIk3g==
   dependencies:
-    "@libp2p/interface" "^1.6.0"
-    "@libp2p/interface-internal" "^1.3.0"
-    "@libp2p/peer-id" "^4.2.0"
-    "@libp2p/peer-record" "^7.0.21"
+    "@libp2p/interface" "^1.6.1"
+    "@libp2p/interface-internal" "^1.3.1"
+    "@libp2p/peer-id" "^4.2.1"
+    "@libp2p/peer-record" "^7.0.22"
     "@multiformats/multiaddr" "^12.2.3"
     "@multiformats/multiaddr-matcher" "^1.2.1"
     it-drain "^3.0.7"
@@ -501,15 +501,15 @@
     interface-datastore "^8.2.11"
     multiformats "^13.1.0"
 
-"@libp2p/mdns@^10.1.1":
-  version "10.1.1"
-  resolved "https://registry.yarnpkg.com/@libp2p/mdns/-/mdns-10.1.1.tgz#92a606144ad968e4fc16489711db308c1484138e"
-  integrity sha512-XtOv8EWx/nSFrMjFEAUjxt6OO74hny6miEovyTK6XoX7f0iWss307Umro362RyumsC6UNt7J5IXsMQ/MOAxLog==
+"@libp2p/mdns@^10.1.2":
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/@libp2p/mdns/-/mdns-10.1.2.tgz#39629cbebf98c0eba7e9f48620e29dbf2a24ca20"
+  integrity sha512-OmKa6RnFt2SDVoBK6d/gUUF5AC5+IeL5poBfvDh90ihqZihEukKWWixaiPcmLRt375sMEkGqeY0Jk5vuy+XUsA==
   dependencies:
-    "@libp2p/interface" "^1.6.0"
-    "@libp2p/interface-internal" "^1.3.0"
-    "@libp2p/peer-id" "^4.2.0"
-    "@libp2p/utils" "^5.4.5"
+    "@libp2p/interface" "^1.6.1"
+    "@libp2p/interface-internal" "^1.3.1"
+    "@libp2p/peer-id" "^4.2.1"
+    "@libp2p/utils" "^5.4.6"
     "@multiformats/multiaddr" "^12.2.3"
     "@types/multicast-dns" "^7.2.4"
     dns-packet "^5.6.1"
@@ -560,7 +560,7 @@
     multiformats "^13.1.0"
     uint8arrays "^5.1.0"
 
-"@libp2p/peer-record@^7.0.21", "@libp2p/peer-record@^7.0.22":
+"@libp2p/peer-record@^7.0.22":
   version "7.0.22"
   resolved "https://registry.yarnpkg.com/@libp2p/peer-record/-/peer-record-7.0.22.tgz#d5af9e5208646b5dca2d232618dbd13823dd03cb"
   integrity sha512-7QnpzENWtuU75E1L9xANmNAoiOMElMR5DZUZdXouvs7Yw0hGq1xI2MzqSH8TYISqjsDvE5SwKod6YQX0vCfoXw==
@@ -682,13 +682,13 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/websockets@^8.1.1":
-  version "8.1.1"
-  resolved "https://registry.yarnpkg.com/@libp2p/websockets/-/websockets-8.1.1.tgz#09d8e7dbdbee41ad0c341d290688c50ca6e3faf7"
-  integrity sha512-Iwh+bZnDlft5rVEfJCddtUFRYRT2OARUm60UuD10bYndwnJM3f/kMWXPo0EoE3nULpejOS5VCcR6/Ipm3PIUiw==
+"@libp2p/websockets@^8.1.2":
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@libp2p/websockets/-/websockets-8.1.2.tgz#1cbabca6a9f0a70758f11800e617f3307afa3c67"
+  integrity sha512-URq0udV+QDRzB31uNKfH/PAte4gdP5pYiZSJZvJ99YZudERTjjjU0+ElqEy3qwm6MX6w1bgf/muld6X0cGWfBg==
   dependencies:
-    "@libp2p/interface" "^1.6.0"
-    "@libp2p/utils" "^5.4.5"
+    "@libp2p/interface" "^1.6.1"
+    "@libp2p/utils" "^5.4.6"
     "@multiformats/mafmt" "^12.1.6"
     "@multiformats/multiaddr" "^12.2.3"
     "@multiformats/multiaddr-to-uri" "^10.0.1"
@@ -700,15 +700,15 @@
     wherearewe "^2.0.1"
     ws "^8.17.0"
 
-"@libp2p/webtransport@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@libp2p/webtransport/-/webtransport-4.1.1.tgz#791da4d720f6387e99d2b65c587a9cca132b03b0"
-  integrity sha512-bissN51kOnSDOazoPfvOTPRr7tOGp8VeqzYbnbynGHbbB+LcgTUGkHzjAdYcbcF/vgz0ITrLYPUQaPaoPHrwag==
+"@libp2p/webtransport@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@libp2p/webtransport/-/webtransport-4.1.2.tgz#c0c4ca0107f19f4fba3afec79cce3132769b771e"
+  integrity sha512-TAKb+dKxVxA8mNFsqio/gJSkK2jvZbKZECSZnHWMehpzQ8x8FFfGSK5ogy99Y1LhuC206e4YaDY/FocrFgNcfA==
   dependencies:
     "@chainsafe/libp2p-noise" "^15.0.0"
-    "@libp2p/interface" "^1.6.0"
-    "@libp2p/peer-id" "^4.2.0"
-    "@libp2p/utils" "^5.4.5"
+    "@libp2p/interface" "^1.6.1"
+    "@libp2p/peer-id" "^4.2.1"
+    "@libp2p/utils" "^5.4.6"
     "@multiformats/multiaddr" "^12.2.3"
     "@multiformats/multiaddr-matcher" "^1.2.1"
     it-stream-types "^2.0.1"
@@ -1052,6 +1052,41 @@
   version "0.23.0"
   resolved "https://registry.yarnpkg.com/@tootallnate/quickjs-emscripten/-/quickjs-emscripten-0.23.0.tgz#db4ecfd499a9765ab24002c3b696d02e6d32a12c"
   integrity sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==
+
+"@topology-foundation/crdt@file:packages/crdt":
+  version "0.0.22"
+
+"@topology-foundation/network@file:packages/network":
+  version "0.0.22"
+  dependencies:
+    "@chainsafe/libp2p-gossipsub" "^13.1.0"
+    "@chainsafe/libp2p-noise" "^15.1.0"
+    "@chainsafe/libp2p-yamux" "^6.0.2"
+    "@libp2p/autonat" "^1.0.0"
+    "@libp2p/bootstrap" "^10.1.0"
+    "@libp2p/circuit-relay-v2" "^1.1.2"
+    "@libp2p/dcutr" "^1.1.0"
+    "@libp2p/identify" "^2.0.2"
+    "@libp2p/interface-pubsub" "^4.0.1"
+    "@libp2p/mdns" "^10.1.1"
+    "@libp2p/pubsub-peer-discovery" "^10.0.2"
+    "@libp2p/webrtc" "^4.1.2"
+    "@libp2p/websockets" "^8.1.1"
+    "@libp2p/webtransport" "^4.1.1"
+    "@multiformats/multiaddr" "^12.3.0"
+    it-pipe "^3.0.1"
+    libp2p "^1.8.1"
+
+"@topology-foundation/node@file:packages/node":
+  version "0.0.22"
+  dependencies:
+    "@topology-foundation/crdt" "0.0.22"
+    "@topology-foundation/network" "0.0.22"
+    "@topology-foundation/object" "0.0.22"
+    commander "^12.1.0"
+
+"@topology-foundation/object@file:packages/object":
+  version "0.0.22"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.11"
