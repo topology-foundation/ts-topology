@@ -15,7 +15,8 @@
       <p>object_peers: <span id="objectPeers"></span></p>
 
       <input id="roomInput" type="text" placeholder="Room ID" />
-      <button id="joinRoom">Join Room</button>
+      <button id="joinRoom">Connect</button>
+      <button id="fetchMessages">Fetch Messages</button>
       <button id="createRoom">Create Room</button>
     </div>
 
@@ -24,7 +25,7 @@
       style="
         overflow-y: scroll;
         min-height: 200px;
-        max-height: 600px;
+        max-height: 60vh;
         width: 100%;
       "
     >
@@ -35,6 +36,15 @@
       <input id="messageInput" type="text" placeholder="Message" />
       <button id="sendMessage">Send</button>
     </div>
+
+    <script>
+      var input = document.getElementById("messageInput");
+      input.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          document.getElementById("sendMessage").click();
+        }
+      });
+    </script>
 
     <script src="./static/bundle/script.js"></script>
   </body>

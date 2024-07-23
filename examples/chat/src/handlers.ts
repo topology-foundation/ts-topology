@@ -5,6 +5,7 @@ export const handleChatMessages = (chat: IChat, e: any) => {
     if (e.detail.msg.topic === "topology::discovery") return;
     const input = uint8ArrayToString(e.detail.msg.data);
     const message = JSON.parse(input);
+    console.log("Received message!: ", message);
     switch (message["type"]) {
         case "object_update": {
             const fn = uint8ArrayToString(new Uint8Array(message["data"]));

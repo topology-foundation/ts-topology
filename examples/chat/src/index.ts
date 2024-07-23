@@ -1,6 +1,7 @@
 import { TopologyNode } from "@topology-foundation/node";
 import { Chat, IChat } from "./objects/chat";
 import { handleChatMessages } from "./handlers";
+import { GSet } from "@topology-foundation/crdt";
 
 const node = new TopologyNode();
 // CRO = Conflict-free Replicated Object
@@ -81,17 +82,26 @@ async function main() {
     button_connect.addEventListener("click", async () => {
         let input: HTMLInputElement = <HTMLInputElement>document.getElementById("roomInput");
         let objectId = input.value;
-        input.value = "";
         if(!objectId){
             alert("Please enter a room id");
             return;
         }
-        try {
-            await node.subscribeObject(objectId, true);
+        await node.subscribeObject(objectId, true);
+    });
 
-            let object: any = node.getObject(objectId);
+    let button_fetch = <HTMLButtonElement>document.getElementById("fetchMessages");
+    button_fetch.addEventListener("click", async () => {
+        let input: HTMLInputElement = <HTMLInputElement>document.getElementById("roomInput");
+        let objectId = input.value;
+        try {
             
+            let object: any = node.getObject(objectId);
+            console.log("Object: ", object);
+            
+            object["chat"] = Object.assign(new GSet<string>(new Set<string>()), object["chat"]);
+    
             chatCRO = Object.assign(new Chat(node.networkNode.peerId), object);
+            
             (<HTMLButtonElement>document.getElementById("chatId")).innerHTML = objectId;
             render();
         } catch (e) {
@@ -110,6 +120,8 @@ async function main() {
             return;
         }
         await sendMessage(message);
+        const element_chat = <HTMLDivElement>document.getElementById("chat");
+        element_chat.scrollTop = element_chat.scrollHeight;
     });
 }
 
