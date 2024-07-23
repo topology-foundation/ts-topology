@@ -1,4 +1,5 @@
 import * as crypto from "crypto";
+import * as protobuf from "protobufjs";
 
 export abstract class TopologyObject {
   // TODO generate functions from the abi
@@ -6,6 +7,11 @@ export abstract class TopologyObject {
   private id?: string;
 
   constructor(peerId: string) {
+    protobuf.load("abi.proto", (err, _) => {
+      if (err) {
+        throw err;
+      }
+    });
     this.abi = "";
 
     // id = sha256(abi, peer_id, random_nonce)
