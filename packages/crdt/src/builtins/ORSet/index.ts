@@ -27,9 +27,9 @@ export class ORSet<T> {
 
     add(element: T): void {
     
-        let c:number = this._summary.get(this.replicaId)! + 1;
-        this._summary.set(this.replicaId, c);
-        this._elements.add({ element, tag: c, replicaId: this.replicaId });
+        let tag:number = this._summary.get(this.replicaId)! + 1;
+        this._summary.set(this.replicaId, tag);
+        this._elements.add({ element, tag, replicaId: this.replicaId });
         
     }
 
