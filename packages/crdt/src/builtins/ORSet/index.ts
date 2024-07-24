@@ -1,39 +1,41 @@
-import { v4 as uuidv4 } from 'uuid';
-
 interface ElementTuple<T> {
     element: T,
-    tag: string
+    tag: number,
+    replicaId: string
 }
 
 export class ORSet<T> {
     private _elements: Set<ElementTuple<T>>;
-    private _tombstone: Set<ElementTuple<T>>;
-
-    constructor(elements: Set<ElementTuple<T>>, tombstone: Set<ElementTuple<T>>) {
+    private _summary: Map<string, number>;
+    public replicaId: string;
+  
+    constructor(elements: Set<ElementTuple<T>>, replicaId: string) {
         this._elements = elements;
-        this._tombstone = tombstone;
+        this.replicaId = replicaId;
+        this._summary = new Map<string, number>([[this.replicaId, 0]]);
+        
     }
 
     lookup(element: T): boolean {
         for (let elem of this._elements) {
             if (elem.element === element) {
-                if (!this._tombstone.has(elem)) {
-                    return true;
-                }
+                return true;
             }
         }
         return false;
     }
 
     add(element: T): void {
-        let tag = uuidv4();
-        this._elements.add({ element, tag });
+    
+        let c:number = this._summary.get(this.replicaId)! + 1;
+        this._summary.set(this.replicaId, c);
+        this._elements.add({ element, tag: c, replicaId: this.replicaId });
+        
     }
 
     remove(element: T): void {
         for (let tuple of this._elements.values()) {
             if (tuple.element === element) {
-                this._tombstone.add(tuple); //adds element to the tombstone
                 this._elements.delete(tuple); //removes element from the elements
             }
         }
@@ -43,34 +45,47 @@ export class ORSet<T> {
         return this._elements;
     }
 
-    getTombstone(): Set<ElementTuple<T>> {
-        return this._tombstone;
+    getSummary(): Map<string,number> {
+        return this._summary;
     }
 
+    //here I just compare the elements set
     compare(peerSet: ORSet<T>): boolean {
-        return (
-            this._elements == peerSet._elements &&
-            this._tombstone == peerSet._tombstone
-        );
+        return (this._elements.size == peerSet.getElements().size && 
+            [...this._elements].every((value) => peerSet.getElements().has(value)));
     }
 
-    //check if its this way
     merge(peerSet: ORSet<T>): void {
+       
+        let M = new Set<ElementTuple<T>>();
+        let A = new Set<ElementTuple<T>>();
+        let B = new Set<ElementTuple<T>>();
 
-        // E \ peerSet.T
-        this._elements.forEach(elem => {
-            if (peerSet.getTombstone().has(elem)) {
-                this._elements.delete(elem);
+        // Adds the elements common to the two sets
+        this._elements.forEach((element) => {
+            if(peerSet.getElements().has(element)) {
+                M.add(element);
             }
         });
 
-        // peerSet.E \ T 
-        peerSet.getElements().forEach(elem => {
-            if (!this._tombstone.has(elem)) {
-                this._elements.add(elem);
+        // in the local payload but not recently removed from the remote payload
+        this._elements.forEach((element) => {
+            if(!peerSet.getElements().has(element) && element.tag > peerSet.getSummary().get(element.replicaId)!) {
+                A.add(element);
             }
         });
 
-        this._tombstone = new Set<ElementTuple<T>>([...this._tombstone, ...peerSet.getTombstone()]);
+        //vice-versa
+        peerSet.getElements().forEach((element) => {
+            if(!this._elements.has(element) && element.tag > this._summary.get(element.replicaId)!) {
+                B.add(element);
+            }
+        });
+
+        this._elements = new Set<ElementTuple<T>>([...M,...A,...B]);
+
+        for( let e of peerSet.getSummary().entries()) {
+            this._summary.set(e[0], Math.max(e[1], this._summary.get(e[0])!));
+        }
     }
 }
