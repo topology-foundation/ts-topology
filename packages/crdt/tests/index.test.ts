@@ -1,17 +1,10 @@
 import { describe, test, expect, beforeEach, afterEach } from "vitest";
-import { LWWElementSet } from "../src/builtins/LWWElementSet";
+import { LWWElementSet, Bias } from "../src/builtins/LWWElementSet";
 import { GSet } from "../src/builtins/GSet";
 import { GCounter } from "../src/builtins/GCounter";
 import { PNCounter } from "../src/builtins/PNCounter";
 import { TwoPSet } from "../src/builtins/2PSet";
 import { ORSet, ElementTuple } from "../src/builtins/ORSet";
-
-
-// Bias for LWW-Element-Set
-enum Bias {
-    ADD,
-    REMOVE
-}
 
 const testValues = ["walter", "jesse", "mike"];
 
@@ -257,7 +250,7 @@ describe("LWW-Element-Set Tests", () => {
         });
     });
 
-    test("Add Elements", () => {
+    test("Test Add Elements", () => {
 
         // Check if the sets contain the elements
         testValues.forEach((value) => {
@@ -268,7 +261,7 @@ describe("LWW-Element-Set Tests", () => {
 
     });
 
-    test("Remove Elements", () => {
+    test("Test Remove Elements", () => {
 
         //remove saul from the sets
         set1.remove("saul", Date.now());
@@ -280,7 +273,7 @@ describe("LWW-Element-Set Tests", () => {
         });
     });
 
-    test("Compare Sets", () => {
+    test("Test Compare Sets", () => {
 
         expect(set1.compare(set2)).toBe(true);
         expect(set1.compare(set3)).toBe(true);
@@ -294,36 +287,54 @@ describe("LWW-Element-Set Tests", () => {
 
     });
 
-    test("Merge Sets", () => {
+    describe("Test Merge Elements" , () => {
 
-        // Adding different names to each set
-        set1.add("gustavo", Date.now());
-        set2.add("saul", Date.now());
+        test("Merge Sets", () => {
 
-        expect(set1.compare(set2)).toBe(false);
+            // Adding different names to each set
+            set1.add("gustavo", Date.now());
+            set2.add("saul", Date.now());
+    
+            expect(set1.compare(set2)).toBe(false);
+    
+            set1.merge(set2);
+            set2.merge(set1);
+    
+            expect(set1.compare(set2)).toBe(true);
+    
+        });
 
-        set1.merge(set2);
-        set2.merge(set1);
+        test("Same Element, different Timestamps", () => {
 
-        expect(set1.compare(set2)).toBe(true);
+            const timestamp = Date.now();
+            set1.add("gustavo", timestamp);
+            set2.add("gustavo", timestamp + 5);
+    
+            expect(set1.getAdds().get("gustavo")).toBe(timestamp);
+    
+            set1.merge(set2);
+            set2.merge(set1);
+    
+            expect(set1.getAdds().get("gustavo")).toBe(timestamp + 5);
+            expect(set2.getAdds().get("gustavo")).toBe(timestamp + 5);
+    
+        });
 
+        test("Merge Removal Timestamps", () => {
+
+            const timestamp = Date.now();
+
+            set1.add("gustavo", timestamp);
+            set1.remove("gustavo", timestamp + 5);
+
+            set1.merge(set2);
+            
+    
+            expect(set1.lookup("gustavo")).toBe(false);
+            expect(set1.getRemoves().get("gustavo")).toBe(timestamp + 5);
+    
+        });
     });
-
-    test("Merge Sets w/same Timestamps", () => {
-
-        // Adding different names to each set
-        set1.add("gustavo", Date.now());
-        set2.add("saul", Date.now());
-
-        expect(set1.compare(set2)).toBe(false);
-
-        set1.merge(set2);
-        set2.merge(set1);
-
-        expect(set1.compare(set2)).toBe(true);
-
-    });
-
 });
 
 describe("OR-Set Tests", () => {
