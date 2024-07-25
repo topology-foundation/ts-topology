@@ -86,7 +86,8 @@ export class TopologyNode {
             );
             const local = this._objectStore.get(object["id"]);
             if (local) {
-              local.merge(object);
+              // TODO: merge requires a merge function in wasm
+              // local.merge(object);
               this._objectStore.put(object["id"], local);
             }
           }
@@ -99,7 +100,7 @@ export class TopologyNode {
   }
 
   createObject(object: TopologyObject) {
-    const objectId = object.getObjectId();
+    const objectId = object.id;
     this.networkNode.subscribe(objectId);
     this._objectStore.put(objectId, object);
   }
@@ -158,14 +159,14 @@ export class TopologyNode {
   }
 
   updateObject(object: TopologyObject, update_data: string) {
-    this._objectStore.put(object.getObjectId(), object);
+    this._objectStore.put(object.id, object);
     // not dialed, emitted through pubsub
     const message = `{
       "type": "object_update",
       "data": [${uint8ArrayFromString(update_data)}]
     }`;
     this.networkNode.broadcastMessage(
-      object.getObjectId(),
+      object.id,
       uint8ArrayFromString(message),
     );
   }
