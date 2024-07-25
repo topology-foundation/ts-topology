@@ -1,4 +1,4 @@
-enum Bias {
+export enum Bias {
     ADD,
     REMOVE
 }

@@ -1,4 +1,4 @@
-interface ElementTuple<T> {
+export interface ElementTuple<T> {
     element: T,
     tag: number,
     replicaId: string
