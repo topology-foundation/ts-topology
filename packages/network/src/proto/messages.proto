@@ -1,0 +1,16 @@
+syntax = "proto3";
+package topology.network;
+
+message Message {
+    enum MessageType {
+        UPDATE = 0;
+        SYNC = 1;
+        SYNC_ACCEPT = 2;
+        SYNC_REJECT = 3;
+    }
+
+    string id = 1;
+    string sender = 2;
+    MessageType type = 3;
+    bytes data = 4;
+}
