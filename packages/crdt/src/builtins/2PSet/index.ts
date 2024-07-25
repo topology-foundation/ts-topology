@@ -17,7 +17,7 @@ export class TwoPSet<T> {
   add(element: T): void {
     this._adds.add(element);
   }
-
+ 
   remove(element: T): void {
     this._removes.add(element);
   }

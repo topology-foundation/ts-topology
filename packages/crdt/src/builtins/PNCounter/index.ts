@@ -22,11 +22,11 @@ export class PNCounter {
     return this._decrements;
   }
 
-  increment(nodeId: string, amount: number): void {
+  increment(nodeId: number, amount: number): void {
     this._increments.increment(nodeId, amount);
   }
 
-  decrement(nodeId: string, amount: number): void {
+  decrement(nodeId: number, amount: number): void {
     this._decrements.increment(nodeId, amount);
   }
 
