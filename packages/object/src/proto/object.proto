@@ -1,4 +1,4 @@
-syntax = "proto3"
+syntax = "proto3";
 
 package topology.object;
 
@@ -6,6 +6,4 @@ message TopologyObject {
     string id = 1;
     string abi = 2;
     string bytecode = 3;
-
-
 }

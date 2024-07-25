@@ -1,35 +1,19 @@
 import * as crypto from "crypto";
-import * as protobuf from "protobufjs";
+import { TopologyObject } from "./proto/object_pb.js";
 
-export abstract class TopologyObject {
-  // TODO generate functions from the abi
-  private abi?: string;
-  private id?: string;
+export * from "./proto/index.js";
 
-  constructor(peerId: string) {
-    protobuf.load("abi.proto", (err, _) => {
-      if (err) {
-        throw err;
-      }
-    });
-    this.abi = "";
+function newTopologyObject(peerId: string, abi?: string, bytecode?: string): TopologyObject {
+  const id = crypto
+    .createHash("sha256")
+    .update(abi ?? "")
+    .update(peerId)
+    .update(Math.floor(Math.random() * Number.MAX_VALUE).toString())
+    .digest("hex");
 
-    // id = sha256(abi, peer_id, random_nonce)
-    this.id = crypto
-      .createHash("sha256")
-      .update(this.abi)
-      .update(peerId)
-      .update(Math.floor(Math.random() * Number.MAX_VALUE).toString())
-      .digest("hex");
-  }
-
-  getObjectAbi(): string {
-    return this.abi ?? "";
-  }
-
-  getObjectId(): string {
-    return this.id ?? "";
-  }
-
-  abstract merge(other: TopologyObject): void;
+  return {
+    id,
+    abi: abi ?? "",
+    bytecode: bytecode ?? ""
+  };
 }

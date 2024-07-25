@@ -24,14 +24,10 @@
     "build": "tsc -b",
     "clean": "rm -rf dist/ node_modules/",
     "prepack": "tsc -b",
-    "protobuf": "buf generate",
+    "proto-gen": "buf generate",
     "test": "vitest"
   },
   "dependencies": {
-    "protobufjs": "^7.3.2",
     "ts-proto": "^1.181.1"
-  },
-  "devDependencies": {
-    "protobufjs-cli": "^1.1.2"
   }
 }
