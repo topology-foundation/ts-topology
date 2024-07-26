@@ -78,8 +78,8 @@ export class TopologyNetworkNode {
             this._config && this._config.bootstrap_peers
               ? this._config.bootstrap_peers
               : [
-                  "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-                ],
+                "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+              ],
         }),
       ],
       services: {
