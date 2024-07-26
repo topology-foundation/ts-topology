@@ -17,12 +17,7 @@ export class ORSet<T> {
     }
 
     lookup(element: T): boolean {
-        for (let elem of this._elements) {
-            if (elem.element === element) {
-                return true;
-            }
-        }
-        return false;
+        return [...this._elements].some(elem => elem.element === element);
     }
 
     add(element: T): void {
@@ -70,14 +65,16 @@ export class ORSet<T> {
 
         // in the local payload but not recently removed from the remote payload
         this._elements.forEach((element) => {
-            if(!peerSet.getElements().has(element) && element.tag > peerSet.getSummary().get(element.replicaId)!) {
+            const tag = peerSet.getSummary().get(element.replicaId);
+            if(!peerSet.getElements().has(element) && tag !== undefined && element.tag > tag ) {
                 A.add(element);
             }
         });
 
         //vice-versa
         peerSet.getElements().forEach((element) => {
-            if(!this._elements.has(element) && element.tag > this._summary.get(element.replicaId)!) {
+            const tag = this._summary.get(element.replicaId);
+            if(!this._elements.has(element) && tag !== undefined && element.tag > tag) {
                 B.add(element);
             }
         });
