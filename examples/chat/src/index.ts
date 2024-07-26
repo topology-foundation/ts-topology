@@ -96,10 +96,11 @@ async function main() {
         try {
             
             let object: any = node.getObject(objectId);
-            console.log("Object: ", object);
+            console.log("Object received: ", object);
             
+            let arr: string[] = Array.from(object["chat"]["_set"]);
+            object["chat"]["_set"] = new Set<string>(arr);
             object["chat"] = Object.assign(new GSet<string>(new Set<string>()), object["chat"]);
-    
             chatCRO = Object.assign(new Chat(node.networkNode.peerId), object);
             
             (<HTMLButtonElement>document.getElementById("chatId")).innerHTML = objectId;
