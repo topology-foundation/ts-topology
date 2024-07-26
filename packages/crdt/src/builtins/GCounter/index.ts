@@ -1,19 +1,11 @@
-export interface IGCounter {
-  globalCounter: number;
-  counts: { [nodeKey: number]: number };
-  value(): number;
-  increment(nodeId: number, amount: number): void;
-  compare(peerCounter: IGCounter): boolean;
-  merge(peerCounter: IGCounter): void;
-}
 /// GCounter with support for state and op changes
 export class GCounter {
   globalCounter: number;
   // instead of standard incremental id for replicas
   // we map the counter with the node id
-  counts: { [nodeId: number]: number };
+  counts: { [nodeId: string]: number };
 
-  constructor(counts: { [nodeId: number]: number }) {
+  constructor(counts: { [nodeId: string]: number }) {
     this.globalCounter = Object.values(counts).reduce((a, b) => a + b, 0);
     this.counts = counts;
   }
@@ -22,7 +14,7 @@ export class GCounter {
     return this.globalCounter;
   }
 
-  increment(nodeId: number, amount: number): void {
+  increment(nodeId: string, amount: number): void {
     this.globalCounter += amount;
     this.counts[nodeId] += amount;
   }
@@ -35,20 +27,20 @@ export class GCounter {
     }
     return true;
   }
-
-
-  merge(peerCounter: IGCounter): void {
-    let temp: { [nodeKey: number]: number } = Object.assign(
+  
+  merge(peerCounter: GCounter): void {
+    let temp: { [nodeKey: string]: number } = Object.assign(
       {},
       this.counts,
       peerCounter.counts,
     );
 
-    for (let key in Object.keys(temp)) {
+    Object.keys(temp).forEach((key) => {
       this.counts[key] = Math.max(this.counts[key], peerCounter.counts[key]);
 
-      this.globalCounter = Object.values(this.counts).reduce((a, b) => a + b, 0);
+    });
 
-    }
+    this.globalCounter = Object.values(this.counts).reduce((a, b) => a + b, 0);
+
   }
 }

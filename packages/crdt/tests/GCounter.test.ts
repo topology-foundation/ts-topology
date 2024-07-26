@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, afterEach } from "vitest";
+import { describe, test, expect, beforeEach } from "vitest";
 import { GCounter } from "../src/builtins/GCounter";
 
 describe("G-Counter Tests", () => {
