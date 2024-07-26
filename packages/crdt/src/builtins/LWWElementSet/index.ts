@@ -16,22 +16,23 @@ export class LWWElementSet<T> {
 
     lookup(element: T): boolean {
 
-        const addElemTimestmp = this._adds.get(element);
-        const remElemTimestmp = this._removes.get(element);
+        const addTimestamp = this._adds.get(element);
+        const removeTimestamp = this._removes.get(element);
 
-        if (addElemTimestmp !== undefined &&
-            (remElemTimestmp === undefined || addElemTimestmp > remElemTimestmp)) {
-            return true;
+        if (addTimestamp !== undefined) {
+            if (removeTimestamp === undefined || addTimestamp > removeTimestamp || (addTimestamp-removeTimestamp === 0 && this._bias === Bias.ADD)) {
+                return true;
+            }
         }
         return false;
     }
 
-    add(element: T, timestamp: number): void {
-        this._adds.set(element, timestamp);
+    add(element: T): void {
+        this._adds.set(element, Date.now());
     }
 
-    remove(element: T, timestamp: number): void {
-        this._removes.set(element, timestamp);
+    remove(element: T): void {
+        this._removes.set(element, Date.now());
     }
 
     getAdds(): Map<T, number> {
@@ -58,26 +59,18 @@ export class LWWElementSet<T> {
 
     merge(peerSet: LWWElementSet<T>): void {
 
-        for (let element of peerSet._adds.keys()) {
-            if (!this._adds.has(element) || this.compareTimestamp(this._adds.get(element)!, peerSet.getAdds().get(element)!)) {
-                this._adds.set(element, peerSet.getAdds().get(element)!);
+        for (let [element, timestamp] of peerSet._adds.entries()) {
+            const thisTimestamp = this._adds.get(element);
+            if (!thisTimestamp || thisTimestamp < timestamp) {
+                this._adds.set(element, timestamp);
             }
         }
 
-        for (let element of peerSet._removes.keys()) {
-            if (!this._removes.has(element) || this.compareTimestamp(this._removes.get(element)!, peerSet.getRemoves().get(element)!)) {
-                this._removes.set(element, peerSet.getRemoves().get(element)!);
+        for (let [element, timestamp] of peerSet._removes.entries()) {
+            const thisTimestamp = this._removes.get(element);
+            if (!thisTimestamp || thisTimestamp < timestamp) {
+                this._removes.set(element, timestamp);
             }
         }
-    }
-
-    private compareTimestamp(thisTime: number, otherTime: number) {
-
-        const timestampComparison = thisTime - otherTime;
-
-        if (timestampComparison === 0) {
-            return this._bias !== Bias.ADD;
-        }
-        return timestampComparison < 0;
     }
 }
