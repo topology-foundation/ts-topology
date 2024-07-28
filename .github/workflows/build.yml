@@ -58,3 +58,17 @@ jobs:
           cd ../../examples/canvas
           yarn install --frozen-lockfile
           yarn build
+  
+  build-example-chat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          # needs to build dist beforehand
+          cd packages/node
+          yarn install --frozen-lockfile
+          yarn build
+          cd ../../examples/chat
+          yarn install --frozen-lockfile
+          yarn build
