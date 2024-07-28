@@ -35,7 +35,7 @@ describe("LWW-Element-Set Tests", () => {
 
         expect(set1.lookup("mike")).toBe(true);
 
-        set1.remove("mike");
+        set1.getRemoves().set("mike", Date.now() + 1);
         
         expect(set1.lookup("mike")).toBe(false);
        

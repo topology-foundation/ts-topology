@@ -43,17 +43,13 @@ export class LWWElementSet<T> {
         return this._removes;
     }
 
-    areSetsEqual(set1: Set<T>, set2: Set<T>): boolean {
-        return (set1.size == set2.size && [...set1].every(value => set2.has(value)));
-    }
-
     compare(peerSet: LWWElementSet<T>): boolean {
         const adds = new Set(this._adds.keys());
         const rems = new Set(this._removes.keys());
         const otherAdds = new Set(peerSet._adds.keys());
         const otherRems = new Set(peerSet._removes.keys());
 
-        return (this.areSetsEqual(adds, otherAdds) && this.areSetsEqual(rems, otherRems));
+        return (compareSets(adds, otherAdds) && compareSets(rems, otherRems));
 
     }
 
@@ -73,4 +69,8 @@ export class LWWElementSet<T> {
             }
         }
     }
+}
+
+function compareSets<T>(set1: Set<T>, set2: Set<T>): boolean {
+    return (set1.size == set2.size && [...set1].every(value => set2.has(value)));
 }
