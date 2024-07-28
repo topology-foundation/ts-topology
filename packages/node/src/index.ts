@@ -63,6 +63,7 @@ export class TopologyNode {
               uint8ArrayToString(new Uint8Array(message["data"])),
             );
             this._objectStore.put(object["id"], object);
+            break;
           }
           case "object_sync": {
             const objectId = uint8ArrayToString(
@@ -89,6 +90,7 @@ export class TopologyNode {
               local.merge(object);
               this._objectStore.put(object["id"], local);
             }
+            break;
           }
           default: {
             return;
@@ -115,7 +117,7 @@ export class TopologyNode {
       "data": [${uint8ArrayFromString(objectId)}]
     }`;
 
-    if (peerId === "") {
+    if (!peerId) {
       await this.networkNode.sendGroupMessageRandomPeer(
         objectId,
         ["/topology/message/0.0.1"],
@@ -137,7 +139,7 @@ export class TopologyNode {
       "data": [${uint8ArrayFromString(objectId)}]
     }`;
 
-    if (peerId === "") {
+    if (!peerId) {
       await this.networkNode.sendGroupMessageRandomPeer(
         objectId,
         ["/topology/message/0.0.1"],

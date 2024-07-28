@@ -351,9 +351,9 @@
     protons-runtime "^5.4.0"
     uint8arraylist "^2.4.8"
 
-"@libp2p/bootstrap@^10.1.0":
+"@libp2p/bootstrap@^10.1.2":
   version "10.1.2"
-  resolved "https://registry.npmjs.org/@libp2p/bootstrap/-/bootstrap-10.1.2.tgz#dae2a2061af16755a14879b58a3f5930466e1a42"
+  resolved "https://registry.yarnpkg.com/@libp2p/bootstrap/-/bootstrap-10.1.2.tgz#dae2a2061af16755a14879b58a3f5930466e1a42"
   integrity sha512-FTM4hZTSiIBOtB9CtCQfpFfwWJva6+l3phR9eRa5gvsEdJdiUCFKe6VFHqwnsnRN1hobcLUWYi2AN6+0OdPdXw==
   dependencies:
     "@libp2p/interface" "^1.6.1"
@@ -414,9 +414,9 @@
     protons-runtime "^5.4.0"
     uint8arraylist "^2.4.8"
 
-"@libp2p/identify@^2.0.2":
+"@libp2p/identify@^2.1.2":
   version "2.1.2"
-  resolved "https://registry.npmjs.org/@libp2p/identify/-/identify-2.1.2.tgz#85a69eb341d893a767d81b3b6138790278109fb9"
+  resolved "https://registry.yarnpkg.com/@libp2p/identify/-/identify-2.1.2.tgz#85a69eb341d893a767d81b3b6138790278109fb9"
   integrity sha512-neLNz6WhYAxDHgsb/LGyZF9i+nE4E+dk30/5gFxc/876oVwgc1IqSs2eEEEx9t0l2ToeHADScBM+bHrFsLIk3g==
   dependencies:
     "@libp2p/interface" "^1.6.1"
@@ -501,9 +501,9 @@
     interface-datastore "^8.2.11"
     multiformats "^13.1.0"
 
-"@libp2p/mdns@^10.1.1":
+"@libp2p/mdns@^10.1.2":
   version "10.1.2"
-  resolved "https://registry.npmjs.org/@libp2p/mdns/-/mdns-10.1.2.tgz#39629cbebf98c0eba7e9f48620e29dbf2a24ca20"
+  resolved "https://registry.yarnpkg.com/@libp2p/mdns/-/mdns-10.1.2.tgz#39629cbebf98c0eba7e9f48620e29dbf2a24ca20"
   integrity sha512-OmKa6RnFt2SDVoBK6d/gUUF5AC5+IeL5poBfvDh90ihqZihEukKWWixaiPcmLRt375sMEkGqeY0Jk5vuy+XUsA==
   dependencies:
     "@libp2p/interface" "^1.6.1"
@@ -682,9 +682,9 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/websockets@^8.1.1":
+"@libp2p/websockets@^8.1.2":
   version "8.1.2"
-  resolved "https://registry.npmjs.org/@libp2p/websockets/-/websockets-8.1.2.tgz#1cbabca6a9f0a70758f11800e617f3307afa3c67"
+  resolved "https://registry.yarnpkg.com/@libp2p/websockets/-/websockets-8.1.2.tgz#1cbabca6a9f0a70758f11800e617f3307afa3c67"
   integrity sha512-URq0udV+QDRzB31uNKfH/PAte4gdP5pYiZSJZvJ99YZudERTjjjU0+ElqEy3qwm6MX6w1bgf/muld6X0cGWfBg==
   dependencies:
     "@libp2p/interface" "^1.6.1"
@@ -700,9 +700,9 @@
     wherearewe "^2.0.1"
     ws "^8.17.0"
 
-"@libp2p/webtransport@^4.1.1":
+"@libp2p/webtransport@^4.1.2":
   version "4.1.2"
-  resolved "https://registry.npmjs.org/@libp2p/webtransport/-/webtransport-4.1.2.tgz#c0c4ca0107f19f4fba3afec79cce3132769b771e"
+  resolved "https://registry.yarnpkg.com/@libp2p/webtransport/-/webtransport-4.1.2.tgz#c0c4ca0107f19f4fba3afec79cce3132769b771e"
   integrity sha512-TAKb+dKxVxA8mNFsqio/gJSkK2jvZbKZECSZnHWMehpzQ8x8FFfGSK5ogy99Y1LhuC206e4YaDY/FocrFgNcfA==
   dependencies:
     "@chainsafe/libp2p-noise" "^15.0.0"
@@ -1052,6 +1052,41 @@
   version "0.23.0"
   resolved "https://registry.npmjs.org/@tootallnate/quickjs-emscripten/-/quickjs-emscripten-0.23.0.tgz#db4ecfd499a9765ab24002c3b696d02e6d32a12c"
   integrity sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==
+
+"@topology-foundation/crdt@file:packages/crdt":
+  version "0.0.22"
+
+"@topology-foundation/network@file:packages/network":
+  version "0.0.22"
+  dependencies:
+    "@chainsafe/libp2p-gossipsub" "^13.1.0"
+    "@chainsafe/libp2p-noise" "^15.1.0"
+    "@chainsafe/libp2p-yamux" "^6.0.2"
+    "@libp2p/autonat" "^1.0.0"
+    "@libp2p/bootstrap" "^10.1.0"
+    "@libp2p/circuit-relay-v2" "^1.1.2"
+    "@libp2p/dcutr" "^1.1.0"
+    "@libp2p/identify" "^2.0.2"
+    "@libp2p/interface-pubsub" "^4.0.1"
+    "@libp2p/mdns" "^10.1.1"
+    "@libp2p/pubsub-peer-discovery" "^10.0.2"
+    "@libp2p/webrtc" "^4.1.2"
+    "@libp2p/websockets" "^8.1.1"
+    "@libp2p/webtransport" "^4.1.1"
+    "@multiformats/multiaddr" "^12.3.0"
+    it-pipe "^3.0.1"
+    libp2p "^1.8.1"
+
+"@topology-foundation/node@file:packages/node":
+  version "0.0.22"
+  dependencies:
+    "@topology-foundation/crdt" "0.0.22"
+    "@topology-foundation/network" "0.0.22"
+    "@topology-foundation/object" "0.0.22"
+    commander "^12.1.0"
+
+"@topology-foundation/object@file:packages/object":
+  version "0.0.22"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.11"
