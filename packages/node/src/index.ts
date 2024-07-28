@@ -20,14 +20,14 @@ export interface TopologyNodeConfig {
 
 export class TopologyNode {
   private _config?: TopologyNodeConfig;
-  private _objectStore: TopologyObjectStore;
 
+  objectStore: TopologyObjectStore;
   networkNode: TopologyNetworkNode;
 
   constructor(config?: TopologyNodeConfig) {
     this._config = config;
     this.networkNode = new TopologyNetworkNode(config?.network_config);
-    this._objectStore = new TopologyObjectStore();
+    this.objectStore = new TopologyObjectStore();
   }
 
   async start(): Promise<void> {
@@ -62,7 +62,7 @@ export class TopologyNode {
             const object = JSON.parse(
               uint8ArrayToString(new Uint8Array(message["data"])),
             );
-            this._objectStore.put(object["id"], object);
+            this.objectStore.put(object["id"], object);
           }
           case "object_sync": {
             const objectId = uint8ArrayToString(
@@ -84,11 +84,11 @@ export class TopologyNode {
             const object = JSON.parse(
               uint8ArrayToString(new Uint8Array(message["data"])),
             );
-            const local = this._objectStore.get(object["id"]);
+            const local = this.objectStore.get(object["id"]);
             if (local) {
               // TODO: merge requires a merge function in wasm
               // local.merge(object);
-              this._objectStore.put(object["id"], local);
+              this.objectStore.put(object["id"], local);
             }
           }
           default: {
@@ -99,11 +99,6 @@ export class TopologyNode {
     );
   }
 
-  createObject(object: TopologyObject) {
-    const objectId = object.id;
-    this.networkNode.subscribe(objectId);
-    this._objectStore.put(objectId, object);
-  }
 
   /// Subscribe to the object's PubSub group
   /// and fetch it from a peer
@@ -155,11 +150,11 @@ export class TopologyNode {
 
   /// Get the object from the local Object Store
   getObject(objectId: string) {
-    return this._objectStore.get(objectId);
+    return this.objectStore.get(objectId);
   }
 
   updateObject(object: TopologyObject, update_data: string) {
-    this._objectStore.put(object.id, object);
+    this.objectStore.put(object.id, object);
     // not dialed, emitted through pubsub
     const message = `{
       "type": "object_update",

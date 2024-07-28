@@ -24,6 +24,7 @@ import { bootstrap } from "@libp2p/bootstrap";
 import { webTransport } from "@libp2p/webtransport";
 import { autoNAT } from "@libp2p/autonat";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
+import { Message } from "./proto/messages_pb.js";
 
 // snake_casing to match the JSON config
 export interface TopologyNetworkNodeConfig {
@@ -78,8 +79,8 @@ export class TopologyNetworkNode {
             this._config && this._config.bootstrap_peers
               ? this._config.bootstrap_peers
               : [
-                  "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-                ],
+                "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+              ],
         }),
       ],
       services: {
@@ -184,7 +185,7 @@ export class TopologyNetworkNode {
     return peers.map((peer) => peer.toString());
   }
 
-  async broadcastMessage(topic: string, message: Uint8Array) {
+  async broadcastMessage(topic: string, message: Message) {
     try {
       if (this._pubsub?.getSubscribers(topic)?.length === 0) return;
       await this._pubsub?.publish(topic, message);
@@ -198,7 +199,7 @@ export class TopologyNetworkNode {
     }
   }
 
-  async sendMessage(peerId: string, protocols: string[], message: string) {
+  async sendMessage(peerId: string, protocols: string[], message: Message) {
     try {
       const connection = await this._node?.dial([multiaddr(`/p2p/${peerId}`)]);
       const stream = <Stream>await connection?.newStream(protocols);
@@ -215,7 +216,7 @@ export class TopologyNetworkNode {
   async sendGroupMessageRandomPeer(
     group: string,
     protocols: string[],
-    message: string,
+    message: Message,
   ) {
     try {
       const peers = this._pubsub?.getSubscribers(group);
@@ -224,7 +225,8 @@ export class TopologyNetworkNode {
 
       const connection = await this._node?.dial(peerId);
       const stream: Stream = (await connection?.newStream(protocols)) as Stream;
-      stringToStream(stream, message);
+      Message.encode(message, stream.sink)
+      // stringToStream(stream, message);
 
       console.log(
         `topology::network::sendMessageRandomTopicPeer: Successfuly sent message to peer: ${peerId} with message: ${message}`,
