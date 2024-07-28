@@ -48,7 +48,7 @@ export class TopologyNode {
             const object = <TopologyObject>this.getObject(objectId);
             const object_message = `{
               "type": "object",
-              "data": [${uint8ArrayFromString(JSON.stringify(object))}]
+              "data": [${uint8ArrayFromString(JSON.stringify(object, (_key, value) => (value instanceof Set ? [...value] : value)))}]
             }`;
             await this.networkNode.sendMessage(
               message["sender"],
