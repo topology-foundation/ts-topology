@@ -43,7 +43,7 @@ export class LWWElementSet<T> {
     }
 
     compare(peerSet: LWWElementSet<T>): boolean {
-        return (compareSets(this._adds.keys(), peerSet._adds.keys()) && compareSets(this._removes.keys(), peerSet._removes.keys()));
+        return (compareSets(this._adds, peerSet._adds) && compareSets(this._removes, peerSet._removes));
     }
 
     merge(peerSet: LWWElementSet<T>): void {
@@ -63,8 +63,16 @@ export class LWWElementSet<T> {
     }
 }
 
-function compareSets<T>(keys1: IterableIterator<T>, keys2: IterableIterator<T>): boolean {
-    const set1 = new Set<T>(keys1);
-    const set2 = new Set<T>(keys2);
-    return (set1.size == set2.size && [...set1].every(value => set2.has(value)));
+function compareSets<T>(set1: Map<T,number>, set2: Map<T,number>): boolean {
+    if(set1.size !== set2.size) {
+        return false;
+    }
+
+    for(let key of set1.keys()) {
+        if(!set2.has(key)) {
+            return false;
+        }
+    }
+    
+    return true;
 }
