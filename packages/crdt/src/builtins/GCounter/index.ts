@@ -27,15 +27,20 @@ export class GCounter {
     }
     return true;
   }
-
+  
   merge(peerCounter: GCounter): void {
     let temp: { [nodeKey: string]: number } = Object.assign(
       {},
       this.counts,
       peerCounter.counts,
     );
+
     Object.keys(temp).forEach((key) => {
       this.counts[key] = Math.max(this.counts[key], peerCounter.counts[key]);
+
     });
+
+    this.globalCounter = Object.values(this.counts).reduce((a, b) => a + b, 0);
+
   }
 }
