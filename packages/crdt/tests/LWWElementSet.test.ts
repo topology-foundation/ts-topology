@@ -90,7 +90,6 @@ describe("LWW-Element-Set Tests", () => {
     
             expect(set1.lookup("gustavo")).toBe(false);
             expect(set1.getRemoves().get("gustavo")).toBe(timestamp + 5);
-    
         });
     });
 });
