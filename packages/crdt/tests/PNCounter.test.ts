@@ -55,5 +55,4 @@ describe("PN-Counter Tests", () => {
         expect(set1.compare(set2)).toBe(true);
         expect(set2.compare(set1)).toBe(true);        
     });
-
 });

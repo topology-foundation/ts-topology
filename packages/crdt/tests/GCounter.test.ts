@@ -2,7 +2,6 @@ import { describe, test, expect, beforeEach } from "vitest";
 import { GCounter } from "../src/builtins/GCounter";
 
 describe("G-Counter Tests", () => {
-
     let set1: GCounter;
     let set2: GCounter; 
 
@@ -62,5 +61,4 @@ describe("G-Counter Tests", () => {
 
         expect(set2.compare(set1)).toBe(true);
     });
-
 });
