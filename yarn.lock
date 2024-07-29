@@ -351,13 +351,13 @@
     protons-runtime "^5.4.0"
     uint8arraylist "^2.4.8"
 
-"@libp2p/bootstrap@^10.1.2":
-  version "10.1.2"
-  resolved "https://registry.yarnpkg.com/@libp2p/bootstrap/-/bootstrap-10.1.2.tgz#dae2a2061af16755a14879b58a3f5930466e1a42"
-  integrity sha512-FTM4hZTSiIBOtB9CtCQfpFfwWJva6+l3phR9eRa5gvsEdJdiUCFKe6VFHqwnsnRN1hobcLUWYi2AN6+0OdPdXw==
+"@libp2p/bootstrap@^10.1.3":
+  version "10.1.3"
+  resolved "https://registry.yarnpkg.com/@libp2p/bootstrap/-/bootstrap-10.1.3.tgz#22ff4ae28b6c7e912be44b0ad38403ad5b39371b"
+  integrity sha512-y2qapvh6gd0O3COJQyrprXIFYCiIvDL63Vr2zJLanFuwQQjuuW0JgzkZnosntTw1edmYfPsvzQSdpbDfqMGqmA==
   dependencies:
-    "@libp2p/interface" "^1.6.1"
-    "@libp2p/peer-id" "^4.2.1"
+    "@libp2p/interface" "^1.6.2"
+    "@libp2p/peer-id" "^4.2.2"
     "@multiformats/mafmt" "^12.1.6"
     "@multiformats/multiaddr" "^12.2.3"
 
@@ -1078,7 +1078,7 @@
     "@chainsafe/libp2p-noise" "^15.1.0"
     "@chainsafe/libp2p-yamux" "^6.0.2"
     "@libp2p/autonat" "^1.0.0"
-    "@libp2p/bootstrap" "^10.1.2"
+    "@libp2p/bootstrap" "^10.1.3"
     "@libp2p/circuit-relay-v2" "^1.1.2"
     "@libp2p/dcutr" "^1.1.0"
     "@libp2p/identify" "^2.1.2"
