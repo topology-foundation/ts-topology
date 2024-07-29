@@ -16,13 +16,21 @@ export class LWWElementSet<T> {
 
     lookup(element: T): boolean {
         const addTimestamp = this._adds.get(element);
-        const removeTimestamp = this._removes.get(element);
-
-        if (addTimestamp !== undefined) {
-            if (removeTimestamp === undefined || addTimestamp > removeTimestamp || (addTimestamp-removeTimestamp === 0 && this._bias === Bias.ADD)) {
-                return true;
-            }
+        if(addTimestamp === undefined) {
+            return false;
         }
+
+        const removeTimestamp = this._removes.get(element);
+        if (removeTimestamp === undefined) {
+            return true;
+        }
+        if (addTimestamp > removeTimestamp) {
+            return true;
+        }
+        if (addTimestamp - removeTimestamp === 0 && this._bias === Bias.ADD) {
+            return true;
+        }
+
         return false;
     }
 
@@ -53,7 +61,6 @@ export class LWWElementSet<T> {
                 this._adds.set(element, timestamp);
             }
         }
-
         for (let [element, timestamp] of peerSet._removes.entries()) {
             const thisTimestamp = this._removes.get(element);
             if (!thisTimestamp || thisTimestamp < timestamp) {
@@ -63,16 +70,6 @@ export class LWWElementSet<T> {
     }
 }
 
-function compareSets<T>(set1: Map<T,number>, set2: Map<T,number>): boolean {
-    if(set1.size !== set2.size) {
-        return false;
-    }
-
-    for(let key of set1.keys()) {
-        if(!set2.has(key)) {
-            return false;
-        }
-    }
-    
-    return true;
+function compareSets<T>(set1: Map<T, number>, set2: Map<T, number>): boolean {
+    return (set1.size === set2.size && [...set1.keys()].every(key => set2.has(key)));
 }
