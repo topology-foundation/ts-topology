@@ -15,7 +15,6 @@ export class LWWElementSet<T> {
     }
 
     lookup(element: T): boolean {
-
         const addTimestamp = this._adds.get(element);
         const removeTimestamp = this._removes.get(element);
 
@@ -50,11 +49,9 @@ export class LWWElementSet<T> {
         const otherRems = new Set(peerSet._removes.keys());
 
         return (compareSets(adds, otherAdds) && compareSets(rems, otherRems));
-
     }
 
     merge(peerSet: LWWElementSet<T>): void {
-
         for (let [element, timestamp] of peerSet._adds.entries()) {
             const thisTimestamp = this._adds.get(element);
             if (!thisTimestamp || thisTimestamp < timestamp) {
