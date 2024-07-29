@@ -28,13 +28,11 @@ describe("LWW-Element-Set Tests", () => {
     });
 
     test("Test Remove Elements", () => {
-
         expect(set1.lookup("mike")).toBe(true);
 
         set1.getRemoves().set("mike", Date.now() + 1);
         
         expect(set1.lookup("mike")).toBe(false);
-       
     });
 
     test("Test Compare Sets", () => {
