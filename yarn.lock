@@ -1063,16 +1063,16 @@
     "@chainsafe/libp2p-noise" "^15.1.0"
     "@chainsafe/libp2p-yamux" "^6.0.2"
     "@libp2p/autonat" "^1.0.0"
-    "@libp2p/bootstrap" "^10.1.0"
+    "@libp2p/bootstrap" "^10.1.2"
     "@libp2p/circuit-relay-v2" "^1.1.2"
     "@libp2p/dcutr" "^1.1.0"
-    "@libp2p/identify" "^2.0.2"
+    "@libp2p/identify" "^2.1.2"
     "@libp2p/interface-pubsub" "^4.0.1"
-    "@libp2p/mdns" "^10.1.1"
+    "@libp2p/mdns" "^10.1.2"
     "@libp2p/pubsub-peer-discovery" "^10.0.2"
     "@libp2p/webrtc" "^4.1.2"
-    "@libp2p/websockets" "^8.1.1"
-    "@libp2p/webtransport" "^4.1.1"
+    "@libp2p/websockets" "^8.1.2"
+    "@libp2p/webtransport" "^4.1.2"
     "@multiformats/multiaddr" "^12.3.0"
     it-pipe "^3.0.1"
     libp2p "^1.8.1"
@@ -2611,7 +2611,7 @@ es-module-lexer@^1.2.1:
   resolved "https://registry.yarnpkg.com/es-module-lexer/-/es-module-lexer-1.5.4.tgz#a8efec3a3da991e60efa6b633a7cad6ab8d26b78"
   integrity sha512-MVNK56NiMrOwitFB7cqDwq0CQutbw+0BvLshJSse0MUNU+y1FC3bUS/AQg7oUng+/wKrrki7JfmwtVHkVfPLlw==
 
-esbuild@^0.21.3, esbuild@~0.21.4:
+esbuild@^0.21.3, esbuild@~0.21.5:
   version "0.21.5"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.21.5.tgz#9ca301b120922959b766360d8ac830da0d02997d"
   integrity sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw==
@@ -5781,12 +5781,12 @@ tslib@^2.0.0, tslib@^2.0.1, tslib@^2.1.0, tslib@^2.4.0, tslib@^2.6.1:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.3.tgz#0438f810ad7a9edcde7a241c3d80db693c8cbfe0"
   integrity sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==
 
-tsx@4.15.7:
-  version "4.15.7"
-  resolved "https://registry.yarnpkg.com/tsx/-/tsx-4.15.7.tgz#69d7499196a323507c4051d2ba10753edcc057e5"
-  integrity sha512-u3H0iSFDZM3za+VxkZ1kywdCeHCn+8/qHQS1MNoO2sONDgD95HlWtt8aB23OzeTmFP9IU4/8bZUdg58Uu5J4cg==
+tsx@4.16.2:
+  version "4.16.2"
+  resolved "https://registry.yarnpkg.com/tsx/-/tsx-4.16.2.tgz#8722be119ae226ef0b4c6210d5ee90f3ba823f19"
+  integrity sha512-C1uWweJDgdtX2x600HjaFaucXTilT7tgUZHbOE4+ypskZ1OP8CRCSDkCxG6Vya9EwaFIVagWwpaVAn5wzypaqQ==
   dependencies:
-    esbuild "~0.21.4"
+    esbuild "~0.21.5"
     get-tsconfig "^4.7.5"
   optionalDependencies:
     fsevents "~2.3.3"
