@@ -667,16 +667,16 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/webrtc@^4.1.2":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@libp2p/webrtc/-/webrtc-4.1.2.tgz#81a322435bdc206d81b5419bb17ea359edca086a"
-  integrity sha512-1tvIP9mEH6hLhHXL4TfOSN7imvt4kLFYHkp+Qv15gKVhrdrsaI7wq/t6zcpTMKFXXmvNWq0twrkmg3ARsD4SCQ==
+"@libp2p/webrtc@^4.1.3":
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@libp2p/webrtc/-/webrtc-4.1.3.tgz#318cbfd28da9917f359bf59f817b77824f9bdbce"
+  integrity sha512-UtxFbp9KWdExb3nU3yI4f3WT+meu5zFL67sEBp2Ln1jiGYRsGcfuF/bXuOnhYjwVQEw0GtKEFuol5FQbBJyufA==
   dependencies:
     "@chainsafe/libp2p-noise" "^15.0.0"
-    "@libp2p/interface" "^1.6.1"
-    "@libp2p/interface-internal" "^1.3.1"
-    "@libp2p/peer-id" "^4.2.1"
-    "@libp2p/utils" "^5.4.6"
+    "@libp2p/interface" "^1.6.2"
+    "@libp2p/interface-internal" "^1.3.2"
+    "@libp2p/peer-id" "^4.2.2"
+    "@libp2p/utils" "^5.4.7"
     "@multiformats/mafmt" "^12.1.6"
     "@multiformats/multiaddr" "^12.2.3"
     "@multiformats/multiaddr-matcher" "^1.2.1"
@@ -686,7 +686,7 @@
     it-pushable "^3.2.3"
     it-stream-types "^2.0.1"
     multiformats "^13.1.0"
-    node-datachannel "^0.10.0"
+    node-datachannel "^0.11.0"
     p-defer "^4.0.1"
     p-event "^6.0.1"
     p-timeout "^6.1.2"
@@ -1085,7 +1085,7 @@
     "@libp2p/interface-pubsub" "^4.0.1"
     "@libp2p/mdns" "^10.1.2"
     "@libp2p/pubsub-peer-discovery" "^10.0.2"
-    "@libp2p/webrtc" "^4.1.2"
+    "@libp2p/webrtc" "^4.1.3"
     "@libp2p/websockets" "^8.1.2"
     "@libp2p/webtransport" "^4.1.2"
     "@multiformats/multiaddr" "^12.3.0"
@@ -4350,10 +4350,10 @@ node-abi@^3.3.0:
   dependencies:
     semver "^7.3.5"
 
-node-datachannel@^0.10.0:
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/node-datachannel/-/node-datachannel-0.10.1.tgz#e2bd380619e90501758bf6fdf0c0ca7256e5be63"
-  integrity sha512-rhxb1iQgbFLY6HMt3W6Xcs8Q1k4jIMgI7KduXcYvIn2UMKYK6e/eegya2caF/+XYAqTeo1743gOr11CXvJ/DJA==
+node-datachannel@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/node-datachannel/-/node-datachannel-0.11.0.tgz#7e1e29c9a82596ebf6550610e7c2547e4a232eca"
+  integrity sha512-8/vAMms32XxgJ9FIRDXbfmmH1ROm0HBdsa/XteIcUWN4VTQN38UITTkuu6YsfQzN/CQp8YhhnfAEzEadQJ2c6Q==
   dependencies:
     node-domexception "^2.0.1"
     prebuild-install "^7.0.1"
