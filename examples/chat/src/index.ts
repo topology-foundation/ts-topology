@@ -103,7 +103,7 @@ async function main() {
             object["chat"] = Object.assign(new GSet<string>(new Set<string>()), object["chat"]);
             chatCRO = Object.assign(new Chat(node.networkNode.peerId), object);
             
-            (<HTMLButtonElement>document.getElementById("chatId")).innerHTML = objectId;
+            (<HTMLButtonElement>document.getElementById("chatId")).innerHTML = chatCRO.getObjectId();
             render();
         } catch (e) {
             console.error("Error while connecting to the CRO ", objectId, e);
