@@ -38,7 +38,6 @@ describe("LWW-Element-Set Tests", () => {
     });
 
     test("Test Compare Sets", () => {
-
         expect(set1.compare(set2)).toBe(true);
         expect(set1.compare(set3)).toBe(true);
         expect(set3.compare(set2)).toBe(true);
@@ -48,7 +47,6 @@ describe("LWW-Element-Set Tests", () => {
         expect(set1.compare(set2)).toBe(false);
         expect(set1.compare(set3)).toBe(false);
         expect(set3.compare(set2)).toBe(true);
-
     });
 
     describe("Test Merge Elements" , () => {
@@ -86,7 +84,6 @@ describe("LWW-Element-Set Tests", () => {
             set2.getRemoves().set("gustavo", timestamp + 5);
 
             set1.merge(set2);
-            
     
             expect(set1.lookup("gustavo")).toBe(false);
             expect(set1.getRemoves().get("gustavo")).toBe(timestamp + 5);
