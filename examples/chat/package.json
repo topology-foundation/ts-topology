@@ -1,13 +1,10 @@
 {
-  "name": "ts-topology-examples-canvas",
-  "version": "0.0.22",
+  "name": "topology-example-chat",
+  "version": "1.0.0",
+  "description": "Topology Protocol Chat Exmaple",
+  "main": "src/index.ts",
+  "repository": "https://github.com/topology-foundation/ts-topology.git",
   "license": "MIT",
-  "scripts": {
-    "build": "webpack",
-    "clean": "rm -rf dist/ node_modules/",
-    "dev": "webpack serve",
-    "start": "ts-node ./src/index.ts"
-  },
   "dependencies": {
     "@topology-foundation/crdt": "file:../../packages/crdt",
     "@topology-foundation/network": "file:../../packages/network",
@@ -26,5 +23,11 @@
     "webpack": "^5.74.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4"
+  },
+  "scripts": {
+    "build": "webpack",
+    "clean": "rm -rf dist/ node_modules/",
+    "dev": "webpack serve",
+    "start": "ts-node ./src/index.ts"
   }
 }
