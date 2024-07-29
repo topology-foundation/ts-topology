@@ -32,26 +32,19 @@ describe("PN-Counter Tests", () => {
 
     test("Test Compare", () => {
         expect(set1.compare(set2)).toBe(true);
-
         set1.decrement("node1",10);
-
         expect(set1.compare(set2)).toBe(false);
-
         set2.decrement("node1",10);
-
         expect(set1.compare(set2)).toBe(true);
     });
 
     test("Test Merge", () => {
         set1.increment("node1",10);
         set2.decrement("node2",5);
-
         expect(set1.compare(set2)).toBe(false);
         expect(set2.compare(set1)).toBe(false); 
-
         set1.merge(set2);
         set2.merge(set1);
-
         expect(set1.compare(set2)).toBe(true);
         expect(set2.compare(set1)).toBe(true);        
     });

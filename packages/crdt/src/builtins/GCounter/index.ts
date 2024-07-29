@@ -20,13 +20,9 @@ export class GCounter {
   }
 
   compare(peerCounter: GCounter): boolean {
-    for (let key in Object.keys(this.counts)) {
-      if (this.counts[key] > peerCounter.counts[key]) {
-        return false;
-      }
-    }
-    return true;
+    return (this.counts.length === peerCounter.counts.length && Object.keys(this.counts).every(key => this.counts[key] <= peerCounter.counts[key]));
   }
+
   merge(peerCounter: GCounter): void {
     let temp: { [nodeKey: string]: number } = Object.assign(
       {},
@@ -35,7 +31,7 @@ export class GCounter {
     );
 
     Object.keys(temp).forEach((key) => {
-      this.counts[key] = Math.max(this.counts[key], peerCounter.counts[key]);
+      this.counts[key] = Math.max(this.counts[key] || 0, peerCounter.counts[key] || 0);
     });
 
     this.globalCounter = Object.values(this.counts).reduce((a, b) => a + b, 0);
