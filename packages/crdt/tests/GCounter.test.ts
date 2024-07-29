@@ -17,7 +17,6 @@ describe("G-Counter Tests", () => {
     });
 
     test("Test Increment", () => {
-
         set1.increment("node1", 10);
         set1.increment("node2", 5);
 
@@ -25,7 +24,6 @@ describe("G-Counter Tests", () => {
     });
 
     test("Test Compare", () => {
-
         expect(set1.compare(set2)).toBe(true);
         
         set2.increment("node1", 5);
@@ -38,7 +36,6 @@ describe("G-Counter Tests", () => {
     });
 
     test("Test Merge", () => {
-
         const counter1 = new GCounter({ "node1": 5 });
         const counter2 = new GCounter({ "node2": 10 });
     

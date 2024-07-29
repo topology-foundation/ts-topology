@@ -3,7 +3,6 @@ import { PNCounter } from "../src/builtins/PNCounter";
 import { GCounter } from "../src/builtins/GCounter";
 
 describe("PN-Counter Tests", () => {
-
     let set1: PNCounter;
     let set2: PNCounter;
 
