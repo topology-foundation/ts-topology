@@ -1,6 +1,7 @@
 name: Publish Package to npmjs
 on:
   workflow_call:
+    secrets: inherit
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
