@@ -9,4 +9,6 @@ jobs:
   
   build_docker_images:
     name: Build Docker Images
+    needs:
+      - npm_publish
     uses: ./.github/workflows/docker.yml
