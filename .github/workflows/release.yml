@@ -1,0 +1,12 @@
+name: Workflow - release
+on:
+  release:
+    types: [published]
+jobs:
+  npm_publish:
+    name: Publish packages to npmjs
+    uses: ./.github/workflows/npm-publish.yml
+  
+  build_docker_images:
+    name: Build Docker Images
+    uses: ./.github/workflows/docker.yml

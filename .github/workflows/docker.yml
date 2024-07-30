@@ -1,7 +1,6 @@
 name: Build Docker Image
 on:
-  release:
-    types: [published]
+  workflow_call:
 permissions:
   packages: write
 env:
