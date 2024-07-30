@@ -1,6 +1,6 @@
 {
   "name": "ts-topology-examples-canvas",
-  "version": "0.0.23-4",
+  "version": "0.0.23-5",
   "license": "MIT",
   "scripts": {
     "build": "webpack",
@@ -9,10 +9,10 @@
     "start": "ts-node ./src/index.ts"
   },
   "dependencies": {
-    "@topology-foundation/crdt": "0.0.23-4",
-    "@topology-foundation/network": "0.0.23-4",
-    "@topology-foundation/node": "0.0.23-4",
-    "@topology-foundation/object": "0.0.23-4",
+    "@topology-foundation/crdt": "0.0.23-5",
+    "@topology-foundation/network": "0.0.23-5",
+    "@topology-foundation/node": "0.0.23-5",
+    "@topology-foundation/object": "0.0.23-5",
     "crypto-browserify": "^3.12.0",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
