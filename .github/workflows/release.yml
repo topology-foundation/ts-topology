@@ -5,6 +5,7 @@ on:
 jobs:
   npm_publish:
     name: Publish packages to npmjs
+    secrets: inherit
     permissions:
       id-token: write
       packages: write
