@@ -35,6 +35,5 @@ export class GCounter {
     });
 
     this.globalCounter = Object.values(this.counts).reduce((a, b) => a + b, 0);
-
   }
 }
