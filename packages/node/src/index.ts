@@ -1,6 +1,8 @@
 import { GossipsubMessage } from "@chainsafe/libp2p-gossipsub";
 import { EventHandler, StreamHandler } from "@libp2p/interface";
 import {
+  Message,
+  Message_MessageType,
   TopologyNetworkNode,
   TopologyNetworkNodeConfig,
   streamToString,
@@ -10,6 +12,7 @@ import { TopologyObjectStore } from "./store";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 import { OPERATIONS } from "./operations.js";
+import * as lp from "it-length-prefixed";
 
 export * from "./operations.js";
 
@@ -39,7 +42,14 @@ export class TopologyNode {
         let input = await streamToString(stream);
         if (!input) return;
 
-        const message = JSON.parse(input);
+        // const stream: Stream = (await connection?.newStream(protocols)) as Stream;
+        // let messageBuffer = Message.encode(message).finish();
+        // stream.sink(lp.encode([messageBuffer]))
+
+        const buf = (await lp.decode(stream.source).return()).value;
+        const message = Message.decode(new Uint8Array(buf ? buf.subarray() : []))
+
+        // const message = JSON.parse(input);
         switch (message["type"]) {
           case "object_fetch": {
             const objectId = uint8ArrayToString(

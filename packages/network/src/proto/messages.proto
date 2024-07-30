@@ -7,10 +7,10 @@ message Message {
         SYNC = 1;
         SYNC_ACCEPT = 2;
         SYNC_REJECT = 3;
+        CUSTOM = 4;
     }
 
-    string id = 1;
-    string sender = 2;
-    MessageType type = 3;
-    bytes data = 4;
+    string sender = 1;
+    MessageType type = 2;
+    bytes data = 3;
 }

@@ -10,7 +10,6 @@ import _m0 from "protobufjs/minimal";
 export const protobufPackage = "topology.network";
 
 export interface Message {
-  id: string;
   sender: string;
   type: Message_MessageType;
   data: Uint8Array;
@@ -21,6 +20,7 @@ export enum Message_MessageType {
   SYNC = 1,
   SYNC_ACCEPT = 2,
   SYNC_REJECT = 3,
+  CUSTOM = 4,
   UNRECOGNIZED = -1,
 }
 
@@ -38,6 +38,9 @@ export function message_MessageTypeFromJSON(object: any): Message_MessageType {
     case 3:
     case "SYNC_REJECT":
       return Message_MessageType.SYNC_REJECT;
+    case 4:
+    case "CUSTOM":
+      return Message_MessageType.CUSTOM;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -55,6 +58,8 @@ export function message_MessageTypeToJSON(object: Message_MessageType): string {
       return "SYNC_ACCEPT";
     case Message_MessageType.SYNC_REJECT:
       return "SYNC_REJECT";
+    case Message_MessageType.CUSTOM:
+      return "CUSTOM";
     case Message_MessageType.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -62,22 +67,19 @@ export function message_MessageTypeToJSON(object: Message_MessageType): string {
 }
 
 function createBaseMessage(): Message {
-  return { id: "", sender: "", type: 0, data: new Uint8Array(0) };
+  return { sender: "", type: 0, data: new Uint8Array(0) };
 }
 
 export const Message = {
   encode(message: Message, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
     if (message.sender !== "") {
-      writer.uint32(18).string(message.sender);
+      writer.uint32(10).string(message.sender);
     }
     if (message.type !== 0) {
-      writer.uint32(24).int32(message.type);
+      writer.uint32(16).int32(message.type);
     }
     if (message.data.length !== 0) {
-      writer.uint32(34).bytes(message.data);
+      writer.uint32(26).bytes(message.data);
     }
     return writer;
   },
@@ -94,24 +96,17 @@ export const Message = {
             break;
           }
 
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.sender = reader.string();
           continue;
-        case 3:
-          if (tag !== 24) {
+        case 2:
+          if (tag !== 16) {
             break;
           }
 
           message.type = reader.int32() as any;
           continue;
-        case 4:
-          if (tag !== 34) {
+        case 3:
+          if (tag !== 26) {
             break;
           }
 
@@ -128,7 +123,6 @@ export const Message = {
 
   fromJSON(object: any): Message {
     return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
       sender: isSet(object.sender) ? globalThis.String(object.sender) : "",
       type: isSet(object.type) ? message_MessageTypeFromJSON(object.type) : 0,
       data: isSet(object.data) ? bytesFromBase64(object.data) : new Uint8Array(0),
@@ -137,9 +131,6 @@ export const Message = {
 
   toJSON(message: Message): unknown {
     const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
     if (message.sender !== "") {
       obj.sender = message.sender;
     }
@@ -157,7 +148,6 @@ export const Message = {
   },
   fromPartial<I extends Exact<DeepPartial<Message>, I>>(object: I): Message {
     const message = createBaseMessage();
-    message.id = object.id ?? "";
     message.sender = object.sender ?? "";
     message.type = object.type ?? 0;
     message.data = object.data ?? new Uint8Array(0);

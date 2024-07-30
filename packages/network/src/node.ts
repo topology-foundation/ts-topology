@@ -24,6 +24,7 @@ import { bootstrap } from "@libp2p/bootstrap";
 import { webTransport } from "@libp2p/webtransport";
 import { autoNAT } from "@libp2p/autonat";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
+import * as lp from "it-length-prefixed";
 import { Message } from "./proto/messages_pb.js";
 
 // snake_casing to match the JSON config
@@ -187,8 +188,8 @@ export class TopologyNetworkNode {
 
   async broadcastMessage(topic: string, message: Message) {
     try {
-      if (this._pubsub?.getSubscribers(topic)?.length === 0) return;
-      await this._pubsub?.publish(topic, message);
+      let messageBuffer = Message.encode(message).finish();
+      await this._pubsub?.publish(topic, messageBuffer);
 
       console.log(
         "topology::network::broadcastMessage: Successfuly broadcasted message to topic",
@@ -203,7 +204,10 @@ export class TopologyNetworkNode {
     try {
       const connection = await this._node?.dial([multiaddr(`/p2p/${peerId}`)]);
       const stream = <Stream>await connection?.newStream(protocols);
-      stringToStream(stream, message);
+      let messageBuffer = Message.encode(message).finish();
+      stream.sink(lp.encode([messageBuffer]))
+
+      // stringToStream(stream, message);
 
       console.log(
         `topology::network::sendMessage: Successfuly sent message to peer: ${peerId} with message: ${message}`,
@@ -225,7 +229,9 @@ export class TopologyNetworkNode {
 
       const connection = await this._node?.dial(peerId);
       const stream: Stream = (await connection?.newStream(protocols)) as Stream;
-      Message.encode(message, stream.sink)
+      let messageBuffer = Message.encode(message).finish();
+      stream.sink(lp.encode([messageBuffer]))
+
       // stringToStream(stream, message);
 
       console.log(

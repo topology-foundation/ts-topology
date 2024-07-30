@@ -18,27 +18,27 @@ export enum OPERATIONS {
   SYNC
 }
 
-function executeObjectOperation(node: TopologyNode, operation: OPERATIONS, data: Uint8Array) {
+export function executeObjectOperation(node: TopologyNode, operation: OPERATIONS, data: Uint8Array) {
   switch (operation) {
     case OPERATIONS.CREATE:
       // data = CRO
       createObject(node, data);
       break;
     case OPERATIONS.UPDATE:
-      // data = CRO
+      // data = [CRO_ID, OPERATION]
       updateObject(node, data)
       break;
     case OPERATIONS.SUBSCRIBE:
-      // data = TopologyObjectId
+      // data = CRO_ID
       subscribeObject(node, data)
       break;
     case OPERATIONS.UNSUBSCRIBE:
-      // data = ObjectId
+      // data = CRO_ID
       unsubscribeObject(node, data)
       break;
     case OPERATIONS.SYNC:
       // data = CRO
-      // TODO: data = RIBLT
+      // TODO: data = [CRO_ID, RIBLT]
       syncObject(node, data)
       break;
     default:
@@ -90,5 +90,7 @@ function syncObject(node: TopologyNode, data: Uint8Array) {
     type: Message_MessageType.SYNC,
     data: data
   })
+
+  // TODO: check how to do it better
   node.networkNode.sendGroupMessageRandomPeer(object.id, ["/topology/message"], message)
 }
