@@ -1,0 +1,20 @@
+name: Workflow - release
+on:
+  release:
+    types: [published]
+jobs:
+  npm_publish:
+    name: Publish packages to npmjs
+    secrets: inherit
+    permissions:
+      id-token: write
+      packages: write
+    uses: ./.github/workflows/npm-publish.yml
+
+  build_docker_images:
+    name: Build Docker Images
+    permissions:
+      packages: write
+    needs:
+      - npm_publish
+    uses: ./.github/workflows/docker.yml
