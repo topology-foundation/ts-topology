@@ -6,7 +6,7 @@ import {
 } from "@topology-foundation/network";
 import { TopologyNode } from ".";
 
-export async function topologyMessageHandler(node: TopologyNode, stream: Stream) {
+export async function topologyMessagesHandler(node: TopologyNode, stream: Stream) {
   const buf = (await lp.decode(stream.source).return()).value;
   const message = Message.decode(new Uint8Array(buf ? buf.subarray() : []))
 
@@ -31,6 +31,18 @@ export async function topologyMessageHandler(node: TopologyNode, stream: Stream)
 
 function updateHandler(node: TopologyNode, data: Uint8Array) {
   //
+  /*
+  this.objectStore.put(object.id, object);
+  // not dialed, emitted through pubsub
+  const message = `{
+    "type": "object_update",
+    "data": [${uint8ArrayFromString(update_data)}]
+  }`;
+  this.networkNode.broadcastMessage(
+    object.id,
+    uint8ArrayFromString(message),
+  );
+  */
 }
 
 function syncHandler(node: TopologyNode, protocol: string, sender: string, data: Uint8Array) {

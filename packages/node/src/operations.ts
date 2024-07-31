@@ -13,12 +13,12 @@ export enum OPERATIONS {
   SUBSCRIBE,
   /* Unsubscribe from a PubSub group */
   UNSUBSCRIBE,
-
   /* Actively send the CRO RIBLT to a random peer */
   SYNC
 }
 
-export function executeObjectOperation(node: TopologyNode, operation: OPERATIONS, data: Uint8Array) {
+/* Utility function to execute object operations apart of calling the functions directly */
+export async function executeObjectOperation(node: TopologyNode, operation: OPERATIONS, data: Uint8Array) {
   switch (operation) {
     case OPERATIONS.CREATE:
       // data = CRO
@@ -30,7 +30,7 @@ export function executeObjectOperation(node: TopologyNode, operation: OPERATIONS
       break;
     case OPERATIONS.SUBSCRIBE:
       // data = CRO_ID
-      subscribeObject(node, data)
+      await subscribeObject(node, data)
       break;
     case OPERATIONS.UNSUBSCRIBE:
       // data = CRO_ID
@@ -39,7 +39,7 @@ export function executeObjectOperation(node: TopologyNode, operation: OPERATIONS
     case OPERATIONS.SYNC:
       // data = CRO
       // TODO: data = [CRO_ID, RIBLT]
-      syncObject(node, data)
+      await syncObject(node, data)
       break;
     default:
       console.error("topology::node::executeObjectOperation", "Invalid operation");
@@ -47,13 +47,13 @@ export function executeObjectOperation(node: TopologyNode, operation: OPERATIONS
   }
 }
 
-function createObject(node: TopologyNode, data: Uint8Array) {
+export function createObject(node: TopologyNode, data: Uint8Array) {
   const object = TopologyObject.decode(data)
   node.networkNode.subscribe(object.id);
   node.objectStore.put(object.id, object);
 }
 
-function updateObject(node: TopologyNode, data: Uint8Array) {
+export function updateObject(node: TopologyNode, data: Uint8Array) {
   // TODO: should just send the object diff, not the full object
   // this is handler, we want the action of sending
   const object = TopologyObject.decode(data)
@@ -70,19 +70,41 @@ function updateObject(node: TopologyNode, data: Uint8Array) {
   );
 }
 
-function subscribeObject(node: TopologyNode, data: Uint8Array) {
+export async function subscribeObject(node: TopologyNode, data: Uint8Array, fetch?: boolean, peerId?: string) {
   // process data as only the object id and not the full obj
+  // need to create the obj anyway to sync empty obj
   const object = TopologyObject.decode(data)
   node.networkNode.subscribe(object.id);
+
+  if (!fetch) return;
+  const message = Message.create({
+    sender: node.networkNode.peerId,
+    type: Message_MessageType.SYNC,
+    data
+  });
+
+  if (!peerId) {
+    await node.networkNode.sendGroupMessageRandomPeer(
+      object.id,
+      ["/topology/message/0.0.1"],
+      message,
+    );
+  } else {
+    await node.networkNode.sendMessage(
+      peerId,
+      ["/topology/message/0.0.1"],
+      message,
+    );
+  }
 }
 
-function unsubscribeObject(node: TopologyNode, data: Uint8Array) {
+export function unsubscribeObject(node: TopologyNode, data: Uint8Array) {
   // process data as only the object id and not the full obj
   const object = TopologyObject.decode(data)
   node.networkNode.unsubscribe(object.id);
 }
 
-function syncObject(node: TopologyNode, data: Uint8Array) {
+export async function syncObject(node: TopologyNode, data: Uint8Array, peerId?: string) {
   // Send sync request to a random peer
   const object = TopologyObject.decode(data)
 
@@ -92,5 +114,17 @@ function syncObject(node: TopologyNode, data: Uint8Array) {
   })
 
   // TODO: check how to do it better
-  node.networkNode.sendGroupMessageRandomPeer(object.id, ["/topology/message"], message)
+  if (!peerId) {
+    await node.networkNode.sendGroupMessageRandomPeer(
+      object.id,
+      ["/topology/message/0.0.1"],
+      message,
+    );
+  } else {
+    await node.networkNode.sendMessage(
+      peerId,
+      ["/topology/message/0.0.1"],
+      message,
+    );
+  }
 }
