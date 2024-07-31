@@ -1,6 +1,15 @@
 import { GCounter } from "./GCounter";
 
-export class Pixel {
+export interface IPixel {
+  red: GCounter;
+  green: GCounter;
+  blue: GCounter;
+  color(): StaticArray<i32>;
+  paint(nodeId: string, rgb: StaticArray<i32>): void;
+  merge(peerPixel: IPixel): void;
+}
+
+class Pixel implements IPixel {
   red: GCounter;
   green: GCounter;
   blue: GCounter;
@@ -25,13 +34,25 @@ export class Pixel {
     this.blue.increment(nodeId, rgb[2]);
   }
 
-  merge(peerPixel: Pixel): void {
+  merge(peerPixel: IPixel): void {
     this.red.merge(peerPixel.red);
     this.green.merge(peerPixel.green);
     this.blue.merge(peerPixel.blue);
   }
 }
 
-export function createPixel(): Pixel {
+export function createPixel(): IPixel {
   return new Pixel();
+}
+
+export function pixelColor(pixel: IPixel): StaticArray<i32> {
+  return pixel.color();
+}
+
+export function pixelPaint(pixel: IPixel, nodeId: string, rgb: StaticArray<i32>): void {
+  pixel.paint(nodeId, rgb);
+}
+
+export function pixelMerge(pixel: IPixel, peerPixel: IPixel): void {
+  pixel.merge(peerPixel);
 }

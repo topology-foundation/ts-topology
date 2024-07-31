@@ -1,37 +1,36 @@
 export class GCounter {
-    private counts: Map<string, i32>;
-  
-    constructor() {
-      this.counts = new Map<string, i32>();
+  private counts: Map<string, i32>;
+
+  constructor() {
+    this.counts = new Map();
+  }
+
+  increment(nodeId: string, value: i32): void {
+    if (this.counts.has(nodeId)) {
+      this.counts.set(nodeId, this.counts.get(nodeId) + value);
+    } else {
+      this.counts.set(nodeId, value);
     }
-  
-    increment(nodeId: string, amount: i32 = 1): void {
-      if (this.counts.has(nodeId)) {
-        this.counts.set(nodeId, this.counts.get(nodeId) + amount);
+  }
+
+  value(): i32 {
+    let sum: i32 = 0;
+    const keys = this.counts.keys();
+    for (let i = 0; i < keys.length; i++) {
+      sum += this.counts.get(keys[i]);
+    }
+    return sum;
+  }
+
+  merge(other: GCounter): void {
+    const otherKeys = other.counts.keys();
+    for (let i = 0; i < otherKeys.length; i++) {
+      const key = otherKeys[i];
+      if (this.counts.has(key)) {
+        this.counts.set(key, Mathf.max(this.counts.get(key) as f32, other.counts.get(key) as f32) as i32);
       } else {
-        this.counts.set(nodeId, amount);
-      }
-    }
-  
-    value(): i32 {
-      let sum: i32 = 0;
-      const keys = this.counts.keys();
-      for (let i = 0; i < keys.length; i++) {
-        sum += this.counts.get(keys[i]);
-      }
-      return sum;
-    }
-  
-    merge(other: GCounter): void {
-      const keys = other.counts.keys();
-      for (let i = 0; i < keys.length; i++) {
-        const nodeId = keys[i];
-        if (this.counts.has(nodeId)) {
-          this.counts.set(nodeId, Math.max(this.counts.get(nodeId), other.counts.get(nodeId)));
-        } else {
-          this.counts.set(nodeId, other.counts.get(nodeId));
-        }
+        this.counts.set(key, other.counts.get(key));
       }
     }
   }
-  
+}
