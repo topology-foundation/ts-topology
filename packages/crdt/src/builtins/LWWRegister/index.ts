@@ -1,4 +1,4 @@
-export type Timestamp = [timestamp: number, replicaId: string];
+type Timestamp = [timestamp: number, replicaId: string];
 
 export class LWWRegister<T> {
     private _element: T;
