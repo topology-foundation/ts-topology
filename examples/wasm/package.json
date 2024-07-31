@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "node tests",
-    "asbuild:debug": "asc assembly/index.ts --target debug",
-    "asbuild:release": "asc assembly/index.ts --target release",
-    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
-    "start": "npx serve ."
+    "build:assemblyscript": "asc assembly/index.ts --config asconfig.json",
+    "build:typescript": "tsc",
+    "build": "npm run build:assemblyscript && npm run build:typescript",
+    "test": "node tests/index.js"
   },
   "keywords": [],
   "author": "",
@@ -26,5 +25,8 @@
       "import": "./build/release.js",
       "types": "./build/release.d.ts"
     }
+  },
+  "dependencies": {
+    "undici": "^6.19.5"
   }
 }

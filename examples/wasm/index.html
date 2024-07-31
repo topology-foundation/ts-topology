@@ -1,10 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="module">
-import { add } from "./build/release.js";
-document.body.innerText = add(1, 2);
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas WASM</title>
 </head>
-<body></body>
+<body>
+  <div id="canvas-container"></div>
+  <button id="test-button">Test Canvas</button>
+  <script type="module">
+    import { loadWasmModule } from './dist/wasmLoader.js';
+
+    document.getElementById('test-button').addEventListener('click', async () => {
+      try {
+        const canvasWasm = await loadWasmModule("/build/canvas.wasm");
+        const pixelWasm = await loadWasmModule("/build/pixel.wasm");
+
+        const width = 5;
+        const height = 10;
+        const canvas = new canvasWasm.Canvas(width, height);
+        canvas.splash("peerId", [0, 0], [2, 2], [255, 0, 0]);
+
+        const container = document.getElementById('canvas-container');
+        container.innerHTML = ''; 
+        for (let x = 0; x < width; x++) {
+          for (let y = 0; y < height; y++) {
+            const pixel = canvas.pixel(x, y);
+            const color = pixel.color();
+            const div = document.createElement('div');
+            div.style.width = '20px';
+            div.style.height = '20px';
+            div.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+            div.style.display = 'inline-block';
+            container.appendChild(div);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading WASM modules:', error);
+      }
+    });
+  </script>
+</body>
 </html>
