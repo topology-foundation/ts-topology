@@ -1,16 +1,16 @@
-export type Timestamp = [timestamp: number, replicaId: number];
+export type Timestamp = [timestamp: number, replicaId: string];
 
 export class LWWRegister<T> {
     private _element: T;
     private _timestamp: Timestamp;
     
 
-    constructor(element: T, replicaId: number) {
+    constructor(element: T, replicaId: string) {
         this._element = element;
         this._timestamp = [Date.now(), replicaId];
     }
 
-    assign(element: T, replicaId: number): void {
+    assign(element: T, replicaId: string): void {
         const timestamp = Date.now();
         if(compareTimestamps(this._timestamp, [timestamp, replicaId])) {
             this._element = element;
