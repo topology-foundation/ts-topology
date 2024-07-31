@@ -2,6 +2,7 @@ import { GCounter } from "../GCounter/index.js";
 
 /// State-based infinite-phase set (IPSet)
 export class IPSet<T> {
+  // Grow-only mapping of elements to GCounters
   private _counters: Map<T, GCounter>;
 
   // State:
@@ -18,7 +19,7 @@ export class IPSet<T> {
 
   add(nodeId: string, element: T): void {
     if (!this._counters.has(element)) {
-      this._counters.get(element)?.increment(nodeId, 1);
+      this._counters.set(element, new GCounter({ [nodeId]: 1 }));
     } else if (this._counters.get(element)?.value()! % 2 === 0) {
       this._counters.get(element)?.increment(nodeId, 1);
     }
@@ -51,6 +52,7 @@ export class IPSet<T> {
   }
 
   compare(peerSet: IPSet<T>): boolean {
+    // Returns true if peerSet includes all operations that were performed on the given IPSet and possibly more.
     // this._counters has to be a subset of peerSet._counters
     // and for each element, the value of the counter in this._counters has to be less than or equal to the value of the counter in peerSet._counters
     return [...this._counters.keys()].every(
