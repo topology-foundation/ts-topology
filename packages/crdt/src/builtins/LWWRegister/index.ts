@@ -1,20 +1,20 @@
+export type Timestamp = [timestamp: number, replicaId: number];
+
 export class LWWRegister<T> {
     private _element: T;
-    private _timestamp: number;
-    private _replicaId: number;
+    private _timestamp: Timestamp;
+    
 
     constructor(element: T, replicaId: number) {
         this._element = element;
-        this._replicaId = replicaId;
-        this._timestamp = Date.now();
+        this._timestamp = [Date.now(), replicaId];
     }
 
     assign(element: T, replicaId: number): void {
         const timestamp = Date.now();
-        if(timestamp > this._timestamp || (timestamp === this._timestamp && replicaId > this._replicaId)) {
+        if(compareTimestamps(this._timestamp, [timestamp, replicaId])) {
             this._element = element;
-            this._timestamp = timestamp;
-            this._replicaId = replicaId;
+            this._timestamp = [timestamp, replicaId];
         }
     }
 
@@ -22,11 +22,7 @@ export class LWWRegister<T> {
         return this._element;
     }
 
-    getReplicaId(): number {
-        return this._replicaId;
-    }
-
-    getTimestamp(): number {
+    getTimestamp(): Timestamp {
         return this._timestamp;
     }
 
@@ -35,10 +31,13 @@ export class LWWRegister<T> {
     }
 
     merge(register: LWWRegister<T>): void {
-        if(register.getTimestamp() > this._timestamp || (register.getTimestamp() === this._timestamp && register.getReplicaId() > this._replicaId)) {
+        if(compareTimestamps(this._timestamp, register.getTimestamp())) {
             this._element = register.getElement();
             this._timestamp = register.getTimestamp();
-            this._replicaId = register.getReplicaId();
         }
     }
+}
+
+function compareTimestamps(thisTimestamp: Timestamp, otherTimestamp: Timestamp): boolean {
+    return (otherTimestamp[0] > thisTimestamp[0] || (otherTimestamp[0] === thisTimestamp[0] && otherTimestamp[1] > thisTimestamp[1]));
 }
