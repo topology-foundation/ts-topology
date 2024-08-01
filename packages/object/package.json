@@ -25,5 +25,8 @@
     "clean": "rm -rf dist/ node_modules/",
     "prepack": "tsc -b",
     "test": "vitest"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.27.29"
   }
 }

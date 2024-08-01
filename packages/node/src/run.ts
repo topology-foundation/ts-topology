@@ -1,5 +1,6 @@
-import { program } from "./cli";
-import { TopologyNode, TopologyNodeConfig } from ".";
+import { program } from "./cli/index.js";
+import { TopologyNode, TopologyNodeConfig } from "./index.js";
+import { TopologyObject } from "@topology-foundation/object";
 import fs from "fs";
 
 async function startNode(config?: TopologyNodeConfig) {
@@ -10,6 +11,7 @@ async function startNode(config?: TopologyNodeConfig) {
 const run = () => {
   program.parse(process.argv);
   const opts = program.opts();
+  let a = new TopologyObject("");
 
   let config: TopologyNodeConfig | undefined;
   if (opts.config) {

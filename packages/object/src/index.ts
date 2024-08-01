@@ -1,12 +1,14 @@
 import * as crypto from "crypto";
+import { compileWasm } from "./compiler.js";
 
-export abstract class TopologyObject {
+export class TopologyObject {
   // TODO generate functions from the abi
   private abi?: string;
   private id?: string;
 
   constructor(peerId: string) {
     this.abi = "";
+    compileWasm().then(() => console.log("Wasm compiled!"))
 
     // id = sha256(abi, peer_id, random_nonce)
     this.id = crypto
@@ -25,5 +27,7 @@ export abstract class TopologyObject {
     return this.id ?? "";
   }
 
-  abstract merge(other: TopologyObject): void;
+  merge(other: TopologyObject) {
+
+  };
 }

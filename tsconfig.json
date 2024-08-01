@@ -3,10 +3,10 @@
     "strict": true,
     "allowJs": true,
     "target": "ES2022",
-    "module": "ES2022",
+    "module": "NodeNext",
 
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
 
     "declaration": true,
     "declarationMap": true,
