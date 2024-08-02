@@ -1,4 +1,5 @@
 {
+  "entries": ["./assembly/index.ts"],
   "targets": {
     "debug": {
       "outFile": "build/debug.wasm",
@@ -15,8 +16,5 @@
       "converge": false,
       "noAssert": false
     }
-  },
-  "options": {
-    "bindings": "esm"
   }
 }
