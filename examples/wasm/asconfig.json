@@ -18,5 +18,8 @@
   },
   "options": {
     "bindings": "esm"
+  },
+  "paths": {
+    "@topology-foundation/crdt-wasm": ["../../packages/crdt-wasm/assembly"]
   }
 }

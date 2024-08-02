@@ -1,4 +1,4 @@
-import { GCounter } from "./GCounter";
+import { GCounter } from "@topology-foundation/crdt-wasm/assembly";
 
 export interface IPixel {
   red: GCounter;

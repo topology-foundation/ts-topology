@@ -14,6 +14,7 @@
   "description": "",
   "devDependencies": {
     "@topology-foundation/crdt": "file:../../packages/crdt",
+    "@topology-foundation/crdt-wasm": "file:../../packages/crdt-wasm",
     "@topology-foundation/network": "file:../../packages/network",
     "@topology-foundation/node": "file:../../packages/node",
     "@topology-foundation/object": "file:../../packages/object",
