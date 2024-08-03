@@ -9,7 +9,7 @@ export class IPSet<T> {
   // - an element exists in the IPSet if _counter[element] exists and is an odd number
   // - otherwise the element doesn't exist in the IPSet
 
-  constructor(counters: Map<T, GCounter>) {
+  constructor(counters: Map<T, GCounter> = new Map()) {
     this._counters = counters;
   }
 

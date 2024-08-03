@@ -10,9 +10,9 @@ describe("Infinite-phase set Tests", () => {
     let set3: IPSet<number>;
 
     beforeEach(() => {
-        set1 = new IPSet<string>(new Map());
-        set2 = new IPSet<number>(new Map());
-        set3 = new IPSet<number>(new Map());
+        set1 = new IPSet<string>();
+        set2 = new IPSet<number>();
+        set3 = new IPSet<number>();
     });
 
     test("Test Add Elements", () => {
@@ -70,10 +70,6 @@ describe("Infinite-phase set Tests", () => {
             set3.remove(peerId, 1);
             set3.add(peerId, 3);
 
-            console.log(
-                "Merging {1:1, 3:2, 5:3} and {1:2, 3:1} should yield {1:2, 3:2, 5:3}"
-            );
-
             set2.merge(set3);
             expect(set2).toStrictEqual(
                 new IPSet<number>(
@@ -92,9 +88,6 @@ describe("Infinite-phase set Tests", () => {
             set3.add(peerId, 5);
             set3.add(peerId, 7);
 
-            console.log(
-                "Merging {1:1, 3:1} and {5:1, 7:1} should yield {1:1, 3:1, 5:1, 7:1}"
-            );
             set3.merge(set2);
             expect(set3).toStrictEqual(
                 new IPSet<number>(
