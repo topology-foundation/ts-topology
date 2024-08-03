@@ -40,6 +40,13 @@ export class RGA<T> {
             .map((element) => element.value! as T);
     }
 
+    clear(): void {
+        this._sequencer = { counter: 0, nodeId: this._sequencer.nodeId };
+        this._elements = [
+            new RGAElement<T>({ counter: 0, nodeId: "" }, null),
+        ]
+    }
+
     isTombstone(element: RGAElement<T>): boolean {
         return element.value === null;
     }
@@ -52,9 +59,13 @@ export class RGA<T> {
     indexWithTombstones(index: number): number {
         // Start from 1 to skip the head element
         let offset = 1;
-        while (index > 0) {
+        while (index >= 0 && offset < this._elements.length) {
+            if(index === 0 && !this.isTombstone(this._elements[offset])) break;
             if (!this.isTombstone(this._elements[offset])) index--;
             offset++;
+        }
+        if (index > 0) {
+            throw new RangeError("Index not found");
         }
         return offset;
     }
@@ -111,9 +122,7 @@ export class RGA<T> {
     delete(index: number): void {
         const i = this.indexWithTombstones(index);
         const ptr = this._elements[i].id;
-        console.log("Ptr: ", ptr);
         index = this.indexOfVPtr(ptr);
-        console.log("Index: ", index);
         this._elements[index].value = null;
     }
 
@@ -126,19 +135,14 @@ export class RGA<T> {
     // Merge another RGA instance into this one
     merge(peerRGA: RGA<T>): void {
         const newVertices: RGAElement<T>[] = [];
-        const combinedVertices = [...this._elements, ...peerRGA._elements];
-
-        // Sort the combined vertices by their Identifier
-        combinedVertices.sort((a, b) => {
-            if (a.id.counter === b.id.counter) {
-                return a.id.nodeId.localeCompare(b.id.nodeId);
-            }
-            return a.id.counter - b.id.counter;
-        });
+       
+        for (let i = 1; i < peerRGA._elements.length; i++) {
+            this.insert(i, peerRGA._elements[i].value!);
+        }
 
         // Deduplicate and merge the vertices
         const seen: Set<string> = new Set();
-        for (const vertex of combinedVertices) {
+        for (const vertex of this._elements) {
             const key = `${vertex.id.counter}_${vertex.id.nodeId}`;
             if (!seen.has(key)) {
                 newVertices.push(vertex);
@@ -154,5 +158,11 @@ export class RGA<T> {
                 }
             }
         }
+
+        this._elements = newVertices;
+        this._sequencer = {
+            counter: Math.max(this._sequencer.counter, peerRGA._sequencer.counter),
+            nodeId: this._sequencer.nodeId,
+        };
     }
 }
