@@ -16,7 +16,6 @@ export class OORSet<T> {
     this._elements = elements;
     this.nodeId = nodeId;
     this._summary = new Map<string, number>([[this.nodeId, 0]]);
-
   }
 
   lookup(element: T): boolean {
@@ -24,11 +23,9 @@ export class OORSet<T> {
   }
 
   add(element: T): void {
-
     let tag: number = this._summary.get(this.nodeId)! + 1;
     this._summary.set(this.nodeId, tag);
     this._elements.add({ element, tag, nodeId: this.nodeId });
-
   }
 
   remove(element: T): void {

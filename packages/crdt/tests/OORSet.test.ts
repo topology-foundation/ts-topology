@@ -2,15 +2,14 @@ import { describe, test, expect, beforeEach } from "vitest";
 import { OORSet, ElementTuple } from "../src/builtins/OORSet";
 
 describe("OR-Set Tests", () => {
-
-  let set1: ORSet<string>;
-  let set2: ORSet<string>;
+  let set1: OORSet<string>;
+  let set2: OORSet<string>;
 
   const testValues = ["walter", "jesse", "mike"];
 
   beforeEach(() => {
-    set1 = new ORSet<string>(new Set<ElementTuple<string>>(), "set1");
-    set2 = new ORSet<string>(new Set<ElementTuple<string>>(), "set2");
+    set1 = new OORSet<string>(new Set<ElementTuple<string>>(), "set1");
+    set2 = new OORSet<string>(new Set<ElementTuple<string>>(), "set2");
 
     testValues.forEach((value) => {
       set1.add(value);
