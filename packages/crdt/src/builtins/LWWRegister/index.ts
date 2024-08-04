@@ -1,29 +1,30 @@
-type Timestamp = [timestamp: number, replicaId: string];
-
 export class LWWRegister<T> {
     private _element: T;
-    private _timestamp: Timestamp;
-    
+    private _timestamp: number;
+    private _nodeId: string;
 
-    constructor(element: T, replicaId: string) {
+    constructor(element: T, nodeId: string) {
         this._element = element;
-        this._timestamp = [Date.now(), replicaId];
+        this._timestamp = Date.now();
+        this._nodeId = nodeId;
     }
 
-    assign(element: T, replicaId: string): void {
-        const timestamp = Date.now();
-        if(compareTimestamps(this._timestamp, [timestamp, replicaId])) {
-            this._element = element;
-            this._timestamp = [timestamp, replicaId];
-        }
+    assign(element: T, nodeId: string): void {
+        this._element = element;
+        this._timestamp = Date.now();
+        this._nodeId = nodeId;
     }
 
     getElement(): T {
         return this._element;
     }
 
-    getTimestamp(): Timestamp {
+    getTimestamp(): number {
         return this._timestamp;
+    }
+
+    getNodeId(): string {
+        return this._nodeId;
     }
 
     compare(register: LWWRegister<T>): boolean {
@@ -31,13 +32,13 @@ export class LWWRegister<T> {
     }
 
     merge(register: LWWRegister<T>): void {
-        if(compareTimestamps(this._timestamp, register.getTimestamp())) {
+        const otherTimestamp = register.getTimestamp();
+        const otherNodeId = register.getNodeId();
+        if (otherTimestamp > this._timestamp ||
+            (otherTimestamp === this._timestamp && otherNodeId > this._nodeId)) {
             this._element = register.getElement();
-            this._timestamp = register.getTimestamp();
+            this._timestamp = otherTimestamp;
+            this._nodeId = otherNodeId;
         }
     }
-}
-
-function compareTimestamps(thisTimestamp: Timestamp, otherTimestamp: Timestamp): boolean {
-    return (otherTimestamp[0] > thisTimestamp[0] || (otherTimestamp[0] === thisTimestamp[0] && otherTimestamp[1] > thisTimestamp[1]));
 }
