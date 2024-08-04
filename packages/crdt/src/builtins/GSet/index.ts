@@ -19,7 +19,7 @@ export class GSet<T> {
   }
 
   compare(peerSet: GSet<T>): boolean {
-    return this._set === peerSet.set();
+    return (this._set.size == peerSet.set().size && [...this._set].every(value => peerSet.set().has(value)));
   }
 
   merge(peerSet: GSet<T>): void {
