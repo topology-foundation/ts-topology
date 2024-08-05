@@ -34,11 +34,14 @@ export class LWWRegister<T> {
     merge(register: LWWRegister<T>): void {
         const otherTimestamp = register.getTimestamp();
         const otherNodeId = register.getNodeId();
-        if (otherTimestamp > this._timestamp ||
-            (otherTimestamp === this._timestamp && otherNodeId > this._nodeId)) {
-            this._element = register.getElement();
-            this._timestamp = otherTimestamp;
-            this._nodeId = otherNodeId;
+        if (otherTimestamp < this._timestamp) {
+            return;
         }
+        if (otherTimestamp === this._timestamp && otherNodeId <= this._nodeId) {
+            return;
+        }
+        this._element = register.getElement();
+        this._timestamp = otherTimestamp;
+        this._nodeId = otherNodeId;
     }
 }

@@ -12,13 +12,20 @@ describe('LWW-Register Tests', () => {
         expect(register1.getNodeId()).toEqual("node2");
     });
 
-    // test('Test Compare', () => {
-    //     let register1 = new LWWRegister<string>("alice", "node1");
-    //     let register2 = new LWWRegister<string>("alice", "node2");
+    test('Test Compare', () => {
+        vi.useFakeTimers();
+        const date = new Date(2000,1,1,13);
+        vi.setSystemTime(date);
 
-    //     expect(register1.compare(register2)).toEqual(true);
-    //     expect(register2.compare(register1)).toEqual(false);
-    // });
+        let register1 = new LWWRegister<string>("alice", "node1");
+
+        vi.useRealTimers();
+        
+        let register2 = new LWWRegister<string>("alice", "node2");
+
+        expect(register1.compare(register2)).toEqual(true);
+        expect(register2.compare(register1)).toEqual(false);
+    });
 
     test('Test Merge', () => {
         let register1 = new LWWRegister<string>("alice", "node1");
