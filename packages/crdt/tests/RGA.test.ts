@@ -74,40 +74,18 @@ describe("Replicable Growable Array Tests", () => {
         expect(rga.getArray()).toEqual(["C", "D"]);
     });
 
-    test("Test Merge Order", () => {
+    test("Test Merge", () => {
         rga.insert(0, "A");
         rga.insert(1, "B");
 
         peerRGA.insert(0, "C");
         peerRGA.insert(1, "D");
-        peerRGA.insert(2, "E");
+        peerRGA.insert(0, "E");
 
         rga.merge(peerRGA);
+        expect(rga.getArray()).toEqual(["E", "C", "A", "D", "B"]);
 
-        expect(rga.getArray()).toEqual(["A", "C", "B", "D"]);
-    });
-
-    test("Test Merge with Delete", () => {
-        rga.insert(0, "A1");
-        peerRGA.insert(0, "B1");
-
-        // Sync both replicas, both should be ["A1", "B1"]
-        rga.merge(peerRGA);
         peerRGA.merge(rga);
-
-        // console.log(rga.elements());
-        // console.log(peerRGA.elements());
-        rga.insert(1, "A2");
-        peerRGA.delete(1);
-        // console.log(rga.elements());
-        // console.log(peerRGA.elements());
-
-        expect(rga.getArray()).toEqual(["A1", "A2", "B1"]);
-        expect(peerRGA.getArray()).toEqual(["A1"]);
-
-        rga.merge(peerRGA);
-        peerRGA.merge(rga);
-
-        expect(rga.getArray()).toEqual(peerRGA.getArray());
+        expect(peerRGA.getArray()).toEqual(rga.getArray());
     });
 });

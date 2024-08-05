@@ -5,11 +5,17 @@ class RGAElement<T> {
     // Virtual identifier of the element
     public vid: Identifier;
     public value: T | null;
+    public parent: Identifier | null;
 
-    constructor(vid: Identifier, value: T | null) {
+    constructor(
+        vid: Identifier,
+        value: T | null,
+        parent: Identifier | null = null
+    ) {
         this.vid = vid;
         /// If the value is null, the element is in the tombstone state
         this.value = value;
+        this.parent = parent;
     }
 }
 
@@ -90,42 +96,37 @@ export class RGA<T> {
                 return offset;
             }
         }
-        throw new RangeError("Index not found");
-    }
-
-    // Function to find the correct insertion point for a new element
-    private shift(offset: number, id: Identifier): number {
-        while (offset < this._elements.length) {
-            const next: Identifier = this._elements[offset].vid;
-            if (this.compareVIds(next, id)) return offset;
-            offset++;
-        }
-        return offset;
+        throw new RangeError("Element not found");
     }
 
     insert(index: number, value: T): void {
         const i = this.indexWithTombstones(index);
-        const predecessor = this._elements[i - 1].vid;
+        const parent = this._elements[i - 1].vid;
         const newVId = this.nextSeq(this._sequencer);
-        this.insertElement(predecessor, new RGAElement(newVId, value));
+        this.insertElement(new RGAElement(newVId, value, parent));
     }
 
     // Function to insert a new element into the array
-    private insertElement(
-        predecessor: Identifier,
-        element: RGAElement<T>
-    ): void {
-        const predecessorIdx = this.indexOfVId(predecessor);
-        const insertIdx = this.shift(predecessorIdx + 1, element.vid);
+    private insertElement(element: RGAElement<T>): void {
+        const parentIdx = this.indexOfVId(element.parent!);
+        let insertIdx = parentIdx + 1;
+        for (; insertIdx < this._elements.length; insertIdx++) {
+            let curr = this._elements[insertIdx];
+            // if (element.vid.counter > curr.vid.counter) break;
+            let currParentIdx = this.indexOfVId(curr.parent!);
+            if (currParentIdx > parentIdx) break;
+            if (currParentIdx === parentIdx) {
+                if (this.compareVIds(curr.vid, element.vid)) break;
+            }
+        }
         this._sequencer = {
             counter: Math.max(this._sequencer.counter, element.vid.counter),
             nodeId: this._sequencer.nodeId,
         };
         // Check if its a duplicate
         if (
-            insertIdx < this._elements.length &&
-            this._elements[insertIdx].vid.counter === element.vid.counter &&
-            this._elements[insertIdx].vid.nodeId === element.vid.nodeId
+            this._elements[insertIdx - 1].vid.counter === element.vid.counter &&
+            this._elements[insertIdx - 1].vid.nodeId === element.vid.nodeId
         ) {
             return;
         }
@@ -149,10 +150,7 @@ export class RGA<T> {
     // Merge another RGA instance into this one
     merge(peerRGA: RGA<T>): void {
         for (let i = 1; i < peerRGA.elements().length; i++) {
-            this.insertElement(
-                peerRGA.elements()[i - 1].vid,
-                peerRGA.elements()[i]
-            );
+            this.insertElement(peerRGA.elements()[i]);
         }
 
         this._sequencer = {
