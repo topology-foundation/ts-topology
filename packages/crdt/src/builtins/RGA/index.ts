@@ -2,11 +2,12 @@
 type Identifier = { counter: number; nodeId: string };
 
 class RGAElement<T> {
-    public id: Identifier;
+    // Virtual identifier of the element
+    public vid: Identifier;
     public value: T | null;
 
-    constructor(id: Identifier, value: T | null) {
-        this.id = id;
+    constructor(vid: Identifier, value: T | null) {
+        this.vid = vid;
         /// If the value is null, the element is in the tombstone state
         this.value = value;
     }
@@ -34,7 +35,7 @@ export class RGA<T> {
         return this._elements;
     }
 
-    getElements(): T[] {
+    getArray(): T[] {
         return this._elements
             .filter((element) => element.value !== null)
             .map((element) => element.value! as T);
@@ -42,45 +43,49 @@ export class RGA<T> {
 
     clear(): void {
         this._sequencer = { counter: 0, nodeId: this._sequencer.nodeId };
-        this._elements = [
-            new RGAElement<T>({ counter: 0, nodeId: "" }, null),
-        ]
+        this._elements = [new RGAElement<T>({ counter: 0, nodeId: "" }, null)];
     }
 
-    isTombstone(element: RGAElement<T>): boolean {
+    private isTombstone(element: RGAElement<T>): boolean {
         return element.value === null;
     }
 
-    nextSeqNr(sequencer: Identifier): Identifier {
+    // Function to generate the next unique identifier
+    private nextSeq(sequencer: Identifier): Identifier {
         return { counter: sequencer.counter + 1, nodeId: sequencer.nodeId };
     }
 
+    // Check whether a < b, ids are never equal
+    private compareVIds(a: Identifier, b: Identifier): boolean {
+        if (a.counter !== b.counter) {
+            return a.counter < b.counter;
+        }
+        return a.nodeId < b.nodeId;
+    }
+
     // Function to map a logical index (ignoring tombstones) to a physical index in the elements array
-    indexWithTombstones(index: number): number {
-        // Start from 1 to skip the head element
-        let offset = 1;
-        while (index >= 0 && offset < this._elements.length) {
-            if(index === 0 && !this.isTombstone(this._elements[offset])) break;
+    private indexWithTombstones(index: number): number {
+        let offset = 1; // Start from 1 to skip the head element
+        while (index > 0) {
             if (!this.isTombstone(this._elements[offset])) index--;
             offset++;
-        }
-        if (index > 0) {
-            throw new RangeError("Index not found");
         }
         return offset;
     }
 
+    // Function to read the value at a given index
     read(index: number): T | null {
-        const i = this.indexWithTombstones(index);
+        let i = this.indexWithTombstones(index);
+        while (this.isTombstone(this._elements[i])) i++;
         return this._elements[i].value;
     }
 
-    // Function to find the physical index of a vertex given its virtual pointer
-    indexOfVPtr(ptr: Identifier): number {
+    // Function to find the physical index of an element given the virtual id
+    private indexOfVId(ptr: Identifier): number {
         for (let offset = 0; offset < this._elements.length; offset++) {
             if (
-                ptr.counter === this._elements[offset].id.counter &&
-                ptr.nodeId === this._elements[offset].id.nodeId
+                ptr.counter === this._elements[offset].vid.counter &&
+                ptr.nodeId === this._elements[offset].vid.nodeId
             ) {
                 return offset;
             }
@@ -88,80 +93,73 @@ export class RGA<T> {
         throw new RangeError("Index not found");
     }
 
-    // Function to find the correct insertion point for a new vertex
-    shift(offset: number, ptr: Identifier): number {
+    // Function to find the correct insertion point for a new element
+    private shift(offset: number, id: Identifier): number {
         while (offset < this._elements.length) {
-            const next: Identifier = this._elements[offset].id;
-            if (
-                next.counter < ptr.counter ||
-                (next.counter === ptr.counter && next.nodeId < ptr.nodeId)
-            ) {
-                return offset;
-            }
+            const next: Identifier = this._elements[offset].vid;
+            if (this.compareVIds(next, id)) return offset;
             offset++;
         }
         return offset;
     }
 
-    // Function to insert a new vertex in the graph
     insert(index: number, value: T): void {
         const i = this.indexWithTombstones(index);
-        const predecessor = this._elements[i - 1].id;
-        const ptr = this.nextSeqNr(this._sequencer);
+        const predecessor = this._elements[i - 1].vid;
+        const newVId = this.nextSeq(this._sequencer);
+        this.insertElement(predecessor, new RGAElement(newVId, value));
+    }
 
-        const predecessorIdx = this.indexOfVPtr(predecessor);
-        const insertIdx = this.shift(predecessorIdx + 1, ptr);
+    // Function to insert a new element into the array
+    private insertElement(
+        predecessor: Identifier,
+        element: RGAElement<T>
+    ): void {
+        const predecessorIdx = this.indexOfVId(predecessor);
+        const insertIdx = this.shift(predecessorIdx + 1, element.vid);
         this._sequencer = {
-            counter: Math.max(this._sequencer.counter, ptr.counter),
+            counter: Math.max(this._sequencer.counter, element.vid.counter),
             nodeId: this._sequencer.nodeId,
         };
-        this._elements.splice(insertIdx, 0, new RGAElement(ptr, value));
+        // Check if its a duplicate
+        if (
+            insertIdx < this._elements.length &&
+            this._elements[insertIdx].vid.counter === element.vid.counter &&
+            this._elements[insertIdx].vid.nodeId === element.vid.nodeId
+        ) {
+            return;
+        }
+        this._elements.splice(insertIdx, 0, element);
     }
 
-    // Function to delete a vertex from the graph
+    // Function to delete an element from the RGA
     delete(index: number): void {
-        const i = this.indexWithTombstones(index);
-        const ptr = this._elements[i].id;
-        index = this.indexOfVPtr(ptr);
-        this._elements[index].value = null;
+        let i = this.indexWithTombstones(index);
+        while (this.isTombstone(this._elements[i])) i++;
+        this._elements[i].value = null;
     }
 
-    // Function to update the value of a vertex
+    // Function to update the value of an element
     update(index: number, value: T): void {
-        const i = this.indexWithTombstones(index);
+        let i = this.indexWithTombstones(index);
+        while (this.isTombstone(this._elements[i])) i++;
         this._elements[i].value = value;
     }
 
     // Merge another RGA instance into this one
     merge(peerRGA: RGA<T>): void {
-        const newVertices: RGAElement<T>[] = [];
-       
-        for (let i = 1; i < peerRGA._elements.length; i++) {
-            this.insert(i, peerRGA._elements[i].value!);
+        for (let i = 1; i < peerRGA.elements().length; i++) {
+            this.insertElement(
+                peerRGA.elements()[i - 1].vid,
+                peerRGA.elements()[i]
+            );
         }
 
-        // Deduplicate and merge the vertices
-        const seen: Set<string> = new Set();
-        for (const vertex of this._elements) {
-            const key = `${vertex.id.counter}_${vertex.id.nodeId}`;
-            if (!seen.has(key)) {
-                newVertices.push(vertex);
-                seen.add(key);
-            } else {
-                const existingIndex = newVertices.findIndex(
-                    (v) =>
-                        v.id.counter === vertex.id.counter &&
-                        v.id.nodeId === vertex.id.nodeId
-                );
-                if (existingIndex !== -1 && vertex.value === null) {
-                    newVertices[existingIndex].value = null; // Ensure tombstone is applied
-                }
-            }
-        }
-
-        this._elements = newVertices;
         this._sequencer = {
-            counter: Math.max(this._sequencer.counter, peerRGA._sequencer.counter),
+            counter: Math.max(
+                this._sequencer.counter,
+                peerRGA._sequencer.counter
+            ),
             nodeId: this._sequencer.nodeId,
         };
     }
