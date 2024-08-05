@@ -35,22 +35,22 @@ export function createPNCounter(): usize {
   return pnCounterInstances.length - 1;
 };
 
-export function incrementCounter(counterPtr: usize, nodeId: string, amount: i32): void {
+export function incrementPNCounter(counterPtr: usize, nodeId: string, amount: i32): void {
   assert(counterPtr < pnCounterInstances.length, "invalid pointer value");
   pnCounterInstances[counterPtr].increment(nodeId, amount);
 };
 
-export function decrementCounter(counterPtr: usize, nodeId: string, amount: i32): void {
+export function decrementPNCounter(counterPtr: usize, nodeId: string, amount: i32): void {
   assert(counterPtr < pnCounterInstances.length, "invalid pointer value");
   pnCounterInstances[counterPtr].decrement(nodeId, amount);
 };
 
-export function getCounterValue(counterPtr: usize): i32 {
+export function getPNCounterValue(counterPtr: usize): i32 {
   assert(counterPtr < pnCounterInstances.length, "invalid pointer value");
   return pnCounterInstances[counterPtr].value();
 };
 
-export function mergeCounters(counterPtr: usize, otherPtr: usize): void {
+export function mergePNCounters(counterPtr: usize, otherPtr: usize): void {
   assert(counterPtr < pnCounterInstances.length, "invalid pointer value");
   assert(otherPtr > pnCounterInstances.length, "invalid pointer value");
   pnCounterInstances[counterPtr].merge(pnCounterInstances[otherPtr]);
