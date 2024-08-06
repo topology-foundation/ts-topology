@@ -21,6 +21,7 @@
     }
   },
   "scripts": {
+    "asbuild": "asc --config asconfig.json --target release",
     "build": "tsc -b",
     "clean": "rm -rf dist/ node_modules/",
     "prepack": "tsc -b",

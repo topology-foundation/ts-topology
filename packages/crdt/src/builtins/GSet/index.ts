@@ -1,28 +1,30 @@
-/// GSet with support for state and op changes
-export class GSet<T> {
-  private _set: Set<T>;
-
+/* GSet with support for state and op changes */
+class GSet<T> {
+  set: Set<T>;
   constructor(set: Set<T>) {
-    this._set = set;
+    this.set = set;
   }
+}
 
-  add(element: T): void {
-    this._set.add(element);
-  }
+function gset_create<T>(set: Set<T> = new Set<T>()): GSet<T> {
+  return new GSet<T>(set);
+}
 
-  lookup(element: T): boolean {
-    return this._set.has(element);
-  }
+function gset_add<T>(gset: GSet<T>, element: T): void {
+  gset.set.add(element);
+}
 
-  set(): Set<T> {
-    return this._set;
-  }
+function gset_lookup<T>(gset: GSet<T>, element: T): boolean {
+  return gset.set.has(element);
+}
 
-  compare(peerSet: GSet<T>): boolean {
-    return (this._set.size == peerSet.set().size && [...this._set].every(value => peerSet.set().has(value)));
-  }
+function gset_compare<T>(gset: GSet<T>, peerSet: GSet<T>): boolean {
+  return (gset.set.size == peerSet.set.size && gset.set.values().every(value => peerSet.set.has(value)));
+}
 
-  merge(peerSet: GSet<T>): void {
-    this._set = new Set<T>([...this._set, ...peerSet.set()]);
-  }
+function gset_merge<T>(gset: GSet<T>, peerSet: GSet<T>): void {
+  //this._set = new Set<T>([...this._set, ...peerSet.set()]);
+  peerSet.set.values().forEach((value) => {
+    gset.set.add(value);
+  });
 }

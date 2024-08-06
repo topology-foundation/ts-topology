@@ -1,29 +1,27 @@
-import { GSet } from "@topology-foundation/crdt";
+import { GSet } from "@topology-foundation/crdt/src/builtins/GSet.js";
+import { Set } from "assemblyscript/std/assembly/Set.js";
 
-export interface IChat {
-  chat: GSet<string>;
-  addMessage(timestamp: string, message: string, node_id: string): void;
-  getMessages(): GSet<string>;
-  merge(other: Chat): void;
-}
-
-export class Chat implements IChat {
+class Chat {
   // store messages as strings in the format (timestamp, message, peerId)
-  chat: GSet<string>;
+  messages: GSet<string>;
 
   constructor(peerId: string) {
-    this.chat = new GSet<string>(new Set<string>());
+    this.messages = new GSet<string>(new Set<string>());
   }
+}
 
-  addMessage(timestamp: string, message: string, node_id: string): void {
-    this.chat.add(`(${timestamp}, ${message}, ${node_id})`);
-  }
+export function createChat(peerId: string): Chat {
+  return new Chat(peerId);
+}
 
-  getMessages(): GSet<string> {
-    return this.chat;
-  }
+export function addMessage(chat: Chat, timestamp: string, message: string, node_id: string): void {
+  chat.messages.add(`(${timestamp}, ${message}, ${node_id})`);
+}
 
-  merge(other: Chat): void {
-    this.chat.merge(other.chat);
-  }
+export function getMessages(chat: Chat): GSet<string> {
+  return chat.messages;
+}
+
+export function merge(chat: Chat, other: Chat): void {
+  chat.messages.merge(other.messages);
 }
