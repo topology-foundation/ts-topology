@@ -1,5 +1,5 @@
 {
-  "entries": ["./src/index.ts"],
+  "entries": ["./src/index.asc.ts"],
   "targets": {
     "debug": {
       "outFile": "dist/asc/debug.wasm",
@@ -17,7 +17,8 @@
       "noAssert": false
     },
     "options": {
-      "bindings": "esm"
+      "bindings": "esm",
+      "disableWarning": "235"
     }
   }
 }
