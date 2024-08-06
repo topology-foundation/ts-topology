@@ -112,7 +112,6 @@ export class RGA<T> {
         let insertIdx = parentIdx + 1;
         for (; insertIdx < this._elements.length; insertIdx++) {
             let curr = this._elements[insertIdx];
-            // if (element.vid.counter > curr.vid.counter) break;
             let currParentIdx = this.indexOfVId(curr.parent!);
             if (currParentIdx > parentIdx) break;
             if (currParentIdx === parentIdx) {
