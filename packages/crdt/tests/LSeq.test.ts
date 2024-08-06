@@ -15,7 +15,7 @@ describe("LSeq Tests", () => {
         lseq.insert(2,'mom');
         lseq.insert(2,'zom');
         lseq.insert(2,'dad');
-        
+       
         expect(lseq.query().join('')).toBe("hi*dadzommom!");
     });
 
@@ -58,8 +58,12 @@ describe("LSeq Tests", () => {
 
         expect(lseq2.query().join('')).toBe("hi*!");
 
-        lseq1.insert(2, 'mom');
-        lseq2.insert(2 ,'dad');
+        lseq1.insert(2, 'm');
+        lseq1.insert(2, 'o');
+        lseq1.insert(2, 'm');
+        lseq2.insert(2 ,'d');
+        lseq2.insert(2 ,'a');
+        lseq2.insert(2 ,'d');
 
         expect(lseq1.query().join('')).toBe("hi*mom!");
         expect(lseq2.query().join('')).toBe("hi*dad!");
@@ -69,5 +73,6 @@ describe("LSeq Tests", () => {
 
         expect(lseq1.query().join('')).toBe("hi*dadmom!");
         expect(lseq2.query().join('')).toBe("hi*dadmom!");
+        
     });
 });

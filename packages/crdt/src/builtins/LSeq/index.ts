@@ -1,6 +1,6 @@
 type VPointer = {
     sequence: number[],
-    id: string
+    nodeId: string
 };
 
 type Vertex<T> = {
@@ -25,13 +25,13 @@ export class LSeq<T> {
         return this._nodeId;
     }
 
-    insert(index: number, content: T): void {
+    insert(index: number, element: T): void {
         const left = index === 0 ? [] : this._vertices[index - 1].vPointer.sequence;
         const right = index === this._vertices.length ? [] : this._vertices[index].vPointer.sequence;
-        const pointer = { sequence: generateSeq(left, right), id: this._nodeId };
-        const idx = this._vertices.findIndex( vertex => compareSeq(vertex.vPointer.sequence, pointer.sequence) >= 0);
+        const pointer = { sequence: generateSeq(left, right), nodeId: this._nodeId };
+        const idx = this._vertices.findIndex( vertex => compareSeq(vertex.vPointer.nodeId, pointer.nodeId,vertex.vPointer.sequence, pointer.sequence) >= 0);
         const newVertices = this._vertices;
-        newVertices.splice(idx >= 0 ? idx  : this._vertices.length, 0, { vPointer: pointer, element: content });
+        newVertices.splice(idx >= 0 ? idx  : this._vertices.length, 0, { vPointer: pointer, element: element });
         this._vertices = newVertices;
     }
 
@@ -51,21 +51,26 @@ export class LSeq<T> {
         const newVertices = this._vertices;
         otherLSeq.getVertices().forEach((value) => {
             if(!newVertices.some( vertex => vertex.vPointer === value.vPointer)) {
-                newVertices.splice(otherLSeq._vertices.indexOf(value),0, value);
+                const idx = otherLSeq.getVertices().findIndex( vertex => compareSeq(vertex.vPointer.nodeId, value.vPointer.nodeId, vertex.vPointer.sequence, value.vPointer.sequence) == 0);
+                newVertices.splice(idx >= 0 ? idx: this._vertices.length,0, value);
             }
         });
         this._vertices = newVertices;
     }
 }
 
-function compareSeq(seq1: number[], seq2: number[]): number {
+function compareSeq(id1: string, id2: string, seq1: number[], seq2: number[]): number {
     const len = Math.min(seq1.length, seq2.length);
     for (let i = 0; i < len; i++) {
         if (seq1[i] !== seq2[i]) {
             return seq1[i] - seq2[i];
         }
     }
-    return seq1.length - seq2.length;
+    let cmp = seq1.length - seq2.length;
+    if(cmp === 0 ){
+        cmp = id1.localeCompare(id2);
+    }
+    return cmp;
 }
 
 function generateSeq(lo: number[], hi: number[]): number[] {
