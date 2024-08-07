@@ -1,4 +1,4 @@
-import { GSet, gset_add, gset_create, gset_merge } from "@topology-foundation/crdt/src/builtins/GSet/index";
+import { GSet, gset_create, gset_add, gset_merge } from "@topology-foundation/crdt/src/index.asc";
 
 class Chat {
   // store messages as strings in the format (timestamp, message, peerId)

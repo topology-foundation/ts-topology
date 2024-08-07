@@ -20,7 +20,7 @@
   "options": {
     "bindings": "esm",
     "lib": {
-      "@topology-foundation/crdt": ["../../../node_modules/@topology-foundation/crdt/src/index.ts"]
+      "@topology-foundation/crdt": ["../crdt/src/index.asc.ts"]
     }
   }
 }
