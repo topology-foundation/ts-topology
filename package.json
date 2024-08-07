@@ -23,7 +23,7 @@
     "release-it": "^17.6.0",
     "typedoc": "^0.26.4",
     "typescript": "^5.4.5",
-    "vitest": "^2.0.3"
+    "vitest": "^2.0.5"
   },
   "workspaces": [
     "packages/*",
