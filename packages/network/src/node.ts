@@ -25,6 +25,27 @@ import { webTransport } from "@libp2p/webtransport";
 import { autoNAT } from "@libp2p/autonat";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 
+import { Logger } from "tslog";
+// import * as fs from 'fs';
+// import * as path from 'path';
+
+// const readJson = (filePath: string) => {
+//   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+// };
+
+// const nodePackagePath = path.resolve(__dirname, '../node/package.json');
+// const nodePackageOptions = readJson(nodePackagePath);
+// const { loggerOptions } = nodePackageOptions;
+
+// const mainLogger = new Logger({ name: "topology:network", ...loggerOptions}); // 3 = INFO
+const mainLogger = new Logger({ name: "topology:network", type: "pretty", minLevel: 3 }); // 3 = INFO
+const startLogger = mainLogger.getSubLogger({ name: "start" });
+const subscribeLogger = mainLogger.getSubLogger({ name: "subscribe" });
+const unsubscribeLogger = mainLogger.getSubLogger({ name: "unsubscribe" });
+const broadcastMessageLogger = mainLogger.getSubLogger({ name: "broadcastMessage" });
+const sendMessageLogger = mainLogger.getSubLogger({ name: "sendMessage" });
+const sendGroupMessageRandomPeerLogger = mainLogger.getSubLogger({ name: "sendGroupMessageRandomTopicPeer" });
+
 // snake_casing to match the JSON config
 export interface TopologyNetworkNodeConfig {
   addresses?: string[];
@@ -115,60 +136,47 @@ export class TopologyNetworkNode {
     this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
     this.peerId = this._node.peerId.toString();
 
-    console.log(
-      "topology::network::start: Successfuly started topology network w/ peer_id",
-      this.peerId,
-    );
+    startLogger.info("Successfuly started topology network w/ peer_id", this.peerId);
 
     // TODO remove this or add better logger
     // we need to keep it now for debugging
     this._node.addEventListener("peer:connect", (e) =>
-      console.log("peer:connect", e.detail),
+      startLogger.info("peer:connect", e.detail)
     );
     this._node.addEventListener("peer:discovery", (e) =>
-      console.log("peer:discovery", e.detail),
+      startLogger.info("peer:discovery", e.detail)
     );
     this._node.addEventListener("peer:identify", (e) =>
-      console.log("peer:identify", e.detail),
+      startLogger.info("peer:identify", e.detail)
     );
   }
 
   subscribe(topic: string) {
     if (!this._node) {
-      console.error(
-        "topology::network::subscribe: Node not initialized, please run .start()",
-      );
+      subscribeLogger.error("Node not initialized, please run .start()");
       return;
     }
 
     try {
       this._pubsub?.subscribe(topic);
       this._pubsub?.getPeers();
-      console.log(
-        "topology::network::subscribe: Successfuly subscribed the topic",
-        topic,
-      );
+      subscribeLogger.info("Successfuly subscribed the topic", topic);
     } catch (e) {
-      console.error("topology::network::subscribe:", e);
+      subscribeLogger.error(e);
     }
   }
 
   unsubscribe(topic: string) {
     if (!this._node) {
-      console.error(
-        "topology::network::unsubscribe: Node not initialized, please run .start()",
-      );
+      unsubscribeLogger.error("Node not initialized, please run .start()");
       return;
     }
 
     try {
       this._pubsub?.unsubscribe(topic);
-      console.log(
-        "topology::network::unsubscribe: Successfuly unsubscribed the topic",
-        topic,
-      );
+      unsubscribeLogger.info("Successfuly unsubscribed the topic", topic);
     } catch (e) {
-      console.error("topology::network::unsubscribe:", e);
+      unsubscribeLogger.error(e);
     }
   }
 
@@ -189,12 +197,9 @@ export class TopologyNetworkNode {
       if (this._pubsub?.getSubscribers(topic)?.length === 0) return;
       await this._pubsub?.publish(topic, message);
 
-      console.log(
-        "topology::network::broadcastMessage: Successfuly broadcasted message to topic",
-        topic,
-      );
+      broadcastMessageLogger.info("Successfuly broadcasted message to topic", topic);
     } catch (e) {
-      console.error("topology::network::broadcastMessage:", e);
+      broadcastMessageLogger.error(e);
     }
   }
 
@@ -204,11 +209,9 @@ export class TopologyNetworkNode {
       const stream = <Stream>await connection?.newStream(protocols);
       stringToStream(stream, message);
 
-      console.log(
-        `topology::network::sendMessage: Successfuly sent message to peer: ${peerId} with message: ${message}`,
-      );
+      sendMessageLogger.info("Successfuly sent message to peer", peerId);
     } catch (e) {
-      console.error("topology::network::sendMessage:", e);
+      sendMessageLogger.error(e);
     }
   }
 
@@ -226,11 +229,9 @@ export class TopologyNetworkNode {
       const stream: Stream = (await connection?.newStream(protocols)) as Stream;
       stringToStream(stream, message);
 
-      console.log(
-        `topology::network::sendMessageRandomTopicPeer: Successfuly sent message to peer: ${peerId} with message: ${message}`,
-      );
+      sendGroupMessageRandomPeerLogger.info(`Successfuly sent message to peer: ${peerId} with message: ${message}`);
     } catch (e) {
-      console.error("topology::network::sendMessageRandomTopicPeer:", e);
+      sendGroupMessageRandomPeerLogger.error(e);
     }
   }
 
