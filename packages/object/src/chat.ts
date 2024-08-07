@@ -1,15 +1,15 @@
-import { GSet, gset_add, gset_merge } from "@topology-foundation/crdt/src/builtins/GSet/index";
+import { GSet, gset_add, gset_create, gset_merge } from "@topology-foundation/crdt/src/builtins/GSet/index";
 
 class Chat {
   // store messages as strings in the format (timestamp, message, peerId)
   messages: GSet<string>;
 
   constructor() {
-    this.messages = new GSet<string>(new Set<string>());
+    this.messages = gset_create<string>();
   }
 }
 
-export function createChat(peerId: string): Chat {
+export function createChat(): Chat {
   return new Chat();
 }
 

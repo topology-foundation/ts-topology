@@ -1,4 +1,5 @@
 /* GSet with support for state and op changes */
+
 export class GSet<T> {
   set: Set<T>;
 
@@ -7,9 +8,7 @@ export class GSet<T> {
   }
 
   add(element: T): void {
-    let set = this.set;
-    set.add(element);
-    this.set = set;
+    this.set.add(element);
   }
 
   lookup(element: T): boolean {
@@ -26,7 +25,7 @@ export class GSet<T> {
 }
 
 /// AssemblyScript functions
-function gset_create<T>(set: Set<T> = new Set<T>()): GSet<T> {
+export function gset_create<T>(set: Set<T> = new Set<T>()): GSet<T> {
   return new GSet<T>(set);
 }
 
@@ -34,7 +33,7 @@ export function gset_add<T>(gset: GSet<T>, element: T): void {
   gset.add(element);
 }
 
-function gset_lookup<T>(gset: GSet<T>, element: T): boolean {
+export function gset_lookup<T>(gset: GSet<T>, element: T): boolean {
   return gset.lookup(element);
 }
 
@@ -44,8 +43,10 @@ export function gset_compare<T>(gset: GSet<T>, peerSet: GSet<T>): boolean {
 }
 
 export function gset_merge<T>(gset: GSet<T>, peerSet: GSet<T>): void {
+  let set = gset.set.values();
   // @ts-ignore
-  peerSet.set.values().forEach((value) => {
-    gset.set.add(value);
-  });
+  for (let i = 0, l = peerSet.set.values().length; i < l; ++i) {
+    // @ts-ignore
+    gset.add(set[i]);
+  }
 }
