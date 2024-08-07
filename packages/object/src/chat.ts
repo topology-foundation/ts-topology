@@ -1,3 +1,4 @@
+// @ts-ignore
 import { GSet, gset_create, gset_add, gset_merge } from "@topology-foundation/crdt/src/index.asc";
 
 class Chat {
