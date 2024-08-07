@@ -15,10 +15,10 @@
       "shrinkLevel": 0,
       "converge": false,
       "noAssert": false
-    },
-    "options": {
-      "bindings": "esm",
-      "disableWarning": "235"
     }
+  },
+  "options": {
+    "bindings": "esm",
+    "disableWarning": [235]
   }
 }

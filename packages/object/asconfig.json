@@ -15,12 +15,12 @@
       "shrinkLevel": 0,
       "converge": false,
       "noAssert": false
-    },
-    "options": {
-      "bindings": "esm"
-    },
+    }
+  },
+  "options": {
+    "bindings": "esm",
     "lib": {
-      "@topology-foundation/crdt": ["../crdt/src"]
+      "@topology-foundation/crdt": ["../../../node_modules/@topology-foundation/crdt/src/index.ts"]
     }
   }
 }

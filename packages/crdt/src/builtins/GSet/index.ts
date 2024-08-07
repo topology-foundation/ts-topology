@@ -7,7 +7,9 @@ export class GSet<T> {
   }
 
   add(element: T): void {
-    this.set.add(element);
+    let set = this.set;
+    set.add(element);
+    this.set = set;
   }
 
   lookup(element: T): boolean {
@@ -28,20 +30,20 @@ function gset_create<T>(set: Set<T> = new Set<T>()): GSet<T> {
   return new GSet<T>(set);
 }
 
-function gset_add<T>(gset: GSet<T>, element: T): void {
-  gset.set.add(element);
+export function gset_add<T>(gset: GSet<T>, element: T): void {
+  gset.add(element);
 }
 
 function gset_lookup<T>(gset: GSet<T>, element: T): boolean {
-  return gset.set.has(element);
+  return gset.lookup(element);
 }
 
-function gset_compare<T>(gset: GSet<T>, peerSet: GSet<T>): boolean {
+export function gset_compare<T>(gset: GSet<T>, peerSet: GSet<T>): boolean {
   // @ts-ignore
   return (gset.set.size == peerSet.set.size && gset.set.values().every(value => peerSet.set.has(value)));
 }
 
-function gset_merge<T>(gset: GSet<T>, peerSet: GSet<T>): void {
+export function gset_merge<T>(gset: GSet<T>, peerSet: GSet<T>): void {
   // @ts-ignore
   peerSet.set.values().forEach((value) => {
     gset.set.add(value);
