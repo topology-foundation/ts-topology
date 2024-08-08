@@ -8,10 +8,8 @@ export async function compileWasm() {
   const { error, stdout, stderr, stats } = await asc.main([
     // Command line options
     "/Users/droak/code/topology/ts-topology/packages/object/src/chat.ts",
-    "--outFile", "myModule.wasm",
-    "--optimize",
-    "--sourceMap",
-    "--stats"
+    "--config=/Users/droak/code/topology/ts-topology/packages/object/asconfig.json",
+    "--target=release"
   ]);
 
   if (error) {

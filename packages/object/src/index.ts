@@ -1,5 +1,5 @@
 import * as crypto from "crypto";
-import { compileWasm } from "./compiler.js";
+import { compileWasm } from "./wasm/compiler.js";
 
 export class TopologyObject {
   // TODO generate functions from the abi
@@ -31,3 +31,6 @@ export class TopologyObject {
 
   };
 }
+
+let obj = new TopologyObject("peerId");
+console.log(obj.getObjectId());
