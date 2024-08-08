@@ -26,19 +26,10 @@ import { autoNAT } from "@libp2p/autonat";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 
 import { Logger } from "tslog";
-// import * as fs from 'fs';
-// import * as path from 'path';
+import tslogconfig from "../tslog.config";
+tslogconfig.name = "topology:network";
+const mainLogger = new Logger(tslogconfig);
 
-// const readJson = (filePath: string) => {
-//   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-// };
-
-// const nodePackagePath = path.resolve(__dirname, '../node/package.json');
-// const nodePackageOptions = readJson(nodePackagePath);
-// const { loggerOptions } = nodePackageOptions;
-
-// const mainLogger = new Logger({ name: "topology:network", ...loggerOptions}); // 3 = INFO
-const mainLogger = new Logger({ name: "topology:network", type: "pretty", minLevel: 3 }); // 3 = INFO
 const startLogger = mainLogger.getSubLogger({ name: "start" });
 const subscribeLogger = mainLogger.getSubLogger({ name: "subscribe" });
 const unsubscribeLogger = mainLogger.getSubLogger({ name: "unsubscribe" });
