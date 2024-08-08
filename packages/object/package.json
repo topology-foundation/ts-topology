@@ -29,5 +29,8 @@
   },
   "devDependencies": {
     "assemblyscript": "^0.27.29"
+  },
+  "dependencies": {
+    "ts-proto": "^1.181.1"
   }
 }

@@ -1,7 +1,7 @@
 import { TopologyObject } from "@topology-foundation/object";
 import { IPixel, Pixel } from "./pixel";
 
-export interface ICanvas extends TopologyObject {
+export interface ICanvas {
   width: number;
   height: number;
   canvas: IPixel[][];
@@ -20,13 +20,12 @@ export interface ICanvas extends TopologyObject {
   merge(peerCanvas: Canvas): void;
 }
 
-export class Canvas extends TopologyObject implements ICanvas {
+export class Canvas implements TopologyObject, ICanvas {
   width: number;
   height: number;
   canvas: IPixel[][];
 
   constructor(peerId: string, width: number, height: number) {
-    super(peerId);
     this.width = width;
     this.height = height;
     this.canvas = Array.from(new Array(width), () =>

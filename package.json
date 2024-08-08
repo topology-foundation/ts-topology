@@ -13,6 +13,7 @@
   },
   "scripts": {
     "docs": "typedoc",
+    "proto-gen": "buf generate",
     "release": "release-it",
     "test": "vitest"
   },
