@@ -125,7 +125,7 @@ class HashgraphDAG<O,T> {
         const currentDegree = outDegrees[dependencyHash]; 
         outDegrees.set(dependencyHash, currentDegree - 1);
         
-        if currentDegree - 1 ===0 {
+        if currentDegree - 1 === 0 {
           const op = this.nodes.get(dependencyHash).operation;
           zeroOutDegreeDependencyOps.set(op, dependencyHash);
         }
