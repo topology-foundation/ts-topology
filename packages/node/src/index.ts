@@ -5,14 +5,9 @@ import {
   Message_MessageType,
   TopologyNetworkNode,
   TopologyNetworkNodeConfig,
-  streamToString,
 } from "@topology-foundation/network";
-import { TopologyObject } from "@topology-foundation/object";
 import { TopologyObjectStore } from "./store/index.js";
-import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
-import { toString as uint8ArrayToString } from "uint8arrays/to-string";
-import * as lp from "it-length-prefixed";
-import { topologyMessagesHandler } from "./handlers";
+import { topologyMessagesHandler } from "./handlers.js";
 
 export * from "./operations.js";
 

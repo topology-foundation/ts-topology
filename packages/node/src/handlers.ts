@@ -4,7 +4,7 @@ import {
   Message,
   Message_MessageType,
 } from "@topology-foundation/network";
-import { TopologyNode } from ".";
+import { TopologyNode } from "./index.js";
 
 export async function topologyMessagesHandler(node: TopologyNode, stream: Stream) {
   const buf = (await lp.decode(stream.source).return()).value;

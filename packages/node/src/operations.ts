@@ -1,6 +1,6 @@
 import { TopologyObject } from "@topology-foundation/object";
-import { TopologyNode } from ".";
 import { Message, Message_MessageType } from "@topology-foundation/network";
+import { TopologyNode } from "./index.js";
 
 /* Object operations */
 export enum OPERATIONS {
