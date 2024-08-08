@@ -21,9 +21,15 @@
     }
   },
   "scripts": {
+    "asbuild": "yarn asbuild:debug && yarn asbuild:release",
+    "asbuild:debug": "asc --config asconfig.json --target debug",
+    "asbuild:release": "asc --config asconfig.json --target release",
     "build": "tsc -b",
     "clean": "rm -rf dist/ node_modules/",
     "prepack": "tsc -b",
     "test": "vitest"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.27.29"
   }
 }

@@ -1,29 +1,23 @@
 import * as crypto from "crypto";
+import { TopologyObject } from "./proto/object_pb.js";
+import { compileWasm } from "./wasm/compiler.js";
 
-export abstract class TopologyObject {
-  // TODO generate functions from the abi
-  private abi?: string;
-  private id?: string;
+export * from "./proto/object_pb.js";
 
-  constructor(peerId: string) {
-    this.abi = "";
-
-    // id = sha256(abi, peer_id, random_nonce)
-    this.id = crypto
+/* Creates a new TopologyObject */
+export function newTopologyObject(peerId: string, id?: string, abi?: string, bytecode?: string): TopologyObject {
+  return {
+    id: id ?? crypto
       .createHash("sha256")
-      .update(this.abi)
+      .update(abi ?? "")
       .update(peerId)
       .update(Math.floor(Math.random() * Number.MAX_VALUE).toString())
-      .digest("hex");
+      .digest("hex"),
+    abi: abi ?? "",
+    bytecode: bytecode ?? ""
   }
-
-  getObjectAbi(): string {
-    return this.abi ?? "";
-  }
-
-  getObjectId(): string {
-    return this.id ?? "";
-  }
-
-  abstract merge(other: TopologyObject): void;
 }
+
+// just for testing wasm compilation with tsx, should be deleted
+let obj = newTopologyObject("peerId");
+console.log(obj.id);

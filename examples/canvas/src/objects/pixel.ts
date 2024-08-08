@@ -1,7 +1,6 @@
 import { GCounter } from "@topology-foundation/crdt";
-import { TopologyObject } from "@topology-foundation/object";
 
-export interface IPixel extends TopologyObject {
+export interface IPixel {
   red: GCounter;
   green: GCounter;
   blue: GCounter;
@@ -11,13 +10,12 @@ export interface IPixel extends TopologyObject {
   merge(peerPixel: IPixel): void;
 }
 
-export class Pixel extends TopologyObject implements IPixel {
+export class Pixel implements IPixel {
   red: GCounter;
   green: GCounter;
   blue: GCounter;
 
-  constructor(peerId: string) {
-    super(peerId);
+  constructor() {
     this.red = new GCounter({});
     this.green = new GCounter({});
     this.blue = new GCounter({});
