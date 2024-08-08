@@ -119,7 +119,7 @@ class HashgraphDAG<O,T> {
       
       // Decrement the outDegree of each dependency by 1
       const dependencyHashes = inverseDependencies[nodeHash];
-      const zeroOutDegreeDependencyOps: Hash[] = [];
+      const zeroOutDegreeDependencyOps: Map<O, Hash> = new Map();
 
       for (const dependencyHash of dependencyHashes) {
         const currentDegree = outDegrees[dependencyHash]; 
