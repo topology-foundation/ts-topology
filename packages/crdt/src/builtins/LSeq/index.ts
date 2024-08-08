@@ -29,17 +29,21 @@ export class LSeq<T> {
         const left = index === 0 ? [] : this._vertices[index - 1].vPointer.sequence;
         const right = index === this._vertices.length ? [] : this._vertices[index].vPointer.sequence;
         const pointer = { sequence: generateSeq(left, right), nodeId: this._nodeId };
-        const idx = this._vertices.findIndex( vertex => compareSeq(vertex.vPointer.nodeId, pointer.nodeId,vertex.vPointer.sequence, pointer.sequence) >= 0);
+        const idx = this._vertices.findIndex(vertex => compareSeq(vertex.vPointer.nodeId, pointer.nodeId, vertex.vPointer.sequence, pointer.sequence) >= 0);
         const newVertices = this._vertices;
-        newVertices.splice(idx >= 0 ? idx  : this._vertices.length, 0, { vPointer: pointer, element: element });
+        newVertices.splice(idx >= 0 ? idx : this._vertices.length, 0, { vPointer: pointer, element: element });
         this._vertices = newVertices;
     }
 
     delete(index: number): void {
-        const newVertices = this._vertices;
-        if (index >= 0 && index < newVertices.length) {
-            newVertices.splice(index, 1);
+        if (index < 0) {
+            return;
         }
+        if (index >= this._vertices.length) {
+            return;
+        }
+        const newVertices = this._vertices;
+        newVertices.splice(index, 1);
         this._vertices = newVertices;
     }
 
@@ -50,9 +54,9 @@ export class LSeq<T> {
     merge(otherLSeq: LSeq<T>): void {
         const newVertices = this._vertices;
         otherLSeq.getVertices().forEach((value) => {
-            if(!newVertices.some( vertex => vertex.vPointer === value.vPointer)) {
-                const idx = otherLSeq.getVertices().findIndex( vertex => compareSeq(vertex.vPointer.nodeId, value.vPointer.nodeId, vertex.vPointer.sequence, value.vPointer.sequence) == 0);
-                newVertices.splice(idx >= 0 ? idx: this._vertices.length,0, value);
+            if (!newVertices.some(vertex => vertex.vPointer === value.vPointer)) {
+                const idx = otherLSeq.getVertices().findIndex(vertex => compareSeq(vertex.vPointer.nodeId, value.vPointer.nodeId, vertex.vPointer.sequence, value.vPointer.sequence) == 0);
+                newVertices.splice(idx >= 0 ? idx : this._vertices.length, 0, value);
             }
         });
         this._vertices = newVertices;
@@ -67,7 +71,7 @@ function compareSeq(id1: string, id2: string, seq1: number[], seq2: number[]): n
         }
     }
     let cmp = seq1.length - seq2.length;
-    if(cmp === 0 ){
+    if (cmp === 0) {
         cmp = id1.localeCompare(id2);
     }
     return cmp;
