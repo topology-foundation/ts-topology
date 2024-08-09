@@ -1,0 +1,33 @@
+{
+  "name": "wasm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build:assemblyscript": "asc assembly/index.ts --config asconfig.json",
+    "build:typescript": "tsc",
+    "build": "npm run build:assemblyscript && npm run build:typescript",
+    "test": "node tests/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@topology-foundation/crdt": "file:../../packages/crdt",
+    "@topology-foundation/crdt-wasm": "file:../../packages/crdt-wasm",
+    "@topology-foundation/network": "file:../../packages/network",
+    "@topology-foundation/node": "file:../../packages/node",
+    "@topology-foundation/object": "file:../../packages/object",
+    "assemblyscript": "^0.27.29"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./build/release.js",
+      "types": "./build/release.d.ts"
+    }
+  },
+  "dependencies": {
+    "undici": "^6.19.5"
+  }
+}
