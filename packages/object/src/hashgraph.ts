@@ -30,7 +30,7 @@ class HashgraphNode<O, T> {
   }
 
   getDependencies(): Hash[] {
-    [].concat(...this.dependencies)
+    [...this.dependencies]
   }
 }
 
