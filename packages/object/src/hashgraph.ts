@@ -1,12 +1,16 @@
-export interface IHashGraphDAG {
-  getFrontier(): Array<string>;
-  getDependencies(hash: string): Array<string>;
-  addNode(op: string, dependecies: Array<string>);
+export interface IHashGraphDAG<O,T> {
+  addNode(hash: Hash, operation: O, tick: T, dependecies: Hash[]);
+  getFrontier(): Hash[];
+  getDependencies(hash: Hash): Hash[];
   getOriginalState(): any;
-  getOriginSet(): Array<string>;
-  getSerializedOperations(): Array<string>;
-
+  getOriginSet(): Array<Hash>;
+  getOps(tick: T): O[];
+  getLinearOps(): O[];
+  getNode(hash: Hash): HashgraphNode<O, T> | undefined;
+  getAllNodes(): HashgraphNode<O, T>[];
 }
+
+type Hash  = string;
 
 class HashgraphNode<O, T> {
   readonly hash: Hash;
@@ -72,6 +76,14 @@ class HashgraphDAG<O,T> {
     return Array.from(this.frontier);
   }
 
+  getOriginSet(): Hash[] {
+    return Array.from(this.originSet);
+  }
+
+  getDependences(hash: Hash): Hash[] {
+    return this.nodes.get(hash).getDependencies();
+  }
+
   getOps(tick: T): O[] {
     // fetch all the ops at the tick `tick`
     const nodeHashes = this.tickStore.get(tick);
@@ -86,8 +98,7 @@ class HashgraphDAG<O,T> {
     
   }
 
-
-  getLinearOps(): Hash[] {
+  getLinearOps(): O[] {
     const result: Hash[] = [];
 
     const outDegrees: Map<Hash, number> = new Map(); 
