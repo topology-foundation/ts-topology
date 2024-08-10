@@ -79,7 +79,7 @@ class HashgraphDAG<T> {
     return Array.from(this.originSet);
   }
 
-  getDependences(hash: Hash): Hash[] {
+  getDependencies(hash: Hash): Hash[] {
     return this.nodes.get(hash)?.getDependencies() || [];
   }
 
