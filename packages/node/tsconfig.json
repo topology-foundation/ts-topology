@@ -14,5 +14,5 @@
       "path": "../object"
     }
   ],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "./*.config.ts"]
 }

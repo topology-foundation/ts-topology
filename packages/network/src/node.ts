@@ -25,17 +25,25 @@ import { webTransport } from "@libp2p/webtransport";
 import { autoNAT } from "@libp2p/autonat";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 
-import { Logger } from "tslog";
-import tslogconfig from "../tslog.config";
-tslogconfig.name = "topology:network";
-const mainLogger = new Logger(tslogconfig);
+import { Logger, ILogObj, ISettingsParam } from "tslog";
 
-const startLogger = mainLogger.getSubLogger({ name: "start" });
-const subscribeLogger = mainLogger.getSubLogger({ name: "subscribe" });
-const unsubscribeLogger = mainLogger.getSubLogger({ name: "unsubscribe" });
-const broadcastMessageLogger = mainLogger.getSubLogger({ name: "broadcastMessage" });
-const sendMessageLogger = mainLogger.getSubLogger({ name: "sendMessage" });
-const sendGroupMessageRandomPeerLogger = mainLogger.getSubLogger({ name: "sendGroupMessageRandomTopicPeer" });
+let mainLogger: Logger<ILogObj> = new Logger();
+
+let startLogger: Logger<ILogObj> = new Logger();
+let subscribeLogger: Logger<ILogObj> = new Logger();
+let unsubscribeLogger: Logger<ILogObj> = new Logger();
+let broadcastMessageLogger: Logger<ILogObj> = new Logger();
+let sendMessageLogger: Logger<ILogObj> = new Logger();
+let sendGroupMessageRandomPeerLogger: Logger<ILogObj> = new Logger();
+
+function assignLoggers(){
+  startLogger = mainLogger.getSubLogger({ name: "start" });
+  subscribeLogger = mainLogger.getSubLogger({ name: "subscribe" });
+  unsubscribeLogger = mainLogger.getSubLogger({ name: "unsubscribe" });
+  broadcastMessageLogger = mainLogger.getSubLogger({ name: "broadcastMessage" });
+  sendMessageLogger = mainLogger.getSubLogger({ name: "sendMessage" });
+  sendGroupMessageRandomPeerLogger = mainLogger.getSubLogger({ name: "sendGroupMessageRandomTopicPeer" });
+}
 
 // snake_casing to match the JSON config
 export interface TopologyNetworkNodeConfig {
@@ -43,6 +51,7 @@ export interface TopologyNetworkNodeConfig {
   bootstrap?: boolean;
   bootstrap_peers?: string[];
   private_key_seed?: string;
+  tslogconfig: ISettingsParam<ILogObj>;
 }
 
 export class TopologyNetworkNode {
@@ -52,8 +61,11 @@ export class TopologyNetworkNode {
 
   peerId: string = "";
 
-  constructor(config?: TopologyNetworkNodeConfig) {
+  constructor(config: TopologyNetworkNodeConfig) {
     this._config = config;
+    mainLogger = new Logger(config.tslogconfig);
+    mainLogger.settings.name = "topology:network";
+    assignLoggers();
   }
 
   async start() {
