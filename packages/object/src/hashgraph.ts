@@ -6,13 +6,13 @@ export interface IHashGraphDAG<T> {
   getOriginSet(): Hash[];
   getOps(tick: number): T[];
   getLinearOps(): T[];
-  getNode(hash: Hash): HashgraphNode<T> | undefined;
-  getAllNodes(): HashgraphNode<T>[];
+  getNode(hash: Hash): HashGraphVertex<T> | undefined;
+  getAllNodes(): HashGraphVertex<T>[];
 }
 
 type Hash  = string;
 
-class HashgraphNode<T> {
+export class HashGraphVertex<T> {
   readonly hash: Hash;
   readonly operation: T;
   readonly dependencies: Set<Hash>;
@@ -32,37 +32,40 @@ class HashgraphNode<T> {
   }
 }
 
-class HashgraphDAG<T> {
-  private nodes: Map<Hash, HashgraphNode<T>> = new Map();
+export class HashGraphDAG<T> {
+  private hashGraph: Map<Hash, HashGraphVertex<T>> = new Map();
   private frontier: Set<Hash> = new Set();
   private originSet: Set<Hash> = new Set();
-  private precedenceRules: Map<string, boolean> = new Map();
+  // private stateStore: Map<Hash, S> = new Map();
   private tickStore: Map<number, Hash[]> = new Map();
   private latestTick: number = 0;
+  private resolveConflicts: (ops: T[]) => T[];
+  // private computeState: (vertexHash: Hash, operation: T) => S;
 
-  constructor() {
+  constructor(resolveConflicts: (ops: T[]) => T[]) {
       // could set the precedenceRules here
+      this.resolveConflicts = resolveConflicts;
   }
 
-  addNode(hash: Hash, operation: T, tick: number, dependencies: Hash[] = []): void {
-    if (this.nodes.has(hash)) {
-      console.log(`Node with hash ${hash} already exists`);
+  addVertex(vertexHash: Hash, operation: T, dependencies: Hash[] = []): void {
+    if (this.hashGraph.has(vertexHash)) {
+      console.log(`Node with hash ${vertexHash} already exists`);
     }
 
     const dependenciesSet = new Set(dependencies);
-    const node = new HashgraphNode(hash, operation, dependenciesSet);
+    const node = new HashGraphVertex(vertexHash, operation, dependenciesSet);
 
-    this.nodes.set(hash, node);
-    this.frontier.add(hash);
-    this.tickStore.set(tick, [...(this.tickStore.get(tick) || []), hash]);
+    this.hashGraph.set(vertexHash, node);
+    this.frontier.add(vertexHash);
+    // this.tickStore.set(tick, [...(this.tickStore.get(tick) || []), hash]);
     
     // if the node has no dependencies place it in the originSet
     if (dependencies.length === 0) {
-      this.originSet.add(hash);
+      this.originSet.add(vertexHash);
     }
 
     for (const dependencyHash of dependencies) {
-      const dependencyNode = this.nodes.get(dependencyHash);
+      const dependencyNode = this.hashGraph.get(dependencyHash);
       if (dependencyNode) {
         this.frontier.delete(dependencyHash);
       } else {
@@ -80,13 +83,13 @@ class HashgraphDAG<T> {
   }
 
   getDependencies(hash: Hash): Hash[] {
-    return this.nodes.get(hash)?.getDependencies() || [];
+    return this.hashGraph.get(hash)?.getDependencies() || [];
   }
 
   getOps(tick: number): T[] {
     // fetch all the ops at the tick `tick`
     const nodeHashes = this.tickStore.get(tick) ?? [];
-    const ops = nodeHashes.map(hash => this.nodes.get(hash)?.operation!);
+    const ops = nodeHashes.map(hash => this.hashGraph.get(hash)?.operation!);
     // apply conflict semantics
     const result = this.applyConflictSemantics(ops)
 
@@ -103,7 +106,7 @@ class HashgraphDAG<T> {
     const outDegrees: Map<Hash, number> = new Map(); 
     const inverseDependencies : Map<Hash, Hash[]> = new Map();
 
-    for (const [nodeHash, node] of this.nodes.entries()) {
+    for (const [nodeHash, node] of this.hashGraph.entries()) {
       // Compute the out degrees of each node
       outDegrees.set(nodeHash, node.getDependeciesCount());
     
@@ -120,7 +123,7 @@ class HashgraphDAG<T> {
 
     while (queue.length > 0) {
       const nodeHash = queue.shift()!;
-      const nodeOp = this.nodes.get(nodeHash)?.operation!;
+      const nodeOp = this.hashGraph.get(nodeHash)?.operation!;
       result.push(nodeOp);
       
       // Decrement the outDegree of each dependency by 1
@@ -134,7 +137,7 @@ class HashgraphDAG<T> {
         outDegrees.set(dependentHash, currentDegree - 1);
         
         if (currentDegree - 1 === 0) {
-          const op = this.nodes.get(dependentHash)?.operation!;
+          const op = this.hashGraph.get(dependentHash)?.operation!;
           zeroOutDegreeDependentOps.set(op, dependentHash);
         }
       }
@@ -155,11 +158,11 @@ class HashgraphDAG<T> {
     return result;
   }
 
-  getNode(hash: Hash): HashgraphNode<T> | undefined {
-    return this.nodes.get(hash);
+  getVertex(vertexHash: Hash): HashGraphVertex<T> | undefined {
+    return this.hashGraph.get(vertexHash);
   }
 
-  getAllNodes(): HashgraphNode<T>[] {
-    return Array.from(this.nodes.values());
+  getAllVertices(): HashGraphVertex<T>[] {
+    return Array.from(this.hashGraph.values());
   }
 }
