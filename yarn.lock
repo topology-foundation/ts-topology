@@ -399,14 +399,14 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/dcutr@^1.1.0":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@libp2p/dcutr/-/dcutr-1.1.1.tgz#d629cd3f05ee87950702b8219ba24519eb961444"
-  integrity sha512-4rADvCkMF2yhxSUu8vJUVp/oKO1ISr2RPx59kqpWrtsEu1cNnxKTl/a3/xutzS+BErCiAldOffu8TDPWxYfMag==
+"@libp2p/dcutr@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@libp2p/dcutr/-/dcutr-1.1.4.tgz#4d4b971a39d2cb62ef1d183b56dc2bc1e6af86cf"
+  integrity sha512-NjIiAoi5q2Y2q0eON+VCdm8ec2Be1Q9q1vcL6z7RyBWwIkk6PPy8RvBaI6GcGKjk251jLrN6vz2yoL7vWRht2A==
   dependencies:
-    "@libp2p/interface" "^1.6.0"
-    "@libp2p/interface-internal" "^1.3.0"
-    "@libp2p/utils" "^5.4.5"
+    "@libp2p/interface" "^1.6.3"
+    "@libp2p/interface-internal" "^1.3.3"
+    "@libp2p/utils" "^5.4.8"
     "@multiformats/multiaddr" "^12.2.3"
     "@multiformats/multiaddr-matcher" "^1.2.1"
     delay "^6.0.0"
