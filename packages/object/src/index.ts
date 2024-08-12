@@ -18,6 +18,10 @@ export function newTopologyObject(peerId: string, id?: string, abi?: string, byt
   }
 }
 
-// just for testing wasm compilation with tsx, should be deleted
-let obj = newTopologyObject("peerId");
-console.log(obj.id);
+async function run() {
+  // TODO: just for testing wasm compilation with tsx, should be deleted
+  let bytecode = await compileWasm();
+  let obj = newTopologyObject("peerId", undefined, undefined, bytecode);
+  console.log(obj);
+}
+run();
