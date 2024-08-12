@@ -414,15 +414,15 @@
     protons-runtime "^5.4.0"
     uint8arraylist "^2.4.8"
 
-"@libp2p/identify@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@libp2p/identify/-/identify-2.1.2.tgz#85a69eb341d893a767d81b3b6138790278109fb9"
-  integrity sha512-neLNz6WhYAxDHgsb/LGyZF9i+nE4E+dk30/5gFxc/876oVwgc1IqSs2eEEEx9t0l2ToeHADScBM+bHrFsLIk3g==
+"@libp2p/identify@^2.1.4":
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/@libp2p/identify/-/identify-2.1.4.tgz#7a40b283e460ac22de4d376b688fad1df3aa9d46"
+  integrity sha512-w2JkmoZkXT3OJnTuyBPlEBicj1J1n90pcusZbs+YIiJ+mhsOvNKnQhJgCG8Q6wnTimcBjinqhRRp0hiaHqX7VQ==
   dependencies:
-    "@libp2p/interface" "^1.6.1"
-    "@libp2p/interface-internal" "^1.3.1"
-    "@libp2p/peer-id" "^4.2.1"
-    "@libp2p/peer-record" "^7.0.22"
+    "@libp2p/interface" "^1.6.3"
+    "@libp2p/interface-internal" "^1.3.3"
+    "@libp2p/peer-id" "^4.2.3"
+    "@libp2p/peer-record" "^7.0.24"
     "@multiformats/multiaddr" "^12.2.3"
     "@multiformats/multiaddr-matcher" "^1.2.1"
     it-drain "^3.0.7"
@@ -444,7 +444,7 @@
     it-stream-types "^2.0.1"
     uint8arraylist "^2.4.3"
 
-"@libp2p/interface-internal@^1.0.1", "@libp2p/interface-internal@^1.0.7", "@libp2p/interface-internal@^1.3.0", "@libp2p/interface-internal@^1.3.1", "@libp2p/interface-internal@^1.3.2", "@libp2p/interface-internal@^1.3.3":
+"@libp2p/interface-internal@^1.0.1", "@libp2p/interface-internal@^1.0.7", "@libp2p/interface-internal@^1.3.0", "@libp2p/interface-internal@^1.3.2", "@libp2p/interface-internal@^1.3.3":
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/@libp2p/interface-internal/-/interface-internal-1.3.3.tgz#29f7f9e183461c03defd3511d131dbf37190b554"
   integrity sha512-xng1cBGDhSZmCu0kUEv3363oSgpoPmvpDr11wumhKNEgGOwBVbEr0v7serYcrlORxFmyUBW8y98CkPRJxskPLA==
@@ -560,7 +560,7 @@
     multiformats "^13.1.0"
     uint8arrays "^5.1.0"
 
-"@libp2p/peer-record@^7.0.22", "@libp2p/peer-record@^7.0.24":
+"@libp2p/peer-record@^7.0.24":
   version "7.0.24"
   resolved "https://registry.yarnpkg.com/@libp2p/peer-record/-/peer-record-7.0.24.tgz#b52e059ece424c56e185e2367efc01ab9098a94e"
   integrity sha512-2LYvLqr3XDjA5u2LGD/3IvdgdrwOYdMzQnzr612/Q+yVS+36CN0dAIqU74OEWx+XeeUJSBQnQ0ryBQq/arbXuA==
