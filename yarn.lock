@@ -652,16 +652,16 @@
     uint8arraylist "^2.4.8"
     uint8arrays "^5.1.0"
 
-"@libp2p/webrtc@^4.1.3":
-  version "4.1.3"
-  resolved "https://registry.yarnpkg.com/@libp2p/webrtc/-/webrtc-4.1.3.tgz#318cbfd28da9917f359bf59f817b77824f9bdbce"
-  integrity sha512-UtxFbp9KWdExb3nU3yI4f3WT+meu5zFL67sEBp2Ln1jiGYRsGcfuF/bXuOnhYjwVQEw0GtKEFuol5FQbBJyufA==
+"@libp2p/webrtc@^4.1.4":
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/@libp2p/webrtc/-/webrtc-4.1.4.tgz#622fb0943c2f868ff6f28e4a834a2c50b0d30740"
+  integrity sha512-vX6FctslugUzZiZNQ8+uNAYN4ZDunnqcecUog0KOonySI8XAJs6ZA9Y2giCoSbkmaAP80gSRp8gGfuri8puLYw==
   dependencies:
     "@chainsafe/libp2p-noise" "^15.0.0"
-    "@libp2p/interface" "^1.6.2"
-    "@libp2p/interface-internal" "^1.3.2"
-    "@libp2p/peer-id" "^4.2.2"
-    "@libp2p/utils" "^5.4.7"
+    "@libp2p/interface" "^1.6.3"
+    "@libp2p/interface-internal" "^1.3.3"
+    "@libp2p/peer-id" "^4.2.3"
+    "@libp2p/utils" "^5.4.8"
     "@multiformats/mafmt" "^12.1.6"
     "@multiformats/multiaddr" "^12.2.3"
     "@multiformats/multiaddr-matcher" "^1.2.1"
