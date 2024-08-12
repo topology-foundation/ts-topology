@@ -5,21 +5,20 @@
 import * as fs from "fs";
 import asc from "assemblyscript/asc";
 
-export async function compileWasm() {
-  const { error, stdout, stderr, stats } = await asc.main([
-    // Command line options
-    "/Users/droak/code/topology/ts-topology/packages/object/src/chat.ts",
-    "--config=/Users/droak/code/topology/ts-topology/packages/object/asconfig.json",
+export async function compileWasm(path: string) {
+  const { error } = await asc.main([
+    path,
+    "--config=../../asconfig.json",
     "--outFile=dist/tmp.wasm",
     "--target=release"
   ]);
 
   if (error) {
     console.log("Compilation failed: " + error.message);
-    console.log(stderr.toString());
+    return new Uint8Array();
   } else {
-    // read tmp file and delete it
-    const bytecode = fs.readFileSync('dist/tmp.wasm');
+    // read tmp file into uint8array
+    const bytecode: Uint8Array = new Uint8Array(fs.readFileSync('dist/tmp.wasm'));
     fs.unlinkSync('dist/tmp.wasm');
     return bytecode;
   }

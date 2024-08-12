@@ -12,11 +12,11 @@ export const protobufPackage = "topology.object";
 export interface TopologyObject {
   id: string;
   abi: string;
-  bytecode: string;
+  bytecode: Uint8Array;
 }
 
 function createBaseTopologyObject(): TopologyObject {
-  return { id: "", abi: "", bytecode: "" };
+  return { id: "", abi: "", bytecode: new Uint8Array(0) };
 }
 
 export const TopologyObject = {
@@ -27,8 +27,8 @@ export const TopologyObject = {
     if (message.abi !== "") {
       writer.uint32(18).string(message.abi);
     }
-    if (message.bytecode !== "") {
-      writer.uint32(26).string(message.bytecode);
+    if (message.bytecode.length !== 0) {
+      writer.uint32(26).bytes(message.bytecode);
     }
     return writer;
   },
@@ -59,7 +59,7 @@ export const TopologyObject = {
             break;
           }
 
-          message.bytecode = reader.string();
+          message.bytecode = reader.bytes();
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -74,7 +74,7 @@ export const TopologyObject = {
     return {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       abi: isSet(object.abi) ? globalThis.String(object.abi) : "",
-      bytecode: isSet(object.bytecode) ? globalThis.String(object.bytecode) : "",
+      bytecode: isSet(object.bytecode) ? bytesFromBase64(object.bytecode) : new Uint8Array(0),
     };
   },
 
@@ -86,8 +86,8 @@ export const TopologyObject = {
     if (message.abi !== "") {
       obj.abi = message.abi;
     }
-    if (message.bytecode !== "") {
-      obj.bytecode = message.bytecode;
+    if (message.bytecode.length !== 0) {
+      obj.bytecode = base64FromBytes(message.bytecode);
     }
     return obj;
   },
@@ -99,10 +99,35 @@ export const TopologyObject = {
     const message = createBaseTopologyObject();
     message.id = object.id ?? "";
     message.abi = object.abi ?? "";
-    message.bytecode = object.bytecode ?? "";
+    message.bytecode = object.bytecode ?? new Uint8Array(0);
     return message;
   },
 };
+
+function bytesFromBase64(b64: string): Uint8Array {
+  if ((globalThis as any).Buffer) {
+    return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
+  } else {
+    const bin = globalThis.atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; ++i) {
+      arr[i] = bin.charCodeAt(i);
+    }
+    return arr;
+  }
+}
+
+function base64FromBytes(arr: Uint8Array): string {
+  if ((globalThis as any).Buffer) {
+    return globalThis.Buffer.from(arr).toString("base64");
+  } else {
+    const bin: string[] = [];
+    arr.forEach((byte) => {
+      bin.push(globalThis.String.fromCharCode(byte));
+    });
+    return globalThis.btoa(bin.join(""));
+  }
+}
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 

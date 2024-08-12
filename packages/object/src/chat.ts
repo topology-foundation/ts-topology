@@ -4,7 +4,6 @@ import { GSet, gset_create, gset_add, gset_merge } from "@topology-foundation/cr
 class Chat {
   // store messages as strings in the format (timestamp, message, peerId)
   messages: GSet<string>;
-
   constructor() {
     this.messages = gset_create<string>();
   }
