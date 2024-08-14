@@ -167,5 +167,7 @@ describe("HashGraph for AddWinSet tests", () => {
         let vertexHash3 =   cro.hashGraph.addVertex(op3, deps3);    
         linearOps = cro.hashGraph.getLinearOps();
         expect([[op1, op2, op3],[op1, op3, op2]]).includes(linearOps);
+
+        console.log("Hello")
     }
 });
