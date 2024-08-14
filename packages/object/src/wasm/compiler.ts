@@ -9,6 +9,7 @@ export async function compileWasm(path: string) {
   const { error } = await asc.main([
     path,
     "--config=../../asconfig.json",
+    "--bindings=esm",
     "--outFile=dist/tmp.wasm",
     "--target=release"
   ]);
@@ -19,7 +20,7 @@ export async function compileWasm(path: string) {
   } else {
     // read tmp file into uint8array
     const bytecode: Uint8Array = new Uint8Array(fs.readFileSync('dist/tmp.wasm'));
-    fs.unlinkSync('dist/tmp.wasm');
+    // fs.unlinkSync('dist/tmp.wasm');
     return bytecode;
   }
 }

@@ -1,35 +1,26 @@
-import { newTopologyObject, TopologyObject } from "@topology-foundation/object";
-import { GSet } from "@topology-foundation/crdt";
+// @ts-ignore
+import { GSet, gset_create, gset_add, gset_merge } from "@topology-foundation/crdt/src/index.asc";
 
-export interface IChat {
-  cro: TopologyObject;
-  chat: GSet<string>;
-  addMessage(timestamp: string, message: string, node_id: string): void;
-  getMessages(): GSet<string>;
-  merge(other: Chat): void;
+export class Chat {
+  // store messages as strings in the format (timestamp, message, peerId)
+  messages: GSet<string>;
+  constructor() {
+    this.messages = gset_create<string>();
+  }
 }
 
-export class Chat implements IChat {
-  // TODO: Change this to build a TopologyObject with the
-  // wasm compilation inside and just use the topology object
-  cro: TopologyObject;
-  // store messages as strings in the format (timestamp, message, peerId)
-  chat: GSet<string>;
+export function createChat(): Chat {
+  return new Chat();
+}
 
-  constructor(peerId: string) {
-    this.cro = newTopologyObject(peerId);
-    this.chat = new GSet<string>(new Set<string>());
-  }
+export function addMessage(chat: Chat, timestamp: string, message: string, node_id: string): void {
+  gset_add(chat.messages, `(${timestamp}, ${message}, ${node_id})`)
+}
 
-  addMessage(timestamp: string, message: string, node_id: string): void {
-    this.chat.add(`(${timestamp}, ${message}, ${node_id})`);
-  }
+export function getMessages(chat: Chat): GSet<string> {
+  return chat.messages;
+}
 
-  getMessages(): GSet<string> {
-    return this.chat;
-  }
-
-  merge(other: Chat): void {
-    this.chat.merge(other.chat);
-  }
+export function merge(chat: Chat, other: Chat): void {
+  gset_merge(chat.messages, other.messages);
 }

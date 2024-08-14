@@ -4,13 +4,15 @@ import { compileWasm } from "./wasm/compiler.js";
 
 export * from "./proto/object_pb.js";
 
-
-export async function compileCRO(path: string): Promise<Uint8Array> {
+async function compileCRO(path: string): Promise<Uint8Array> {
+  // get the bytecode from the wasm compiler and abi
+  // TODO: abi not extracted yet
   return compileWasm(path);
 }
 
 /* Creates a new TopologyObject */
-export function newTopologyObject(peerId: string, id?: string, abi?: string, bytecode?: Uint8Array): TopologyObject {
+export async function newTopologyObject(peerId: string, path: string, id?: string, abi?: string): Promise<TopologyObject> {
+  const bytecode = await compileWasm(path);
   return {
     id: id ?? crypto
       .createHash("sha256")
@@ -25,8 +27,7 @@ export function newTopologyObject(peerId: string, id?: string, abi?: string, byt
 
 async function run() {
   // TODO: just for testing wasm compilation with tsx, should be deleted
-  let bytecode = await compileCRO("/Users/droak/code/topology/ts-topology/packages/object/src/chat.ts");
-  let obj = newTopologyObject("peerId", undefined, undefined, bytecode);
+  let obj = await newTopologyObject("peerId", "/Users/droak/code/topology/ts-topology/examples/chat/src/objects/chat.ts", "", "");
   console.log(obj);
 }
 run();

@@ -1,12 +1,13 @@
 import { TopologyNode } from "@topology-foundation/node";
 import * as topology from "@topology-foundation/node";
-import { Chat, IChat } from "./objects/chat";
+import { Chat, addMessage, getMessages } from "./objects/chat";
 import { handleChatMessages } from "./handlers";
-import { GSet } from "@topology-foundation/crdt";
+// import { GSet } from "@topology-foundation/crdt";
+import { newTopologyObject } from "@topology-foundation/object";
 
 const node = new TopologyNode();
 // CRO = Conflict-free Replicated Object
-let chatCRO: IChat;
+let chatCRO: Chat;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
 let objectPeers: string[] = [];
@@ -25,18 +26,19 @@ const render = () => {
   element_objectPeers.innerHTML = "[" + objectPeers.join(", ") + "]";
 
   if (!chatCRO) return;
-  const chat = chatCRO.getMessages();
+  const chat = getMessages(chatCRO);
   const element_chat = <HTMLDivElement>document.getElementById("chat");
   element_chat.innerHTML = "";
 
-  if (chat.set().size == 0) {
+
+  if (chat.set.size == 0) {
     const div = document.createElement("div");
     div.innerHTML = "No messages yet";
     div.style.padding = "10px";
     element_chat.appendChild(div);
     return;
   }
-  Array.from(chat.set()).sort().forEach((message: string) => {
+  Array.from(chat.set).sort().forEach((message: string) => {
     const div = document.createElement("div");
     div.innerHTML = message;
     div.style.padding = "10px";
@@ -53,7 +55,7 @@ async function sendMessage(message: string) {
     return;
   }
   console.log("Sending message: ", `(${timestamp}, ${message}, ${node.networkNode.peerId})`);
-  chatCRO.addMessage(timestamp, message, node.networkNode.peerId);
+  addMessage(chatCRO, timestamp, message, node.networkNode.peerId)
 
   // topology.updateObject(node, chatCRO, `addMessage(${timestamp}, ${message}, ${node.networkNode.peerId})`);
   render();
@@ -72,8 +74,9 @@ async function main() {
   });
 
   let button_create = <HTMLButtonElement>document.getElementById("createRoom");
-  button_create.addEventListener("click", () => {
-    chatCRO = new Chat(node.networkNode.peerId);
+  button_create.addEventListener("click", async () => {
+    chatCRO = await newTopologyObject(node.networkNode.peerId, "./objects/chat.ts")
+
     topology.createObject(node, chatCRO);
     (<HTMLButtonElement>document.getElementById("chatId")).innerHTML = chatCRO.cro.id;
     render();
