@@ -1,13 +1,13 @@
+import { sha256 } from "js-sha256";
 export interface IHashGraphDAG<T> {
-  addNode(hash: Hash, operation: T, tick: number, dependecies: Hash[]): void;
+  addVertex(hash: Hash, operation: T, tick: number, dependecies: Hash[]): void;
   getFrontier(): Hash[];
   getDependencies(hash: Hash): Hash[];
-  getOriginalState(): any;
   getOriginSet(): Hash[];
-  getOps(tick: number): T[];
+  computeHash(op: T, dependencies: Hash[]): Hash;
   getLinearOps(): T[];
-  getNode(hash: Hash): HashGraphVertex<T> | undefined;
-  getAllNodes(): HashGraphVertex<T>[];
+  getVertex(hash: Hash): HashGraphVertex<T> | undefined;
+  getAllVertices(): HashGraphVertex<T>[];
 }
 
 type Hash  = string;
@@ -47,7 +47,26 @@ export class HashGraphDAG<T> {
       this.resolveConflicts = resolveConflicts;
   }
 
-  addVertex(vertexHash: Hash, operation: T, dependencies: Hash[] = []): void {
+  computeHash(op: T, dependencies: Hash[]): Hash {
+    // Serialize the operation and dependencies
+    const serializedOperation = JSON.stringify(op);
+    const serializedDependencies = JSON.stringify(dependencies);
+
+    // Concatenate the serialized strings
+    const combined = `${serializedOperation}|${serializedDependencies}`;
+
+    // Compute the BLAKE3 hash
+    const hashValue = sha256(combined);
+
+    // Return the hash as a hexadecimal string
+    return hashValue;
+  }
+
+  addVertex(operation: T, dependencies: Hash[] = []): Hash {
+    
+    // compute the vertex hash
+    const vertexHash: Hash = this.computeHash(operation, dependencies);
+
     if (this.hashGraph.has(vertexHash)) {
       console.log(`Node with hash ${vertexHash} already exists`);
     }
@@ -72,6 +91,7 @@ export class HashGraphDAG<T> {
         console.log(`Dependency node ${dependencyHash} does not exist`);
       }
     }
+    return vertexHash;
   }
 
   getFrontier(): Hash[] {
@@ -84,20 +104,6 @@ export class HashGraphDAG<T> {
 
   getDependencies(hash: Hash): Hash[] {
     return this.hashGraph.get(hash)?.getDependencies() || [];
-  }
-
-  getOps(tick: number): T[] {
-    // fetch all the ops at the tick `tick`
-    const nodeHashes = this.tickStore.get(tick) ?? [];
-    const ops = nodeHashes.map(hash => this.hashGraph.get(hash)?.operation!);
-    // apply conflict semantics
-    const result = this.applyConflictSemantics(ops)
-
-    return result
-  }
-
-  applyConflictSemantics(ops: T[]): T[] {
-    return ops;
   }
 
   getLinearOps(): T[] {
@@ -144,7 +150,7 @@ export class HashGraphDAG<T> {
       
       const dependentOps = Array.from(zeroOutDegreeDependentOps.keys());
       // apply conflict semantics to the dependencyOps
-      const ops = this.applyConflictSemantics(dependentOps);
+      const ops = this.resolveConflicts(dependentOps);
       for (const op of ops) {
         queue.push(zeroOutDegreeDependentOps.get(op)!);
       }
