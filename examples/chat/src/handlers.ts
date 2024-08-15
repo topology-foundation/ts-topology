@@ -1,5 +1,5 @@
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
-import { Chat } from "./objects/chat";
+import { addMessage, Chat } from "./objects/chat";
 
 export const handleChatMessages = (chat: ChatI, e: any) => {
   if (e.detail.msg.topic === "topology::discovery") return;
@@ -18,13 +18,13 @@ export const handleChatMessages = (chat: ChatI, e: any) => {
   }
 };
 
-function handleObjectUpdate(chat: ChatI, fn: string) {
+function handleObjectUpdate(chat: Chat, fn: string) {
   // In this case we only have addMessage
   // `addMessage(${timestamp}, ${message}, ${node.getPeerId()})`
   let args = fn.replace("addMessage(", "").replace(")", "").split(", ");
   console.log("Received message: ", args);
   try {
-    chat.addMessage(args[0], args[1], args[2]);
+    addMessage(chat, args[0], args[1], args[2])
   } catch (e) {
     console.error(e);
   }

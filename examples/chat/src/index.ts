@@ -2,7 +2,7 @@ import { TopologyNode } from "@topology-foundation/node";
 import * as topology from "@topology-foundation/node";
 import { Chat, addMessage, getMessages } from "./objects/chat";
 import { handleChatMessages } from "./handlers";
-// import { GSet } from "@topology-foundation/crdt";
+import { GSet } from "@topology-foundation/crdt";
 import { newTopologyObject } from "@topology-foundation/object";
 
 const node = new TopologyNode();

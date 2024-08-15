@@ -22,7 +22,18 @@ export async function newTopologyObject(peerId: string, path: string, id?: strin
       .digest("hex"),
     abi: abi ?? "",
     bytecode: bytecode ?? new Uint8Array(),
+    operations: []
   }
+}
+
+export async function callFn(obj: TopologyObject, fn: string, args: string[]): Promise<TopologyObject> {
+  obj.operations.push({
+    nonce: Math.floor(Math.random() * Number.MAX_VALUE).toString(),
+    fn: fn,
+    args: args
+  });
+
+  return obj;
 }
 
 async function run() {
@@ -30,4 +41,4 @@ async function run() {
   let obj = await newTopologyObject("peerId", "/Users/droak/code/topology/ts-topology/examples/chat/src/objects/chat.ts", "", "");
   console.log(obj);
 }
-run();
+// run();

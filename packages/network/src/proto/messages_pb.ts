@@ -5,7 +5,7 @@
 // source: network/src/proto/messages.proto
 
 /* eslint-disable */
-import _m0 from "protobufjs/minimal.js";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "topology.network";
 
