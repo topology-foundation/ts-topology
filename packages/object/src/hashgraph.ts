@@ -1,286 +1,228 @@
 import { sha256 } from "js-sha256";
-import { todo } from "node:test";
-export interface IHashGraphDAG<T> {
-  addVertex(hash: Hash, operation: T, tick: number, dependecies: Hash[]): void;
-  getFrontier(): Hash[];
-  getDependencies(hash: Hash): Hash[];
-  getOriginSet(): Hash[];
-  computeHash(op: T, dependencies: Hash[]): Hash;
-  getLinearOps(): T[];
-  getVertex(hash: Hash): HashGraphVertex<T> | undefined;
-  getAllVertices(): HashGraphVertex<T>[];
+
+type Hash = string;
+
+interface Operation {
+    type: string;
+    value: any;
 }
 
-type Hash  = string;
-
-export class HashGraphVertex<T> {
-  readonly hash: Hash;
-  readonly operation: T;
-  readonly dependencies: Set<Hash>;
-
-  constructor(hash: Hash, operation: T, dependencies: Set<Hash> = new Set()) {
-    this.hash = hash;
-    this.operation = operation;
-    this.dependencies = dependencies;
-  }
-
-  getDependeciesCount(): number {
-    return this.dependencies.size;
-  }
-
-  getDependencies(): Hash[] {
-    return [...this.dependencies];
-  }
-
-  getOperation(): T {
-    return this.operation;
-  }
+class Vertex<T extends Operation> {
+    constructor(
+        public readonly hash: Hash,
+        public readonly operation: T,
+        public readonly dependencies: Set<Hash>
+    ) {}
 }
+
 export enum ActionType {
-  DropLeft,
-  DropRight,
-  Nop,
-  Swap
+    DropLeft,
+    DropRight,
+    Nop,
+    Swap
 }
 
-export class HashGraphDAG<T> {
-  private hashGraph: Map<Hash, HashGraphVertex<T>> = new Map();
-  private frontier: Set<Hash> = new Set();
-  private root: Hash = "";
-  // private stateStore: Map<Hash, S> = new Map();
-  private tickStore: Map<number, Hash[]> = new Map();
-  private latestTick: number = 0;
-  private resolveConflicts: (op1: T, op2: T) => ActionType;
-  // private computeState: (vertexHash: Hash, operation: T) => S;
+interface VertexInfo {
+    parent: Hash;
+    depth: number;
+    ancestors: Hash[];
+}
 
-  constructor(resolveConflicts: (op1: T, op2: T) => ActionType) {
-      // could set the precedenceRules here
-      this.resolveConflicts = resolveConflicts;
-  }
+export class HashGraph<T extends Operation> {
+    private vertices: Map<Hash, Vertex<T>> = new Map();
+    private vertexInfo: Map<Hash, VertexInfo> = new Map();
+    private frontier: Set<Hash> = new Set();
+    private root: Hash = "";
+    private maxLog: number = 0;
 
-  computeHash(op: T, dependencies: Hash[]): Hash {
-    // Serialize the operation and dependencies
-    const serializedOperation = JSON.stringify(op);
-    const serializedDependencies = JSON.stringify(dependencies);
+    constructor(private resolveConflicts: (op1: T, op2: T) => ActionType) {}
 
-    // Concatenate the serialized strings
-    const combined = `${serializedOperation}|${serializedDependencies}`;
-
-    // Compute the BLAKE3 hash
-    const hashValue = sha256(combined);
-
-    // Return the hash as a hexadecimal string
-    return hashValue;
-  }
-
-  addVertex(operation: T, dependencies: Hash[] = []): Hash {
-    
-    // compute the vertex hash
-    const vertexHash: Hash = this.computeHash(operation, dependencies);
-
-    if (this.hashGraph.has(vertexHash)) {
-      console.log(`Node with hash ${vertexHash} already exists`);
+    // Time complexity: O(1), Space complexity: O(1)
+    computeHash(op: T, dependencies: Hash[]): Hash {
+        const serialized = JSON.stringify({ op, dependencies });
+        return sha256(serialized);
     }
 
-    const dependenciesSet = new Set(dependencies);
-    const node = new HashGraphVertex(vertexHash, operation, dependenciesSet);
-
-    this.hashGraph.set(vertexHash, node);
-    this.frontier.add(vertexHash);
-    // this.tickStore.set(tick, [...(this.tickStore.get(tick) || []), hash]);
-    
-    // if the node has no dependencies place it in the originSet
-    if (dependencies.length === 0) {
-      this.root = vertexHash;
-    }
-
-    for (const dependencyHash of dependencies) {
-      const dependencyNode = this.hashGraph.get(dependencyHash);
-      if (dependencyNode) {
-        this.frontier.delete(dependencyHash);
-      } else {
-        console.log(`Dependency node ${dependencyHash} does not exist`);
-      }
-    }
-    return vertexHash;
-  }
-
-  getFrontier(): Hash[] {
-    return Array.from(this.frontier);
-  }
-
-  getRoot(): Hash {
-    return this.root;
-  }
-
-  getDependencies(hash: Hash): Hash[] {
-    return this.hashGraph.get(hash)?.getDependencies() || [];
-  }
-
-  // getLinearOps(): T[] {
-  //   const result: T[] = [];
-
-  //   const outDegrees: Map<Hash, number> = new Map(); 
-  //   const inverseDependencies : Map<Hash, Hash[]> = new Map();
-
-  //   for (const [nodeHash, node] of this.hashGraph.entries()) {
-  //     // Compute the out degrees of each node
-  //     outDegrees.set(nodeHash, node.getDependeciesCount());
-    
-  //     // compute the mapping that stores node -> [dependencies]
-  //     const dependencies = node.getDependencies();
-  //     for (const dependency of dependencies) {
-  //       inverseDependencies.set(dependency, [...inverseDependencies.get(dependency) || [], nodeHash]);
-  //     }
-  //   }
-
-  //   // Initialize the queue
-  //   const queue: Hash[] = [];
-  //   outDegrees.forEach((value, key) => value === 0 && queue.push(key));
-
-  //   while (queue.length > 0) {
-  //     const nodeHash = queue.shift()!;
-  //     const nodeOp = this.hashGraph.get(nodeHash)?.operation!;
-  //     result.push(nodeOp);
-      
-  //     // Decrement the outDegree of each dependency by 1
-  //     const dependentHashes = inverseDependencies.get(nodeHash) || [];
-  //     // zeroOutDegreeDependencyOps is an inverse mapping (ops -> nodeHash) which 
-  //     // is needed to get the nodeHash after applyConflictSemantics applied on the ops.
-  //     const zeroOutDegreeDependentOps: Map<T, Hash> = new Map();
-
-  //     for (const dependentHash of dependentHashes) {
-  //       const currentDegree = outDegrees.get(dependentHash)!;
-  //       outDegrees.set(dependentHash, currentDegree - 1);
-        
-  //       if (currentDegree - 1 === 0) {
-  //         const op = this.hashGraph.get(dependentHash)?.operation!;
-  //         zeroOutDegreeDependentOps.set(op, dependentHash);
-  //       }
-  //     }
-      
-  //     const dependentOps = Array.from(zeroOutDegreeDependentOps.keys());
-  //     // apply conflict semantics to the dependencyOps
-  //     const ops = this.resolveConflicts(dependentOps);
-  //     for (const op of ops) {
-  //       queue.push(zeroOutDegreeDependentOps.get(op)!);
-  //     }
-  //   }
-
-  //   // Check if topological sort is possible (i.e., the graph is a DAG)
-  //   // if (topologicalOrder.length !== nodes.size) {
-  //   // throw new Error("Graph is not a DAG (contains a cycle)");
-  //   //}
-
-  //   return result;
-  // }
-
-  linearizeOps(): T[] {
-
-    const inverseDependenciesMap: Map<Hash, Hash[]> = new Map();
-
-    // Build inverse dependencies map
-    for (const [nodeHash, node] of this.hashGraph.entries()) {
-        node.getDependencies().forEach(dep => 
-            inverseDependenciesMap.set(dep, [...(inverseDependenciesMap.get(dep) || []), nodeHash])
-        );
-    }
-
-    // Build a light weight dependences map
-    const dependenciesMap: Map<Hash, Hash[]> = new Map();
-    this.hashGraph.forEach((vertex, vertexHash) => dependenciesMap.set(vertexHash, vertex.getDependencies()));
-
-    // Get candidate sorted array
-    let candidateSortArray = this._topologicalSort(this.root, inverseDependenciesMap);
-
-    // Compute reachability for each vertex
-    // refine the array using conflict semantics
-    const reachabilityMap: Map<string, boolean> = new Map();
-    let i = 0;
-    while (i < candidateSortArray.length) {
-      let vertex = candidateSortArray[i];
-      // compute a reachability map for the vertex using forward and backward bfs.
-      // only vertices not reachable can cause potential conflicts.
-      this._computeReachabilityMap(vertex, dependenciesMap, inverseDependenciesMap, reachabilityMap);
-      console.log("Vertex: ", vertex);
-      // iterate over every vertex in the candidateSortArray and check for potential 
-      // conflict with every vertex not in the reachabilityMap
-      for (let j = i + 1; j < candidateSortArray.length; ++j) {
-        const otherVertex = candidateSortArray[j];
-        const key = `${vertex}-${otherVertex}`;
-        // check for potential conflict
-        if (!reachabilityMap.has(key)) {
-          const op1 = this.hashGraph.get(vertex)?.getOperation()!;
-          const op2 = this.hashGraph.get(otherVertex)?.getOperation()!;
-          const action = this.resolveConflicts(op1, op2);
-          switch (action) {
-            case ActionType.DropLeft:
-              candidateSortArray.splice(i, 1);
-              break;
-            case ActionType.DropRight:
-              candidateSortArray.splice(j, 1);
-              break;
-            case ActionType.Nop:
-              ++i;
-              break;
-            case ActionType.Swap:
-              [candidateSortArray[i], candidateSortArray[j]] = [candidateSortArray[j], candidateSortArray[i]];
-              ++i;
-          }
-          // if any action was taken then break out of the inner loop.
+    // Time complexity: O(log n), Space complexity: O(log n)
+    addVertex(operation: T, dependencies: Hash[] = []): Hash {
+        const hash = this.computeHash(operation, dependencies);
+        if (this.vertices.has(hash)) {
+            return hash; // Vertex already exists
         }
-      }
-    }
-    let linearOps = candidateSortArray.map((hash) => this.hashGraph.get(hash)?.getOperation()!);
 
-    return linearOps;
-  }
+        const vertex = new Vertex(hash, operation, new Set(dependencies));
+        this.vertices.set(hash, vertex);
+        this.frontier.add(hash);
 
-  _computeReachabilityMap(
-    startNodeHash: Hash,
-    hashGraph: Map<Hash, Hash[]>,
-    inverseDependencies: Map<Hash, Hash[]>,
-    reachabilityMap: Map<string, boolean>
-): void {
-    const visited = new Set<Hash>();
+        if (dependencies.length === 0) {
+            this.root = hash;
+            this.vertexInfo.set(hash, { parent: hash, depth: 0, ancestors: [hash] });
+        } else {
+            let maxDepthParent = dependencies[0];
+            let maxDepth = this.vertexInfo.get(maxDepthParent)!.depth;
 
-    const dfs = (nodeHash: Hash, isBackward: boolean) => {
-        if (visited.has(nodeHash)) return;
-        visited.add(nodeHash);
-        visited.forEach(node => reachabilityMap.set(`${startNodeHash}-${node}`, true));
-        const neighbors = isBackward ? hashGraph.get(nodeHash) : inverseDependencies.get(nodeHash);
-        neighbors?.forEach(neighbor => dfs(neighbor, isBackward));
-    };
+            for (let i = 1; i < dependencies.length; i++) {
+                const depDepth = this.vertexInfo.get(dependencies[i])!.depth;
+                if (depDepth > maxDepth) {
+                    maxDepthParent = dependencies[i];
+                    maxDepth = depDepth;
+                }
+            }
 
-    dfs(startNodeHash, true);  // Backward DFS
-    visited.clear();
-    dfs(startNodeHash, false); // Forward DFS
-    reachabilityMap.set(`${startNodeHash}-${startNodeHash}`, true); // Self-reachability
-}
+            const newDepth = maxDepth + 1;
+            const ancestors = this.computeAncestors(hash, maxDepthParent, newDepth);
+            this.vertexInfo.set(hash, { parent: maxDepthParent, depth: newDepth, ancestors });
 
-  _topologicalSort(startNodeHash: Hash, dag: Map<Hash, Hash[]>): Hash[] {
-    const visited = new Set<Hash>();
-    const result: Hash[] = [];
+            for (const dep of dependencies) {
+                this.frontier.delete(dep);
+            }
+        }
 
-    function dfs(nodeHash: Hash) {
-        if (visited.has(nodeHash)) return; // Return if already visited
-        visited.add(nodeHash);
-        result.push(nodeHash); // Add to result
-
-        // Recursively visit dependencies
-        (dag.get(nodeHash) || []).forEach(dfs);
+        this.maxLog = Math.max(this.maxLog, Math.floor(Math.log2(this.vertexInfo.get(hash)!.depth || 1)));
+        return hash;
     }
 
-    dfs(startNodeHash); // Start DFS from the given node
-    return result; 
-}
+    // Time complexity: O(log n), Space complexity: O(log n)
+    private computeAncestors(hash: Hash, parent: Hash, depth: number): Hash[] {
+        const ancestors: Hash[] = new Array(Math.floor(Math.log2(depth)) + 1);
+        ancestors[0] = parent;
 
+        for (let i = 1; i < ancestors.length; i++) {
+            const halfAncestor = ancestors[i - 1];
+            if (halfAncestor) {
+                ancestors[i] = this.vertexInfo.get(halfAncestor)!.ancestors[i - 1];
+            }
+        }
 
-  getVertex(vertexHash: Hash): HashGraphVertex<T> | undefined {
-    return this.hashGraph.get(vertexHash);
-  }
+        return ancestors;
+    }
 
-  getAllVertices(): HashGraphVertex<T>[] {
-    return Array.from(this.hashGraph.values());
-  }
+    // Time complexity: O(log n), Space complexity: O(1)
+    private getLCA(u: Hash, v: Hash): Hash {
+        let uInfo = this.vertexInfo.get(u)!;
+        let vInfo = this.vertexInfo.get(v)!;
+
+        if (uInfo.depth < vInfo.depth) {
+            [u, v] = [v, u];
+            [uInfo, vInfo] = [vInfo, uInfo];
+        }
+
+        for (let i = this.maxLog; i >= 0; i--) {
+            if (uInfo.depth - (1 << i) >= vInfo.depth) {
+                u = uInfo.ancestors[i];
+                uInfo = this.vertexInfo.get(u)!;
+            }
+        }
+
+        if (u === v) return u;
+
+        for (let i = this.maxLog; i >= 0; i--) {
+            if (uInfo.ancestors[i] !== vInfo.ancestors[i]) {
+                u = uInfo.ancestors[i];
+                v = vInfo.ancestors[i];
+                uInfo = this.vertexInfo.get(u)!;
+                vInfo = this.vertexInfo.get(v)!;
+            }
+        }
+
+        return uInfo.parent;
+    }
+
+    // Time complexity: O(n^2 * log n) worst case, typically better in practice
+    // Space complexity: O(n)
+    linearizeOps(): T[] {
+        const order = this.topologicalSort();
+        const result: T[] = [];
+        let i = 0;
+
+        while (i < order.length) {
+            const anchor = order[i];
+            let shouldKeepAnchor = true;
+            let j = i + 1;
+
+            while (j < order.length) {
+                const moving = order[j];
+
+                if (this.getLCA(anchor, moving) !== anchor) {
+                    const op1 = this.vertices.get(anchor)!.operation;
+                    const op2 = this.vertices.get(moving)!.operation;
+                    const action = this.resolveConflicts(op1, op2);
+
+                    switch (action) {
+                        case ActionType.DropLeft:
+                            shouldKeepAnchor = false;
+                            j = order.length;  // Break out of inner loop
+                            break;
+                        case ActionType.DropRight:
+                            order[j] = order[order.length - 1];
+                            order.pop();
+                            continue;  // Continue with the same j
+                        case ActionType.Swap:
+                            [order[i], order[j]] = [order[j], order[i]];
+                            j = order.length;  // Break out of inner loop
+                            break;
+                        case ActionType.Nop:
+                            j++;
+                            break;
+                    }
+                } else {
+                    j++;
+                }
+            }
+
+            if (shouldKeepAnchor) {
+                result.push(this.vertices.get(anchor)!.operation);
+                i++;
+            } else {
+                order[i] = order[order.length - 1];
+                order.pop();
+            }
+        }
+
+        return result;
+    }
+
+    // Time complexity: O(n), Space complexity: O(n)
+    topologicalSort(): Hash[] {
+        const visited = new Set<Hash>();
+        const result: Hash[] = [];
+
+        const dfs = (hash: Hash) => {
+            if (visited.has(hash)) return;
+            visited.add(hash);
+            const vertex = this.vertices.get(hash)!;
+            for (const dep of vertex.dependencies) {
+                dfs(dep);
+            }
+            result.push(hash);
+        };
+
+        dfs(this.root);
+        return result.reverse();
+    }
+
+    // Time complexity: O(1), Space complexity: O(1)
+    getFrontier(): Hash[] {
+        return Array.from(this.frontier);
+    }
+
+    // Time complexity: O(1), Space complexity: O(1)
+    getRoot(): Hash {
+        return this.root;
+    }
+
+    // Time complexity: O(1), Space complexity: O(1)
+    getDependencies(hash: Hash): Hash[] {
+        return Array.from(this.vertices.get(hash)?.dependencies || []);
+    }
+
+    // Time complexity: O(1), Space complexity: O(1)
+    getVertex(hash: Hash): Vertex<T> | undefined {
+        return this.vertices.get(hash);
+    }
+
+    // Time complexity: O(n), Space complexity: O(n)
+    getAllVertices(): Vertex<T>[] {
+        return Array.from(this.vertices.values());
+    }
 }
