@@ -1,7 +1,7 @@
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 import { addMessage, Chat } from "./objects/chat";
 
-export const handleChatMessages = (chat: ChatI, e: any) => {
+export const handleChatMessages = (chat: Chat, e: any) => {
   if (e.detail.msg.topic === "topology::discovery") return;
   const input = uint8ArrayToString(e.detail.msg.data);
   const message = JSON.parse(input);

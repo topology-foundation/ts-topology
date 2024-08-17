@@ -1,14 +1,14 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "ESNEXT",
-        "rootDir": ".",
-        "strict": true,
-        "moduleResolution": "node",
-        "allowSyntheticDefaultImports": true,
-        "allowJs": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
-    }
+  "compilerOptions": {
+      "target": "ESNext",
+      "module": "ESNext",
+      "rootDir": ".",
+      "strict": true,
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true,
+      "allowJs": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
+  }
 }

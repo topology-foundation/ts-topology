@@ -1,5 +1,4 @@
 /* GSet with support for state and op changes */
-
 export class GSet<T> {
   set: Set<T>;
 

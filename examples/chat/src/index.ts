@@ -3,10 +3,11 @@ import * as topology from "@topology-foundation/node";
 import { Chat, addMessage, getMessages } from "./objects/chat";
 import { handleChatMessages } from "./handlers";
 import { GSet } from "@topology-foundation/crdt";
-import { newTopologyObject } from "@topology-foundation/object";
+import { newTopologyObject, TopologyObject } from "@topology-foundation/object";
 
 const node = new TopologyNode();
 // CRO = Conflict-free Replicated Object
+let topologyObject: TopologyObject;
 let chatCRO: Chat;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
@@ -65,20 +66,20 @@ async function main() {
   await node.start();
   render();
 
-  node.addCustomGroupMessageHandler(chatCRO.cro.id, (e) => {
+  node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
     handleChatMessages(chatCRO, e);
     peers = node.networkNode.getAllPeers();
     discoveryPeers = node.networkNode.getGroupPeers("topology::discovery");
-    if (chatCRO) objectPeers = node.networkNode.getGroupPeers(chatCRO.cro.id);
+    if (chatCRO) objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
     render();
   });
 
   let button_create = <HTMLButtonElement>document.getElementById("createRoom");
   button_create.addEventListener("click", async () => {
-    chatCRO = await newTopologyObject(node.networkNode.peerId, "./objects/chat.ts")
+    topologyObject = await newTopologyObject(node.networkNode.peerId, "./objects/chat.ts");
 
-    topology.createObject(node, chatCRO);
-    (<HTMLButtonElement>document.getElementById("chatId")).innerHTML = chatCRO.cro.id;
+    // topology.createObject(node, chatCRO);
+    (<HTMLButtonElement>document.getElementById("chatId")).innerHTML = topologyObject.id;
     render();
   });
 
@@ -90,7 +91,9 @@ async function main() {
       alert("Please enter a room id");
       return;
     }
-    await topology.subscribeObject(node, objectId, true);
+
+    //objectId
+    await topology.subscribeObject(node, new Uint8Array(), true);
   });
 
   let button_fetch = <HTMLButtonElement>document.getElementById("fetchMessages");
@@ -105,9 +108,9 @@ async function main() {
       let arr: string[] = Array.from(object["chat"]["_set"]);
       object["chat"]["_set"] = new Set<string>(arr);
       object["chat"] = Object.assign(new GSet<string>(new Set<string>()), object["chat"]);
-      chatCRO = Object.assign(new Chat(node.networkNode.peerId), object);
+      chatCRO = Object.assign(new Chat(), object);
 
-      (<HTMLButtonElement>document.getElementById("chatId")).innerHTML = chatCRO.cro.id;
+      (<HTMLButtonElement>document.getElementById("chatId")).innerHTML = topologyObject.id;
       render();
     } catch (e) {
       console.error("Error while connecting to the CRO ", objectId, e);

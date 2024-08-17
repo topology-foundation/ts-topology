@@ -18,6 +18,10 @@
     ".": {
       "types": "./dist/src/index.d.ts",
       "import": "./dist/src/index.js"
+    },
+    "./wasm": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./src/index.asc.ts"
     }
   },
   "scripts": {
