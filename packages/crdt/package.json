@@ -24,7 +24,7 @@
     "build": "tsc -b",
     "clean": "rm -rf dist/ node_modules/",
     "prepack": "tsc -b",
-    "test": "vitest --reporter=verbose"
+    "test": "vitest"
   },
   "dependencies": {},
   "devDependencies": {
