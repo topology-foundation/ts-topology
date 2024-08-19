@@ -33,7 +33,8 @@ export class TopologyNode {
       this._config.tslog_config = {
         type: "hidden",
         minLevel: 3,
-        hideLogPositionForProduction: true
+        hideLogPositionForProduction: true,
+        prettyLogTemplate: "{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}\t{{logLevelName}}\t{{filePathWithLine}}{{name}}"
       };
     } 
     if(!this._config.network_config?.tslog_config){
