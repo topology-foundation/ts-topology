@@ -1,0 +1,27 @@
+{
+    "network_config": {
+      "addresses": ["/webrtc"],
+      "bootstrap_peers": [
+        "/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ"
+      ],
+      "private_key_seed": "node"
+    },
+    "tslog_config": {
+        // use https://tslog.js.org/#/?id=settings for reference
+
+        // Logger name, used to identify the logger instance.
+        "name": "mainLogger",
+      
+        // Minimum log level to log. 
+        // Options: 0: silly, 1: trace, 2: debug, 3: info, 4: warn, 5: error, 6: fatal
+        "minLevel": 3,
+
+        // Type - hidden || json || pretty
+        "type": "hidden",
+
+        // Hide log position for production
+        "hideLogPositionForProduction": true
+      }
+      
+  }
+  

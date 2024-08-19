@@ -29,29 +29,13 @@ import { Logger, ILogObj, ISettingsParam } from "tslog";
 
 let mainLogger: Logger<ILogObj> = new Logger();
 
-let startLogger: Logger<ILogObj> = new Logger();
-let subscribeLogger: Logger<ILogObj> = new Logger();
-let unsubscribeLogger: Logger<ILogObj> = new Logger();
-let broadcastMessageLogger: Logger<ILogObj> = new Logger();
-let sendMessageLogger: Logger<ILogObj> = new Logger();
-let sendGroupMessageRandomPeerLogger: Logger<ILogObj> = new Logger();
-
-function assignLoggers(){
-  startLogger = mainLogger.getSubLogger({ name: "start" });
-  subscribeLogger = mainLogger.getSubLogger({ name: "subscribe" });
-  unsubscribeLogger = mainLogger.getSubLogger({ name: "unsubscribe" });
-  broadcastMessageLogger = mainLogger.getSubLogger({ name: "broadcastMessage" });
-  sendMessageLogger = mainLogger.getSubLogger({ name: "sendMessage" });
-  sendGroupMessageRandomPeerLogger = mainLogger.getSubLogger({ name: "sendGroupMessageRandomTopicPeer" });
-}
-
 // snake_casing to match the JSON config
 export interface TopologyNetworkNodeConfig {
   addresses?: string[];
   bootstrap?: boolean;
   bootstrap_peers?: string[];
   private_key_seed?: string;
-  tslogconfig: ISettingsParam<ILogObj>;
+  tslog_config?: ISettingsParam<ILogObj>;
 }
 
 export class TopologyNetworkNode {
@@ -61,11 +45,10 @@ export class TopologyNetworkNode {
 
   peerId: string = "";
 
-  constructor(config: TopologyNetworkNodeConfig) {
+  constructor(config?: TopologyNetworkNodeConfig) {
     this._config = config;
-    mainLogger = new Logger(config.tslogconfig);
-    mainLogger.settings.name = "topology:network";
-    assignLoggers();
+    mainLogger = new Logger(config?.tslog_config);
+    mainLogger.settings.name = "topology::network";
   }
 
   async start() {
@@ -139,47 +122,47 @@ export class TopologyNetworkNode {
     this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
     this.peerId = this._node.peerId.toString();
 
-    startLogger.info("Successfuly started topology network w/ peer_id", this.peerId);
+    mainLogger.info("::start", "Successfuly started topology network w/ peer_id", this.peerId);
 
     // TODO remove this or add better logger
     // we need to keep it now for debugging
     this._node.addEventListener("peer:connect", (e) =>
-      startLogger.info("peer:connect", e.detail)
+      mainLogger.info("::start::peer::connect", e.detail)
     );
     this._node.addEventListener("peer:discovery", (e) =>
-      startLogger.info("peer:discovery", e.detail)
+      mainLogger.info("::start::peer::discovery", e.detail)
     );
     this._node.addEventListener("peer:identify", (e) =>
-      startLogger.info("peer:identify", e.detail)
+      mainLogger.info("::start::peer::identify", e.detail)
     );
   }
 
   subscribe(topic: string) {
     if (!this._node) {
-      subscribeLogger.error("Node not initialized, please run .start()");
+      mainLogger.error("::subscribe", "Node not initialized, please run .start()");
       return;
     }
 
     try {
       this._pubsub?.subscribe(topic);
       this._pubsub?.getPeers();
-      subscribeLogger.info("Successfuly subscribed the topic", topic);
+      mainLogger.info("::subscribe", "Successfuly subscribed the topic", topic);
     } catch (e) {
-      subscribeLogger.error(e);
+      mainLogger.error("::subscribe", e);
     }
   }
 
   unsubscribe(topic: string) {
     if (!this._node) {
-      unsubscribeLogger.error("Node not initialized, please run .start()");
+      mainLogger.error("::unsubscribe", "Node not initialized, please run .start()");
       return;
     }
 
     try {
       this._pubsub?.unsubscribe(topic);
-      unsubscribeLogger.info("Successfuly unsubscribed the topic", topic);
+      mainLogger.info("::unsubscribe", "Successfuly unsubscribed the topic", topic);
     } catch (e) {
-      unsubscribeLogger.error(e);
+      mainLogger.error("::unsubscribe", e);
     }
   }
 
@@ -200,9 +183,9 @@ export class TopologyNetworkNode {
       if (this._pubsub?.getSubscribers(topic)?.length === 0) return;
       await this._pubsub?.publish(topic, message);
 
-      broadcastMessageLogger.info("Successfuly broadcasted message to topic", topic);
+      mainLogger.info("::broadcastMessage", "Successfuly broadcasted message to topic", topic);
     } catch (e) {
-      broadcastMessageLogger.error(e);
+      mainLogger.error("::sendMessage", e);
     }
   }
 
@@ -212,9 +195,9 @@ export class TopologyNetworkNode {
       const stream = <Stream>await connection?.newStream(protocols);
       stringToStream(stream, message);
 
-      sendMessageLogger.info("Successfuly sent message to peer", peerId);
+      mainLogger.info("::sendMessage", "Successfuly sent message to peer", peerId);
     } catch (e) {
-      sendMessageLogger.error(e);
+      mainLogger.error("::sendMessage", e);
     }
   }
 
@@ -232,9 +215,9 @@ export class TopologyNetworkNode {
       const stream: Stream = (await connection?.newStream(protocols)) as Stream;
       stringToStream(stream, message);
 
-      sendGroupMessageRandomPeerLogger.info(`Successfuly sent message to peer: ${peerId} with message: ${message}`);
+      mainLogger.info("::sendGroupMessageRandomPeer", `Successfuly sent message to peer: ${peerId} with message: ${message}`);
     } catch (e) {
-      sendGroupMessageRandomPeerLogger.error(e);
+      mainLogger.error("::sendGroupMessageRandomPeer", e);
     }
   }
 
