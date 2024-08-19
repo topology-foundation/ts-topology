@@ -6,7 +6,11 @@ export default defineConfig({
     target: 'esnext',
   },
   plugins: [
-    nodePolyfills(),
+    nodePolyfills({
+      overrides: {
+        fs: 'memfs',
+      },
+    }),
   ],
   optimizeDeps: {
     esbuildOptions: {
