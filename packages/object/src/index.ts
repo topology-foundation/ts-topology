@@ -6,7 +6,8 @@ export * from "./proto/object_pb.js";
 
 /* Creates a new TopologyObject */
 export async function newTopologyObject(peerId: string, path: string, id?: string, abi?: string): Promise<TopologyObject> {
-  const bytecode = await compileWasm(path);
+  // const bytecode = await compileWasm(path);
+  const bytecode = new Uint8Array();
   return {
     id: id ?? crypto
       .createHash("sha256")
