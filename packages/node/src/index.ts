@@ -8,6 +8,8 @@ import {
 } from "@topology-foundation/network";
 import { TopologyObjectStore } from "./store/index.js";
 import { topologyMessagesHandler } from "./handlers.js";
+import { OPERATIONS, executeObjectOperation } from "./operations.js";
+import { TopologyObject } from "@topology-foundation/object";
 
 export * from "./operations.js";
 
@@ -17,13 +19,12 @@ export interface TopologyNodeConfig {
 }
 
 export class TopologyNode {
-  private _config?: TopologyNodeConfig;
-
+  config?: TopologyNodeConfig;
   objectStore: TopologyObjectStore;
   networkNode: TopologyNetworkNode;
 
   constructor(config?: TopologyNodeConfig) {
-    this._config = config;
+    this.config = config;
     this.networkNode = new TopologyNetworkNode(config?.network_config);
     this.objectStore = new TopologyObjectStore();
   }
@@ -33,7 +34,7 @@ export class TopologyNode {
 
     this.networkNode.addMessageHandler(
       ["/topology/message/0.0.1"],
-      async ({ stream }) => topologyMessagesHandler(this, stream)
+      async ({ stream }) => topologyMessagesHandler(this, stream),
     );
   }
 
@@ -53,7 +54,7 @@ export class TopologyNode {
       sender: this.networkNode.peerId,
       type: Message_MessageType.CUSTOM,
       data,
-    })
+    });
     this.networkNode.broadcastMessage(group, message);
   }
 
@@ -68,5 +69,75 @@ export class TopologyNode {
       data,
     });
     this.networkNode.sendMessage(peerId, [protocol], message);
+  }
+
+  createObject(id: string, abi?: string, bytecode?: Uint8Array) {
+    const object = TopologyObject.create({
+      id,
+      abi,
+      bytecode,
+    });
+    executeObjectOperation(
+      this,
+      OPERATIONS.CREATE,
+      TopologyObject.encode(object).finish(),
+    );
+  }
+
+  updateObject(
+    id: string,
+    operations: { nonce: string; fn: string; args: string[] }[],
+  ) {
+    const object = TopologyObject.create({
+      id,
+      operations,
+    });
+    executeObjectOperation(
+      this,
+      OPERATIONS.UPDATE,
+      TopologyObject.encode(object).finish(),
+    );
+  }
+
+  async subscribeObject(id: string, fetch?: boolean, peerId?: string) {
+    const object = TopologyObject.create({
+      id,
+    });
+    executeObjectOperation(
+      this,
+      OPERATIONS.SUBSCRIBE,
+      TopologyObject.encode(object).finish(),
+      fetch,
+      peerId,
+    );
+  }
+
+  unsubscribeObject(id: string, purge?: boolean) {
+    const object = TopologyObject.create({
+      id,
+    });
+    executeObjectOperation(
+      this,
+      OPERATIONS.UNSUBSCRIBE,
+      TopologyObject.encode(object).finish(),
+      purge,
+    );
+  }
+
+  async syncObject(
+    id: string,
+    operations: { nonce: string; fn: string; args: string[] }[],
+    peerId?: string,
+  ) {
+    const object = TopologyObject.create({
+      id,
+      operations,
+    });
+    executeObjectOperation(
+      this,
+      OPERATIONS.SYNC,
+      TopologyObject.encode(object).finish(),
+      peerId,
+    );
   }
 }

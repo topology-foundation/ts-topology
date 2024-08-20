@@ -15,4 +15,8 @@ export class TopologyObjectStore {
   put(objectId: string, object: TopologyObject) {
     this._store.set(objectId, object);
   }
+
+  remove(objectId: string) {
+    this._store.delete(objectId);
+  }
 }
