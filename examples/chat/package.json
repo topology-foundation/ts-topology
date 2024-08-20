@@ -5,11 +5,19 @@
   "main": "src/index.ts",
   "repository": "https://github.com/topology-foundation/ts-topology.git",
   "license": "MIT",
+  "scripts": {
+    "asbuild": "asc --config asconfig.json --target release",
+    "build": "vite build",
+    "clean": "rm -rf dist/ node_modules/",
+    "dev": "vite serve",
+    "start": "ts-node ./src/index.ts"
+  },
   "dependencies": {
     "@topology-foundation/crdt": "0.0.23-5",
     "@topology-foundation/network": "0.0.23-5",
     "@topology-foundation/node": "0.0.23-5",
     "@topology-foundation/object": "0.0.23-5",
+    "assemblyscript": "^0.27.29",
     "crypto-browserify": "^3.12.0",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
@@ -25,11 +33,5 @@
     "webpack": "^5.74.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4"
-  },
-  "scripts": {
-    "build": "vite build",
-    "clean": "rm -rf dist/ node_modules/",
-    "dev": "vite serve",
-    "start": "ts-node ./src/index.ts"
   }
 }

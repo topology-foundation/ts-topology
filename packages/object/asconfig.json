@@ -1,5 +1,5 @@
 {
-  "entries": ["./src/chat.ts"],
+  "entries": ["./src/index.ts"],
   "targets": {
     "debug": {
       "outFile": "dist/asc/debug.wasm",
