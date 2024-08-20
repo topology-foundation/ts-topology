@@ -34,16 +34,16 @@ importers:
     dependencies:
       '@topology-foundation/crdt':
         specifier: 0.0.23-5
-        version: 0.0.23-5
+        version: link:../../packages/crdt
       '@topology-foundation/network':
         specifier: 0.0.23-5
-        version: 0.0.23-5
+        version: link:../../packages/network
       '@topology-foundation/node':
         specifier: 0.0.23-5
-        version: 0.0.23-5
+        version: link:../../packages/node
       '@topology-foundation/object':
         specifier: 0.0.23-5
-        version: 0.0.23-5
+        version: link:../../packages/object
       crypto-browserify:
         specifier: ^3.12.0
         version: 3.12.0
@@ -69,6 +69,9 @@ importers:
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
+      vite:
+        specifier: ^5.4.1
+        version: 5.4.1(@types/node@22.4.1)(terser@5.31.6)
       webpack:
         specifier: ^5.74.0
         version: 5.93.0(webpack-cli@5.1.4)
@@ -83,22 +86,25 @@ importers:
     dependencies:
       '@topology-foundation/crdt':
         specifier: 0.0.23-5
-        version: 0.0.23-5
+        version: link:../../packages/crdt
       '@topology-foundation/network':
         specifier: 0.0.23-5
-        version: 0.0.23-5
+        version: link:../../packages/network
       '@topology-foundation/node':
         specifier: 0.0.23-5
-        version: 0.0.23-5
+        version: link:../../packages/node
       '@topology-foundation/object':
         specifier: 0.0.23-5
-        version: 0.0.23-5
+        version: link:../../packages/object
       assemblyscript:
         specifier: ^0.27.29
         version: 0.27.29
       crypto-browserify:
         specifier: ^3.12.0
         version: 3.12.0
+      memfs:
+        specifier: ^4.11.1
+        version: 4.11.1
       process:
         specifier: ^0.11.10
         version: 0.11.10
@@ -163,6 +169,9 @@ importers:
       '@libp2p/circuit-relay-v2':
         specifier: ^1.1.4
         version: 1.1.5
+      '@libp2p/crypto':
+        specifier: ^4.1.9
+        version: 4.1.9
       '@libp2p/dcutr':
         specifier: ^1.1.4
         version: 1.1.5
@@ -175,6 +184,9 @@ importers:
       '@libp2p/mdns':
         specifier: ^10.1.3
         version: 10.1.5
+      '@libp2p/peer-id-factory':
+        specifier: ^4.2.4
+        version: 4.2.4
       '@libp2p/pubsub-peer-discovery':
         specifier: ^10.0.2
         version: 10.0.2
@@ -190,15 +202,27 @@ importers:
       '@multiformats/multiaddr':
         specifier: ^12.3.0
         version: 12.3.0
+      it-length-prefixed:
+        specifier: ^9.1.0
+        version: 9.1.0
+      it-map:
+        specifier: ^3.1.1
+        version: 3.1.1
       it-pipe:
         specifier: ^3.0.1
         version: 3.0.1
       libp2p:
         specifier: ^1.8.3
         version: 1.9.2
+      protobufjs:
+        specifier: ^7.3.2
+        version: 7.3.2
       ts-proto:
-        specifier: ^1.181.1
-        version: 1.181.2
+        specifier: ^2.0.2
+        version: 2.0.2
+      uint8arrays:
+        specifier: ^5.1.0
+        version: 5.1.0
     devDependencies:
       '@libp2p/interface':
         specifier: ^1.7.0
@@ -209,18 +233,27 @@ importers:
 
   packages/node:
     dependencies:
+      '@chainsafe/libp2p-gossipsub':
+        specifier: ^13.1.0
+        version: 13.2.0
+      '@libp2p/interface':
+        specifier: ^1.7.0
+        version: 1.7.0
       '@topology-foundation/crdt':
         specifier: 0.0.23-5
-        version: 0.0.23-5
+        version: link:../crdt
       '@topology-foundation/network':
         specifier: 0.0.23-5
-        version: 0.0.23-5
+        version: link:../network
       '@topology-foundation/object':
         specifier: 0.0.23-5
-        version: 0.0.23-5
+        version: link:../object
       commander:
         specifier: ^12.1.0
         version: 12.1.0
+      it-length-prefixed:
+        specifier: ^9.1.0
+        version: 9.1.0
     devDependencies:
       '@types/node':
         specifier: ^22.4.1
@@ -237,9 +270,12 @@ importers:
 
   packages/object:
     dependencies:
+      protobufjs:
+        specifier: ^7.3.2
+        version: 7.3.2
       ts-proto:
-        specifier: ^1.181.1
-        version: 1.181.2
+        specifier: ^2.0.2
+        version: 2.0.2
     devDependencies:
       assemblyscript:
         specifier: ^0.27.29
@@ -933,6 +969,9 @@ packages:
   '@babel/types@7.25.2':
     resolution: {integrity: sha512-YTnYtra7W9e6/oAZEHj0bJehPRUlLH9/fbpT5LfB0NhQXyALCRkRs3zH9v07IYhkgpqX6Z78FnuccZr/l4Fs4Q==}
     engines: {node: '>=6.9.0'}
+
+  '@bufbuild/protobuf@2.0.0':
+    resolution: {integrity: sha512-sw2JhwJyvyL0zlhG61aDzOVryEfJg2PDZFSV7i7IdC7nAE41WuXCru3QWLGiP87At0BMzKOoKO/FqEGoKygGZQ==}
 
   '@chainsafe/as-chacha20poly1305@0.1.0':
     resolution: {integrity: sha512-BpNcL8/lji/GM3+vZ/bgRWqJ1q5kwvTFmGPk7pxm/QQZDbaMI98waOHjEymTjq2JmdD/INdNBFOVSyJofXg7ew==}
@@ -1657,18 +1696,6 @@ packages:
 
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
-
-  '@topology-foundation/crdt@0.0.23-5':
-    resolution: {integrity: sha512-CwIz7W+T7l4d4ST3N9xr4KCQ6FWpNaCe07qo7w6l+3+Kpi6k6YsiJLMLn3H9FO+/FKHcCR37s4CoB7kr5OHOzg==}
-
-  '@topology-foundation/network@0.0.23-5':
-    resolution: {integrity: sha512-wgUGsqUHyy2uM80VVMwawB7qQEwy8s+zQjIbwFHINNRRDaPmCE38wFc7vysa/DFRHjBja7zWNV5hLI6mRUVp5Q==}
-
-  '@topology-foundation/node@0.0.23-5':
-    resolution: {integrity: sha512-frHT0DMxr28TxNdYX6DftlNkkvFogijfkAiXLLSBVlmj2CWg6xd7k7S2mrUjjCU/Sl71JyrfWVJhA7xd5uO4UA==}
-
-  '@topology-foundation/object@0.0.23-5':
-    resolution: {integrity: sha512-0yEXw9uVcRiYE5AMdMHPnB/aM0SogkI5jqNwtRHKDLTSpwLsTjndhntm+QG2tSsg3+AMLJa1W2KUFxOEAYxhow==}
 
   '@tsconfig/node10@1.0.11':
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
@@ -5068,8 +5095,8 @@ packages:
   ts-proto-descriptors@1.16.0:
     resolution: {integrity: sha512-3yKuzMLpltdpcyQji1PJZRfoo4OJjNieKTYkQY8pF7xGKsYz/RHe3aEe4KiRxcinoBmnEhmuI+yJTxLb922ULA==}
 
-  ts-proto@1.181.2:
-    resolution: {integrity: sha512-knJ8dtjn2Pd0c5ZGZG8z9DMiD4PUY8iGI9T9tb8DvGdWRMkLpf0WcPO7G+7cmbZyxvNTAG6ci3fybEaFgMZIvg==}
+  ts-proto@2.0.2:
+    resolution: {integrity: sha512-O+UZouRUx0d8w2Rn2ezSIHCed+Rl5teeqfDNc4pPRVxksi3Um0rUkWA/vd6W8Ga199atfFy9jp2dfySxfT1q9g==}
     hasBin: true
 
   tslib@2.6.3:
@@ -6441,6 +6468,8 @@ snapshots:
       '@babel/helper-validator-identifier': 7.24.7
       to-fast-properties: 2.0.0
 
+  '@bufbuild/protobuf@2.0.0': {}
+
   '@chainsafe/as-chacha20poly1305@0.1.0': {}
 
   '@chainsafe/as-sha256@0.4.2': {}
@@ -6730,7 +6759,7 @@ snapshots:
       '@noble/hashes': 1.4.0
       asn1js: 3.0.5
       multiformats: 13.2.2
-      protons-runtime: 5.4.0
+      protons-runtime: 5.5.0
       uint8arraylist: 2.4.8
       uint8arrays: 5.1.0
 
@@ -7555,47 +7584,6 @@ snapshots:
       defer-to-connect: 2.0.1
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
-
-  '@topology-foundation/crdt@0.0.23-5': {}
-
-  '@topology-foundation/network@0.0.23-5':
-    dependencies:
-      '@chainsafe/libp2p-gossipsub': 13.2.0
-      '@chainsafe/libp2p-noise': 15.1.1
-      '@chainsafe/libp2p-yamux': 6.0.2
-      '@libp2p/autonat': 1.1.5
-      '@libp2p/bootstrap': 10.1.5
-      '@libp2p/circuit-relay-v2': 1.1.5
-      '@libp2p/dcutr': 1.1.5
-      '@libp2p/identify': 2.1.5
-      '@libp2p/interface-pubsub': 4.0.1
-      '@libp2p/mdns': 10.1.5
-      '@libp2p/pubsub-peer-discovery': 10.0.2
-      '@libp2p/webrtc': 4.1.7(react-native@0.75.1(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(react@18.3.1)(typescript@5.5.4))
-      '@libp2p/websockets': 8.2.0
-      '@libp2p/webtransport': 4.1.7
-      '@multiformats/multiaddr': 12.3.0
-      it-pipe: 3.0.1
-      libp2p: 1.9.2
-    transitivePeerDependencies:
-      - bufferutil
-      - react-native
-      - supports-color
-      - utf-8-validate
-
-  '@topology-foundation/node@0.0.23-5':
-    dependencies:
-      '@topology-foundation/crdt': 0.0.23-5
-      '@topology-foundation/network': 0.0.23-5
-      '@topology-foundation/object': 0.0.23-5
-      commander: 12.1.0
-    transitivePeerDependencies:
-      - bufferutil
-      - react-native
-      - supports-color
-      - utf-8-validate
-
-  '@topology-foundation/object@0.0.23-5': {}
 
   '@tsconfig/node10@1.0.11': {}
 
@@ -11438,10 +11426,10 @@ snapshots:
       long: 5.2.3
       protobufjs: 7.3.2
 
-  ts-proto@1.181.2:
+  ts-proto@2.0.2:
     dependencies:
+      '@bufbuild/protobuf': 2.0.0
       case-anything: 2.1.13
-      protobufjs: 7.3.2
       ts-poet: 6.9.0
       ts-proto-descriptors: 1.16.0
 

@@ -19,6 +19,7 @@
     "@topology-foundation/object": "0.0.23-5",
     "assemblyscript": "^0.27.29",
     "crypto-browserify": "^3.12.0",
+    "memfs": "^4.11.1",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
     "ts-node": "^10.9.2",
