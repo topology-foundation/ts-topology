@@ -95,26 +95,27 @@ async function init() {
     let croId = (<HTMLInputElement>document.getElementById("canvasIdInput"))
       .value;
     try {
-      await node.subscribeObject(croId, true);
+      await node.subscribeObject(croId, true, "", (_, topologyObject) => {
+        let object: any = topologyObject;
+        object["canvas"] = object["canvas"].map((x: any) =>
+          x.map((y: any) => {
+            y["red"] = Object.assign(new GCounter({}), y["red"]);
+            y["green"] = Object.assign(new GCounter({}), y["green"]);
+            y["blue"] = Object.assign(new GCounter({}), y["blue"]);
+            return Object.assign(new Pixel(node.networkNode.peerId), y);
+          })
+        );
+
+        canvasCRO = Object.assign(
+          new Canvas(node.networkNode.peerId, 0, 0),
+          object
+        );
+
+        (<HTMLSpanElement>document.getElementById("canvasId")).innerText =
+          croId;
+        render();
+      });
       // TODO remove the need to click to time for subscribe and fetch
-
-      let object: any = node.getObject(croId);
-      object["canvas"] = object["canvas"].map((x: any) =>
-        x.map((y: any) => {
-          y["red"] = Object.assign(new GCounter({}), y["red"]);
-          y["green"] = Object.assign(new GCounter({}), y["green"]);
-          y["blue"] = Object.assign(new GCounter({}), y["blue"]);
-          return Object.assign(new Pixel(node.networkNode.peerId), y);
-        }),
-      );
-
-      canvasCRO = Object.assign(
-        new Canvas(node.networkNode.peerId, 0, 0),
-        object,
-      );
-
-      (<HTMLSpanElement>document.getElementById("canvasId")).innerText = croId;
-      render();
     } catch (e) {
       console.error("Error while connecting with CRO", croId, e);
     }
