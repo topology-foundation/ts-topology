@@ -22,14 +22,10 @@
     "@types/node": "^22.4.1",
     "assemblyscript": "^0.27.29",
     "release-it": "^17.6.0",
-    "typedoc": "^0.26.4",
+    "typedoc": "^0.26.6",
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
   },
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
   "private": true,
   "release-it": {
     "plugins": {
