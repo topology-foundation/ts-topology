@@ -24,10 +24,9 @@ import { bootstrap } from "@libp2p/bootstrap";
 import { webTransport } from "@libp2p/webtransport";
 import { autoNAT } from "@libp2p/autonat";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
-
 import { Logger, ILogObj, ISettingsParam } from "tslog";
 
-let mainLogger: Logger<ILogObj> = new Logger();
+let log: Logger<ILogObj> = new Logger();
 
 // snake_casing to match the JSON config
 export interface TopologyNetworkNodeConfig {
@@ -47,8 +46,8 @@ export class TopologyNetworkNode {
 
   constructor(config?: TopologyNetworkNodeConfig) {
     this._config = config;
-    mainLogger = new Logger(config?.tslog_config);
-    mainLogger.settings.name = "topology::network";
+    log = new Logger(config?.tslog_config);
+    log.settings.name = "topology::network";
   }
 
   async start() {
@@ -122,47 +121,47 @@ export class TopologyNetworkNode {
     this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
     this.peerId = this._node.peerId.toString();
 
-    mainLogger.info("::start", "Successfuly started topology network w/ peer_id", this.peerId);
+    log.info("::start", "Successfuly started topology network w/ peer_id", this.peerId);
 
     // TODO remove this or add better logger
     // we need to keep it now for debugging
     this._node.addEventListener("peer:connect", (e) =>
-      mainLogger.info("::start::peer::connect", e.detail)
+      log.info("::start::peer::connect", e.detail)
     );
     this._node.addEventListener("peer:discovery", (e) =>
-      mainLogger.info("::start::peer::discovery", e.detail)
+      log.info("::start::peer::discovery", e.detail)
     );
     this._node.addEventListener("peer:identify", (e) =>
-      mainLogger.info("::start::peer::identify", e.detail)
+      log.info("::start::peer::identify", e.detail)
     );
   }
 
   subscribe(topic: string) {
     if (!this._node) {
-      mainLogger.error("::subscribe", "Node not initialized, please run .start()");
+      log.error("::subscribe", "Node not initialized, please run .start()");
       return;
     }
 
     try {
       this._pubsub?.subscribe(topic);
       this._pubsub?.getPeers();
-      mainLogger.info("::subscribe", "Successfuly subscribed the topic", topic);
+      log.info("::subscribe", "Successfuly subscribed the topic", topic);
     } catch (e) {
-      mainLogger.error("::subscribe", e);
+      log.error("::subscribe", e);
     }
   }
 
   unsubscribe(topic: string) {
     if (!this._node) {
-      mainLogger.error("::unsubscribe", "Node not initialized, please run .start()");
+      log.error("::unsubscribe", "Node not initialized, please run .start()");
       return;
     }
 
     try {
       this._pubsub?.unsubscribe(topic);
-      mainLogger.info("::unsubscribe", "Successfuly unsubscribed the topic", topic);
+      log.info("::unsubscribe", "Successfuly unsubscribed the topic", topic);
     } catch (e) {
-      mainLogger.error("::unsubscribe", e);
+      log.error("::unsubscribe", e);
     }
   }
 
@@ -183,9 +182,9 @@ export class TopologyNetworkNode {
       if (this._pubsub?.getSubscribers(topic)?.length === 0) return;
       await this._pubsub?.publish(topic, message);
 
-      mainLogger.info("::broadcastMessage", "Successfuly broadcasted message to topic", topic);
+      log.info("::broadcastMessage", "Successfuly broadcasted message to topic", topic);
     } catch (e) {
-      mainLogger.error("::sendMessage", e);
+      log.error("::sendMessage", e);
     }
   }
 
@@ -195,9 +194,9 @@ export class TopologyNetworkNode {
       const stream = <Stream>await connection?.newStream(protocols);
       stringToStream(stream, message);
 
-      mainLogger.info("::sendMessage", "Successfuly sent message to peer", peerId);
+      log.info("::sendMessage", "Successfuly sent message to peer", peerId);
     } catch (e) {
-      mainLogger.error("::sendMessage", e);
+      log.error("::sendMessage", e);
     }
   }
 
@@ -215,9 +214,9 @@ export class TopologyNetworkNode {
       const stream: Stream = (await connection?.newStream(protocols)) as Stream;
       stringToStream(stream, message);
 
-      mainLogger.info("::sendGroupMessageRandomPeer", `Successfuly sent message to peer: ${peerId} with message: ${message}`);
+      log.info("::sendGroupMessageRandomPeer", `Successfuly sent message to peer: ${peerId} with message: ${message}`);
     } catch (e) {
-      mainLogger.error("::sendGroupMessageRandomPeer", e);
+      log.error("::sendGroupMessageRandomPeer", e);
     }
   }
 

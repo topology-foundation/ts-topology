@@ -28,8 +28,8 @@ export class TopologyNode {
 
   constructor(config?: TopologyNodeConfig) {
     this._config = config;
+    if(!this._config) this._config = {};
     if(!this._config?.tslog_config){
-      if(!this._config) this._config = {};
       this._config.tslog_config = {
         type: "hidden",
         minLevel: 3,
