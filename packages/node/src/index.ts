@@ -38,7 +38,7 @@ export class TopologyNode {
       };
     } 
     if(!this._config.network_config?.tslog_config){
-      this._config.network_config = { tslog_config: this._config?.tslog_config };
+      this._config.network_config = { ...this._config.network_config, tslog_config: this._config?.tslog_config };
     }
     this.networkNode = new TopologyNetworkNode(this._config?.network_config);
     this._objectStore = new TopologyObjectStore();
