@@ -1,10 +1,13 @@
+import { TopologyObject } from "@topology-foundation/object";
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 import { addMessage, Chat } from "./objects/chat";
 
 export const handleChatMessages = (chat: Chat, e: any) => {
-  if (e.detail.msg.topic === "topology::discovery") return;
-  const input = uint8ArrayToString(e.detail.msg.data);
-  const message = JSON.parse(input);
+  console.log(e);
+  // const input = TopologyObject.decode(e.detail.msg.data);
+
+  console.log("Received message!: ", input);
+  const message = {};
   console.log("Received message!: ", message);
   switch (message["type"]) {
     case "object_update": {
@@ -24,7 +27,7 @@ function handleObjectUpdate(chat: Chat, fn: string) {
   let args = fn.replace("addMessage(", "").replace(")", "").split(", ");
   console.log("Received message: ", args);
   try {
-    addMessage(chat, args[0], args[1], args[2])
+    addMessage(chat, args[0], args[1], args[2]);
   } catch (e) {
     console.error(e);
   }

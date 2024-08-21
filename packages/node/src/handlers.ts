@@ -4,18 +4,38 @@ import { Message, Message_MessageType } from "@topology-foundation/network";
 import { TopologyNode } from "./index.js";
 import { TopologyObject } from "@topology-foundation/object";
 
+/*
+  Handler for all CRO messages, including pubsub messages and direct messages
+  You need to setup stream xor data, not both
+*/
 export async function topologyMessagesHandler(
   node: TopologyNode,
-  stream: Stream,
+  stream?: Stream,
+  data?: Uint8Array,
 ) {
-  const buf = (await lp.decode(stream.source).return()).value;
-  const message = Message.decode(new Uint8Array(buf ? buf.subarray() : []));
+  let message: Message;
+  if (stream) {
+    const buf = (await lp.decode(stream.source).return()).value;
+    message = Message.decode(new Uint8Array(buf ? buf.subarray() : []));
+  } else if (data) {
+    message = Message.decode(data);
+  } else {
+    console.error(
+      "topology::node::messageHandler",
+      "Stream and data are undefined",
+    );
+    return;
+  }
 
   switch (message.type) {
     case Message_MessageType.UPDATE:
       updateHandler(node, message.data);
       break;
     case Message_MessageType.SYNC:
+      if (!stream) {
+        console.error("topology::node::messageHandler", "Stream is undefined");
+        return;
+      }
       syncHandler(
         node,
         stream.protocol ?? "/topology/message/0.0.1",
@@ -100,6 +120,8 @@ function syncAcceptHandler(node: TopologyNode, data: Uint8Array) {
   });
   object.operations.push(...object_operations.operations);
   node.objectStore.put(object.id, object);
+
+  // TODO missing sending back the diff
 }
 
 /* data: { id: string } */

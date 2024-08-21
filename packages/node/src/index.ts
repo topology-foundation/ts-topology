@@ -1,5 +1,5 @@
 import { GossipsubMessage } from "@chainsafe/libp2p-gossipsub";
-import { EventHandler, StreamHandler } from "@libp2p/interface";
+import { EventCallback, StreamHandler } from "@libp2p/interface";
 import {
   Message,
   Message_MessageType,
@@ -32,7 +32,6 @@ export class TopologyNode {
 
   async start(): Promise<void> {
     await this.networkNode.start();
-
     this.networkNode.addMessageHandler(
       ["/topology/message/0.0.1"],
       async ({ stream }) => topologyMessagesHandler(this, stream),
@@ -45,9 +44,8 @@ export class TopologyNode {
 
   addCustomGroupMessageHandler(
     group: string,
-    handler: EventHandler<CustomEvent<GossipsubMessage>>,
+    handler: EventCallback<CustomEvent<GossipsubMessage>>,
   ) {
-    // TODO: ignore if messages are not from the group
     this.networkNode.addGroupMessageHandler(group, handler);
   }
 
@@ -114,6 +112,9 @@ export class TopologyNode {
       TopologyObject.encode(object).finish(),
       fetch,
       peerId,
+    );
+    this.networkNode.addGroupMessageHandler(id, async (e) =>
+      topologyMessagesHandler(this, undefined, e.detail.msg.data),
     );
   }
 

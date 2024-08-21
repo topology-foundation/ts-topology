@@ -84,11 +84,6 @@ async function main() {
   node.addCustomGroupMessageHandler("", (e) => {
     peers = node.networkNode.getAllPeers();
     discoveryPeers = node.networkNode.getGroupPeers("topology::discovery");
-
-    // on create/connect
-    if (chatCRO)
-      objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
-    handleChatMessages(chatCRO, e);
     render();
   });
 
@@ -100,6 +95,15 @@ async function main() {
       node.networkNode.peerId,
       "/tmp/chat.ts",
     );
+
+    // message handler for the CRO
+    node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
+      // on create/connect
+      if (topologyObject)
+        objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
+      handleChatMessages(chatCRO, e);
+      render();
+    });
 
     (<HTMLButtonElement>document.getElementById("chatId")).innerHTML =
       topologyObject.id;
@@ -118,8 +122,22 @@ async function main() {
     }
 
     chatCRO = new Chat();
+    topologyObject = await newTopologyObject(
+      node.networkNode.peerId,
+      "",
+      objectId,
+    );
     //objectId
     await node.subscribeObject(objectId, true);
+
+    // message handler for the CRO
+    node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
+      // on create/connect
+      if (topologyObject)
+        objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
+      handleChatMessages(chatCRO, e);
+      render();
+    });
   });
 
   let button_fetch = <HTMLButtonElement>(
