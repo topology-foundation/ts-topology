@@ -175,6 +175,9 @@ importers:
       '@libp2p/dcutr':
         specifier: ^1.1.4
         version: 1.1.5
+      '@libp2p/devtools-metrics':
+        specifier: ^0.2.5
+        version: 0.2.5
       '@libp2p/identify':
         specifier: ^2.1.4
         version: 2.1.5
@@ -1247,6 +1250,9 @@ packages:
   '@libp2p/dcutr@1.1.5':
     resolution: {integrity: sha512-1zDhZxLxrl+yqIAG9KzyLu3gzyvOT7UYTislw4EwhcMGMviot/pgR87SSVqbT+HDpAoj1sM/3F5VUT/sCDa9WA==}
 
+  '@libp2p/devtools-metrics@0.2.5':
+    resolution: {integrity: sha512-JYETw4TYOhS3DfEzjEL1pMm6LQiyMnkIVfSsfj+ExnHgWfkdy/jXe8dd/IkSyp0OBX7Lf2Qe7Gu9nqm6GhssYQ==}
+
   '@libp2p/identify@2.1.5':
     resolution: {integrity: sha512-uVghY2KfZ3ffDkPmcivfiRDlq1h5rCcoHAW+Kb7JF2qrDfg6BgHAn6IRN4pe/DnYXOuJXIIm6+jjcReTPGBKBQ==}
 
@@ -1301,6 +1307,9 @@ packages:
 
   '@libp2p/pubsub@9.0.26':
     resolution: {integrity: sha512-69sFv5DAHSXrQdu4THX9WSZuEfCjEbbk6bKiTtbNGpq1Vaf57rjsTWk/EXMS/veeMl95xJs3/BR7dQal2PtJmw==}
+
+  '@libp2p/simple-metrics@1.1.5':
+    resolution: {integrity: sha512-4EK1dsBysbJ9TZmqo0wSbKE/QnCucFBFmyZrH0kIt85N7dvhf8l20kdPuNctVOzh9pmY6oBxz6dZm+idl+cpMg==}
 
   '@libp2p/utils@5.4.9':
     resolution: {integrity: sha512-0fRdX98WqhTmXU2WEVLegLFxs/kKTtUHanHk5Lzs4oGsIzlPHR7zE6lj/U1WfsFA+Xo1eYQpNLiXEL29hG+Nyw==}
@@ -2264,6 +2273,10 @@ packages:
   case-anything@2.1.13:
     resolution: {integrity: sha512-zlOQ80VrQ2Ue+ymH5OuM/DlDq64mEm+B9UTdHULv5osUMD6HalNTblf2b1u/m6QecjsnOkBpqVZ+XPwIVsy7Ng==}
     engines: {node: '>=12.13'}
+
+  cborg@4.2.3:
+    resolution: {integrity: sha512-XBFbEJ6WMfn9L7woc2t+EzOxF8vGqddoopKBbrhIvZBt2WIUgSlT8xLmM6Aq1xv8eWt4yOSjwxWjYeuHU3CpJA==}
+    hasBin: true
 
   chai@5.1.1:
     resolution: {integrity: sha512-pT1ZgP8rPNqUgieVaEY+ryQr6Q4HXNg8Ei9UnLUrjN4IA7dvQC5JB+/kxVcPNDHyBcc/26CXPkbNzq3qwrOEKA==}
@@ -3505,6 +3518,9 @@ packages:
     resolution: {integrity: sha512-XCWifEcNFFjjBHtor4Sfaj8rcpt+FkY0L6WdhD578SCDhV4VUm7fCkF3dv5a+fTcfQqvN9BsxBTvWbYO6iCjTg==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
 
+  it-rpc@1.0.2:
+    resolution: {integrity: sha512-W5wxcMeq67QICl7VlUAG4QYWVHworz4WQQLVAXh2OaG5Itzbwu+cEyKzQcfSohC00dyfnD1dM+yHwJvVR5TTsw==}
+
   it-sort@3.0.6:
     resolution: {integrity: sha512-aNrlZAXB8vWBd42tCpaXGL6CJVJNDW3OLczmdt6g0k/s9Z6evkTdgU2LjwW5SNNeX41sF+C8MjV+OcVf93PsPw==}
 
@@ -3976,6 +3992,11 @@ packages:
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
+  nanoid@5.0.7:
+    resolution: {integrity: sha512-oLxFY2gd2IqnjcYyOXD8XGCftpGtZP2AbHbOkthDkvRywH5ayNtPVy9YlOPcHckXzbLTCHpkb7FB+yuxKV13pQ==}
+    engines: {node: ^18 || >=20}
     hasBin: true
 
   napi-build-utils@1.0.2:
@@ -6775,6 +6796,21 @@ snapshots:
       protons-runtime: 5.5.0
       uint8arraylist: 2.4.8
 
+  '@libp2p/devtools-metrics@0.2.5':
+    dependencies:
+      '@libp2p/interface': 1.7.0
+      '@libp2p/interface-internal': 1.3.4
+      '@libp2p/logger': 4.0.20
+      '@libp2p/peer-id': 4.2.4
+      '@libp2p/simple-metrics': 1.1.5
+      '@multiformats/multiaddr': 12.3.0
+      cborg: 4.2.3
+      it-pipe: 3.0.1
+      it-pushable: 3.2.3
+      it-rpc: 1.0.2
+      multiformats: 13.2.2
+      progress-events: 1.0.1
+
   '@libp2p/identify@2.1.5':
     dependencies:
       '@libp2p/interface': 1.7.0
@@ -6934,6 +6970,13 @@ snapshots:
       p-queue: 8.0.1
       uint8arraylist: 2.4.8
       uint8arrays: 5.1.0
+
+  '@libp2p/simple-metrics@1.1.5':
+    dependencies:
+      '@libp2p/interface': 1.7.0
+      '@libp2p/logger': 4.0.20
+      it-foreach: 2.1.1
+      it-stream-types: 2.0.1
 
   '@libp2p/utils@5.4.9':
     dependencies:
@@ -8246,6 +8289,8 @@ snapshots:
 
   case-anything@2.1.13: {}
 
+  cborg@4.2.3: {}
+
   chai@5.1.1:
     dependencies:
       assertion-error: 2.0.1
@@ -9532,6 +9577,19 @@ snapshots:
       it-stream-types: 2.0.1
       uint8arraylist: 2.4.8
 
+  it-rpc@1.0.2:
+    dependencies:
+      any-signal: 4.1.1
+      cborg: 4.2.3
+      it-length-prefixed: 9.1.0
+      it-pushable: 3.2.3
+      it-stream-types: 2.0.1
+      nanoid: 5.0.7
+      p-defer: 4.0.1
+      protons-runtime: 5.5.0
+      uint8arraylist: 2.4.8
+      uint8arrays: 5.1.0
+
   it-sort@3.0.6:
     dependencies:
       it-all: 3.0.6
@@ -10155,6 +10213,8 @@ snapshots:
   mute-stream@1.0.0: {}
 
   nanoid@3.3.7: {}
+
+  nanoid@5.0.7: {}
 
   napi-build-utils@1.0.2: {}
 

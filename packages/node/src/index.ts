@@ -11,6 +11,7 @@ import { topologyMessagesHandler } from "./handlers.js";
 import { OPERATIONS, executeObjectOperation } from "./operations.js";
 import { TopologyObject } from "@topology-foundation/object";
 
+import * as crypto from "crypto";
 export * from "./operations.js";
 
 // snake_casing to match the JSON config
@@ -46,7 +47,8 @@ export class TopologyNode {
     group: string,
     handler: EventHandler<CustomEvent<GossipsubMessage>>,
   ) {
-    this.networkNode.addGroupMessageHandler(handler);
+    // TODO: ignore if messages are not from the group
+    this.networkNode.addGroupMessageHandler(group, handler);
   }
 
   sendGroupMessage(group: string, data: Uint8Array) {
@@ -84,13 +86,16 @@ export class TopologyNode {
     );
   }
 
-  updateObject(
-    id: string,
-    operations: { nonce: string; fn: string; args: string[] }[],
-  ) {
+  updateObject(id: string, operations: { fn: string; args: string[] }[]) {
     const object = TopologyObject.create({
       id,
-      operations,
+      operations: operations.map((op) => {
+        return {
+          nonce: generateNonce(op.fn, op.args),
+          fn: op.fn,
+          args: op.args,
+        };
+      }),
     });
     executeObjectOperation(
       this,
@@ -140,4 +145,13 @@ export class TopologyNode {
       peerId,
     );
   }
+}
+
+function generateNonce(fn: string, args: string[]) {
+  return crypto
+    .createHash("sha256")
+    .update(fn)
+    .update(args.join(","))
+    .update(Math.floor(Math.random() * Number.MAX_VALUE).toString())
+    .digest("hex");
 }

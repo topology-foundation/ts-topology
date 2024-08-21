@@ -12,15 +12,21 @@ import {
 import { generateKeyPairFromSeed } from "@libp2p/crypto/keys";
 import { dcutr } from "@libp2p/dcutr";
 import { identify } from "@libp2p/identify";
-import { EventHandler, PubSub, Stream, StreamHandler } from "@libp2p/interface";
+import {
+  EventCallback,
+  EventHandler,
+  PubSub,
+  Stream,
+  StreamHandler,
+} from "@libp2p/interface";
 import { createFromPrivKey } from "@libp2p/peer-id-factory";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import { multiaddr } from "@multiformats/multiaddr";
 import { Libp2p, createLibp2p } from "libp2p";
-import { stringToStream } from "./stream.js";
 import { bootstrap } from "@libp2p/bootstrap";
+import { devToolsMetrics } from "@libp2p/devtools-metrics";
 import { webTransport } from "@libp2p/webtransport";
 import { autoNAT } from "@libp2p/autonat";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
@@ -80,8 +86,8 @@ export class TopologyNetworkNode {
             this._config && this._config.bootstrap_peers
               ? this._config.bootstrap_peers
               : [
-                "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-              ],
+                  "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+                ],
         }),
       ],
       services: {
@@ -122,16 +128,14 @@ export class TopologyNetworkNode {
       this.peerId,
     );
 
-    // TODO remove this or add better logger
-    // we need to keep it now for debugging
     this._node.addEventListener("peer:connect", (e) =>
-      console.log("peer:connect", e.detail),
+      console.log("::start::peer::connect", e.detail),
     );
     this._node.addEventListener("peer:discovery", (e) =>
-      console.log("peer:discovery", e.detail),
+      console.log("::start::peer::discovery", e.detail),
     );
     this._node.addEventListener("peer:identify", (e) =>
-      console.log("peer:identify", e.detail),
+      console.log("::start::peer::identify", e.detail),
     );
   }
 
@@ -205,7 +209,7 @@ export class TopologyNetworkNode {
       const connection = await this._node?.dial([multiaddr(`/p2p/${peerId}`)]);
       const stream = <Stream>await connection?.newStream(protocols);
       let messageBuffer = Message.encode(message).finish();
-      stream.sink(lp.encode([messageBuffer]))
+      stream.sink(lp.encode([messageBuffer]));
 
       // stringToStream(stream, message);
 
@@ -230,9 +234,7 @@ export class TopologyNetworkNode {
       const connection = await this._node?.dial(peerId);
       const stream: Stream = (await connection?.newStream(protocols)) as Stream;
       let messageBuffer = Message.encode(message).finish();
-      stream.sink(lp.encode([messageBuffer]))
-
-      // stringToStream(stream, message);
+      stream.sink(lp.encode([messageBuffer]));
 
       console.log(
         `topology::network::sendMessageRandomTopicPeer: Successfuly sent message to peer: ${peerId} with message: ${message}`,
@@ -242,8 +244,14 @@ export class TopologyNetworkNode {
     }
   }
 
-  addGroupMessageHandler(handler: EventHandler<CustomEvent<GossipsubMessage>>) {
-    this._pubsub?.addEventListener("gossipsub:message", handler);
+  addGroupMessageHandler(
+    group: string,
+    handler: EventCallback<CustomEvent<GossipsubMessage>>,
+  ) {
+    this._pubsub?.addEventListener("gossipsub:message", (e) => {
+      if (group && e.detail.msg.topic !== group) return;
+      handler(e);
+    });
   }
 
   addMessageHandler(protocol: string | string[], handler: StreamHandler) {

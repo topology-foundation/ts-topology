@@ -39,6 +39,7 @@
     "@libp2p/circuit-relay-v2": "^1.1.4",
     "@libp2p/crypto": "^4.1.9",
     "@libp2p/dcutr": "^1.1.4",
+    "@libp2p/devtools-metrics": "^0.2.5",
     "@libp2p/identify": "^2.1.4",
     "@libp2p/interface-pubsub": "^4.0.1",
     "@libp2p/mdns": "^10.1.3",

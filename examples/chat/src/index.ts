@@ -3,11 +3,7 @@ import * as topology from "@topology-foundation/node";
 import { Chat, addMessage, getMessages } from "./objects/chat";
 import { handleChatMessages } from "./handlers";
 import { GSet } from "@topology-foundation/crdt";
-import {
-  callFn,
-  newTopologyObject,
-  TopologyObject,
-} from "@topology-foundation/object";
+import { newTopologyObject, TopologyObject } from "@topology-foundation/object";
 
 const node = new TopologyNode();
 // CRO = Conflict-free Replicated Object
@@ -71,8 +67,10 @@ async function sendMessage(message: string) {
   // call the fn on the chat.ts object and the topologyObject
   addMessage(chatCRO, timestamp, message, node.networkNode.peerId);
   node.updateObject(topologyObject.id, [
-    "addMessage",
-    [timestamp, message, node.networkNode.peerId],
+    {
+      fn: "addMessage",
+      args: [timestamp, message, node.networkNode.peerId],
+    },
   ]);
 
   render();
@@ -82,15 +80,17 @@ async function main() {
   await node.start();
   render();
 
-  /*
-  node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
-    handleChatMessages(chatCRO, e);
+  // generic message handler
+  node.addCustomGroupMessageHandler("", (e) => {
     peers = node.networkNode.getAllPeers();
     discoveryPeers = node.networkNode.getGroupPeers("topology::discovery");
-    if (chatCRO) objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
+
+    // on create/connect
+    if (chatCRO)
+      objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
+    handleChatMessages(chatCRO, e);
     render();
   });
-  */
 
   let button_create = <HTMLButtonElement>document.getElementById("createRoom");
   button_create.addEventListener("click", async () => {
@@ -119,7 +119,7 @@ async function main() {
 
     chatCRO = new Chat();
     //objectId
-    await topology.subscribeObject(node, new Uint8Array(), true);
+    await node.subscribeObject(objectId, true);
   });
 
   let button_fetch = <HTMLButtonElement>(
