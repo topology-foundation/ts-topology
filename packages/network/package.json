@@ -47,7 +47,6 @@
     "@libp2p/webtransport": "^4.1.2",
     "@multiformats/multiaddr": "^12.3.0",
     "it-pipe": "^3.0.1",
-    "libp2p": "^1.8.3",
-    "tslog": "^4.9.3"
+    "libp2p": "^1.8.3"
   }
 }

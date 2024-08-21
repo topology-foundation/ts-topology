@@ -6,10 +6,5 @@
       "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP"
     ],
     "private_key_seed": "bootstrap"
-  },
-  "tslog_config": {
-    "minLevel": 3,
-    "type": "hidden",  
-    "hideLogPositionForProduction": true
   }
 }
