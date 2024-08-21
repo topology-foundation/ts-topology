@@ -6,7 +6,7 @@ import {
   streamToString,
 } from "@topology-foundation/network";
 import { TopologyObject } from "@topology-foundation/object";
-import { TopologyObjectStore } from "./store";
+import { TopologyObjectStore, TopologyObjectStoreCallback } from "./store";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 import { OPERATIONS } from "./operations.js";
@@ -122,8 +122,11 @@ export class TopologyNode {
 
   /// Subscribe to the object's PubSub group
   /// and fetch it from a peer
-  async subscribeObject(objectId: string, fetch = false, peerId = "") {
+  async subscribeObject(objectId: string, fetch = false, peerId = "", subscribionCallback?: TopologyObjectStoreCallback) {
     this.networkNode.subscribe(objectId);
+    if (subscribionCallback) {
+      this._objectStore.subscribe(objectId, subscribionCallback);
+    }
     if (!fetch) return;
     const message = `{
       "type": "object_fetch",
