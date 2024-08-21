@@ -29,15 +29,16 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@types/node": "^20.14.10",
-    "tsx": "4.16.2",
-    "typescript": "^5.4.5",
-    "vitest": "^2.0.3"
+    "@types/node": "^22.4.1",
+    "tsx": "4.16.5",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
   },
   "dependencies": {
     "@topology-foundation/crdt": "0.0.23-5",
     "@topology-foundation/network": "0.0.23-5",
     "@topology-foundation/object": "0.0.23-5",
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "tslog": "^4.9.3"
   }
 }
