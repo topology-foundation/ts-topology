@@ -38,7 +38,6 @@
     "@topology-foundation/crdt": "0.0.23-5",
     "@topology-foundation/network": "0.0.23-5",
     "@topology-foundation/object": "0.0.23-5",
-    "commander": "^12.1.0",
-    "tslog": "^4.9.3"
+    "commander": "^12.1.0"
   }
 }

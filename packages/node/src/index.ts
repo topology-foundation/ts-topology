@@ -10,14 +10,12 @@ import { TopologyObjectStore, TopologyObjectStoreCallback } from "./store";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 import { OPERATIONS } from "./operations.js";
-import { ILogObj, ISettingsParam } from "tslog"
 
 export * from "./operations.js";
 
 // snake_casing to match the JSON config
 export interface TopologyNodeConfig {
   network_config?: TopologyNetworkNodeConfig;
-  tslog_config?: ISettingsParam<ILogObj>;
 }
 
 export class TopologyNode {
@@ -28,19 +26,7 @@ export class TopologyNode {
 
   constructor(config?: TopologyNodeConfig) {
     this._config = config;
-    if(!this._config) this._config = {};
-    if(!this._config?.tslog_config){
-      this._config.tslog_config = {
-        type: "hidden",
-        minLevel: 3,
-        hideLogPositionForProduction: true,
-        prettyLogTemplate: "{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}\t{{logLevelName}}\t{{filePathWithLine}}{{name}}"
-      };
-    } 
-    if(!this._config.network_config?.tslog_config){
-      this._config.network_config = { tslog_config: this._config?.tslog_config };
-    }
-    this.networkNode = new TopologyNetworkNode(this._config?.network_config);
+    this.networkNode = new TopologyNetworkNode(config?.network_config);
     this._objectStore = new TopologyObjectStore();
   }
 
