@@ -106,7 +106,7 @@ async function main() {
       handleObjectOps(chatCRO, obj.operations);
     });
 
-    (<HTMLButtonElement>document.getElementById("chatId")).innerHTML =
+    (<HTMLButtonElement>document.getElementById("chatId")).innerText =
       topologyObject.id;
     render();
   });
@@ -164,7 +164,7 @@ async function main() {
       );
       chatCRO = Object.assign(new Chat(), object);
 
-      (<HTMLButtonElement>document.getElementById("chatId")).innerHTML =
+      (<HTMLButtonElement>document.getElementById("chatId")).innerText =
         topologyObject.id;
       render();
     } catch (e) {
