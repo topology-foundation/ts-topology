@@ -15,10 +15,7 @@ export async function topologyMessagesHandler(
 ) {
   let message: Message;
   if (stream) {
-    console.log("topologyMessagesHandler", stream);
-    console.log(stream.source);
     const buf = (await lp.decode(stream.source).return()).value;
-    console.log("topologyMessagesHandler", buf);
     message = Message.decode(new Uint8Array(buf ? buf.subarray() : []));
   } else if (data) {
     message = Message.decode(data);
@@ -29,8 +26,6 @@ export async function topologyMessagesHandler(
     );
     return;
   }
-
-  console.log("topologyMessagesHandler", message);
 
   switch (message.type) {
     case Message_MessageType.UPDATE:
@@ -90,7 +85,6 @@ function syncHandler(
   // (might send reject) <- TODO: when should we reject?
 
   // process, calculate diffs, and send back
-  console.log("syncHandler", data);
 
   const message = Message.create({
     sender: node.networkNode.peerId,
