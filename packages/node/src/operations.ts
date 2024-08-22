@@ -70,7 +70,10 @@ function updateObject(node: TopologyNode, data: Uint8Array) {
     });
   }
 
-  object.operations.push(...object_operations.operations);
+  for (const op of object_operations.operations) {
+    if (object.operations.some((o) => o.nonce === op.nonce)) continue;
+    object.operations.push(op);
+  }
   node.objectStore.put(object.id, object);
 
   const message = Message.create({

@@ -6,7 +6,7 @@ import {
   TopologyNetworkNode,
   TopologyNetworkNodeConfig,
 } from "@topology-foundation/network";
-import { TopologyObjectStore, TopologyObjectStoreCallback } from "./store/index.js";
+import { TopologyObjectStore } from "./store/index.js";
 import { topologyMessagesHandler } from "./handlers.js";
 import { OPERATIONS, executeObjectOperation } from "./operations.js";
 import { TopologyObject } from "@topology-foundation/object";

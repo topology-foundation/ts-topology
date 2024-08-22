@@ -1,7 +1,6 @@
 import { TopologyNode } from "@topology-foundation/node";
-import * as topology from "@topology-foundation/node";
 import { Chat, addMessage, getMessages } from "./objects/chat";
-import { handleChatMessages } from "./handlers";
+import { handleObjectOps } from "./handlers";
 import { GSet } from "@topology-foundation/crdt";
 import { newTopologyObject, TopologyObject } from "@topology-foundation/object";
 
@@ -96,13 +95,15 @@ async function main() {
       "/tmp/chat.ts",
     );
 
-    // message handler for the CRO
     node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
       // on create/connect
       if (topologyObject)
         objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
-      handleChatMessages(chatCRO, e);
       render();
+    });
+
+    node.objectStore.subscribe(topologyObject.id, (_, obj) => {
+      handleObjectOps(chatCRO, obj.operations);
     });
 
     (<HTMLButtonElement>document.getElementById("chatId")).innerHTML =
@@ -135,8 +136,11 @@ async function main() {
       // on create/connect
       if (topologyObject)
         objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
-      handleChatMessages(chatCRO, e);
       render();
+    });
+
+    node.objectStore.subscribe(topologyObject.id, (_, obj) => {
+      handleObjectOps(chatCRO, obj.operations);
     });
   });
 

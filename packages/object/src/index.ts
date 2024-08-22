@@ -5,27 +5,38 @@ import { compileWasm } from "./wasm/compiler.js";
 export * from "./proto/object_pb.js";
 
 /* Creates a new TopologyObject */
-export async function newTopologyObject(peerId: string, path: string, id?: string, abi?: string): Promise<TopologyObject> {
+export async function newTopologyObject(
+  peerId: string,
+  path: string,
+  id?: string,
+  abi?: string,
+): Promise<TopologyObject> {
   // const bytecode = await compileWasm(path);
   const bytecode = new Uint8Array();
   return {
-    id: id ?? crypto
-      .createHash("sha256")
-      .update(abi ?? "")
-      .update(peerId)
-      .update(Math.floor(Math.random() * Number.MAX_VALUE).toString())
-      .digest("hex"),
+    id:
+      id ??
+      crypto
+        .createHash("sha256")
+        .update(abi ?? "")
+        .update(peerId)
+        .update(Math.floor(Math.random() * Number.MAX_VALUE).toString())
+        .digest("hex"),
     abi: abi ?? "",
     bytecode: bytecode ?? new Uint8Array(),
-    operations: []
-  }
+    operations: [],
+  };
 }
 
-export async function callFn(obj: TopologyObject, fn: string, args: string[]): Promise<TopologyObject> {
+export async function callFn(
+  obj: TopologyObject,
+  fn: string,
+  args: string[],
+): Promise<TopologyObject> {
   obj.operations.push({
     nonce: Math.floor(Math.random() * Number.MAX_VALUE).toString(),
     fn: fn,
-    args: args
+    args: args,
   });
   return obj;
 }
