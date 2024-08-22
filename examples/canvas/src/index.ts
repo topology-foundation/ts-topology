@@ -129,28 +129,7 @@ async function init() {
         render();
       });
 
-      /*
-      await node.subscribeObject(croId, true, "");
-      node.objectStore.subscribe(croId, (_, topologyObject) => {
-        let object: any = topologyObject;
-        object["canvas"] = object["canvas"].map((x: any) =>
-          x.map((y: any) => {
-            y["red"] = Object.assign(new GCounter({}), y["red"]);
-            y["green"] = Object.assign(new GCounter({}), y["green"]);
-            y["blue"] = Object.assign(new GCounter({}), y["blue"]);
-            return Object.assign(new Pixel(), y);
-          }),
-        );
-
-        canvasCRO = Object.assign(
-          new Canvas(node.networkNode.peerId, 0, 0),
-          object,
-        );
-        */
-
       render();
-      //});
-      // TODO remove the need to click to time for subscribe and fetch
     } catch (e) {
       console.error("Error while connecting with CRO", croId, e);
     }
