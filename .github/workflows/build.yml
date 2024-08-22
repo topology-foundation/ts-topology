@@ -46,5 +46,5 @@ jobs:
           pnpm install
           cd packages/node
           pnpm build
-          cd examples/chat
+          cd ../../examples/chat
           pnpm build
