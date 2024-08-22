@@ -78,10 +78,6 @@ export class HashGraph<T> {
     this.vertices.set(hash, vertex);
     this.frontier.add(hash);
 
-    // update root
-    if (deps.length === 0) {
-      this.root = hash;
-    }
     // Update forward edges
     for (const dep of deps) {
       if (!this.forwardEdges.has(dep)) {
