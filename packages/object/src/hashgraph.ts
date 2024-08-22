@@ -1,4 +1,4 @@
-import { sha256 } from "js-sha256";
+import * as crypto from "crypto";
 
 type Hash = string;
 
@@ -22,33 +22,68 @@ export class HashGraph<T> {
   private forwardEdges: Map<Hash, Set<Hash>> = new Map();
   // private resolveConflicts: (op1: T, op2: T) => ActionType;
   private root: Hash = "";
+  private nodeId: string = ""
 
-  constructor(private resolveConflicts: (op1: T, op2: T) => ActionType) { }
+  constructor(private resolveConflicts: (op1: T, op2: T) => ActionType, nodeId: string) { }
 
   // Time complexity: O(1), Space complexity: O(1)
-  computeHash(op: T, dependencies: Hash[]): Hash {
-    const serialized = JSON.stringify({ op, dependencies });
-    return sha256(serialized);
+  computeHash(op: T, deps: Hash[], peerId: String): Hash {
+    const serialized = JSON.stringify({ op, deps, peerId });
+    const hash = crypto
+      .createHash("sha256")
+      .update(serialized)
+      .digest("hex");
+
+    return hash;
   }
 
-  // Time complexity: O(d), where d is the number of dependencies
-  // Space complexity: O(d)
-  addVertex(operation: T, dependencies: Hash[] = []): Hash {
-    const hash = this.computeHash(operation, dependencies);
-    if (this.vertices.has(hash)) {
-      return hash; // Vertex already exists
-    }
+  addToFrontier(operation: T): Hash {
+    const deps = this.getFrontier();
+    const hash = this.computeHash(operation, deps, this.nodeId)
+    const vertex = new Vertex(hash, operation, new Set(deps));
 
-    const vertex = new Vertex(hash, operation, new Set(dependencies));
     this.vertices.set(hash, vertex);
     this.frontier.add(hash);
 
     // update root
-    if (dependencies.length === 0) {
+    if (deps.length === 0) {
       this.root = hash;
     }
     // Update forward edges
-    for (const dep of dependencies) {
+    for (const dep of deps) {
+      if (!this.forwardEdges.has(dep)) {
+        this.forwardEdges.set(dep, new Set());
+      }
+      this.forwardEdges.get(dep)!.add(hash);
+      this.frontier.delete(dep);
+    }
+    return hash;
+  }
+  // Time complexity: O(d), where d is the number of dependencies
+  // Space complexity: O(d)
+  addVertex(op: T, deps: Hash[], peerId: string): Hash {
+
+    // Temporary fix: don't add the vertex if the dependencies are not present in the local HG.
+    if (!deps.every(dep => this.forwardEdges.has(dep) || this.vertices.has(dep))) {
+      console.log("Invalid dependency detected.");
+      return ""
+    }
+
+    const hash = this.computeHash(op, deps, peerId);
+    if (this.vertices.has(hash)) {
+      return hash; // Vertex already exists
+    }
+
+    const vertex = new Vertex(hash, op, new Set(deps));
+    this.vertices.set(hash, vertex);
+    this.frontier.add(hash);
+
+    // update root
+    if (deps.length === 0) {
+      this.root = hash;
+    }
+    // Update forward edges
+    for (const dep of deps) {
       if (!this.forwardEdges.has(dep)) {
         this.forwardEdges.set(dep, new Set());
       }
@@ -136,7 +171,7 @@ export class HashGraph<T> {
   }
 
   // Time complexity: O(V), Space complexity: O(V)
-  private areCausallyRelated(hash1: Hash, hash2: Hash): boolean {
+  areCausallyRelated(hash1: Hash, hash2: Hash): boolean {
     const visited = new Set<Hash>();
     const stack = [hash1];
 
@@ -178,7 +213,7 @@ export class HashGraph<T> {
   }
 
   // Time complexity: O(1), Space complexity: O(1)
-  getRoots(): Hash {
+  getRoot(): Hash {
     return this.root;
   }
 
