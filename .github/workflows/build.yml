@@ -12,8 +12,8 @@ jobs:
       - shell: bash
         run: |
           cd packages/crdt
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm install
+          pnpm build
 
   build-network:
     runs-on: ubuntu-latest
@@ -22,8 +22,8 @@ jobs:
       - shell: bash
         run: |
           cd packages/network
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm install
+          pnpm build
 
   build-node:
     runs-on: ubuntu-latest
@@ -32,8 +32,8 @@ jobs:
       - shell: bash
         run: |
           cd packages/node
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm install
+          pnpm build
 
   build-object:
     runs-on: ubuntu-latest
@@ -42,8 +42,8 @@ jobs:
       - shell: bash
         run: |
           cd packages/object
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm install
+          pnpm build
 
   build-example-canvas:
     runs-on: ubuntu-latest
@@ -53,12 +53,12 @@ jobs:
         run: |
           # needs to build dist beforehand
           cd packages/node
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm install
+          pnpm build
           cd ../../examples/canvas
-          yarn install --frozen-lockfile
-          yarn build
-  
+          pnpm install
+          pnpm build
+
   build-example-chat:
     runs-on: ubuntu-latest
     steps:
@@ -67,8 +67,8 @@ jobs:
         run: |
           # needs to build dist beforehand
           cd packages/node
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm install
+          pnpm build
           cd ../../examples/chat
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm install
+          pnpm build
