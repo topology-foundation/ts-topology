@@ -280,7 +280,7 @@ describe("HashGraph for AddWinSet tests", () => {
         expect([[op1, op2, op6, op7, op4, op5]]).toContainEqual(linearOps);
     });
 
-    test("Test: Jaoa's latest brain teaser", () => {
+    test("Test: Joao's latest brain teaser", () => {
         /*
             
                        __ V2:Add(2) <------------\
