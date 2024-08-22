@@ -5,43 +5,17 @@ on:
   pull_request:
     branches: [main]
 jobs:
-  build-crdt:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - shell: bash
-        run: |
-          cd packages/crdt
-          pnpm install
-          pnpm build
-
-  build-network:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - shell: bash
-        run: |
-          cd packages/network
-          pnpm install
-          pnpm build
-
+  # node builds all packages
   build-node:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - shell: bash
         run: |
           cd packages/node
-          pnpm install
-          pnpm build
-
-  build-object:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - shell: bash
-        run: |
-          cd packages/object
           pnpm install
           pnpm build
 
@@ -49,13 +23,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - shell: bash
         run: |
-          # needs to build dist beforehand
-          cd packages/node
-          pnpm install
-          pnpm build
-          cd ../../examples/canvas
+          cd examples/canvas
           pnpm install
           pnpm build
 
@@ -63,12 +36,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - shell: bash
         run: |
-          # needs to build dist beforehand
-          cd packages/node
-          pnpm install
-          pnpm build
-          cd ../../examples/chat
+          cd examples/chat
           pnpm install
           pnpm build
