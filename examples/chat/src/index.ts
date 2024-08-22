@@ -89,11 +89,7 @@ async function main() {
   let button_create = <HTMLButtonElement>document.getElementById("createRoom");
   button_create.addEventListener("click", async () => {
     chatCRO = new Chat();
-    // TODO: path not used
-    topologyObject = await newTopologyObject(
-      node.networkNode.peerId,
-      "/tmp/chat.ts",
-    );
+    topologyObject = await node.createObject();
 
     node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
       // on create/connect
@@ -103,6 +99,7 @@ async function main() {
     });
 
     node.objectStore.subscribe(topologyObject.id, (_, obj) => {
+      console.log("Received object operations: ", obj);
       handleObjectOps(chatCRO, obj.operations);
     });
 
@@ -123,13 +120,7 @@ async function main() {
     }
 
     chatCRO = new Chat();
-    topologyObject = await newTopologyObject(
-      node.networkNode.peerId,
-      "",
-      objectId,
-    );
-    //objectId
-    await node.subscribeObject(objectId, true);
+    topologyObject = await node.subscribeObject(objectId, true);
 
     // message handler for the CRO
     node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
@@ -140,6 +131,7 @@ async function main() {
     });
 
     node.objectStore.subscribe(topologyObject.id, (_, obj) => {
+      console.log("Received object operations: ", obj);
       handleObjectOps(chatCRO, obj.operations);
     });
   });

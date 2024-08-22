@@ -7,7 +7,7 @@ export * from "./proto/object_pb.js";
 /* Creates a new TopologyObject */
 export async function newTopologyObject(
   peerId: string,
-  path: string,
+  path?: string,
   id?: string,
   abi?: string,
 ): Promise<TopologyObject> {

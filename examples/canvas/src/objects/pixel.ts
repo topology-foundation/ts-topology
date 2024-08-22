@@ -1,16 +1,6 @@
 import { GCounter } from "@topology-foundation/crdt";
 
-export interface IPixel {
-  red: GCounter;
-  green: GCounter;
-  blue: GCounter;
-  color(): [number, number, number];
-  paint(nodeId: string, rgb: [number, number, number]): void;
-  counters(): [GCounter, GCounter, GCounter];
-  merge(peerPixel: IPixel): void;
-}
-
-export class Pixel implements IPixel {
+export class Pixel {
   red: GCounter;
   green: GCounter;
   blue: GCounter;

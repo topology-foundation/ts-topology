@@ -1,35 +1,15 @@
-import { TopologyObject } from "@topology-foundation/object";
-import { IPixel, Pixel } from "./pixel";
+import { Pixel } from "./pixel";
 
-export interface ICanvas {
+export class Canvas {
   width: number;
   height: number;
-  canvas: IPixel[][];
-  splash(
-    node_id: string,
-    offset: [number, number],
-    size: [number, number],
-    rgb: [number, number, number],
-  ): void;
-  paint(
-    nodeId: string,
-    offset: [number, number],
-    rgb: [number, number, number],
-  ): void;
-  pixel(x: number, y: number): IPixel;
-  merge(peerCanvas: Canvas): void;
-}
+  canvas: Pixel[][];
 
-export class Canvas implements TopologyObject, ICanvas {
-  width: number;
-  height: number;
-  canvas: IPixel[][];
-
-  constructor(peerId: string, width: number, height: number) {
+  constructor(width: number, height: number) {
     this.width = width;
     this.height = height;
     this.canvas = Array.from(new Array(width), () =>
-      Array.from(new Array(height), () => new Pixel(peerId)),
+      Array.from(new Array(height), () => new Pixel()),
     );
   }
 
@@ -60,7 +40,7 @@ export class Canvas implements TopologyObject, ICanvas {
     this.canvas[offset[0]][offset[1]].paint(nodeId, rgb);
   }
 
-  pixel(x: number, y: number): IPixel {
+  pixel(x: number, y: number): Pixel {
     return this.canvas[x][y];
   }
 

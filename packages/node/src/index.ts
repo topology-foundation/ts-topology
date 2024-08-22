@@ -9,7 +9,7 @@ import {
 import { TopologyObjectStore } from "./store/index.js";
 import { topologyMessagesHandler } from "./handlers.js";
 import { OPERATIONS, executeObjectOperation } from "./operations.js";
-import { TopologyObject } from "@topology-foundation/object";
+import { newTopologyObject, TopologyObject } from "@topology-foundation/object";
 
 import * as crypto from "crypto";
 export * from "./operations.js";
@@ -71,17 +71,22 @@ export class TopologyNode {
     this.networkNode.sendMessage(peerId, [protocol], message);
   }
 
-  createObject(id: string, abi?: string, bytecode?: Uint8Array) {
-    const object = TopologyObject.create({
+  async createObject(id?: string, path?: string, abi?: string) {
+    const object = await newTopologyObject(
+      this.networkNode.peerId,
+      path,
       id,
       abi,
-      bytecode,
-    });
+    );
     executeObjectOperation(
       this,
       OPERATIONS.CREATE,
       TopologyObject.encode(object).finish(),
     );
+    this.networkNode.addGroupMessageHandler(object.id, async (e) =>
+      topologyMessagesHandler(this, undefined, e.detail.msg.data),
+    );
+    return object;
   }
 
   updateObject(id: string, operations: { fn: string; args: string[] }[]) {
@@ -116,6 +121,7 @@ export class TopologyNode {
     this.networkNode.addGroupMessageHandler(id, async (e) =>
       topologyMessagesHandler(this, undefined, e.detail.msg.data),
     );
+    return object;
   }
 
   unsubscribeObject(id: string, purge?: boolean) {
