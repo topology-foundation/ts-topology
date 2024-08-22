@@ -28,8 +28,10 @@ jobs:
           version: 9
       - shell: bash
         run: |
-          cd examples/canvas
           pnpm install
+          cd packages/node
+          pnpm build
+          cd ../../examples/canvas
           pnpm build
 
   build-example-chat:
@@ -41,6 +43,8 @@ jobs:
           version: 9
       - shell: bash
         run: |
-          cd examples/chat
           pnpm install
+          cd packages/node
+          pnpm build
+          cd examples/chat
           pnpm build
