@@ -4,9 +4,9 @@ type Hash = string;
 
 class Vertex<T> {
   constructor(
-    public readonly hash: Hash,
-    public readonly operation: T,
-    public readonly dependencies: Set<Hash>
+    readonly hash: Hash,
+    readonly operation: T,
+    readonly dependencies: Set<Hash>
   ) { }
 }
 
@@ -20,11 +20,9 @@ export class HashGraph<T> {
   private vertices: Map<Hash, Vertex<T>> = new Map();
   private frontier: Set<Hash> = new Set();
   private forwardEdges: Map<Hash, Set<Hash>> = new Map();
-  // private resolveConflicts: (op1: T, op2: T) => ActionType;
   private root: Hash = "";
-  private nodeId: string = ""
 
-  constructor(private resolveConflicts: (op1: T, op2: T) => ActionType, nodeId: string) { }
+  constructor(private resolveConflicts: (op1: T, op2: T) => ActionType, private nodeId: string) { }
 
   // Time complexity: O(1), Space complexity: O(1)
   computeHash(op: T, deps: Hash[], peerId: String): Hash {
@@ -106,7 +104,6 @@ export class HashGraph<T> {
       if (Array.from(vertex.dependencies).every(dep => visited.has(dep))) {
         const children = this.forwardEdges.get(hash) || new Set();
         for (const child of children) {
-          // console.log("Visiting child: ", child);
           visit(child);
         }
       }

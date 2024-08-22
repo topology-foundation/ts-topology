@@ -18,8 +18,8 @@ enum OperationType {
 
 class Operation<T> {
     constructor(
-        public readonly type: OperationType,
-        public readonly value: T
+        readonly type: OperationType,
+        readonly value: T
     ) { }
 }
 
@@ -247,11 +247,11 @@ describe("HashGraph for AddWinSet tests", () => {
         let op2: Operation<number> = new Operation(OperationType.Add, 1);
         let deps2: string[] = [vertexHash1];
         let vertexHash2 = cro.hashGraph.addVertex(op2, deps2, peerId);
-        // Add the third vertex V3 concurrent with V2
+        // Add the third vertex V3 with dependency on V2
         let op3: Operation<number> = new Operation(OperationType.Remove, 2);
         let deps3: string[] = [vertexHash2];
         let vertexHash3 = cro.hashGraph.addVertex(op3, deps3, peerId);
-        // Add the vertex V4 with dependency on V2
+        // Add the vertex V4 -> [V1]
         let op4: Operation<number> = new Operation(OperationType.Remove, 2);
         let deps4: string[] = [vertexHash1];
         let vertexHash4 = cro.hashGraph.addVertex(op4, deps4, peerId);

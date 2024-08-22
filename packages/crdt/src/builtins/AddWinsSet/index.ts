@@ -1,4 +1,4 @@
-/// GSet with support for state and op changes
+/// AddWinsSet with support for state and op changes
 export class AddWinsSet<T> {
   private state: Map<T, number>;
 
