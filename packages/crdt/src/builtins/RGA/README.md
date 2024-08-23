@@ -12,9 +12,10 @@ The structure is designed to maintain a consistent state across multiple replica
 
 Each element in the RGA is represented by an `RGAElement` object with the following properties:
 
-- `vid`: A unique identifier for the element, consisting of a counter and a node ID.
-- `value`: The actual value stored in the element (or null if the element is deleted).
-- `parent`: The identifier of the element that precedes this one in the logical order.
+-   `vid`: A unique identifier for the element, consisting of a counter and a node ID.
+-   `value`: The actual value stored in the element (or null if the element is deleted).
+-   `parent`: The identifier of the element that precedes this one in the logical order.
+-   `isDeleted`: A flag indicating whether the element has been deleted.
 
 ### RGA Class
 
@@ -34,12 +35,13 @@ The `RGA` class manages the sequencer, which generates new identifiers, and the 
 
 2. **Logical Ordering**: Elements are ordered based on their `parent` references and `vid` comparisons.
 
-3. **Tombstones**: Deleted elements are not removed but marked as tombstones (null value).
+3. **Tombstones**: Deleted elements are not removed but marked as tombstones with the isDeleted property.
 
-4. **Conflict Resolution**:  
-   - For concurrent inserts at the same position (same parent element), the element with the higher `vid` is placed first.
-   - If the parent elements are different, the elements are inserted in the order of their parent's index.
-   - Deletions are preserved due to the tombstone mechanism.
+4. **Conflict Resolution**:
+
+    - For concurrent inserts at the same position (same parent element), the element with the higher `vid` is placed first.
+    - If the parent elements are different, the elements are inserted in the order of their parent's index.
+    - Deletions are preserved due to the tombstone mechanism.
 
 5. **Merging**: When merging two RGAs, elements from the peer RGA are inserted into the current RGA, maintaining the correct order and resolving the conflicts.
 
