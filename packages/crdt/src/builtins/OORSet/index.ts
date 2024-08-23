@@ -51,35 +51,25 @@ export class OORSet<T> {
   }
 
   merge(peerSet: OORSet<T>): void {
-    let M = new Set<ElementTuple<T>>();
-    let A = new Set<ElementTuple<T>>();
-    let B = new Set<ElementTuple<T>>();
+    // place: [local, remote, both]
+    // sets: [elements, removed]
+    // existence: [in, notIn]
+    let bothInElements = [...this._elements].filter((element) => peerSet.getElements().has(element));
+    let localInElementsRemoteNotInRemoved = [...this._elements].filter((element) =>
+      !peerSet.getElements().has(element) && element.tag > peerSet.getSummary().get(element.nodeId)!
+    );
+    let localNotInRemovedRemoteInElements = [...peerSet._elements].filter((element) =>
+      !this._elements.has(element) && element.tag > this.getSummary().get(element.nodeId)!
+    );
 
-    // Adds the elements common to the two sets
-    this._elements.forEach((element) => {
-      if (peerSet.getElements().has(element)) {
-        M.add(element);
-      }
-    });
+    this._elements = new Set<ElementTuple<T>>([...bothInElements, ...localInElementsRemoteNotInRemoved, ...localNotInRemovedRemoteInElements]);
+    this._elements = new Set(
+      [...this._elements].filter((e) =>
+        [...this._elements].every((e2) => e.tag > e2.tag)
+      )
+    );
 
-    // in the local payload but not recently removed from the remote payload
-    this._elements.forEach((element) => {
-      const tag = peerSet.getSummary().get(element.nodeId);
-      if (!peerSet.getElements().has(element) && tag !== undefined && element.tag > tag) {
-        A.add(element);
-      }
-    });
-
-    //vice-versa
-    peerSet.getElements().forEach((element) => {
-      const tag = this._summary.get(element.nodeId);
-      if (!this._elements.has(element) && tag !== undefined && element.tag > tag) {
-        B.add(element);
-      }
-    });
-
-    this._elements = new Set<ElementTuple<T>>([...M, ...A, ...B]);
-
+    // update summary
     for (let e of peerSet.getSummary().entries()) {
       this._summary.set(e[0], Math.max(e[1], this._summary.get(e[0])!));
     }
