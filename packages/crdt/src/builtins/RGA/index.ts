@@ -11,7 +11,7 @@ class RGAElement<T> {
     constructor(
         vid: Identifier,
         value: T | null,
-        parent: Identifier | null = null,
+        parent: Identifier | null,
         isDeleted: boolean = false
     ) {
         this.vid = vid;
@@ -28,7 +28,7 @@ export class RGA<T> {
     /// This can be optimized using a Btree
     elements: RGAElement<T>[];
 
-    /* 
+	/* 
 		We are using an empty element as the head of the array to simplify the logic of merging two RGA instances.
 		It acts as an anchor and is the same for all replicas.
 	*/
@@ -99,8 +99,9 @@ export class RGA<T> {
         return -1;
     }
 
-    insert(index: number, value: T): void {
-        const i = this.indexWithTombstones(index);
+	// Function to insert a new element after a given index, might not be immidiately after becuase we look at parents
+    insert(parentIndex: number, value: T): void {
+        const i = this.indexWithTombstones(parentIndex);
         const parent = this.elements[i - 1].vid;
         const newVId = this.nextSeq(this.sequencer);
         this.insertElement(new RGAElement(newVId, value, parent));
