@@ -5,7 +5,7 @@ type Hash = string;
 class Vertex<T> {
   constructor(
     readonly hash: Hash,
-    readonly operation: T,
+    readonly operation: Operation<T>,
     readonly dependencies: Set<Hash>
   ) { }
 }
@@ -16,16 +16,49 @@ export enum ActionType {
   Nop,
   Swap
 }
-export class HashGraph<T> {
+
+export enum OperationType {
+  Add,
+  Remove,
+  Nop
+}
+
+export class Operation<T> {
+  constructor(
+      readonly type: OperationType,
+      readonly value: T 
+  ) { }
+}
+
+export interface IHashGraph<T> {
+  addVertex(op: T, deps: Hash[], peerId: string): Hash;
+  addToFrontier(op: T): Hash;
+  topologicalSort(): Hash[];
+  areCausallyRelated(vertexHash1: Hash, vertexHash2: Hash): boolean;
+  getFrontier(): Hash[];
+  getDependencies(vertexHash: Hash): Hash[] | undefined;
+  getVertex(vertexHash: Hash): Vertex<T> | undefined;
+  getAllVertices(): Vertex<T>[];
+}
+
+export class HashGraph<T extends number> {
   private vertices: Map<Hash, Vertex<T>> = new Map();
   private frontier: Set<Hash> = new Set();
   private forwardEdges: Map<Hash, Set<Hash>> = new Map();
-  private root: Hash = "";
+  rootHash: Hash = "";
 
-  constructor(private resolveConflicts: (op1: T, op2: T) => ActionType, private nodeId: string) { }
+  constructor(private resolveConflicts: (op1: Operation<T>, op2: Operation<T>) => ActionType, private nodeId: string) { 
+    // Create and add the NOP root vertex
+    const nopOperation = new Operation(OperationType.Nop, 0 as T);
+    this.rootHash = this.computeHash(nopOperation, [], this.nodeId);
+    const rootVertex = new Vertex(this.rootHash, nopOperation, new Set());
+    this.vertices.set(this.rootHash, rootVertex);
+    this.frontier.add(this.rootHash);
+    this.forwardEdges.set(this.rootHash, new Set());
+  }
 
   // Time complexity: O(1), Space complexity: O(1)
-  computeHash(op: T, deps: Hash[], peerId: String): Hash {
+  private computeHash(op: Operation<T>, deps: Hash[], peerId: String): Hash {
     const serialized = JSON.stringify({ op, deps, peerId });
     const hash = crypto
       .createHash("sha256")
@@ -35,7 +68,7 @@ export class HashGraph<T> {
     return hash;
   }
 
-  addToFrontier(operation: T): Hash {
+  addToFrontier(operation: Operation<T>): Hash {
     const deps = this.getFrontier();
     const hash = this.computeHash(operation, deps, this.nodeId)
     const vertex = new Vertex(hash, operation, new Set(deps));
@@ -43,10 +76,6 @@ export class HashGraph<T> {
     this.vertices.set(hash, vertex);
     this.frontier.add(hash);
 
-    // update root
-    if (deps.length === 0) {
-      this.root = hash;
-    }
     // Update forward edges
     for (const dep of deps) {
       if (!this.forwardEdges.has(dep)) {
@@ -59,7 +88,7 @@ export class HashGraph<T> {
   }
   // Time complexity: O(d), where d is the number of dependencies
   // Space complexity: O(d)
-  addVertex(op: T, deps: Hash[], peerId: string): Hash {
+  addVertex(op: Operation<T>, deps: Hash[], peerId: string): Hash {
 
     // Temporary fix: don't add the vertex if the dependencies are not present in the local HG.
     if (!deps.every(dep => this.forwardEdges.has(dep) || this.vertices.has(dep))) {
@@ -96,27 +125,23 @@ export class HashGraph<T> {
     const visit = (hash: Hash) => {
       if (visited.has(hash)) return;
 
-      const vertex = this.vertices.get(hash)!;
       visited.add(hash);
-      result.push(hash);
-
-      // Check if all dependencies are visited
-      if (Array.from(vertex.dependencies).every(dep => visited.has(dep))) {
-        const children = this.forwardEdges.get(hash) || new Set();
-        for (const child of children) {
-          visit(child);
-        }
+      
+      const children = this.forwardEdges.get(hash) || new Set();
+      for (const child of children) {
+        visit(child);
       }
+      result.push(hash);
     };
     // Start with the root vertex
-    visit(this.root);
+    visit(this.rootHash);
 
-    return result;
+    return result.reverse();
   }
 
-  linearizeOps(): T[] {
+  linearizeOps(): Operation<T>[] {
     const order = this.topologicalSort();
-    const result: T[] = [];
+    const result: Operation<T>[] = [];
     let i = 0;
 
     while (i < order.length) {
@@ -207,12 +232,12 @@ export class HashGraph<T> {
 
   // Time complexity: O(1), Space complexity: O(1)
   getRoot(): Hash {
-    return this.root;
+    return this.rootHash;
   }
 
   // Time complexity: O(1), Space complexity: O(1)
-  getDependencies(hash: Hash): Hash[] {
-    return Array.from(this.vertices.get(hash)?.dependencies || []);
+  getDependencies(vertexHash: Hash): Hash[] {
+    return Array.from(this.vertices.get(vertexHash)?.dependencies || []);
   }
 
   // Time complexity: O(1), Space complexity: O(1)
