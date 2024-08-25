@@ -42,3 +42,36 @@ export class TwoPSet<T> {
     this._removes.merge(peerSet.removes());
   }
 }
+
+/// AssemblyScript functions
+export function twopset_create<T>(adds: GSet<T>, removes: GSet<T>): TwoPSet<T> {
+  return new TwoPSet<T>(adds, removes);
+}
+
+export function twopset_lookup<T>(set: TwoPSet<T>, element: T): boolean {
+  return set.lookup(element);
+}
+
+export function twopset_add<T>(set: TwoPSet<T>, element: T): void {
+  set.add(element);
+}
+
+export function twopset_remove<T>(set: TwoPSet<T>, element: T): void {
+  set.remove(element);
+}
+
+export function twopset_adds<T>(set: TwoPSet<T>): GSet<T> {
+  return set.adds();
+}
+
+export function twopset_removes<T>(set: TwoPSet<T>): GSet<T> {
+  return set.removes();
+}
+
+export function twopset_compare<T>(set: TwoPSet<T>, peerSet: TwoPSet<T>): boolean {
+  return set.compare(peerSet);
+}
+
+export function twopset_merge<T>(set: TwoPSet<T>, peerSet: TwoPSet<T>): void {
+  set.merge(peerSet);
+}
