@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { TwoPSet } from "../src/builtins/2PSet";
-import { GSet } from "../src/builtins/GSet";
+import { TwoPSet } from "../src/crdts/2PSet/index.js";
+import { GSet } from "../src/crdts/GSet/index.js";
 
 describe("2P-Set Tests", () => {
 
@@ -22,7 +22,7 @@ describe("2P-Set Tests", () => {
 
     test("Test Remove Element", () => {
         expect(set1.lookup("mike")).toBe(true);
-        
+
         set1.remove("mike");
 
         expect(set1.lookup("mike")).toBe(false);
@@ -37,13 +37,13 @@ describe("2P-Set Tests", () => {
 
         set2.remove("mike");
 
-        expect(set1.compare(set2)).toBe(true); 
+        expect(set1.compare(set2)).toBe(true);
     });
 
     test("Test Merge Elements", () => {
         set1.remove("mike");
         set2.add("gustavo");
-        
+
         expect(set1.compare(set2)).toBe(false);
 
         set1.merge(set2);

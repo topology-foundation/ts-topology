@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { IPSet } from "../src/builtins/IPSet";
-import { GCounter } from "../src/builtins/GCounter";
+import { IPSet } from "../src/crdts/IPSet/index.js";
+import { GCounter } from "../src/crdts/GCounter/index.js";
 
 describe("Infinite-phase set Tests", () => {
     const peerId = "node";

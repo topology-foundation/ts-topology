@@ -1,6 +1,6 @@
-import { describe, test, expect, beforeEach, afterEach } from "vitest";
-import { PNCounter } from "../src/builtins/PNCounter";
-import { GCounter } from "../src/builtins/GCounter";
+import { describe, test, expect, beforeEach } from "vitest";
+import { PNCounter } from "../src/crdts/PNCounter/index.js";
+import { GCounter } from "../src/crdts/GCounter/index.js";
 
 describe("PN-Counter Tests", () => {
     let set1: PNCounter;
@@ -42,10 +42,10 @@ describe("PN-Counter Tests", () => {
         set1.increment("node1",10);
         set2.decrement("node2",5);
         expect(set1.compare(set2)).toBe(false);
-        expect(set2.compare(set1)).toBe(false); 
+        expect(set2.compare(set1)).toBe(false);
         set1.merge(set2);
         set2.merge(set1);
         expect(set1.compare(set2)).toBe(true);
-        expect(set2.compare(set1)).toBe(true);        
+        expect(set2.compare(set1)).toBe(true);
     });
 });
