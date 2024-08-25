@@ -5,6 +5,9 @@ const fs = require("node:fs");
 module.exports = {
 	mode: "production",
 	entry: path.resolve(__dirname, "./src/index.ts"),
+	externals: {
+		"node:crypto": "commonjs crypto",
+	},
 	devServer: {
 		allowedHosts: "all",
 		client: {

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { RGA } from "../src/builtins/RGA"; // Adjust the import path according to your project structure
+import { RGA } from "../src/crdts/RGA/index.js";
 
 describe("Replicable Growable Array Tests", () => {
 	let rga: RGA<string>;
