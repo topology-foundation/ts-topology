@@ -16,6 +16,7 @@ import { dcutr } from "@libp2p/dcutr";
 import { identify } from "@libp2p/identify";
 import type {
 	EventHandler,
+	PrivateKey,
 	PubSub,
 	Stream,
 	StreamHandler,
@@ -50,7 +51,7 @@ export class TopologyNetworkNode {
 	}
 
 	async start() {
-		let privateKey;
+		let privateKey: PrivateKey | undefined = undefined;
 		if (this._config?.private_key_seed) {
 			const tmp = this._config.private_key_seed.padEnd(32, "0");
 			privateKey = await generateKeyPairFromSeed(
@@ -62,10 +63,7 @@ export class TopologyNetworkNode {
 		this._node = await createLibp2p({
 			peerId: privateKey ? await createFromPrivKey(privateKey) : undefined,
 			addresses: {
-				listen:
-					this._config && this._config.addresses
-						? this._config.addresses
-						: ["/webrtc"],
+				listen: this._config?.addresses ? this._config.addresses : ["/webrtc"],
 			},
 			connectionEncryption: [noise()],
 			connectionGater: {
@@ -79,12 +77,11 @@ export class TopologyNetworkNode {
 					topics: ["topology::discovery"],
 				}),
 				bootstrap({
-					list:
-						this._config && this._config.bootstrap_peers
-							? this._config.bootstrap_peers
-							: [
-									"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-								],
+					list: this._config?.bootstrap_peers
+						? this._config.bootstrap_peers
+						: [
+								"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+							],
 				}),
 			],
 			services: {

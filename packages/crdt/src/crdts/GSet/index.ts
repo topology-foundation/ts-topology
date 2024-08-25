@@ -1,31 +1,27 @@
 /// GSet with support for state and op changes
 export class GSet<T> {
-	private _set: Set<T>;
+	set: Set<T>;
 
 	constructor(set: Set<T>) {
-		this._set = set;
+		this.set = set;
 	}
 
 	add(element: T): void {
-		this._set.add(element);
+		this.set.add(element);
 	}
 
 	lookup(element: T): boolean {
-		return this._set.has(element);
-	}
-
-	set(): Set<T> {
-		return this._set;
+		return this.set.has(element);
 	}
 
 	compare(peerSet: GSet<T>): boolean {
 		return (
-			this._set.size == peerSet.set().size &&
-			[...this._set].every((value) => peerSet.set().has(value))
+			this.set.size === peerSet.set.size &&
+			[...this.set].every((value) => peerSet.set.has(value))
 		);
 	}
 
 	merge(peerSet: GSet<T>): void {
-		this._set = new Set<T>([...this._set, ...peerSet.set()]);
+		this.set = new Set<T>([...this.set, ...peerSet.set]);
 	}
 }

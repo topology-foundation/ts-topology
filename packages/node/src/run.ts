@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import { TopologyNode, type TopologyNodeConfig } from ".";
 import { program } from "./cli";
 

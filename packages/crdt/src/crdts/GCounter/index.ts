@@ -35,12 +35,12 @@ export class GCounter {
 			peerCounter.counts,
 		);
 
-		Object.keys(temp).forEach((key) => {
+		for (const key of Object.keys(temp)) {
 			this.counts[key] = Math.max(
 				this.counts[key] || 0,
 				peerCounter.counts[key] || 0,
 			);
-		});
+		}
 
 		this.globalCounter = Object.values(this.counts).reduce((a, b) => a + b, 0);
 	}

@@ -13,11 +13,11 @@ describe("LWW-Element-Set Tests", () => {
 		set2 = new LWWElementSet<string>(new Map(), new Map(), Bias.ADD);
 		set3 = new LWWElementSet<string>(new Map(), new Map(), Bias.REMOVE);
 
-		testValues.forEach((value) => {
+		for (const value of testValues) {
 			set1.add(value);
 			set2.add(value);
 			set3.add(value);
-		});
+		}
 	});
 
 	test("Test Add Elements", () => {

@@ -2,13 +2,13 @@ import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 import type { ICanvas } from "./objects/canvas";
 
 // TODO: this should be superseded by wasm and main ts-topology library
-export const handleCanvasMessages = (canvas: ICanvas, e: any) => {
+export const handleCanvasMessages = (canvas: ICanvas, e: CustomEvent) => {
 	if (e.detail.msg.topic === "topology::discovery") return;
 	const input = uint8ArrayToString(e.detail.msg.data);
 	const message = JSON.parse(input);
-	switch (message["type"]) {
+	switch (message.type) {
 		case "object_update": {
-			const fn = uint8ArrayToString(new Uint8Array(message["data"]));
+			const fn = uint8ArrayToString(new Uint8Array(message.data));
 			handleObjectUpdate(canvas, fn);
 			break;
 		}

@@ -1,4 +1,4 @@
-import * as crypto from "crypto";
+import * as crypto from "node:crypto";
 
 export abstract class TopologyObject {
 	// TODO generate functions from the abi

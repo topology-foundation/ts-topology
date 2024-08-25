@@ -1,14 +1,14 @@
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 import type { IChat } from "./objects/chat";
 
-export const handleChatMessages = (chat: IChat, e: any) => {
+export const handleChatMessages = (chat: IChat, e: CustomEvent) => {
 	if (e.detail.msg.topic === "topology::discovery") return;
 	const input = uint8ArrayToString(e.detail.msg.data);
 	const message = JSON.parse(input);
 	console.log("Received message!: ", message);
-	switch (message["type"]) {
+	switch (message.type) {
 		case "object_update": {
-			const fn = uint8ArrayToString(new Uint8Array(message["data"]));
+			const fn = uint8ArrayToString(new Uint8Array(message.data));
 			handleObjectUpdate(chat, fn);
 			break;
 		}

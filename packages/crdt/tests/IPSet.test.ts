@@ -122,16 +122,24 @@ describe("Infinite-phase set Tests", () => {
 	});
 
 	test("Test set() function", () => {
-		[1, 2, 3, 4, 5].forEach((i) => set2.add(peerId, i));
+		for (const i of [1, 2, 3, 4, 5]) {
+			set2.add(peerId, i);
+		}
 		expect(set2.set()).toStrictEqual(new Set([1, 2, 3, 4, 5]));
 
-		[1, 3, 4].forEach((i) => set2.remove(peerId, i));
+		for (const i of [1, 3, 4]) {
+			set2.remove(peerId, i);
+		}
 		expect(set2.set()).toStrictEqual(new Set([2, 5]));
 
-		[1, 2, 3].forEach((i) => set2.remove(peerId, i));
+		for (const i of [1, 2, 3]) {
+			set2.remove(peerId, i);
+		}
 		expect(set2.set()).toStrictEqual(new Set([5]));
 
-		[1, 2, 3].forEach((i) => set2.add(peerId, i));
+		for (const i of [1, 2, 3]) {
+			set2.add(peerId, i);
+		}
 		expect(set2.set()).toStrictEqual(new Set([1, 2, 3, 5]));
 	});
 });

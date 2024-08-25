@@ -40,18 +40,16 @@ export class TopologyNode {
 				if (!input) return;
 
 				const message = JSON.parse(input);
-				switch (message["type"]) {
+				switch (message.type) {
 					case "object_fetch": {
-						const objectId = uint8ArrayToString(
-							new Uint8Array(message["data"]),
-						);
+						const objectId = uint8ArrayToString(new Uint8Array(message.data));
 						const object = <TopologyObject>this.getObject(objectId);
 						const object_message = `{
               "type": "object",
               "data": [${uint8ArrayFromString(JSON.stringify(object, (_key, value) => (value instanceof Set ? [...value] : value)))}]
             }`;
 						await this.networkNode.sendMessage(
-							message["sender"],
+							message.sender,
 							[<string>stream.protocol],
 							object_message,
 						);
@@ -60,22 +58,20 @@ export class TopologyNode {
 					}
 					case "object": {
 						const object = JSON.parse(
-							uint8ArrayToString(new Uint8Array(message["data"])),
+							uint8ArrayToString(new Uint8Array(message.data)),
 						);
-						this._objectStore.put(object["id"], object);
+						this._objectStore.put(object.id, object);
 						break;
 					}
 					case "object_sync": {
-						const objectId = uint8ArrayToString(
-							new Uint8Array(message["data"]),
-						);
+						const objectId = uint8ArrayToString(new Uint8Array(message.data));
 						const object = <TopologyObject>this.getObject(objectId);
 						const object_message = `{
               "type": "object_merge",
               "data": [${uint8ArrayFromString(JSON.stringify(object))}]
             }`;
 						await this.networkNode.sendMessage(
-							message["sender"],
+							message.sender,
 							[<string>stream.protocol],
 							object_message,
 						);
@@ -83,12 +79,12 @@ export class TopologyNode {
 					}
 					case "object_merge": {
 						const object = JSON.parse(
-							uint8ArrayToString(new Uint8Array(message["data"])),
+							uint8ArrayToString(new Uint8Array(message.data)),
 						);
-						const local = this._objectStore.get(object["id"]);
+						const local = this._objectStore.get(object.id);
 						if (local) {
 							local.merge(object);
-							this._objectStore.put(object["id"], local);
+							this._objectStore.put(object.id, local);
 						}
 						break;
 					}

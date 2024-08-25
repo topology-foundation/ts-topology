@@ -12,17 +12,17 @@ let objectPeers: string[] = [];
 
 const render = () => {
 	const peers_element = <HTMLDivElement>document.getElementById("peers");
-	peers_element.innerHTML = "[" + peers.join(", ") + "]";
+	peers_element.innerHTML = `[${peers.join(", ")}]`;
 
 	const discovery_element = <HTMLDivElement>(
 		document.getElementById("discovery_peers")
 	);
-	discovery_element.innerHTML = "[" + discoveryPeers.join(", ") + "]";
+	discovery_element.innerHTML = `[${discoveryPeers.join(", ")}]`;
 
 	const object_element = <HTMLDivElement>(
 		document.getElementById("object_peers")
 	);
-	object_element.innerHTML = "[" + objectPeers.join(", ") + "]";
+	object_element.innerHTML = `[${objectPeers.join(", ")}]`;
 
 	if (!canvasCRO) return;
 	const canvas = canvasCRO.canvas;
@@ -96,12 +96,12 @@ async function init() {
 			.value;
 		try {
 			await node.subscribeObject(croId, true, "", (_, topologyObject) => {
-				const object: any = topologyObject;
-				object["canvas"] = object["canvas"].map((x: any) =>
-					x.map((y: any) => {
-						y["red"] = Object.assign(new GCounter({}), y["red"]);
-						y["green"] = Object.assign(new GCounter({}), y["green"]);
-						y["blue"] = Object.assign(new GCounter({}), y["blue"]);
+				const object: Canvas = topologyObject as Canvas;
+				object.canvas = object.canvas.map((x: Pixel[]) =>
+					x.map((y: Pixel) => {
+						y.red = Object.assign(new GCounter({}), y.red);
+						y.green = Object.assign(new GCounter({}), y.green);
+						y.blue = Object.assign(new GCounter({}), y.blue);
 						return Object.assign(new Pixel(node.networkNode.peerId), y);
 					}),
 				);

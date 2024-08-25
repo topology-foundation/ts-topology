@@ -28,7 +28,7 @@ export class RGA<T> {
 	/// This can be optimized using a Btree
 	elements: RGAElement<T>[];
 
-	/* 
+	/*
 		We are using an empty element as the head of the array to simplify the logic of merging two RGA instances.
 		It acts as an anchor and is the same for all replicas.
 	*/
@@ -46,7 +46,7 @@ export class RGA<T> {
 	getArray(): T[] {
 		return this.elements
 			.filter((element) => !element.isDeleted)
-			.map((element) => element.value! as T);
+			.map((element) => element.value as T);
 	}
 
 	clear(): void {
@@ -72,10 +72,11 @@ export class RGA<T> {
 	// Function to map a logical index (ignoring tombstones) to a physical index in the elements array
 	private indexWithTombstones(index: number): number {
 		let offset = 1; // Start from 1 to skip the head element
-		while (index > 0) {
-			if (!this.elements[offset].isDeleted) index--;
+		for (let i = 0; i < index; i++) {
+			while (this.elements[offset].isDeleted) offset++;
 			offset++;
 		}
+
 		return offset;
 	}
 
@@ -87,7 +88,8 @@ export class RGA<T> {
 	}
 
 	// Function to find the physical index of an element given the virtual id
-	private indexOfVId(ptr: Identifier): number {
+	private indexOfVId(ptr: Identifier | null): number {
+		if (!ptr) return -1;
 		for (let offset = 0; offset < this.elements.length; offset++) {
 			if (
 				ptr.counter === this.elements[offset].vid.counter &&
@@ -109,11 +111,11 @@ export class RGA<T> {
 
 	// Function to insert a new element into the array
 	private insertElement(element: RGAElement<T>): void {
-		const parentIdx = this.indexOfVId(element.parent!);
+		const parentIdx = this.indexOfVId(element.parent);
 		let insertIdx = parentIdx + 1;
 		for (; insertIdx < this.elements.length; insertIdx++) {
 			const curr = this.elements[insertIdx];
-			const currParentIdx = this.indexOfVId(curr.parent!);
+			const currParentIdx = this.indexOfVId(curr.parent);
 			if (currParentIdx > parentIdx) break;
 			if (currParentIdx === parentIdx) {
 				if (this.compareVIds(curr.vid, element.vid)) break;

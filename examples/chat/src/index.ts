@@ -1,5 +1,6 @@
 import { GSet } from "@topology-foundation/crdt";
 import { TopologyNode } from "@topology-foundation/node";
+import { TopologyObject } from "@topology-foundation/object";
 import { handleChatMessages } from "./handlers";
 import { Chat, type IChat } from "./objects/chat";
 
@@ -15,38 +16,37 @@ const render = () => {
 	element_peerId.innerHTML = node.networkNode.peerId;
 
 	const element_peers = <HTMLDivElement>document.getElementById("peers");
-	element_peers.innerHTML = "[" + peers.join(", ") + "]";
+	element_peers.innerHTML = `[${peers.join(", ")}]`;
 
 	const element_discoveryPeers = <HTMLDivElement>(
 		document.getElementById("discoveryPeers")
 	);
-	element_discoveryPeers.innerHTML = "[" + discoveryPeers.join(", ") + "]";
+	element_discoveryPeers.innerHTML = `[${discoveryPeers.join(", ")}]`;
 
 	const element_objectPeers = <HTMLDivElement>(
 		document.getElementById("objectPeers")
 	);
-	element_objectPeers.innerHTML = "[" + objectPeers.join(", ") + "]";
+	element_objectPeers.innerHTML = `[${objectPeers.join(", ")}]`;
 
 	if (!chatCRO) return;
 	const chat = chatCRO.getMessages();
 	const element_chat = <HTMLDivElement>document.getElementById("chat");
 	element_chat.innerHTML = "";
 
-	if (chat.set().size == 0) {
+	if (chat.set().size === 0) {
 		const div = document.createElement("div");
 		div.innerHTML = "No messages yet";
 		div.style.padding = "10px";
 		element_chat.appendChild(div);
 		return;
 	}
-	Array.from(chat.set())
-		.sort()
-		.forEach((message: string) => {
-			const div = document.createElement("div");
-			div.innerHTML = message;
-			div.style.padding = "10px";
-			element_chat.appendChild(div);
-		});
+
+	for (const message of [...chat.set()].sort()) {
+		const div = document.createElement("div");
+		div.innerHTML = message;
+		div.style.padding = "10px";
+		element_chat.appendChild(div);
+	}
 };
 
 async function sendMessage(message: string) {
@@ -115,14 +115,14 @@ async function main() {
 		);
 		const objectId = input.value;
 		try {
-			const object: any = node.getObject(objectId);
+			const object: Chat = node.getObject(objectId) as Chat;
 			console.log("Object received: ", object);
 
-			const arr: string[] = Array.from(object["chat"]["_set"]);
-			object["chat"]["_set"] = new Set<string>(arr);
-			object["chat"] = Object.assign(
+			const arr: string[] = Array.from(object.chat.set);
+			object.chat.set = new Set<string>(arr);
+			object.chat = Object.assign(
 				new GSet<string>(new Set<string>()),
-				object["chat"],
+				object.chat,
 			);
 			chatCRO = Object.assign(new Chat(node.networkNode.peerId), object);
 

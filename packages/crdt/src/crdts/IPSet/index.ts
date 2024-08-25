@@ -20,7 +20,7 @@ export class IPSet<T> {
 	add(nodeId: string, element: T): void {
 		if (!this._counters.has(element)) {
 			this._counters.set(element, new GCounter({ [nodeId]: 1 }));
-		} else if (this._counters.get(element)?.value()! % 2 === 0) {
+		} else if ((this._counters.get(element)?.value() ?? 0) % 2 === 0) {
 			this._counters.get(element)?.increment(nodeId, 1);
 		}
 	}
@@ -28,7 +28,7 @@ export class IPSet<T> {
 	remove(nodeId: string, element: T): void {
 		if (
 			this._counters.has(element) &&
-			this._counters.get(element)?.value()! % 2 === 1
+			(this._counters.get(element)?.value() ?? 0) % 2 === 1
 		) {
 			this._counters.get(element)?.increment(nodeId, 1);
 		}
@@ -36,7 +36,7 @@ export class IPSet<T> {
 
 	contains(element: T): boolean {
 		if (this._counters.has(element)) {
-			return this._counters.get(element)?.value()! % 2 === 1;
+			return (this._counters.get(element)?.value() ?? 0) % 2 === 1;
 		}
 		return false;
 	}
@@ -58,8 +58,8 @@ export class IPSet<T> {
 		return [...this._counters.keys()].every(
 			(element) =>
 				peerSet.counters().has(element) &&
-				this._counters.get(element)?.value()! <=
-					peerSet.counters().get(element)?.value()!,
+				(this._counters.get(element)?.value() ?? 0) <=
+					(peerSet.counters().get(element)?.value() ?? 0),
 		);
 	}
 
