@@ -1,73 +1,15 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { AddWinsSet } from "../src/builtins/AddWinsSet";
-import { ActionType, HashGraph, Operation, OperationType } from "../../object/src/hashgraph";
-import { TopologyObject } from "../../object/src";
-
-interface IAddWinsCRO<T extends number> extends TopologyObject {
-    addWinsSet: AddWinsSet<T>;
-    hashGraph: HashGraph<T>;
-    add(element: T): void;
-    remove(element: T): void;
-    resolveConflicts(op1: Operation<T>, op2: Operation<T>): ActionType;
-}
-
-
-class AddWinsCRO<T extends number> extends TopologyObject implements IAddWinsCRO<T> {
-    addWinsSet: AddWinsSet<T>;
-    hashGraph: HashGraph<T>;
-
-    constructor(peerId: string) {
-        super(peerId);
-        this.addWinsSet = new AddWinsSet<T>();
-        this.hashGraph = new HashGraph<T>(this.resolveConflicts, peerId, );
-    }
-
-    resolveConflicts(op1: Operation<T>, op2: Operation<T>): ActionType {
-        if (op1.type !== op2.type && op1.value === op2.value) {
-            return op1.type === OperationType.Add ? ActionType.DropRight : ActionType.DropLeft;
-        }
-        return ActionType.Nop;
-    }
-
-    add(value: T): void {
-        const op = new Operation(OperationType.Add, value);
-        this.addWinsSet.add(value);
-    }
-
-    remove(value: T): void {
-        const op = new Operation(OperationType.Remove, value);
-        this.addWinsSet.remove(value);
-    }
-
-    merge(other: TopologyObject): void {
-
-    }
-y
-    read(): T[] {
-        const operations = this.hashGraph.linearizeOps();
-        const tempCounter = new AddWinsSet<T>();
-
-        for (const op of operations) {
-            if (op.type === OperationType.Add) {
-                tempCounter.add(op.value);
-            } else {
-                tempCounter.remove(op.value);
-            }
-        }
-
-        return tempCounter.values();
-
-    }
-}
+import { AddWinsSet } from "../src/cros/AddWinsSet/index.js";
+import { Operation, OperationType } from "@topology-foundation/object";
 
 describe("HashGraph for AddWinSet tests", () => {
-    let cro: AddWinsCRO<number>;
+    let cro: AddWinsSet<number>;
     let op0: Operation<number>;
     let vertexHash0: string
     const peerId = "peerId0"
 
     beforeEach(() => {
-        cro = new AddWinsCRO("peer0");
+        cro = new AddWinsSet("peer0");
         op0 = new Operation(OperationType.Nop, 0);
         vertexHash0 = cro.hashGraph.rootHash;
     });
@@ -154,7 +96,7 @@ describe("HashGraph for AddWinSet tests", () => {
     test("Test: Tricky Case", () => {
         /*
                         ___  V2:REMOVE(1) <- V4:ADD(10)
-            V1:ADD(1) /                 
+            V1:ADD(1) /
                       \ ___  V3:ADD(1) <- V5:REMOVE(5)
         */
 
@@ -189,7 +131,7 @@ describe("HashGraph for AddWinSet tests", () => {
     test("Test: Yuta Papa's Case", () => {
         /*
                         ___  V2:REMOVE(1) <- V4:ADD(2)
-            V1:ADD(1) /                 
+            V1:ADD(1) /
                       \ ___  V3:REMOVE(2) <- V5:ADD(1)
         */
 
@@ -242,37 +184,37 @@ describe("HashGraph for AddWinSet tests", () => {
         let op1: Operation<number> = new Operation(OperationType.Add, 1);
         let deps1: string[] = [vertexHash0]
         let vertexHash1 = cro.hashGraph.addVertex(op1, deps1, peerId);
-        console.log("vertex1: ", vertexHash1); 
+        console.log("vertex1: ", vertexHash1);
         // Add second vertex
         let op2: Operation<number> = new Operation(OperationType.Add, 1);
         let deps2: string[] = [vertexHash1];
         let vertexHash2 = cro.hashGraph.addVertex(op2, deps2, peerId);
-        console.log("vertex2: ", vertexHash2); 
+        console.log("vertex2: ", vertexHash2);
         // Add the third vertex V3 with dependency on V2
         let op3: Operation<number> = new Operation(OperationType.Remove, 2);
         let deps3: string[] = [vertexHash2];
         let vertexHash3 = cro.hashGraph.addVertex(op3, deps3, peerId);
-        console.log("vertex3: ", vertexHash3); 
+        console.log("vertex3: ", vertexHash3);
         // Add the vertex V4 -> [V1]
         let op4: Operation<number> = new Operation(OperationType.Remove, 2);
         let deps4: string[] = [vertexHash1];
         let vertexHash4 = cro.hashGraph.addVertex(op4, deps4, peerId);
-        console.log("vertex4: ", vertexHash4); 
+        console.log("vertex4: ", vertexHash4);
         // Add the vertex V5 -> [V4]
         let op5: Operation<number> = new Operation(OperationType.Add, 2);
         let deps5: string[] = [vertexHash4];
         let vertexHash5 = cro.hashGraph.addVertex(op5, deps5, peerId);
-        console.log("vertex5: ", vertexHash5); 
+        console.log("vertex5: ", vertexHash5);
         // Add the vertex V6 ->[V3]
         let op6: Operation<number> = new Operation(OperationType.Add, 3);
         let deps6: string[] = [vertexHash3];
         let vertexHash6 = cro.hashGraph.addVertex(op6, deps6, peerId);
-        console.log("vertex6: ", vertexHash6); 
+        console.log("vertex6: ", vertexHash6);
         // Add the vertex V7 -> [V3]
         let op7: Operation<number> = new Operation(OperationType.Remove, 1);
         let deps7: string[] = [vertexHash3];
         let vertexHash7 = cro.hashGraph.addVertex(op7, deps7, peerId);
-        console.log("vertex7: ", vertexHash7); 
+        console.log("vertex7: ", vertexHash7);
         // Add the vertex V8 -> [V7, V5]
         let op8: Operation<number> = new Operation(OperationType.Remove, 3);
         let deps8: string[] = [vertexHash7, vertexHash5];
@@ -282,7 +224,7 @@ describe("HashGraph for AddWinSet tests", () => {
         let op9: Operation<number> = new Operation(OperationType.Remove, 1);
         let deps9: string[] = [vertexHash5];
         let vertexHash9 = cro.hashGraph.addVertex(op9, deps9, peerId);
-        console.log("vertex9: ", vertexHash9); 
+        console.log("vertex9: ", vertexHash9);
 
         let sortedOrder = cro.hashGraph.topologicalSort();
         expect([[vertexHash0, vertexHash1, vertexHash4, vertexHash5, vertexHash9, vertexHash2, vertexHash3, vertexHash7, vertexHash8, vertexHash6]]).toContainEqual(sortedOrder);
@@ -312,27 +254,27 @@ describe("HashGraph for AddWinSet tests", () => {
         let op1: Operation<number> = new Operation(OperationType.Add, 1);
         let deps1: string[] = [vertexHash0]
         let vertexHash1 = cro.hashGraph.addVertex(op1, deps1, peerId);
-        console.log("vertex1: ", vertexHash1); 
+        console.log("vertex1: ", vertexHash1);
         // Add second vertex
         let op2: Operation<number> = new Operation(OperationType.Add, 1);
         let deps2: string[] = [vertexHash1];
         let vertexHash2 = cro.hashGraph.addVertex(op2, deps2, peerId);
-        console.log("vertex2: ", vertexHash2); 
+        console.log("vertex2: ", vertexHash2);
         // Add the third vertex V3 with dependency on V2
         let op3: Operation<number> = new Operation(OperationType.Remove, 2);
         let deps3: string[] = [vertexHash2];
         let vertexHash3 = cro.hashGraph.addVertex(op3, deps3, peerId);
-        console.log("vertex3: ", vertexHash3); 
+        console.log("vertex3: ", vertexHash3);
         // Add the vertex V4 -> [V1]
         let op4: Operation<number> = new Operation(OperationType.Remove, 2);
         let deps4: string[] = [vertexHash1];
         let vertexHash4 = cro.hashGraph.addVertex(op4, deps4, peerId);
-        console.log("vertex4: ", vertexHash4); 
+        console.log("vertex4: ", vertexHash4);
         // Add the vertex V6 ->[V3]
         let op6: Operation<number> = new Operation(OperationType.Add, 3);
         let deps6: string[] = [vertexHash3];
         let vertexHash6 = cro.hashGraph.addVertex(op6, deps6, peerId);
-        console.log("vertex6: ", vertexHash6); 
+        console.log("vertex6: ", vertexHash6);
         // Add the vertex V7 -> [V3]
         let op7: Operation<number> = new Operation(OperationType.Remove, 1);
         let deps7: string[] = [vertexHash3];
@@ -342,7 +284,7 @@ describe("HashGraph for AddWinSet tests", () => {
         let op5: Operation<number> = new Operation(OperationType.Add, 2);
         let deps5: string[] = [vertexHash4, vertexHash7];
         let vertexHash5 = cro.hashGraph.addVertex(op5, deps5, peerId);
-        console.log("vertex5: ", vertexHash5);  
+        console.log("vertex5: ", vertexHash5);
         // Add the vertex V8 -> [V7]
         let op8: Operation<number> = new Operation(OperationType.Remove, 3);
         let deps8: string[] = [vertexHash7, vertexHash5];
@@ -352,7 +294,7 @@ describe("HashGraph for AddWinSet tests", () => {
         let op9: Operation<number> = new Operation(OperationType.Remove, 1);
         let deps9: string[] = [vertexHash5];
         let vertexHash9 = cro.hashGraph.addVertex(op9, deps9, peerId);
-        console.log("vertex9: ", vertexHash9); 
+        console.log("vertex9: ", vertexHash9);
 
         let sortedOrder = cro.hashGraph.topologicalSort();
         console.log(sortedOrder)
@@ -361,7 +303,7 @@ describe("HashGraph for AddWinSet tests", () => {
 
     test("Test: Joao's latest brain teaser", () => {
         /*
-            
+
                        __ V2:Add(2) <------------\
             V1:Add(1) /                           \ - V5:RM(2)
                       \__ V3:RM(2) <- V4:RM(2) <--/

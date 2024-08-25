@@ -26,12 +26,12 @@ export enum OperationType {
 export class Operation<T> {
   constructor(
       readonly type: OperationType,
-      readonly value: T 
+      readonly value: T
   ) { }
 }
 
 export interface IHashGraph<T> {
-  addVertex(op: T, deps: Hash[], peerId: string): Hash;
+  addVertex(op: T, deps: Hash[], nodeId: string): Hash;
   addToFrontier(op: T): Hash;
   topologicalSort(): Hash[];
   areCausallyRelated(vertexHash1: Hash, vertexHash2: Hash): boolean;
@@ -47,10 +47,10 @@ export class HashGraph<T extends number> {
   private forwardEdges: Map<Hash, Set<Hash>> = new Map();
   rootHash: Hash = "";
 
-  constructor(private resolveConflicts: (op1: Operation<T>, op2: Operation<T>) => ActionType, private nodeId: string) { 
+  constructor(private resolveConflicts: (op1: Operation<T>, op2: Operation<T>) => ActionType, private nodeId: string) {
     // Create and add the NOP root vertex
     const nopOperation = new Operation(OperationType.Nop, 0 as T);
-    this.rootHash = this.computeHash(nopOperation, [], this.nodeId);
+    this.rootHash = this.computeHash(nopOperation, [], "");
     const rootVertex = new Vertex(this.rootHash, nopOperation, new Set());
     this.vertices.set(this.rootHash, rootVertex);
     this.frontier.add(this.rootHash);
@@ -58,8 +58,8 @@ export class HashGraph<T extends number> {
   }
 
   // Time complexity: O(1), Space complexity: O(1)
-  private computeHash(op: Operation<T>, deps: Hash[], peerId: String): Hash {
-    const serialized = JSON.stringify({ op, deps, peerId });
+  private computeHash(op: Operation<T>, deps: Hash[], nodeId: String): Hash {
+    const serialized = JSON.stringify({ op, deps, nodeId });
     const hash = crypto
       .createHash("sha256")
       .update(serialized)
@@ -88,7 +88,7 @@ export class HashGraph<T extends number> {
   }
   // Time complexity: O(d), where d is the number of dependencies
   // Space complexity: O(d)
-  addVertex(op: Operation<T>, deps: Hash[], peerId: string): Hash {
+  addVertex(op: Operation<T>, deps: Hash[], nodeId: string): Hash {
 
     // Temporary fix: don't add the vertex if the dependencies are not present in the local HG.
     if (!deps.every(dep => this.forwardEdges.has(dep) || this.vertices.has(dep))) {
@@ -96,7 +96,7 @@ export class HashGraph<T extends number> {
       return ""
     }
 
-    const hash = this.computeHash(op, deps, peerId);
+    const hash = this.computeHash(op, deps, nodeId);
     if (this.vertices.has(hash)) {
       return hash; // Vertex already exists
     }
@@ -126,7 +126,7 @@ export class HashGraph<T extends number> {
       if (visited.has(hash)) return;
 
       visited.add(hash);
-      
+
       const children = this.forwardEdges.get(hash) || new Set();
       for (const child of children) {
         visit(child);

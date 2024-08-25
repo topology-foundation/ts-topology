@@ -1,5 +1,7 @@
 import * as crypto from "crypto";
 
+export * from "./hashgraph.js"
+
 export abstract class TopologyObject {
   // TODO generate functions from the abi
   private abi?: string;
