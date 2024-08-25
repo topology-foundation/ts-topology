@@ -1,48 +1,45 @@
 {
-  "name": "ts-topology",
-  "description": "The official TypeScript implementation of Topology Protocol",
-  "version": "0.0.23-5",
-  "license": "MIT",
-  "homepage": "https://topology.gg/",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/topology-foundation/ts-topology.git"
-  },
-  "bugs": {
-    "url": "https://github.com/topology-foundation/ts-topology/issues"
-  },
-  "scripts": {
-    "biome-check": "biome check",
-    "docs": "typedoc",
-    "release": "release-it",
-    "test": "vitest"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.8.3",
-    "@release-it-plugins/workspaces": "^4.2.0",
-    "@types/node": "^22.4.1",
-    "release-it": "^17.6.0",
-    "typedoc": "^0.26.4",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
-  },
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
-  "private": true,
-  "release-it": {
-    "plugins": {
-      "@release-it-plugins/workspaces": {
-        "publish": false
-      }
-    },
-    "npm": false,
-    "git": {
-      "commitMessage": "chore: release v${version}"
-    },
-    "github": {
-      "release": true
-    }
-  }
+	"name": "ts-topology",
+	"description": "The official TypeScript implementation of Topology Protocol",
+	"version": "0.0.23-5",
+	"license": "MIT",
+	"homepage": "https://topology.gg/",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/topology-foundation/ts-topology.git"
+	},
+	"bugs": {
+		"url": "https://github.com/topology-foundation/ts-topology/issues"
+	},
+	"scripts": {
+		"biome-check": "biome check",
+		"docs": "typedoc",
+		"release": "release-it",
+		"test": "vitest"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.8.3",
+		"@release-it-plugins/workspaces": "^4.2.0",
+		"@types/node": "^22.4.1",
+		"release-it": "^17.6.0",
+		"typedoc": "^0.26.4",
+		"typescript": "^5.5.4",
+		"vitest": "^2.0.5"
+	},
+	"workspaces": ["packages/*", "examples/*"],
+	"private": true,
+	"release-it": {
+		"plugins": {
+			"@release-it-plugins/workspaces": {
+				"publish": false
+			}
+		},
+		"npm": false,
+		"git": {
+			"commitMessage": "chore: release v${version}"
+		},
+		"github": {
+			"release": true
+		}
+	}
 }

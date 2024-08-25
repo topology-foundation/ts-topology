@@ -1,32 +1,31 @@
-import { TopologyObject } from "@topology-foundation/object";
 import { GSet } from "@topology-foundation/crdt";
+import { TopologyObject } from "@topology-foundation/object";
 
 export interface IChat extends TopologyObject {
-    chat: GSet<string>;
-    addMessage(timestamp: string, message: string, node_id: string): void;
-    getMessages(): GSet<string>;
-    merge(other: Chat): void;
+	chat: GSet<string>;
+	addMessage(timestamp: string, message: string, node_id: string): void;
+	getMessages(): GSet<string>;
+	merge(other: Chat): void;
 }
 
 export class Chat extends TopologyObject implements IChat {
-    // store messages as strings in the format (timestamp, message, peerId)
-    chat: GSet<string>;
+	// store messages as strings in the format (timestamp, message, peerId)
+	chat: GSet<string>;
 
-    constructor(peerId: string) {
-        super(peerId);
-        this.chat = new GSet<string>(new Set<string>());
-    }
+	constructor(peerId: string) {
+		super(peerId);
+		this.chat = new GSet<string>(new Set<string>());
+	}
 
-    addMessage(timestamp: string, message: string, node_id: string): void {
-        this.chat.add(`(${timestamp}, ${message}, ${node_id})`);
-    }
+	addMessage(timestamp: string, message: string, node_id: string): void {
+		this.chat.add(`(${timestamp}, ${message}, ${node_id})`);
+	}
 
-    getMessages(): GSet<string> {
-        return this.chat;
-    }
+	getMessages(): GSet<string> {
+		return this.chat;
+	}
 
-    merge(other: Chat): void {
-        this.chat.merge(other.chat);
-    }
-
+	merge(other: Chat): void {
+		this.chat.merge(other.chat);
+	}
 }

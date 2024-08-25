@@ -1,8 +1,8 @@
 {
-  "$schema": "https://typedoc.org/schema.json",
-  "includeVersion": true,
-  "entryPoints": ["src/index.ts"],
-  "readme": "README.md",
-  "commentStyle": "block",
-  "sort": ["kind", "instance-first", "source-order", "alphabetical"]
+	"$schema": "https://typedoc.org/schema.json",
+	"includeVersion": true,
+	"entryPoints": ["src/index.ts"],
+	"readme": "README.md",
+	"commentStyle": "block",
+	"sort": ["kind", "instance-first", "source-order", "alphabetical"]
 }
