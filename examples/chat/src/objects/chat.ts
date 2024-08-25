@@ -1,15 +1,20 @@
 // if it can't compile, append src/index.asc to the import path on runtime
-import { GSet, gset_create, gset_add, gset_merge } from "@topology-foundation/crdt";
+import {
+  GSet,
+  gset_create,
+  gset_add,
+  gset_merge,
+} from "@topology-foundation/crdt";
 
 export class Chat {
-  // store messages as strings in the format (timestamp, message, peerId)
+  // store messages as strings in the format (timestamp, message, nodeId)
   messages: GSet<string>;
   constructor() {
     this.messages = gset_create<string>();
   }
 
-  addMessage(timestamp: string, message: string, node_id: string): void {
-    this.messages.add(`(${timestamp}, ${message}, ${node_id})`)
+  addMessage(timestamp: string, message: string, nodeId: string): void {
+    this.messages.add(`(${timestamp}, ${message}, ${nodeId})`);
   }
 
   getMessages(): GSet<string> {
@@ -26,8 +31,13 @@ export function createChat(): Chat {
 }
 
 // @ts-ignore
-export function addMessage(chat: Chat, timestamp: string, message: string, node_id: string): void {
-  gset_add(chat.messages, `(${timestamp}, ${message}, ${node_id})`)
+export function addMessage(
+  chat: Chat,
+  timestamp: string,
+  message: string,
+  nodeId: string,
+): void {
+  gset_add(chat.messages, `(${timestamp}, ${message}, ${nodeId})`);
 }
 
 // @ts-ignore
