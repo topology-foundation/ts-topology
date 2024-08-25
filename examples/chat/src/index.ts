@@ -33,7 +33,7 @@ const render = () => {
 	const element_chat = <HTMLDivElement>document.getElementById("chat");
 	element_chat.innerHTML = "";
 
-	if (chat.set().size === 0) {
+	if (chat.set.size === 0) {
 		const div = document.createElement("div");
 		div.innerHTML = "No messages yet";
 		div.style.padding = "10px";
@@ -41,7 +41,7 @@ const render = () => {
 		return;
 	}
 
-	for (const message of [...chat.set()].sort()) {
+	for (const message of [...chat.set].sort()) {
 		const div = document.createElement("div");
 		div.innerHTML = message;
 		div.style.padding = "10px";
