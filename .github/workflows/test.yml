@@ -11,5 +11,5 @@ jobs:
       - uses: actions/checkout@v4
       - shell: bash
         run: |
-          yarn install --frozen-lockfile
-          yarn test
+          pnpm install
+          pnpm test
