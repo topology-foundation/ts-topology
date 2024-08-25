@@ -1,4 +1,4 @@
-import { GSet } from "../GSet/index.ts";
+import { GSet } from "../GSet/index.js";
 
 /// 2PSet with support for state and op changes
 export class TwoPSet<T> {
