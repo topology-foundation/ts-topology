@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { LWWElementSet, Bias } from "../src/builtins/LWWElementSet";
+import { LWWElementSet, Bias } from "../src/crdts/LWWElementSet/index.js";
 
 describe("LWW-Element-Set Tests", () => {
     const testValues = ["walter", "jesse", "mike"];
@@ -31,7 +31,7 @@ describe("LWW-Element-Set Tests", () => {
         expect(set1.lookup("mike")).toBe(true);
 
         set1.getRemoves().set("mike", Date.now() + 1);
-        
+
         expect(set1.lookup("mike")).toBe(false);
     });
 
@@ -52,12 +52,12 @@ describe("LWW-Element-Set Tests", () => {
             // Adding different names to each set
             set1.add("gustavo");
             set2.add("saul");
-    
+
             expect(set1.compare(set2)).toBe(false);
-    
+
             set1.merge(set2);
             set2.merge(set1);
-    
+
             expect(set1.compare(set2)).toBe(true);
         });
 
@@ -65,12 +65,12 @@ describe("LWW-Element-Set Tests", () => {
             const timestamp = Date.now();
             set1.getAdds().set("gustavo", timestamp);
             set2.getAdds().set("gustavo", timestamp + 5);
-    
+
             expect(set1.getAdds().get("gustavo")).toBe(timestamp);
-    
+
             set1.merge(set2);
             set2.merge(set1);
-    
+
             expect(set1.getAdds().get("gustavo")).toBe(timestamp + 5);
             expect(set2.getAdds().get("gustavo")).toBe(timestamp + 5);
         });
@@ -82,7 +82,7 @@ describe("LWW-Element-Set Tests", () => {
             set2.getRemoves().set("gustavo", timestamp + 5);
 
             set1.merge(set2);
-    
+
             expect(set1.lookup("gustavo")).toBe(false);
             expect(set1.getRemoves().get("gustavo")).toBe(timestamp + 5);
         });

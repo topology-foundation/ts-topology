@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { GCounter } from "../src/builtins/GCounter";
+import { GCounter } from "../src/crdts/GCounter/index.js";
 
 describe("G-Counter Tests", () => {
     let set1: GCounter;
@@ -31,8 +31,8 @@ describe("G-Counter Tests", () => {
 
     test("Test Merge", () => {
         let set2 = new GCounter({ "node1": 3, "node2": 10});
-        let set3 = new GCounter({ "node1": 5, "node3": 15}); 
-        
+        let set3 = new GCounter({ "node1": 5, "node3": 15});
+
         expect(set1.counts).toEqual({"node1": 5, "node2": 10});
         set2.merge(set1);
         expect(set2.counts).toEqual({"node1": 5, "node2": 10});

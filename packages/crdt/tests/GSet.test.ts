@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach, afterEach } from "vitest";
-import { GSet } from "../src/builtins/GSet";
+import { GSet } from "../src/crdts/GSet/index.js";
 
 describe("G-Set Tests", () => {
 
@@ -41,6 +41,6 @@ describe("G-Set Tests", () => {
         set2.merge(set1);
 
         expect(set1.compare(set2)).toBe(true);
-       
+
     });
 });

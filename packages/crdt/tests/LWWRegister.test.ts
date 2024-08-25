@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
-import { LWWRegister } from "../src/builtins/LWWRegister/index.ts";
+import { LWWRegister } from "../src/crdts/LWWRegister/index.js";
 
 describe('LWW-Register Tests', () => {
     test('Test Assign', () => {
@@ -20,7 +20,7 @@ describe('LWW-Register Tests', () => {
         let register1 = new LWWRegister<string>("alice", "node1");
 
         vi.useRealTimers();
-        
+
         let register2 = new LWWRegister<string>("alice", "node2");
 
         expect(register1.compare(register2)).toEqual(true);
