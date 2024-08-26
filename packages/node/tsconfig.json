@@ -1,18 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "dist"
-  },
-  "references": [
-    {
-      "path": "../crdt"
-    },
-    {
-      "path": "../network"
-    },
-    {
-      "path": "../object"
-    }
-  ],
-  "include": ["src/**/*.ts"]
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"outDir": "dist"
+	},
+	"include": ["src/**/*.ts"]
 }

@@ -88,5 +88,4 @@ describe("Replicable Growable Array Tests", () => {
 		peerRGA.merge(rga);
 		expect(peerRGA.getArray()).toEqual(rga.getArray());
 	});
->>>>>>> main
 });
