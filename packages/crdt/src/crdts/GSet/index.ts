@@ -40,10 +40,12 @@ export function gset_lookup<T>(gset: GSet<T>, element: T): boolean {
 }
 
 export function gset_compare<T>(gset: GSet<T>, peerSet: GSet<T>): boolean {
-	/* @ts-ignore */
 	return (
 		gset.set.size === peerSet.set.size &&
-		gset.set.values().every((value) => peerSet.set.has(value))
+		gset.set
+			.values()
+			// @ts-ignore
+			.every((value) => peerSet.set.has(value))
 	);
 }
 
