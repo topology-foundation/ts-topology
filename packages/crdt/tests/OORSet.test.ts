@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { OORSet, ElementTuple } from "../src/builtins/OORSet";
+import { OORSet, ElementTuple } from "../src/crdts/OORSet";
 
 describe("OR-Set Tests", () => {
   let set1: OORSet<string>;
@@ -8,19 +8,19 @@ describe("OR-Set Tests", () => {
   const testValues = ["walter", "jesse", "mike"];
 
   beforeEach(() => {
-    set1 = new OORSet<string>(new Set<ElementTuple<string>>(), "set1");
-    set2 = new OORSet<string>(new Set<ElementTuple<string>>(), "set2");
+    set1 = new OORSet<string>("set1", new Set<ElementTuple<string>>());
+    set2 = new OORSet<string>("set2", new Set<ElementTuple<string>>());
 
     testValues.forEach((value) => {
-      set1.add(value);
-      set2.add(value);
+      set1.add("set1",value);
+      set2.add("set2",value);
     });
   });
 
   test("Test Add Elements", () => {
     expect(set1.lookup("gustavo")).toBe(false);
 
-    set1.add("gustavo");
+    set1.add("set1","gustavo");
 
     expect(set1.lookup("gustavo")).toBe(true);
   });
@@ -33,7 +33,7 @@ describe("OR-Set Tests", () => {
     expect(set1.lookup("mike")).toBe(false);
   });
 
-  test("Test Compare & Merge Elements", () => {
+  test("Test Merge Elements", () => {
     expect(set1.compare(set2)).toBe(false);
 
     set1.merge(set2);
@@ -41,5 +41,4 @@ describe("OR-Set Tests", () => {
 
     expect(set1.compare(set2)).toBe(true);
   });
-
 });

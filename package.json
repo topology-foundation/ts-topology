@@ -18,11 +18,11 @@
   },
   "devDependencies": {
     "@release-it-plugins/workspaces": "^4.2.0",
-    "@types/node": "^20.14.10",
+    "@types/node": "^22.4.1",
     "release-it": "^17.6.0",
     "typedoc": "^0.26.4",
-    "typescript": "^5.4.5",
-    "vitest": "^2.0.3"
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
   },
   "workspaces": [
     "packages/*",
