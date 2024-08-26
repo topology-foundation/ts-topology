@@ -3,5 +3,16 @@
 	"compilerOptions": {
 		"outDir": "dist"
 	},
+	"references": [
+		{
+			"path": "../crdt"
+		},
+		{
+			"path": "../network"
+		},
+		{
+			"path": "../object"
+		}
+	],
 	"include": ["src/**/*.ts"]
 }
