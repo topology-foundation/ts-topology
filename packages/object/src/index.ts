@@ -1,5 +1,5 @@
-import * as crypto from "crypto";
-import { TopologyObject } from "./proto/object_pb.js";
+import * as crypto from "node:crypto";
+import type { TopologyObject } from "./proto/object_pb.js";
 import { compileWasm } from "./wasm/compiler.js";
 
 export * from "./proto/object_pb.js";

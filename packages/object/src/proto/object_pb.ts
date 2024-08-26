@@ -10,250 +10,295 @@ import _m0 from "protobufjs/minimal.js";
 export const protobufPackage = "topology.object";
 
 export interface TopologyObject {
-  id: string;
-  abi?: string | undefined;
-  bytecode?: Uint8Array | undefined;
-  operations: TopologyObject_Operation[];
+	id: string;
+	abi?: string | undefined;
+	bytecode?: Uint8Array | undefined;
+	operations: TopologyObject_Operation[];
 }
 
 export interface TopologyObject_Operation {
-  nonce: string;
-  fn?: string | undefined;
-  args: string[];
+	nonce: string;
+	fn?: string | undefined;
+	args: string[];
 }
 
 function createBaseTopologyObject(): TopologyObject {
-  return { id: "", abi: undefined, bytecode: undefined, operations: [] };
+	return { id: "", abi: undefined, bytecode: undefined, operations: [] };
 }
 
 export const TopologyObject = {
-  encode(message: TopologyObject, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    if (message.abi !== undefined) {
-      writer.uint32(18).string(message.abi);
-    }
-    if (message.bytecode !== undefined) {
-      writer.uint32(26).bytes(message.bytecode);
-    }
-    for (const v of message.operations) {
-      TopologyObject_Operation.encode(v!, writer.uint32(34).fork()).ldelim();
-    }
-    return writer;
-  },
+	encode(
+		message: TopologyObject,
+		writer: _m0.Writer = _m0.Writer.create(),
+	): _m0.Writer {
+		if (message.id !== "") {
+			writer.uint32(10).string(message.id);
+		}
+		if (message.abi !== undefined) {
+			writer.uint32(18).string(message.abi);
+		}
+		if (message.bytecode !== undefined) {
+			writer.uint32(26).bytes(message.bytecode);
+		}
+		for (const v of message.operations) {
+			TopologyObject_Operation.encode(v!, writer.uint32(34).fork()).ldelim();
+		}
+		return writer;
+	},
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): TopologyObject {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseTopologyObject();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
+	decode(input: _m0.Reader | Uint8Array, length?: number): TopologyObject {
+		const reader =
+			input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+		const end = length === undefined ? reader.len : reader.pos + length;
+		const message = createBaseTopologyObject();
+		while (reader.pos < end) {
+			const tag = reader.uint32();
+			switch (tag >>> 3) {
+				case 1:
+					if (tag !== 10) {
+						break;
+					}
 
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
+					message.id = reader.string();
+					continue;
+				case 2:
+					if (tag !== 18) {
+						break;
+					}
 
-          message.abi = reader.string();
-          continue;
-        case 3:
-          if (tag !== 26) {
-            break;
-          }
+					message.abi = reader.string();
+					continue;
+				case 3:
+					if (tag !== 26) {
+						break;
+					}
 
-          message.bytecode = reader.bytes();
-          continue;
-        case 4:
-          if (tag !== 34) {
-            break;
-          }
+					message.bytecode = reader.bytes();
+					continue;
+				case 4:
+					if (tag !== 34) {
+						break;
+					}
 
-          message.operations.push(TopologyObject_Operation.decode(reader, reader.uint32()));
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
+					message.operations.push(
+						TopologyObject_Operation.decode(reader, reader.uint32()),
+					);
+					continue;
+			}
+			if ((tag & 7) === 4 || tag === 0) {
+				break;
+			}
+			reader.skipType(tag & 7);
+		}
+		return message;
+	},
 
-  fromJSON(object: any): TopologyObject {
-    return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      abi: isSet(object.abi) ? globalThis.String(object.abi) : undefined,
-      bytecode: isSet(object.bytecode) ? bytesFromBase64(object.bytecode) : undefined,
-      operations: globalThis.Array.isArray(object?.operations)
-        ? object.operations.map((e: any) => TopologyObject_Operation.fromJSON(e))
-        : [],
-    };
-  },
+	fromJSON(object: any): TopologyObject {
+		return {
+			id: isSet(object.id) ? globalThis.String(object.id) : "",
+			abi: isSet(object.abi) ? globalThis.String(object.abi) : undefined,
+			bytecode: isSet(object.bytecode)
+				? bytesFromBase64(object.bytecode)
+				: undefined,
+			operations: globalThis.Array.isArray(object?.operations)
+				? object.operations.map((e: any) =>
+						TopologyObject_Operation.fromJSON(e),
+					)
+				: [],
+		};
+	},
 
-  toJSON(message: TopologyObject): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.abi !== undefined) {
-      obj.abi = message.abi;
-    }
-    if (message.bytecode !== undefined) {
-      obj.bytecode = base64FromBytes(message.bytecode);
-    }
-    if (message.operations?.length) {
-      obj.operations = message.operations.map((e) => TopologyObject_Operation.toJSON(e));
-    }
-    return obj;
-  },
+	toJSON(message: TopologyObject): unknown {
+		const obj: any = {};
+		if (message.id !== "") {
+			obj.id = message.id;
+		}
+		if (message.abi !== undefined) {
+			obj.abi = message.abi;
+		}
+		if (message.bytecode !== undefined) {
+			obj.bytecode = base64FromBytes(message.bytecode);
+		}
+		if (message.operations?.length) {
+			obj.operations = message.operations.map((e) =>
+				TopologyObject_Operation.toJSON(e),
+			);
+		}
+		return obj;
+	},
 
-  create<I extends Exact<DeepPartial<TopologyObject>, I>>(base?: I): TopologyObject {
-    return TopologyObject.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<TopologyObject>, I>>(object: I): TopologyObject {
-    const message = createBaseTopologyObject();
-    message.id = object.id ?? "";
-    message.abi = object.abi ?? undefined;
-    message.bytecode = object.bytecode ?? undefined;
-    message.operations = object.operations?.map((e) => TopologyObject_Operation.fromPartial(e)) || [];
-    return message;
-  },
+	create<I extends Exact<DeepPartial<TopologyObject>, I>>(
+		base?: I,
+	): TopologyObject {
+		return TopologyObject.fromPartial(base ?? ({} as any));
+	},
+	fromPartial<I extends Exact<DeepPartial<TopologyObject>, I>>(
+		object: I,
+	): TopologyObject {
+		const message = createBaseTopologyObject();
+		message.id = object.id ?? "";
+		message.abi = object.abi ?? undefined;
+		message.bytecode = object.bytecode ?? undefined;
+		message.operations =
+			object.operations?.map((e) => TopologyObject_Operation.fromPartial(e)) ||
+			[];
+		return message;
+	},
 };
 
 function createBaseTopologyObject_Operation(): TopologyObject_Operation {
-  return { nonce: "", fn: undefined, args: [] };
+	return { nonce: "", fn: undefined, args: [] };
 }
 
 export const TopologyObject_Operation = {
-  encode(message: TopologyObject_Operation, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.nonce !== "") {
-      writer.uint32(10).string(message.nonce);
-    }
-    if (message.fn !== undefined) {
-      writer.uint32(18).string(message.fn);
-    }
-    for (const v of message.args) {
-      writer.uint32(26).string(v!);
-    }
-    return writer;
-  },
+	encode(
+		message: TopologyObject_Operation,
+		writer: _m0.Writer = _m0.Writer.create(),
+	): _m0.Writer {
+		if (message.nonce !== "") {
+			writer.uint32(10).string(message.nonce);
+		}
+		if (message.fn !== undefined) {
+			writer.uint32(18).string(message.fn);
+		}
+		for (const v of message.args) {
+			writer.uint32(26).string(v!);
+		}
+		return writer;
+	},
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): TopologyObject_Operation {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseTopologyObject_Operation();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
+	decode(
+		input: _m0.Reader | Uint8Array,
+		length?: number,
+	): TopologyObject_Operation {
+		const reader =
+			input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+		const end = length === undefined ? reader.len : reader.pos + length;
+		const message = createBaseTopologyObject_Operation();
+		while (reader.pos < end) {
+			const tag = reader.uint32();
+			switch (tag >>> 3) {
+				case 1:
+					if (tag !== 10) {
+						break;
+					}
 
-          message.nonce = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
+					message.nonce = reader.string();
+					continue;
+				case 2:
+					if (tag !== 18) {
+						break;
+					}
 
-          message.fn = reader.string();
-          continue;
-        case 3:
-          if (tag !== 26) {
-            break;
-          }
+					message.fn = reader.string();
+					continue;
+				case 3:
+					if (tag !== 26) {
+						break;
+					}
 
-          message.args.push(reader.string());
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
+					message.args.push(reader.string());
+					continue;
+			}
+			if ((tag & 7) === 4 || tag === 0) {
+				break;
+			}
+			reader.skipType(tag & 7);
+		}
+		return message;
+	},
 
-  fromJSON(object: any): TopologyObject_Operation {
-    return {
-      nonce: isSet(object.nonce) ? globalThis.String(object.nonce) : "",
-      fn: isSet(object.fn) ? globalThis.String(object.fn) : undefined,
-      args: globalThis.Array.isArray(object?.args) ? object.args.map((e: any) => globalThis.String(e)) : [],
-    };
-  },
+	fromJSON(object: any): TopologyObject_Operation {
+		return {
+			nonce: isSet(object.nonce) ? globalThis.String(object.nonce) : "",
+			fn: isSet(object.fn) ? globalThis.String(object.fn) : undefined,
+			args: globalThis.Array.isArray(object?.args)
+				? object.args.map((e: any) => globalThis.String(e))
+				: [],
+		};
+	},
 
-  toJSON(message: TopologyObject_Operation): unknown {
-    const obj: any = {};
-    if (message.nonce !== "") {
-      obj.nonce = message.nonce;
-    }
-    if (message.fn !== undefined) {
-      obj.fn = message.fn;
-    }
-    if (message.args?.length) {
-      obj.args = message.args;
-    }
-    return obj;
-  },
+	toJSON(message: TopologyObject_Operation): unknown {
+		const obj: any = {};
+		if (message.nonce !== "") {
+			obj.nonce = message.nonce;
+		}
+		if (message.fn !== undefined) {
+			obj.fn = message.fn;
+		}
+		if (message.args?.length) {
+			obj.args = message.args;
+		}
+		return obj;
+	},
 
-  create<I extends Exact<DeepPartial<TopologyObject_Operation>, I>>(base?: I): TopologyObject_Operation {
-    return TopologyObject_Operation.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<TopologyObject_Operation>, I>>(object: I): TopologyObject_Operation {
-    const message = createBaseTopologyObject_Operation();
-    message.nonce = object.nonce ?? "";
-    message.fn = object.fn ?? undefined;
-    message.args = object.args?.map((e) => e) || [];
-    return message;
-  },
+	create<I extends Exact<DeepPartial<TopologyObject_Operation>, I>>(
+		base?: I,
+	): TopologyObject_Operation {
+		return TopologyObject_Operation.fromPartial(base ?? ({} as any));
+	},
+	fromPartial<I extends Exact<DeepPartial<TopologyObject_Operation>, I>>(
+		object: I,
+	): TopologyObject_Operation {
+		const message = createBaseTopologyObject_Operation();
+		message.nonce = object.nonce ?? "";
+		message.fn = object.fn ?? undefined;
+		message.args = object.args?.map((e) => e) || [];
+		return message;
+	},
 };
 
 function bytesFromBase64(b64: string): Uint8Array {
-  if ((globalThis as any).Buffer) {
-    return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
-  } else {
-    const bin = globalThis.atob(b64);
-    const arr = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; ++i) {
-      arr[i] = bin.charCodeAt(i);
-    }
-    return arr;
-  }
+	if ((globalThis as any).Buffer) {
+		return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
+	} else {
+		const bin = globalThis.atob(b64);
+		const arr = new Uint8Array(bin.length);
+		for (let i = 0; i < bin.length; ++i) {
+			arr[i] = bin.charCodeAt(i);
+		}
+		return arr;
+	}
 }
 
 function base64FromBytes(arr: Uint8Array): string {
-  if ((globalThis as any).Buffer) {
-    return globalThis.Buffer.from(arr).toString("base64");
-  } else {
-    const bin: string[] = [];
-    arr.forEach((byte) => {
-      bin.push(globalThis.String.fromCharCode(byte));
-    });
-    return globalThis.btoa(bin.join(""));
-  }
+	if ((globalThis as any).Buffer) {
+		return globalThis.Buffer.from(arr).toString("base64");
+	} else {
+		const bin: string[] = [];
+		arr.forEach((byte) => {
+			bin.push(globalThis.String.fromCharCode(byte));
+		});
+		return globalThis.btoa(bin.join(""));
+	}
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+	| Date
+	| Function
+	| Uint8Array
+	| string
+	| number
+	| boolean
+	| undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
+export type DeepPartial<T> = T extends Builtin
+	? T
+	: T extends globalThis.Array<infer U>
+		? globalThis.Array<DeepPartial<U>>
+		: T extends ReadonlyArray<infer U>
+			? ReadonlyArray<DeepPartial<U>>
+			: T extends {}
+				? { [K in keyof T]?: DeepPartial<T[K]> }
+				: Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+export type Exact<P, I extends P> = P extends Builtin
+	? P
+	: P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+			[K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+		};
 
 function isSet(value: any): boolean {
-  return value !== null && value !== undefined;
+	return value !== null && value !== undefined;
 }
