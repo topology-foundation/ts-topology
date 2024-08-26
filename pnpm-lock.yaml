@@ -151,6 +151,9 @@ importers:
 
   packages/crdt:
     devDependencies:
+      '@topology-foundation/object':
+        specifier: 0.0.23-5
+        version: link:../object
       assemblyscript:
         specifier: ^0.27.29
         version: 0.27.29
