@@ -239,8 +239,8 @@ importers:
         specifier: ^7.3.2
         version: 7.3.2
       ts-proto:
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
       uint8arrays:
         specifier: ^5.1.0
         version: 5.1.0
@@ -295,8 +295,8 @@ importers:
         specifier: ^7.3.2
         version: 7.3.2
       ts-proto:
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
     devDependencies:
       assemblyscript:
         specifier: ^0.27.29
@@ -5190,8 +5190,8 @@ packages:
   ts-proto-descriptors@1.16.0:
     resolution: {integrity: sha512-3yKuzMLpltdpcyQji1PJZRfoo4OJjNieKTYkQY8pF7xGKsYz/RHe3aEe4KiRxcinoBmnEhmuI+yJTxLb922ULA==}
 
-  ts-proto@2.0.2:
-    resolution: {integrity: sha512-O+UZouRUx0d8w2Rn2ezSIHCed+Rl5teeqfDNc4pPRVxksi3Um0rUkWA/vd6W8Ga199atfFy9jp2dfySxfT1q9g==}
+  ts-proto@2.0.3:
+    resolution: {integrity: sha512-nh1pCkdWy5gKGjNaYQZcKMDlWqaeQ8Kg6kma8b/EkLbI1zzg3fhIBu4KA+dR5NqosLkqcZxLMGDZJ/0T1b3prw==}
     hasBin: true
 
   tsconfck@3.1.1:
@@ -11615,7 +11615,7 @@ snapshots:
       long: 5.2.3
       protobufjs: 7.3.2
 
-  ts-proto@2.0.2:
+  ts-proto@2.0.3:
     dependencies:
       '@bufbuild/protobuf': 2.0.0
       case-anything: 2.1.13

@@ -27,6 +27,6 @@
 	},
 	"dependencies": {
 		"protobufjs": "^7.3.2",
-		"ts-proto": "^2.0.2"
+		"ts-proto": "^2.0.3"
 	}
 }
