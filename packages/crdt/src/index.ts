@@ -9,3 +9,4 @@ export * from "./crdts/OORSet/index.js";
 export * from "./crdts/PNCounter/index.js";
 export * from "./crdts/RGA/index.js";
 
+export * from "./cros/AddWinsSet/index.js";
