@@ -1,8 +1,13 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "dist"
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.asc.ts"]
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"outDir": "dist"
+	},
+	"references": [
+		{
+			"path": "../object"
+		}
+	],
+	"include": ["src/**/*.ts"],
+	"exclude": ["src/**/*.asc.ts"]
 }
