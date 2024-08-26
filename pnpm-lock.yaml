@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      vite:
-        specifier: ^5.4.1
-        version: 5.4.1(@types/node@22.4.1)(terser@5.31.6)
     devDependencies:
       '@release-it-plugins/workspaces':
         specifier: ^4.2.0
@@ -30,6 +26,9 @@ importers:
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
+      vite:
+        specifier: ^5.4.1
+        version: 5.4.1(@types/node@22.4.1)(terser@5.31.6)
       vite-tsconfig-paths:
         specifier: ^5.0.1
         version: 5.0.1(typescript@5.5.4)(vite@5.4.1(@types/node@22.4.1)(terser@5.31.6))
