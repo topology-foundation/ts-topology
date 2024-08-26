@@ -15,7 +15,7 @@ export class OORSet<T> {
   constructor(nodeId?: string, elements?: Set<ElementTuple<T>>) {
     if(nodeId !== undefined) {
       this.nodeId = nodeId;
-      this.summary = new Map<string, number>([[this.nodeId, 0]]);
+      this.summary = new Map<string, number>([[this.nodeId,this.elements.size]]);
     }
 
     if(elements !== undefined) {
