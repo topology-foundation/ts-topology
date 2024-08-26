@@ -1,11 +1,13 @@
 import { TopologyNode } from "@topology-foundation/node";
-import { Canvas, ICanvas } from "./objects/canvas";
+import { Canvas } from "./objects/canvas";
 import { Pixel } from "./objects/pixel";
 import { GCounter } from "@topology-foundation/crdt";
-import { handleCanvasMessages } from "./handlers";
+import { handleObjectOps } from "./handlers";
+import { TopologyObject } from "@topology-foundation/object";
 
 const node = new TopologyNode();
-let canvasCRO: ICanvas;
+let canvasCRO: Canvas;
+let topologyObject: TopologyObject;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
 let objectPeers: string[] = [];
@@ -61,32 +63,46 @@ async function paint_pixel(pixel: HTMLDivElement) {
   const [r, g, b] = canvasCRO.pixel(x, y).color();
   pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 
-  node.updateObject(
-    canvasCRO,
-    `paint(${node.networkNode.peerId}, [${[x, y]}], [${painting}])`,
-  );
+  node.updateObject(topologyObject.id, [
+    {
+      fn: "paint",
+      args: [
+        node.networkNode.peerId,
+        `${x},${y}`,
+        `${painting[0]},${painting[1]},${painting[2]}`,
+      ],
+    },
+  ]);
 }
 
 async function init() {
   await node.start();
 
-  node.addCustomGroupMessageHandler((e) => {
-    handleCanvasMessages(canvasCRO, e);
+  node.addCustomGroupMessageHandler("", (e) => {
     peers = node.networkNode.getAllPeers();
     discoveryPeers = node.networkNode.getGroupPeers("topology::discovery");
-    if (canvasCRO) {
-      objectPeers = node.networkNode.getGroupPeers(canvasCRO.getObjectId());
-    }
     render();
   });
 
   let create_button = <HTMLButtonElement>document.getElementById("create");
-  create_button.addEventListener("click", () => {
-    canvasCRO = new Canvas(node.networkNode.peerId, 5, 10);
-    node.createObject(canvasCRO);
+  create_button.addEventListener("click", async () => {
+    canvasCRO = new Canvas(5, 10);
+    topologyObject = await node.createObject();
+
+    // message handler for the CRO
+    node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
+      // on create/connect
+      if (topologyObject)
+        objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
+      render();
+    });
+
+    node.objectStore.subscribe(topologyObject.id, (_, obj) => {
+      handleObjectOps(canvasCRO, obj.operations);
+    });
 
     (<HTMLSpanElement>document.getElementById("canvasId")).innerText =
-      canvasCRO.getObjectId();
+      topologyObject.id;
     render();
   });
 
@@ -95,27 +111,25 @@ async function init() {
     let croId = (<HTMLInputElement>document.getElementById("canvasIdInput"))
       .value;
     try {
-      await node.subscribeObject(croId, true, "", (_, topologyObject) => {
-        let object: any = topologyObject;
-        object["canvas"] = object["canvas"].map((x: any) =>
-          x.map((y: any) => {
-            y["red"] = Object.assign(new GCounter({}), y["red"]);
-            y["green"] = Object.assign(new GCounter({}), y["green"]);
-            y["blue"] = Object.assign(new GCounter({}), y["blue"]);
-            return Object.assign(new Pixel(node.networkNode.peerId), y);
-          })
-        );
+      canvasCRO = new Canvas(5, 10);
+      topologyObject = await node.createObject();
 
-        canvasCRO = Object.assign(
-          new Canvas(node.networkNode.peerId, 0, 0),
-          object
-        );
-
+      // message handler for the CRO
+      node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
+        // on create/connect
+        if (topologyObject)
+          objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
         (<HTMLSpanElement>document.getElementById("canvasId")).innerText =
-          croId;
+          topologyObject.id;
         render();
       });
-      // TODO remove the need to click to time for subscribe and fetch
+
+      node.objectStore.subscribe(topologyObject.id, (_, obj) => {
+        handleObjectOps(canvasCRO, obj.operations);
+        render();
+      });
+
+      render();
     } catch (e) {
       console.error("Error while connecting with CRO", croId, e);
     }

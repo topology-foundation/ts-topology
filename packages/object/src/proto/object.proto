@@ -1,0 +1,15 @@
+syntax = "proto3";
+package topology.object;
+
+message TopologyObject {
+    message Operation {
+        string nonce = 1;
+        optional string fn = 2;
+        repeated string args = 3;
+    };
+
+    string id = 1;
+    optional string abi = 2;
+    optional bytes bytecode = 3;
+    repeated Operation operations = 4;
+}

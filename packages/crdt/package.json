@@ -1,32 +1,35 @@
 {
-  "name": "@topology-foundation/crdt",
-  "version": "0.0.23-5",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/topology-foundation/ts-topology.git"
-  },
-  "type": "module",
-  "types": "./dist/src/index.d.ts",
-  "files": [
-    "src",
-    "dist",
-    "!dist/test",
-    "!**/*.tsbuildinfo"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js"
-    }
-  },
-  "scripts": {
-    "build": "tsc -b",
-    "clean": "rm -rf dist/ node_modules/",
-    "prepack": "tsc -b",
-    "test": "vitest"
-  },
-  "dependencies": {
-    "@topology-foundation/object": "0.0.23-5"
-  }
+	"name": "@topology-foundation/crdt",
+	"version": "0.0.23-5",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/topology-foundation/ts-topology.git"
+	},
+	"type": "module",
+	"types": "./dist/src/index.d.ts",
+	"files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
+	"exports": {
+		".": {
+			"types": "./dist/src/index.d.ts",
+			"import": "./dist/src/index.js"
+		},
+		"./wasm": {
+			"types": "./dist/src/index.d.ts",
+			"import": "./src/index.asc.ts"
+		}
+	},
+	"scripts": {
+		"asbuild": "yarn asbuild:debug && yarn asbuild:release",
+		"asbuild:debug": "asc --config asconfig.json --target debug",
+		"asbuild:release": "asc --config asconfig.json --target release",
+		"build": "tsc -b",
+		"clean": "rm -rf dist/ node_modules/",
+		"prepack": "tsc -b",
+		"test": "vitest"
+	},
+	"devDependencies": {
+		"@topology-foundation/object": "0.0.23-5",
+		"assemblyscript": "^0.27.29"
+	}
 }

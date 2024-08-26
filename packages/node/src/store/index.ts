@@ -36,4 +36,8 @@ export class TopologyObjectStore {
       }
     }
   }
+
+  remove(objectId: string) {
+    this._store.delete(objectId);
+  }
 }

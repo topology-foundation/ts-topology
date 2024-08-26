@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { RGA } from "../src/crdts/RGA";
+import { RGA } from "../src/crdts/RGA/index.js";
 
 describe("Replicable Growable Array Tests", () => {
 	let rga: RGA<string>;

@@ -5,70 +5,46 @@ on:
   pull_request:
     branches: [main]
 jobs:
-  build-crdt:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - shell: bash
-        run: |
-          cd packages/crdt
-          yarn install --frozen-lockfile
-          yarn build
-
-  build-network:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - shell: bash
-        run: |
-          cd packages/network
-          yarn install --frozen-lockfile
-          yarn build
-
+  # node builds all packages
   build-node:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - shell: bash
         run: |
           cd packages/node
-          yarn install --frozen-lockfile
-          yarn build
-
-  build-object:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - shell: bash
-        run: |
-          cd packages/object
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm install
+          pnpm build
 
   build-example-canvas:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - shell: bash
         run: |
-          # needs to build dist beforehand
+          pnpm install
           cd packages/node
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm build
           cd ../../examples/canvas
-          yarn install --frozen-lockfile
-          yarn build
-  
+          pnpm build
+
   build-example-chat:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - shell: bash
         run: |
-          # needs to build dist beforehand
+          pnpm install
           cd packages/node
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm build
           cd ../../examples/chat
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm build

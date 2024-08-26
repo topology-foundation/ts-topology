@@ -1,28 +1,51 @@
-/// GSet with support for state and op changes
+/* GSet with support for state and op changes */
 export class GSet<T> {
-  private _set: Set<T>;
+  set: Set<T>;
 
-  constructor(set: Set<T>) {
-    this._set = set;
+  constructor(set: Set<T> = new Set<T>()) {
+    this.set = set;
   }
 
   add(element: T): void {
-    this._set.add(element);
+    this.set.add(element);
   }
 
   lookup(element: T): boolean {
-    return this._set.has(element);
-  }
-
-  set(): Set<T> {
-    return this._set;
+    return this.set.has(element);
   }
 
   compare(peerSet: GSet<T>): boolean {
-    return (this._set.size == peerSet.set().size && [...this._set].every(value => peerSet.set().has(value)));
+    return (this.set.size == peerSet.set.size && [...this.set].every(value => peerSet.set.has(value)));
   }
 
   merge(peerSet: GSet<T>): void {
-    this._set = new Set<T>([...this._set, ...peerSet.set()]);
+    this.set = new Set<T>([...this.set, ...peerSet.set]);
+  }
+}
+
+/// AssemblyScript functions
+export function gset_create<T>(set: Set<T> = new Set<T>()): GSet<T> {
+  return new GSet<T>(set);
+}
+
+export function gset_add<T>(gset: GSet<T>, element: T): void {
+  gset.add(element);
+}
+
+export function gset_lookup<T>(gset: GSet<T>, element: T): boolean {
+  return gset.lookup(element);
+}
+
+export function gset_compare<T>(gset: GSet<T>, peerSet: GSet<T>): boolean {
+  // @ts-ignore
+  return (gset.set.size == peerSet.set.size && gset.set.values().every(value => peerSet.set.has(value)));
+}
+
+export function gset_merge<T>(gset: GSet<T>, peerSet: GSet<T>): void {
+  let set = gset.set.values();
+  // @ts-ignore
+  for (let i = 0, l = peerSet.set.values().length; i < l; ++i) {
+    // @ts-ignore
+    gset.add(set[i]);
   }
 }

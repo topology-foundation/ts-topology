@@ -9,7 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - shell: bash
         run: |
-          yarn install --frozen-lockfile
-          yarn test
+          pnpm install
+          pnpm test

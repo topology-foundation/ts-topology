@@ -1,46 +1,46 @@
 {
-  "name": "ts-topology",
-  "description": "The official TypeScript implementation of Topology Protocol",
-  "version": "0.0.23-5",
-  "license": "MIT",
-  "homepage": "https://topology.gg/",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/topology-foundation/ts-topology.git"
-  },
-  "bugs": {
-    "url": "https://github.com/topology-foundation/ts-topology/issues"
-  },
-  "scripts": {
-    "docs": "typedoc",
-    "release": "release-it",
-    "test": "vitest"
-  },
-  "devDependencies": {
-    "@release-it-plugins/workspaces": "^4.2.0",
-    "@types/node": "^22.4.1",
-    "release-it": "^17.6.0",
-    "typedoc": "^0.26.4",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
-  },
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
-  "private": true,
-  "release-it": {
-    "plugins": {
-      "@release-it-plugins/workspaces": {
-        "publish": false
-      }
-    },
-    "npm": false,
-    "git": {
-      "commitMessage": "chore: release v${version}"
-    },
-    "github": {
-      "release": true
-    }
-  }
+	"name": "ts-topology",
+	"description": "The official TypeScript implementation of Topology Protocol",
+	"version": "0.0.23-5",
+	"license": "MIT",
+	"homepage": "https://topology.gg/",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/topology-foundation/ts-topology.git"
+	},
+	"bugs": {
+		"url": "https://github.com/topology-foundation/ts-topology/issues"
+	},
+	"scripts": {
+		"docs": "typedoc",
+		"proto-gen": "buf generate",
+		"release": "release-it",
+		"test": "vitest"
+	},
+	"devDependencies": {
+		"@release-it-plugins/workspaces": "^4.2.0",
+		"@types/node": "^22.4.1",
+		"assemblyscript": "^0.27.29",
+		"release-it": "^17.6.0",
+		"typedoc": "^0.26.6",
+		"typescript": "^5.5.4",
+		"vite": "^5.4.1",
+		"vite-tsconfig-paths": "^5.0.1",
+		"vitest": "^2.0.5"
+	},
+	"private": true,
+	"release-it": {
+		"plugins": {
+			"@release-it-plugins/workspaces": {
+				"publish": false
+			}
+		},
+		"npm": false,
+		"git": {
+			"commitMessage": "chore: release v${version}"
+		},
+		"github": {
+			"release": true
+		}
+	}
 }

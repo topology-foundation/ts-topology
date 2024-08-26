@@ -1,32 +1,51 @@
-import { TopologyObject } from "@topology-foundation/object";
-import { GSet } from "@topology-foundation/crdt";
+// if it can't compile, append src/index.asc to the import path on runtime
+import {
+  GSet,
+  gset_create,
+  gset_add,
+  gset_merge,
+} from "@topology-foundation/crdt";
 
-export interface IChat extends TopologyObject {
-    chat: GSet<string>;
-    addMessage(timestamp: string, message: string, node_id: string): void;
-    getMessages(): GSet<string>;
-    merge(other: Chat): void;
+export class Chat {
+  // store messages as strings in the format (timestamp, message, nodeId)
+  messages: GSet<string>;
+  constructor() {
+    this.messages = gset_create<string>();
+  }
+
+  addMessage(timestamp: string, message: string, nodeId: string): void {
+    this.messages.add(`(${timestamp}, ${message}, ${nodeId})`);
+  }
+
+  getMessages(): GSet<string> {
+    return this.messages;
+  }
+
+  merge(other: Chat): void {
+    this.messages.merge(other.messages);
+  }
 }
 
-export class Chat extends TopologyObject implements IChat {
-    // store messages as strings in the format (timestamp, message, peerId)
-    chat: GSet<string>;
+export function createChat(): Chat {
+  return new Chat();
+}
 
-    constructor(peerId: string) {
-        super(peerId);
-        this.chat = new GSet<string>(new Set<string>());
-    }
+// @ts-ignore
+export function addMessage(
+  chat: Chat,
+  timestamp: string,
+  message: string,
+  nodeId: string,
+): void {
+  gset_add(chat.messages, `(${timestamp}, ${message}, ${nodeId})`);
+}
 
-    addMessage(timestamp: string, message: string, node_id: string): void {
-        this.chat.add(`(${timestamp}, ${message}, ${node_id})`);
-    }
+// @ts-ignore
+export function getMessages(chat: Chat): GSet<string> {
+  return chat.messages;
+}
 
-    getMessages(): GSet<string> {
-        return this.chat;
-    }
-
-    merge(other: Chat): void {
-        this.chat.merge(other.chat);
-    }
-
+// @ts-ignore
+export function merge(chat: Chat, other: Chat): void {
+  gset_merge(chat.messages, other.messages);
 }
