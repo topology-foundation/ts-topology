@@ -1,44 +1,44 @@
-import { describe, test, expect, beforeEach } from "vitest";
-import { OORSet, ElementTuple } from "../src/crdts/OORSet";
+import { beforeEach, describe, expect, test } from "vitest";
+import { type ElementTuple, OORSet } from "../src/crdts/OORSet";
 
 describe("OR-Set Tests", () => {
-  let set1: OORSet<string>;
-  let set2: OORSet<string>;
+	let set1: OORSet<string>;
+	let set2: OORSet<string>;
 
-  const testValues = ["walter", "jesse", "mike"];
+	const testValues = ["walter", "jesse", "mike"];
 
-  beforeEach(() => {
-    set1 = new OORSet<string>("set1", new Set<ElementTuple<string>>());
-    set2 = new OORSet<string>("set2", new Set<ElementTuple<string>>());
+	beforeEach(() => {
+		set1 = new OORSet<string>("set1", new Set<ElementTuple<string>>());
+		set2 = new OORSet<string>("set2", new Set<ElementTuple<string>>());
 
-    testValues.forEach((value) => {
-      set1.add("set1",value);
-      set2.add("set2",value);
-    });
-  });
+		for (const value of testValues) {
+			set1.add("set1", value);
+			set2.add("set2", value);
+		}
+	});
 
-  test("Test Add Elements", () => {
-    expect(set1.lookup("gustavo")).toBe(false);
+	test("Test Add Elements", () => {
+		expect(set1.lookup("gustavo")).toBe(false);
 
-    set1.add("set1","gustavo");
+		set1.add("set1", "gustavo");
 
-    expect(set1.lookup("gustavo")).toBe(true);
-  });
+		expect(set1.lookup("gustavo")).toBe(true);
+	});
 
-  test("Test Remove Elements", () => {
-    expect(set1.lookup("mike")).toBe(true);
+	test("Test Remove Elements", () => {
+		expect(set1.lookup("mike")).toBe(true);
 
-    set1.remove("mike");
+		set1.remove("mike");
 
-    expect(set1.lookup("mike")).toBe(false);
-  });
+		expect(set1.lookup("mike")).toBe(false);
+	});
 
-  test("Test Merge Elements", () => {
-    expect(set1.compare(set2)).toBe(false);
+	test("Test Merge Elements", () => {
+		expect(set1.compare(set2)).toBe(false);
 
-    set1.merge(set2);
-    set2.merge(set1);
+		set1.merge(set2);
+		set2.merge(set1);
 
-    expect(set1.compare(set2)).toBe(true);
-  });
+		expect(set1.compare(set2)).toBe(true);
+	});
 });
