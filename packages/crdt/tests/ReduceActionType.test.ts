@@ -1,9 +1,6 @@
-import { beforeEach, describe, expect, test } from "vitest";
-import {
-	ReduceActionType,
-	ActionType,
-} from "../src/cros/ReduceActionType/index.js";
 import { Operation, OperationType } from "@topology-foundation/object/";
+import { beforeEach, describe, expect, test } from "vitest";
+import { ReduceActionType } from "../src/cros/ReduceActionType/index.js";
 
 describe("Reduce Action Type tests", () => {
 	let cro: ReduceActionType<number>;

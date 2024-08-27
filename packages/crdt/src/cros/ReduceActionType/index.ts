@@ -1,9 +1,9 @@
+import { Smush32 } from "@thi.ng/random";
 import {
+	HashGraph,
 	type Hash,
 	type Operation,
-	HashGraph,
 } from "@topology-foundation/object";
-import { Smush32 } from "@thi.ng/random";
 
 type ReductionType<T> = { hash: Hash; op: Operation<T>; index: number };
 type ResolvedConflict = { action: ActionType; indices: number[] };
