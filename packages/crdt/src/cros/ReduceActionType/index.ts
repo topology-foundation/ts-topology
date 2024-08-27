@@ -18,6 +18,7 @@ const MOD = 1e9 + 9;
 function compute_hash(s: string): number {
 	let hash = 0;
 	for (let i = 0; i < s.length; i++) {
+		// Same as hash = hash * 31 + s.charCodeAt(i);
 		hash = (hash << 5) - hash + s.charCodeAt(i);
 		hash %= MOD;
 	}
@@ -58,7 +59,7 @@ export class ReduceActionType<T> {
 				const moving = order[j];
 
 				if (!this.hashGraph.areCausallyRelated(anchor, moving)) {
-					console.log("Start the magic ", i, j);
+					console.log("Start the magic", i, j);
 					const concurrentOps: ReductionType<T>[] = [];
 					concurrentOps.push({
 						hash: anchor,
@@ -94,10 +95,12 @@ export class ReduceActionType<T> {
 
 					switch (resolved.action) {
 						case ActionType.Reduce:
+							// Sort the indices in descending order, so that splice does not mess up the order
+							resolved.indices.sort((a, b) => (a < b ? 1 : -1));
 							for (const idx of resolved.indices) {
 								if (idx === i) shouldIncrementI = false;
 								order.splice(idx, 1);
-								console.log("Spliced at", idx, order[idx]);
+								console.log("Spliced at", idx);
 								console.log("After splicing: ", order);
 							}
 							if (!shouldIncrementI) j = order.length; // Break out of inner loop
