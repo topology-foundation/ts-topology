@@ -134,7 +134,7 @@ export class HashGraph<T> {
 		// Start with the root vertex
 		visit(this.rootHash);
 
-		return result.reverse().splice(0, 1);
+		return result.reverse();
 	}
 
 	// linearizeOps(): Operation<T>[] {

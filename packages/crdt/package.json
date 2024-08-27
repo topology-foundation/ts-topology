@@ -8,7 +8,12 @@
 	},
 	"type": "module",
 	"types": "./dist/src/index.d.ts",
-	"files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
+	"files": [
+		"src",
+		"dist",
+		"!dist/test",
+		"!**/*.tsbuildinfo"
+	],
 	"exports": {
 		".": {
 			"types": "./dist/src/index.d.ts",
@@ -31,5 +36,8 @@
 	"devDependencies": {
 		"@topology-foundation/object": "0.0.23-5",
 		"assemblyscript": "^0.27.29"
+	},
+	"dependencies": {
+		"@thi.ng/random": "^4.0.3"
 	}
 }

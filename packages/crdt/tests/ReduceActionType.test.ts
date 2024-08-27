@@ -1,172 +1,20 @@
-import { Operation, OperationType } from "@topology-foundation/object";
 import { beforeEach, describe, expect, test } from "vitest";
-import { AddWinsSet } from "../src/cros/AddWinsSet/index.js";
+import {
+	ReduceActionType,
+	ActionType,
+} from "../src/cros/ReduceActionType/index.js";
+import { Operation, OperationType } from "@topology-foundation/object/";
 
-describe("HashGraph for AddWinSet tests", () => {
-	let cro: AddWinsSet<number>;
+describe("Reduce Action Type tests", () => {
+	let cro: ReduceActionType<number>;
 	let op0: Operation<number>;
 	let vertexHash0: string;
 	const peerId = "peerId0";
 
 	beforeEach(() => {
-		cro = new AddWinsSet("peer0");
+		cro = new ReduceActionType("peer0");
 		op0 = new Operation(OperationType.Nop, 0);
 		vertexHash0 = cro.hashGraph.rootHash;
-	});
-
-	test("Test: Add Two Vertices", () => {
-		/*
-              V1:NOP <- V2:ADD(1) <- V2:REMOVE(1)
-        */
-		const op1: Operation<number> = new Operation(OperationType.Add, 1);
-		const deps1: string[] = [vertexHash0];
-		const vertexHash1 = cro.hashGraph.addVertex(op1, deps1, peerId);
-		let linearOps = cro.hashGraph.linearizeOps();
-		expect(linearOps).toEqual([op0, op1]);
-
-		// Add second vertex
-		const op2: Operation<number> = new Operation(OperationType.Remove, 1);
-		const deps2: string[] = [vertexHash1];
-		const vertexHash2 = cro.hashGraph.addVertex(op2, deps2, peerId);
-		linearOps = cro.hashGraph.linearizeOps();
-		const orderArray = cro.hashGraph.topologicalSort();
-		expect(linearOps).toEqual([op0, op1, op2]);
-	});
-
-	test("Test: Add Two Concurrent Vertices With Same Value", () => {
-		/*
-                        _ V2:REMOVE(1)
-            V1:ADD(1) /
-                      \ _ V3:ADD(1)
-        */
-
-		const op1: Operation<number> = new Operation(OperationType.Add, 1);
-		const deps1: string[] = [vertexHash0];
-		const vertexHash1 = cro.hashGraph.addVertex(op1, deps1, peerId);
-
-		let linearOps = cro.hashGraph.linearizeOps();
-		expect(linearOps).toEqual([op0, op1]);
-
-		// Add second vertex
-		const op2: Operation<number> = new Operation(OperationType.Remove, 1);
-		const deps2: string[] = [vertexHash1];
-		const vertexHash2 = cro.hashGraph.addVertex(op2, deps2, peerId);
-
-		linearOps = cro.hashGraph.linearizeOps();
-		expect(linearOps).toEqual([op0, op1, op2]);
-
-		// Add the third vertex V3 concurrent with V2
-		const op3: Operation<number> = new Operation(OperationType.Add, 1);
-		const deps3: string[] = [vertexHash1];
-		const vertexHash3 = cro.hashGraph.addVertex(op3, deps3, peerId);
-
-		linearOps = cro.hashGraph.linearizeOps();
-		expect(linearOps).toEqual([op0, op1, op3]);
-	});
-
-	test("Test: Add Two Concurrent Vertices With Different Values", () => {
-		/*
-                        _ V2:REMOVE(1)
-            V1:ADD(1) /
-                      \ _ V3:ADD(2)
-        */
-
-		const op1: Operation<number> = new Operation(OperationType.Add, 1);
-		const deps1: string[] = [vertexHash0];
-		const vertexHash1 = cro.hashGraph.addVertex(op1, deps1, peerId);
-		let linearOps = cro.hashGraph.linearizeOps();
-		expect(linearOps).toEqual([op0, op1]);
-
-		// Add second vertex
-		const op2: Operation<number> = new Operation(OperationType.Remove, 1);
-		const deps2: string[] = [vertexHash1];
-		const vertexHash2 = cro.hashGraph.addVertex(op2, deps2, peerId);
-		linearOps = cro.hashGraph.linearizeOps();
-		expect(linearOps).toEqual([op0, op1, op2]);
-
-		// Add the third vertex V3 concurrent with V2
-		const op3: Operation<number> = new Operation(OperationType.Add, 3);
-		const deps3: string[] = [vertexHash1];
-		const vertexHash3 = cro.hashGraph.addVertex(op3, deps3, peerId);
-		linearOps = cro.hashGraph.linearizeOps();
-		expect([
-			[op0, op1, op2, op3],
-			[op0, op1, op3, op2],
-		]).toContainEqual(linearOps);
-	});
-
-	test("Test: Tricky Case", () => {
-		/*
-                        ___  V2:REMOVE(1) <- V4:ADD(10)
-            V1:ADD(1) /
-                      \ ___  V3:ADD(1) <- V5:REMOVE(5)
-        */
-
-		const op1: Operation<number> = new Operation(OperationType.Add, 1);
-		const deps1: string[] = [vertexHash0];
-		const vertexHash1 = cro.hashGraph.addVertex(op1, deps1, peerId);
-
-		// Add second vertex
-		const op2: Operation<number> = new Operation(OperationType.Remove, 1);
-		const deps2: string[] = [vertexHash1];
-		const vertexHash2 = cro.hashGraph.addVertex(op2, deps2, peerId);
-
-		// Add the third vertex V3 concurrent with V2
-		const op3: Operation<number> = new Operation(OperationType.Add, 1);
-		const deps3: string[] = [vertexHash1];
-		const vertexHash3 = cro.hashGraph.addVertex(op3, deps3, peerId);
-
-		// Add the vertex V4 with dependency on V2
-		const op4: Operation<number> = new Operation(OperationType.Add, 10);
-		const deps4: string[] = [vertexHash2];
-		const vertexHash4 = cro.hashGraph.addVertex(op4, deps4, peerId);
-
-		// Add the vertex V5 with dependency on V3
-		const op5: Operation<number> = new Operation(OperationType.Remove, 5);
-		const deps5: string[] = [vertexHash3];
-		const vertexHash5 = cro.hashGraph.addVertex(op5, deps5, peerId);
-		const linearOps = cro.hashGraph.linearizeOps();
-		expect([
-			[op0, op1, op4, op3, op5],
-			[op0, op1, op3, op5, op4],
-		]).toContainEqual(linearOps);
-	});
-
-	test("Test: Yuta Papa's Case", () => {
-		/*
-                        ___  V2:REMOVE(1) <- V4:ADD(2)
-            V1:ADD(1) /
-                      \ ___  V3:REMOVE(2) <- V5:ADD(1)
-        */
-
-		const op1: Operation<number> = new Operation(OperationType.Add, 1);
-		const deps1: string[] = [vertexHash0];
-		const vertexHash1 = cro.hashGraph.addVertex(op1, deps1, peerId);
-
-		// Add second vertex
-		const op2: Operation<number> = new Operation(OperationType.Remove, 1);
-		const deps2: string[] = [vertexHash1];
-		const vertexHash2 = cro.hashGraph.addVertex(op2, deps2, peerId);
-
-		// Add the third vertex V3 concurrent with V2
-		const op3: Operation<number> = new Operation(OperationType.Remove, 2);
-		const deps3: string[] = [vertexHash1];
-		const vertexHash3 = cro.hashGraph.addVertex(op3, deps3, peerId);
-
-		// Add the vertex V4 with dependency on V2
-		const op4: Operation<number> = new Operation(OperationType.Add, 2);
-		const deps4: string[] = [vertexHash2];
-		const vertexHash4 = cro.hashGraph.addVertex(op4, deps4, peerId);
-
-		// Add the vertex V5 with dependency on V3
-		const op5: Operation<number> = new Operation(OperationType.Add, 1);
-		const deps5: string[] = [vertexHash3];
-		const vertexHash5 = cro.hashGraph.addVertex(op5, deps5, peerId);
-		const linearOps = cro.hashGraph.linearizeOps();
-		expect([
-			[op0, op1, op4, op5],
-			[op0, op1, op5, op4],
-		]).toContainEqual(linearOps);
 	});
 
 	test("Test: Mega Complex Case", () => {
@@ -247,8 +95,8 @@ describe("HashGraph for AddWinSet tests", () => {
 				vertexHash6,
 			],
 		]).toContainEqual(sortedOrder);
-		console.log(sortedOrder);
-		const linearOps = cro.hashGraph.linearizeOps();
+		console.log("Sorted", sortedOrder);
+		const linearOps = cro.linearizeOps();
 		// expect([[op0, op1, op2, op6, op7, op4, op5], [op0, op1, op4, op5, op9, op2, op3, op]]).toContainEqual(linearOps);
 	});
 
@@ -352,7 +200,7 @@ describe("HashGraph for AddWinSet tests", () => {
 		const deps5: string[] = [vertexHash2, vertexHash4];
 		const vertexHash5 = cro.hashGraph.addVertex(op5, deps5, peerId);
 
-		const linearOps = cro.hashGraph.linearizeOps();
+		const linearOps = cro.linearizeOps();
 		expect(linearOps).toEqual([op0, op1, op2, op5]);
 	});
 });

@@ -3,13 +3,25 @@ import {
 	type Operation,
 	HashGraph,
 } from "@topology-foundation/object";
+import { Smush32 } from "@thi.ng/random";
 
 type ReductionType<T> = { hash: Hash; op: Operation<T>; index: number };
-type ResolvedConflict = { action: ActionType; indeces: number[] };
+type ResolvedConflict = { action: ActionType; indices: number[] };
 
-enum ActionType {
+export enum ActionType {
 	Reduce = 0,
 	Nop = 1,
+}
+
+const MOD = 1e9 + 9;
+
+function compute_hash(s: string): number {
+	let hash = 0;
+	for (let i = 0; i < s.length; i++) {
+		hash = (hash << 5) - hash + s.charCodeAt(i);
+		hash %= MOD;
+	}
+	return hash;
 }
 
 /// Example implementation of the Reduce action type
@@ -21,14 +33,15 @@ export class ReduceActionType<T> {
 		this.hashGraph = new HashGraph<T>(nodeId);
 	}
 
-	// TODO
 	resolveConflicts(ops: ReductionType<T>[]): ResolvedConflict {
-		if (op1.type !== op2.type && op1.value === op2.value) {
-			return op1.type === OperationType.Add
-				? ActionType.DropRight
-				: ActionType.DropLeft;
-		}
-		return ActionType.Nop;
+		ops.sort((a, b) => (a.hash < b.hash ? -1 : 1));
+		const seed: string = ops.map((op) => op.hash).join("");
+		console.log("Hashing...", seed, compute_hash(seed));
+		const rnd = new Smush32(compute_hash(seed));
+		const chosen = rnd.int() % ops.length;
+		const indices = ops.map((op) => op.index);
+		indices.splice(chosen, 1);
+		return { action: ActionType.Nop, indices: indices };
 	}
 
 	linearizeOps(): Operation<T>[] {
@@ -45,6 +58,7 @@ export class ReduceActionType<T> {
 				const moving = order[j];
 
 				if (!this.hashGraph.areCausallyRelated(anchor, moving)) {
+					console.log("Start the magic ", i, j);
 					const concurrentOps: ReductionType<T>[] = [];
 					concurrentOps.push({
 						hash: anchor,
@@ -74,16 +88,17 @@ export class ReduceActionType<T> {
 							});
 						}
 					}
+					console.log("Concurrent ops: ", concurrentOps);
 					const resolved = this.resolveConflicts(concurrentOps);
+					console.log("Resolved: ", resolved);
 
 					switch (resolved.action) {
 						case ActionType.Reduce:
-							for (const idx of resolved.indeces) {
+							for (const idx of resolved.indices) {
 								if (idx === i) shouldIncrementI = false;
 								order.splice(idx, 1);
 							}
-							j = order.length; // Break out of inner loop
-							shouldIncrementI = false;
+							if (!shouldIncrementI) j = order.length; // Break out of inner loop
 							break;
 						case ActionType.Nop:
 							j++;

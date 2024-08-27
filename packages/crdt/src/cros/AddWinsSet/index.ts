@@ -12,7 +12,7 @@ export class AddWinsSet<T extends number> {
 
 	constructor(nodeId: string) {
 		this.state = new Map<T, number>();
-		this.hashGraph = new HashGraph<T>(this.resolveConflicts, nodeId);
+		this.hashGraph = new HashGraph<T>(nodeId);
 	}
 
 	resolveConflicts(op1: Operation<T>, op2: Operation<T>): ActionType {
@@ -55,18 +55,18 @@ export class AddWinsSet<T extends number> {
 		}
 	}
 
-	read(): T[] {
-		const operations = this.hashGraph.linearizeOps();
-		const tempCounter = new AddWinsSet<T>("");
+	// read(): T[] {
+	// 	const operations = this.hashGraph.linearizeOps();
+	// 	const tempCounter = new AddWinsSet<T>("");
 
-		for (const op of operations) {
-			if (op.type === OperationType.Add) {
-				tempCounter.add(op.value);
-			} else {
-				tempCounter.remove(op.value);
-			}
-		}
+	// 	for (const op of operations) {
+	// 		if (op.type === OperationType.Add) {
+	// 			tempCounter.add(op.value);
+	// 		} else {
+	// 			tempCounter.remove(op.value);
+	// 		}
+	// 	}
 
-		return tempCounter.values();
-	}
+	// 	return tempCounter.values();
+	// }
 }
