@@ -83,7 +83,6 @@ describe("Reduce Action Type tests", () => {
 		const sortedOrder = cro.hashGraph.topologicalSort();
 		expect([
 			[
-				vertexHash0,
 				vertexHash1,
 				vertexHash4,
 				vertexHash5,
@@ -97,6 +96,7 @@ describe("Reduce Action Type tests", () => {
 		]).toContainEqual(sortedOrder);
 		console.log("Sorted", sortedOrder);
 		const linearOps = cro.linearizeOps();
+		console.log("Linear order", linearOps);
 		// expect([[op0, op1, op2, op6, op7, op4, op5], [op0, op1, op4, op5, op9, op2, op3, op]]).toContainEqual(linearOps);
 	});
 

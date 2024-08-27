@@ -41,7 +41,7 @@ export class ReduceActionType<T> {
 		const chosen = rnd.int() % ops.length;
 		const indices = ops.map((op) => op.index);
 		indices.splice(chosen, 1);
-		return { action: ActionType.Nop, indices: indices };
+		return { action: ActionType.Reduce, indices: indices };
 	}
 
 	linearizeOps(): Operation<T>[] {
@@ -97,6 +97,8 @@ export class ReduceActionType<T> {
 							for (const idx of resolved.indices) {
 								if (idx === i) shouldIncrementI = false;
 								order.splice(idx, 1);
+								console.log("Spliced at", idx, order[idx]);
+								console.log("After splicing: ", order);
 							}
 							if (!shouldIncrementI) j = order.length; // Break out of inner loop
 							break;

@@ -159,6 +159,10 @@ importers:
         version: 5.0.4(webpack-cli@5.1.4)(webpack@5.94.0)
 
   packages/crdt:
+    dependencies:
+      '@thi.ng/random':
+        specifier: ^4.0.3
+        version: 4.0.3
     devDependencies:
       '@topology-foundation/object':
         specifier: 0.0.23-5
@@ -1917,6 +1921,18 @@ packages:
   '@szmarczak/http-timer@5.0.1':
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
+
+  '@thi.ng/api@8.11.9':
+    resolution: {integrity: sha512-GV2HZJ+QEdUScK5f47K/n75UqN16qdBxu4sPwv8vWAOlBMT4Wak4AWAtb1Aks/WkXVuJRSVRaIjmevZxfFAStw==}
+    engines: {node: '>=18'}
+
+  '@thi.ng/errors@2.5.15':
+    resolution: {integrity: sha512-vQ0M3yf6UbB8k6rdQMo2zgFpvcvEl95aLA1y5Fhxtm1KU6JfzDO1YZL3eIYPPnzhjUHw9zc0htbeBLI1x2QDnw==}
+    engines: {node: '>=18'}
+
+  '@thi.ng/random@4.0.3':
+    resolution: {integrity: sha512-ffHg6qJeGPHvom6mQGXMg4GaMIj1FME9Nx9aqZqm1h9r6tJN7Z2s4MIM4QFdZ1hfhGdErJ378eDROxHZCL1Uyw==}
+    engines: {node: '>=18'}
 
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
@@ -7968,6 +7984,15 @@ snapshots:
   '@szmarczak/http-timer@5.0.1':
     dependencies:
       defer-to-connect: 2.0.1
+
+  '@thi.ng/api@8.11.9': {}
+
+  '@thi.ng/errors@2.5.15': {}
+
+  '@thi.ng/random@4.0.3':
+    dependencies:
+      '@thi.ng/api': 8.11.9
+      '@thi.ng/errors': 2.5.15
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
