@@ -26,7 +26,7 @@
 		"assemblyscript": "^0.27.29"
 	},
 	"dependencies": {
-		"protobufjs": "^7.3.2",
+		"protobufjs": "^7.4.0",
 		"ts-proto": "^2.0.3"
 	}
 }
