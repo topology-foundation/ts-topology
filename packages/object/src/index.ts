@@ -7,11 +7,7 @@ export * from "./proto/object_pb.js";
 export * from "./hashgraph.js";
 
 export interface CRO<T> {
-	resolveConflicts: (
-		op1: hashgraph.Vertex<T>,
-		op2: hashgraph.Vertex<T>,
-	) => hashgraph.ActionType;
-	merge: (cro: CRO<T>) => void;
+	resolveConflicts: (vertices: hashgraph.Vertex<T>[]) => hashgraph.ActionType;
 }
 
 /* Creates a new TopologyObject */

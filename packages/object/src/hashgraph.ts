@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
 
 type Hash = string;
-type Operation<T> = { type: number; value: T | null };
+export type Operation<T> = { type: number; value: T | null };
 
 enum OperationType {
 	NOP = -1,
@@ -25,7 +25,7 @@ export interface Vertex<T> {
 
 export class HashGraph<T> {
 	nodeId: string;
-	resolveConflicts: (v1: Vertex<T>, v2: Vertex<T>) => ActionType;
+	resolveConflicts: (vertices: Vertex<T>[]) => ActionType;
 
 	vertices: Map<Hash, Vertex<T>> = new Map();
 	frontier: Set<Hash> = new Set();
@@ -38,7 +38,7 @@ export class HashGraph<T> {
 
 	constructor(
 		nodeId: string,
-		resolveConflicts: (v1: Vertex<T>, v2: Vertex<T>) => ActionType,
+		resolveConflicts: (vertices: Vertex<T>[]) => ActionType,
 	) {
 		this.nodeId = nodeId;
 		this.resolveConflicts = resolveConflicts;
@@ -155,13 +155,13 @@ export class HashGraph<T> {
 				const moving = order[j];
 
 				if (!this.areCausallyRelated(anchor, moving)) {
-					const op1 = this.vertices.get(anchor);
-					const op2 = this.vertices.get(moving);
+					const v1 = this.vertices.get(anchor);
+					const v2 = this.vertices.get(moving);
 					let action: ActionType;
-					if (!op1 || !op2) {
+					if (!v1 || !v2) {
 						action = ActionType.Nop;
 					} else {
-						action = this.resolveConflicts(op1, op2);
+						action = this.resolveConflicts([v1, v2]);
 					}
 
 					switch (action) {
