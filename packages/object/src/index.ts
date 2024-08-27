@@ -10,13 +10,13 @@ export interface CRO<T> {
 	resolveConflicts: (
 		op1: hashgraph.Vertex<T>,
 		op2: hashgraph.Vertex<T>,
-	) => ActionType;
+	) => hashgraph.ActionType;
 	merge: (cro: CRO<T>) => void;
 }
 
 /* Creates a new TopologyObject */
 export async function newTopologyObject(
-	peerId: string,
+	nodeId: string,
 	path?: string,
 	id?: string,
 	abi?: string,
@@ -29,7 +29,7 @@ export async function newTopologyObject(
 			crypto
 				.createHash("sha256")
 				.update(abi ?? "")
-				.update(peerId)
+				.update(nodeId)
 				.update(Math.floor(Math.random() * Number.MAX_VALUE).toString())
 				.digest("hex"),
 		abi: abi ?? "",

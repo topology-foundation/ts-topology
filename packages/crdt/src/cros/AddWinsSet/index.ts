@@ -1,14 +1,10 @@
+import { ActionType, CRO } from "@topology-foundation/object";
+import { Vertex } from "@topology-foundation/object/src";
+
 enum OperationType {
 	Add = 0,
 	Remove = 1,
 	Nop = 2,
-}
-
-enum ActionType {
-	DropLeft = 0,
-	DropRight = 1,
-	Nop = 2,
-	Swap = 3,
 }
 
 interface Operation<T> {
@@ -17,7 +13,7 @@ interface Operation<T> {
 }
 
 /// AddWinsSet with support for state and op changes
-export class AddWinsSet<T> {
+export class AddWinsSet<T> implements CRO<T> {
 	operations: Operation<T>[];
 	state: Map<T, number>;
 
@@ -68,9 +64,9 @@ export class AddWinsSet<T> {
 			.map(([value, _]) => value);
 	}
 
-	resolveConflicts(op1: Operation<T>, op2: Operation<T>): ActionType {
-		if (op1.type !== op2.type && op1.value === op2.value) {
-			return op1.type === OperationType.Add
+	resolveConflicts(v1: Vertex<T>, v2: Vertex<T>): ActionType {
+		if (v1.operation.type !== v2.operation.type && v1.operation.value === v2.operation.value) {
+			return v1.operation.type === OperationType.Add
 				? ActionType.DropRight
 				: ActionType.DropLeft;
 		}

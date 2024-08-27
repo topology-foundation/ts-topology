@@ -1,47 +1,67 @@
 import * as crypto from "node:crypto";
 
 type Hash = string;
+type Operation<T> = { type: number; value: T | null };
 
 enum OperationType {
 	NOP = -1,
 }
 
-export interface Vertex {
+export enum ActionType {
+	DropLeft = 0,
+	DropRight = 1,
+	Nop = 2,
+	Swap = 3,
+}
+
+export interface Vertex<T> {
 	hash: Hash;
 	nodeId: string;
 	// internal Operation type enum converted to number
-	// -1 for NOOP
-	operation: number;
+	// -1 for NOP
+	operation: Operation<T>;
 	dependencies: Set<Hash>;
 }
 
 export class HashGraph<T> {
 	nodeId: string;
-	resolveConflicts: (op1: Operation<T>, op2: Operation<T>) => ActionType;
+	resolveConflicts: (v1: Vertex<T>, v2: Vertex<T>) => ActionType;
 
-	vertices: Map<Hash, Vertex> = new Map();
+	vertices: Map<Hash, Vertex<T>> = new Map();
 	frontier: Set<Hash> = new Set();
 	forwardEdges: Map<Hash, Set<Hash>> = new Map();
-	rootHash: Hash = computeHash(OperationType.NOP, [], "");
+	static readonly rootHash: Hash = computeHash(
+		{ type: OperationType.NOP, value: null },
+		[],
+		"",
+	);
 
-	constructor(nodeId: string) {
+	constructor(
+		nodeId: string,
+		resolveConflicts: (v1: Vertex<T>, v2: Vertex<T>) => ActionType,
+	) {
 		this.nodeId = nodeId;
+		this.resolveConflicts = resolveConflicts;
+
 		// Create and add the NOP root vertex
-		const rootVertex: Vertex = {
-			hash: this.rootHash,
+		const rootVertex: Vertex<T> = {
+			hash: HashGraph.rootHash,
 			nodeId: "",
-			operation: OperationType.NOP,
+			operation: {
+				type: OperationType.NOP,
+				value: null,
+			},
 			dependencies: new Set(),
 		};
-		this.vertices.set(this.rootHash, rootVertex);
-		this.frontier.add(this.rootHash);
-		this.forwardEdges.set(this.rootHash, new Set());
+		this.vertices.set(HashGraph.rootHash, rootVertex);
+		this.frontier.add(HashGraph.rootHash);
+		this.forwardEdges.set(HashGraph.rootHash, new Set());
 	}
 
-	addToFrontier(operation: number): Hash {
+	addToFrontier(operation: Operation<T>): Hash {
 		const deps = this.getFrontier();
 		const hash = computeHash(operation, deps, this.nodeId);
-		const vertex: Vertex = {
+		const vertex: Vertex<T> = {
 			hash,
 			nodeId: this.nodeId,
 			operation,
@@ -64,7 +84,7 @@ export class HashGraph<T> {
 
 	// Time complexity: O(d), where d is the number of dependencies
 	// Space complexity: O(d)
-	addVertex(operation: number, deps: Hash[], nodeId: string): Hash {
+	addVertex(operation: Operation<T>, deps: Hash[], nodeId: string): Hash {
 		// Temporary fix: don't add the vertex if the dependencies are not present in the local HG.
 		if (
 			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
@@ -78,7 +98,7 @@ export class HashGraph<T> {
 			return hash; // Vertex already exists
 		}
 
-		const vertex: Vertex = {
+		const vertex: Vertex<T> = {
 			hash,
 			nodeId,
 			operation,
@@ -116,7 +136,7 @@ export class HashGraph<T> {
 			result.push(hash);
 		};
 		// Start with the root vertex
-		visit(this.rootHash);
+		visit(HashGraph.rootHash);
 
 		return result.reverse();
 	}
@@ -135,8 +155,8 @@ export class HashGraph<T> {
 				const moving = order[j];
 
 				if (!this.areCausallyRelated(anchor, moving)) {
-					const op1 = this.vertices.get(anchor)?.operation;
-					const op2 = this.vertices.get(moving)?.operation;
+					const op1 = this.vertices.get(anchor);
+					const op2 = this.vertices.get(moving);
 					let action: ActionType;
 					if (!op1 || !op2) {
 						action = ActionType.Nop;
@@ -223,28 +243,27 @@ export class HashGraph<T> {
 	}
 
 	// Time complexity: O(1), Space complexity: O(1)
-	getRoot(): Hash {
-		return this.rootHash;
-	}
-
-	// Time complexity: O(1), Space complexity: O(1)
 	getDependencies(vertexHash: Hash): Hash[] {
 		return Array.from(this.vertices.get(vertexHash)?.dependencies || []);
 	}
 
 	// Time complexity: O(1), Space complexity: O(1)
-	getVertex(hash: Hash): Vertex | undefined {
+	getVertex(hash: Hash): Vertex<T> | undefined {
 		return this.vertices.get(hash);
 	}
 
 	// Time complexity: O(V), Space complexity: O(V)
-	getAllVertices(): Vertex[] {
+	getAllVertices(): Vertex<T>[] {
 		return Array.from(this.vertices.values());
 	}
 }
 
 // Time complexity: O(1), Space complexity: O(1)
-function computeHash(operation: number, deps: Hash[], nodeId: string): Hash {
+function computeHash<T>(
+	operation: Operation<T>,
+	deps: Hash[],
+	nodeId: string,
+): Hash {
 	const serialized = JSON.stringify({ operation, deps, nodeId });
 	const hash = crypto.createHash("sha256").update(serialized).digest("hex");
 
