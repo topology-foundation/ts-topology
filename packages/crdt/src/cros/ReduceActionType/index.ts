@@ -1,7 +1,7 @@
 import { Smush32 } from "@thi.ng/random";
 import {
-	HashGraph,
 	type Hash,
+	HashGraph,
 	type Operation,
 } from "@topology-foundation/object";
 
