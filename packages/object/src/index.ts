@@ -1,9 +1,18 @@
 import * as crypto from "node:crypto";
 import type { TopologyObject } from "./proto/object_pb.js";
 import { compileWasm } from "./wasm/compiler.js";
+import type * as hashgraph from "./hashgraph.js";
 
 export * from "./proto/object_pb.js";
 export * from "./hashgraph.js";
+
+export interface CRO<T> {
+	resolveConflicts: (
+		op1: hashgraph.Vertex<T>,
+		op2: hashgraph.Vertex<T>,
+	) => ActionType;
+	merge: (cro: CRO<T>) => void;
+}
 
 /* Creates a new TopologyObject */
 export async function newTopologyObject(
