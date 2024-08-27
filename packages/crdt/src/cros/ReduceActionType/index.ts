@@ -37,7 +37,6 @@ export class ReduceActionType<T> {
 	resolveConflicts(ops: ReductionType<T>[]): ResolvedConflict {
 		ops.sort((a, b) => (a.hash < b.hash ? -1 : 1));
 		const seed: string = ops.map((op) => op.hash).join("");
-		console.log("Hashing...", seed, compute_hash(seed));
 		const rnd = new Smush32(compute_hash(seed));
 		const chosen = rnd.int() % ops.length;
 		const indices = ops.map((op) => op.index);
@@ -59,7 +58,6 @@ export class ReduceActionType<T> {
 				const moving = order[j];
 
 				if (!this.hashGraph.areCausallyRelated(anchor, moving)) {
-					console.log("Start the magic", i, j);
 					const concurrentOps: ReductionType<T>[] = [];
 					concurrentOps.push({
 						hash: anchor,
@@ -89,9 +87,7 @@ export class ReduceActionType<T> {
 							});
 						}
 					}
-					console.log("Concurrent ops: ", concurrentOps);
 					const resolved = this.resolveConflicts(concurrentOps);
-					console.log("Resolved: ", resolved);
 
 					switch (resolved.action) {
 						case ActionType.Reduce:
@@ -100,8 +96,6 @@ export class ReduceActionType<T> {
 							for (const idx of resolved.indices) {
 								if (idx === i) shouldIncrementI = false;
 								order.splice(idx, 1);
-								console.log("Spliced at", idx);
-								console.log("After splicing: ", order);
 							}
 							if (!shouldIncrementI) j = order.length; // Break out of inner loop
 							break;

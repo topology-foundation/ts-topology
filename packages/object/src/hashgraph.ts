@@ -2,7 +2,7 @@ import * as crypto from "node:crypto";
 
 export type Hash = string;
 
-class Vertex<T> {
+export class Vertex<T> {
 	constructor(
 		readonly hash: Hash,
 		readonly operation: Operation<T>,
@@ -137,61 +137,6 @@ export class HashGraph<T> {
 		result.reverse().splice(0, 1); // Remove the Nop
 		return result;
 	}
-
-	// linearizeOps(): Operation<T>[] {
-	// 	const order = this.topologicalSort();
-	// 	const result: Operation<T>[] = [];
-	// 	let i = 0;
-
-	// 	while (i < order.length) {
-	// 		const anchor = order[i];
-	// 		let j = i + 1;
-	// 		let shouldIncrementI = true;
-
-	// 		while (j < order.length) {
-	// 			const moving = order[j];
-
-	// 			if (!this.areCausallyRelated(anchor, moving)) {
-	// 				const op1 = this.vertices.get(anchor)?.operation;
-	// 				const op2 = this.vertices.get(moving)?.operation;
-	// 				let action: ActionType;
-	// 				if (!op1 || !op2) {
-	// 					action = ActionType.Nop;
-	// 				} else {
-	// 					action = this.resolveConflicts(op1, op2);
-	// 				}
-
-	// 				switch (action) {
-	// 					case ActionType.DropLeft:
-	// 						order.splice(i, 1);
-	// 						j = order.length; // Break out of inner loop
-	// 						shouldIncrementI = false;
-	// 						continue; // Continue outer loop without incrementing i
-	// 					case ActionType.DropRight:
-	// 						order.splice(j, 1);
-	// 						continue; // Continue with the same j
-	// 					case ActionType.Swap:
-	// 						[order[i], order[j]] = [order[j], order[i]];
-	// 						j = order.length; // Break out of inner loop
-	// 						break;
-	// 					case ActionType.Nop:
-	// 						j++;
-	// 						break;
-	// 				}
-	// 			} else {
-	// 				j++;
-	// 			}
-	// 		}
-
-	// 		if (shouldIncrementI) {
-	// 			const op = this.vertices.get(order[i])?.operation;
-	// 			if (op) result.push();
-	// 			i++;
-	// 		}
-	// 	}
-
-	// 	return result;
-	// }
 
 	// Time complexity: O(V), Space complexity: O(V)
 	areCausallyRelated(hash1: Hash, hash2: Hash): boolean {

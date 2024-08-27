@@ -35,47 +35,38 @@ describe("Reduce Action Type tests", () => {
 		const op1: Operation<number> = new Operation(OperationType.Add, 1);
 		const deps1: string[] = [vertexHash0];
 		const vertexHash1 = cro.hashGraph.addVertex(op1, deps1, peerId);
-		console.log("vertex1: ", vertexHash1);
 		// Add second vertex
 		const op2: Operation<number> = new Operation(OperationType.Add, 1);
 		const deps2: string[] = [vertexHash1];
 		const vertexHash2 = cro.hashGraph.addVertex(op2, deps2, peerId);
-		console.log("vertex2: ", vertexHash2);
 		// Add the third vertex V3 with dependency on V2
 		const op3: Operation<number> = new Operation(OperationType.Remove, 2);
 		const deps3: string[] = [vertexHash2];
 		const vertexHash3 = cro.hashGraph.addVertex(op3, deps3, peerId);
-		console.log("vertex3: ", vertexHash3);
 		// Add the vertex V4 -> [V1]
 		const op4: Operation<number> = new Operation(OperationType.Remove, 2);
 		const deps4: string[] = [vertexHash1];
 		const vertexHash4 = cro.hashGraph.addVertex(op4, deps4, peerId);
-		console.log("vertex4: ", vertexHash4);
 		// Add the vertex V5 -> [V4]
 		const op5: Operation<number> = new Operation(OperationType.Add, 2);
 		const deps5: string[] = [vertexHash4];
 		const vertexHash5 = cro.hashGraph.addVertex(op5, deps5, peerId);
-		console.log("vertex5: ", vertexHash5);
 		// Add the vertex V6 ->[V3]
 		const op6: Operation<number> = new Operation(OperationType.Add, 3);
 		const deps6: string[] = [vertexHash3];
 		const vertexHash6 = cro.hashGraph.addVertex(op6, deps6, peerId);
-		console.log("vertex6: ", vertexHash6);
 		// Add the vertex V7 -> [V3]
 		const op7: Operation<number> = new Operation(OperationType.Remove, 1);
 		const deps7: string[] = [vertexHash3];
 		const vertexHash7 = cro.hashGraph.addVertex(op7, deps7, peerId);
-		console.log("vertex7: ", vertexHash7);
 		// Add the vertex V8 -> [V7, V5]
 		const op8: Operation<number> = new Operation(OperationType.Remove, 3);
 		const deps8: string[] = [vertexHash7, vertexHash5];
 		const vertexHash8 = cro.hashGraph.addVertex(op8, deps8, peerId);
-		console.log("vertex8: ", vertexHash8);
 		// Add the vertex V9 -> [V5]
 		const op9: Operation<number> = new Operation(OperationType.Remove, 1);
 		const deps9: string[] = [vertexHash5];
 		const vertexHash9 = cro.hashGraph.addVertex(op9, deps9, peerId);
-		console.log("vertex9: ", vertexHash9);
 
 		const sortedOrder = cro.hashGraph.topologicalSort();
 		expect([
@@ -91,9 +82,7 @@ describe("Reduce Action Type tests", () => {
 				vertexHash6,
 			],
 		]).toContainEqual(sortedOrder);
-		console.log("Sorted", sortedOrder);
 		const linearOps = cro.linearizeOps();
-		console.log("Linear order", linearOps);
 		expect([[op1, op5, op8]]).toContainEqual(linearOps);
 	});
 
@@ -126,7 +115,6 @@ describe("Reduce Action Type tests", () => {
 		const vertexHash5 = cro.hashGraph.addVertex(op5, deps5, peerId);
 
 		const linearOps = cro.linearizeOps();
-		console.log("Linear order", linearOps);
 		expect(linearOps).toEqual([op1]);
 	});
 });

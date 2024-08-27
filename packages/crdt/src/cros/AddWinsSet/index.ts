@@ -6,7 +6,7 @@ import {
 } from "@topology-foundation/object";
 
 /// AddWinsSet with support for state and op changes
-export class AddWinsSet<T extends number> {
+export class AddWinsSet<T> {
 	state: Map<T, number>;
 	hashGraph: HashGraph<T>;
 
@@ -54,19 +54,4 @@ export class AddWinsSet<T extends number> {
 			this.state.set(value, Math.max(this.getValue(value), count));
 		}
 	}
-
-	// read(): T[] {
-	// 	const operations = this.hashGraph.linearizeOps();
-	// 	const tempCounter = new AddWinsSet<T>("");
-
-	// 	for (const op of operations) {
-	// 		if (op.type === OperationType.Add) {
-	// 			tempCounter.add(op.value);
-	// 		} else {
-	// 			tempCounter.remove(op.value);
-	// 		}
-	// 	}
-
-	// 	return tempCounter.values();
-	// }
 }
