@@ -1,6 +1,6 @@
 import * as crypto from "node:crypto";
 
-type Hash = string;
+export type Hash = string;
 
 class Vertex<T> {
 	constructor(
@@ -41,19 +41,13 @@ export interface IHashGraph<T> {
 	getAllVertices(): Vertex<T>[];
 }
 
-export class HashGraph<T extends number> {
-	private vertices: Map<Hash, Vertex<T>> = new Map();
+export class HashGraph<T> {
+	vertices: Map<Hash, Vertex<T>> = new Map();
 	private frontier: Set<Hash> = new Set();
 	private forwardEdges: Map<Hash, Set<Hash>> = new Map();
 	rootHash: Hash = "";
 
-	constructor(
-		private resolveConflicts: (
-			op1: Operation<T>,
-			op2: Operation<T>,
-		) => ActionType,
-		private nodeId: string,
-	) {
+	constructor(private nodeId: string) {
 		// Create and add the NOP root vertex
 		const nopOperation = new Operation(OperationType.Nop, 0 as T);
 		this.rootHash = this.computeHash(nopOperation, [], "");
@@ -140,63 +134,63 @@ export class HashGraph<T extends number> {
 		// Start with the root vertex
 		visit(this.rootHash);
 
-		return result.reverse();
+		return result.reverse().splice(0, 1);
 	}
 
-	linearizeOps(): Operation<T>[] {
-		const order = this.topologicalSort();
-		const result: Operation<T>[] = [];
-		let i = 0;
+	// linearizeOps(): Operation<T>[] {
+	// 	const order = this.topologicalSort();
+	// 	const result: Operation<T>[] = [];
+	// 	let i = 0;
 
-		while (i < order.length) {
-			const anchor = order[i];
-			let j = i + 1;
-			let shouldIncrementI = true;
+	// 	while (i < order.length) {
+	// 		const anchor = order[i];
+	// 		let j = i + 1;
+	// 		let shouldIncrementI = true;
 
-			while (j < order.length) {
-				const moving = order[j];
+	// 		while (j < order.length) {
+	// 			const moving = order[j];
 
-				if (!this.areCausallyRelated(anchor, moving)) {
-					const op1 = this.vertices.get(anchor)?.operation;
-					const op2 = this.vertices.get(moving)?.operation;
-					let action: ActionType;
-					if (!op1 || !op2) {
-						action = ActionType.Nop;
-					} else {
-						action = this.resolveConflicts(op1, op2);
-					}
+	// 			if (!this.areCausallyRelated(anchor, moving)) {
+	// 				const op1 = this.vertices.get(anchor)?.operation;
+	// 				const op2 = this.vertices.get(moving)?.operation;
+	// 				let action: ActionType;
+	// 				if (!op1 || !op2) {
+	// 					action = ActionType.Nop;
+	// 				} else {
+	// 					action = this.resolveConflicts(op1, op2);
+	// 				}
 
-					switch (action) {
-						case ActionType.DropLeft:
-							order.splice(i, 1);
-							j = order.length; // Break out of inner loop
-							shouldIncrementI = false;
-							continue; // Continue outer loop without incrementing i
-						case ActionType.DropRight:
-							order.splice(j, 1);
-							continue; // Continue with the same j
-						case ActionType.Swap:
-							[order[i], order[j]] = [order[j], order[i]];
-							j = order.length; // Break out of inner loop
-							break;
-						case ActionType.Nop:
-							j++;
-							break;
-					}
-				} else {
-					j++;
-				}
-			}
+	// 				switch (action) {
+	// 					case ActionType.DropLeft:
+	// 						order.splice(i, 1);
+	// 						j = order.length; // Break out of inner loop
+	// 						shouldIncrementI = false;
+	// 						continue; // Continue outer loop without incrementing i
+	// 					case ActionType.DropRight:
+	// 						order.splice(j, 1);
+	// 						continue; // Continue with the same j
+	// 					case ActionType.Swap:
+	// 						[order[i], order[j]] = [order[j], order[i]];
+	// 						j = order.length; // Break out of inner loop
+	// 						break;
+	// 					case ActionType.Nop:
+	// 						j++;
+	// 						break;
+	// 				}
+	// 			} else {
+	// 				j++;
+	// 			}
+	// 		}
 
-			if (shouldIncrementI) {
-				const op = this.vertices.get(order[i])?.operation;
-				if (op) result.push();
-				i++;
-			}
-		}
+	// 		if (shouldIncrementI) {
+	// 			const op = this.vertices.get(order[i])?.operation;
+	// 			if (op) result.push();
+	// 			i++;
+	// 		}
+	// 	}
 
-		return result;
-	}
+	// 	return result;
+	// }
 
 	// Time complexity: O(V), Space complexity: O(V)
 	areCausallyRelated(hash1: Hash, hash2: Hash): boolean {
