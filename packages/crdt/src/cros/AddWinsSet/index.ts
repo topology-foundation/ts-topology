@@ -13,53 +13,27 @@ enum OperationType {
 
 /// AddWinsSet with support for state and op changes
 export class AddWinsSet<T> implements CRO<T> {
-	operations: Operation<T>[];
 	state: Map<T, number>;
 
 	constructor() {
-		this.operations = [];
 		this.state = new Map<T, number>();
 	}
 
 	add(value: T): void {
-		const op: Operation<T> = { type: OperationType.Add, value };
-		this.operations.push(op);
-		this.state.set(value, (this.state.get(value) || 0) + 1);
+		if ((this.state.get(value) ?? 0) % 2 === 0) this.state.set(value, 1);
 	}
 
 	remove(value: T): void {
-		const op: Operation<T> = { type: OperationType.Remove, value };
-		this.operations.push(op);
-		this.add(value);
+		if ((this.state.get(value) ?? 0) % 2 === 1) this.state.set(value, 0);
 	}
 
-	list(): T[] {
-		const operations = this.hashGraph.linearizeOps();
-		const tempCounter = new AddWinsSet<T>("");
-
-		for (const op of operations) {
-			if (op.type === OperationType.Add) {
-				tempCounter.add(op.value);
-			} else {
-				tempCounter.remove(op.value);
-			}
-		}
-
-		return tempCounter.values();
-	}
-
-	getValue(value: T): number {
-		return this.state.get(value) || 0;
-	}
-
-	isInSet(value: T): boolean {
-		const count = this.getValue(value);
-		return count > 0 && count % 2 === 1;
+	contains(value: T): boolean {
+		return (this.state.get(value) ?? 0) % 2 === 1;
 	}
 
 	values(): T[] {
 		return Array.from(this.state.entries())
-			.filter(([_, count]) => count % 2 === 1)
+			.filter(([_, count]) => count === 1)
 			.map(([value, _]) => value);
 	}
 
@@ -76,9 +50,19 @@ export class AddWinsSet<T> implements CRO<T> {
 		return ActionType.Nop;
 	}
 
-	merge(other: AddWinsSet<T>): void {
-		for (const [value, count] of other.state) {
-			this.state.set(value, Math.max(this.getValue(value), count));
+	// merged at HG level and called as a callback
+	mergeCallback(operations: Operation<T>[]): void {
+		for (const op of operations) {
+			switch (op.type) {
+				case OperationType.Add:
+					if (op.value !== null) this.add(op.value);
+					break;
+				case OperationType.Remove:
+					if (op.value !== null) this.remove(op.value);
+					break;
+				default:
+					break;
+			}
 		}
 	}
 }

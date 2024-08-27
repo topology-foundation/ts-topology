@@ -8,6 +8,7 @@ export * from "./hashgraph.js";
 
 export interface CRO<T> {
 	resolveConflicts: (vertices: hashgraph.Vertex<T>[]) => hashgraph.ActionType;
+	mergeCallback: (operations: hashgraph.Operation<T>[]) => void;
 }
 
 /* Creates a new TopologyObject */

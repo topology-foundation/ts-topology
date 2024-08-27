@@ -31,9 +31,9 @@ export class HashGraph<T> {
 	frontier: Set<Hash> = new Set();
 	forwardEdges: Map<Hash, Set<Hash>> = new Map();
 	static readonly rootHash: Hash = computeHash(
+		"",
 		{ type: OperationType.NOP, value: null },
 		[],
-		"",
 	);
 
 	constructor(
@@ -60,7 +60,7 @@ export class HashGraph<T> {
 
 	addToFrontier(operation: Operation<T>): Hash {
 		const deps = this.getFrontier();
-		const hash = computeHash(operation, deps, this.nodeId);
+		const hash = computeHash(this.nodeId, operation, deps);
 		const vertex: Vertex<T> = {
 			hash,
 			nodeId: this.nodeId,
@@ -93,7 +93,7 @@ export class HashGraph<T> {
 			return "";
 		}
 
-		const hash = computeHash(operation, deps, nodeId);
+		const hash = computeHash(nodeId, operation, deps);
 		if (this.vertices.has(hash)) {
 			return hash; // Vertex already exists
 		}
@@ -260,9 +260,9 @@ export class HashGraph<T> {
 
 // Time complexity: O(1), Space complexity: O(1)
 function computeHash<T>(
+	nodeId: string,
 	operation: Operation<T>,
 	deps: Hash[],
-	nodeId: string,
 ): Hash {
 	const serialized = JSON.stringify({ operation, deps, nodeId });
 	const hash = crypto.createHash("sha256").update(serialized).digest("hex");
