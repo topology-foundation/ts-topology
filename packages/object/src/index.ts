@@ -3,7 +3,7 @@ import type { TopologyObject } from "./proto/object_pb.js";
 import { compileWasm } from "./wasm/compiler.js";
 
 export * from "./proto/object_pb.js";
-export * from "./hashgraph.js";
+export * from "./hashgraph/index.js";
 
 /* Creates a new TopologyObject */
 export async function newTopologyObject(
