@@ -67,13 +67,12 @@ function updateObject(node: TopologyNode, data: Uint8Array) {
 	if (!object) {
 		object = TopologyObjectBase.create({
 			id: object_operations.id,
-			operations: [],
 		});
 	}
 
-	for (const op of object_operations.operations) {
-		if (object.operations.some((o) => o.nonce === op.nonce)) continue;
-		object.operations.push(op);
+	for (const v1 of object_operations.vertices) {
+		if (object.vertices.some((v2) => v1.hash === v2.hash)) continue;
+		object.vertices.push(v1);
 	}
 	node.objectStore.put(object.id, object);
 
