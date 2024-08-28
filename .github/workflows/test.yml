@@ -14,6 +14,6 @@ jobs:
           version: 9
       - shell: bash
         run: |
-          cd packages/objects && pnpm build
+          cd packages/object && pnpm build
           cd ../.. && pnpm install
           pnpm test
