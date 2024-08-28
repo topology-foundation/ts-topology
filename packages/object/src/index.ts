@@ -58,7 +58,11 @@ function proxyCROHandler<T>(obj: TopologyObject<T>): ProxyHandler<object> {
 				return new Proxy(target[propKey as keyof object], {
 					apply(applyTarget, thisArg, args) {
 						if ((thisArg.operations as string[]).includes(propKey as string))
-							callFn(obj, propKey as string, args);
+							callFn(
+								obj,
+								propKey as string,
+								(args.length === 1 ? args[0] : args) as T,
+							);
 						return Reflect.apply(applyTarget, thisArg, args);
 					},
 				});
@@ -71,9 +75,9 @@ function proxyCROHandler<T>(obj: TopologyObject<T>): ProxyHandler<object> {
 export async function callFn<T>(
 	obj: TopologyObject<T>,
 	fn: string,
-	args: string[],
+	args: T,
 ): Promise<TopologyObject<T>> {
-	obj.hashGraph.addToFrontier({ type: fn, value: args.join(",") as T });
+	obj.hashGraph.addToFrontier({ type: fn, value: args });
 
 	return obj;
 }
