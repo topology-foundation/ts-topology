@@ -1,12 +1,12 @@
 import * as crypto from "node:crypto";
-import type { TopologyObjectBase } from "./proto/object_pb.js";
-import { compileWasm } from "./wasm/compiler.js";
 import {
 	type ActionType,
 	HashGraph,
 	type Operation,
 	type Vertex,
 } from "./hashgraph.js";
+import type { TopologyObjectBase } from "./proto/object_pb.js";
+import { compileWasm } from "./wasm/compiler.js";
 
 export * from "./proto/object_pb.js";
 export * from "./hashgraph.js";
@@ -31,7 +31,7 @@ export async function newTopologyObject<T>(
 ): Promise<TopologyObject<T>> {
 	// const bytecode = await compileWasm(path);
 	const bytecode = new Uint8Array();
-	let obj: TopologyObject<T> = {
+	const obj: TopologyObject<T> = {
 		id:
 			id ??
 			crypto

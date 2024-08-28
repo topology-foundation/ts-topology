@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { AddWinsSet } from "../../crdt/src/cros/AddWinsSet/index.js";
 import {
+	type TopologyObject,
 	callFn,
 	newTopologyObject,
-	type TopologyObject,
 } from "../src/index.js";
 
 describe("HashGraph for AddWinSet tests", () => {
