@@ -21,7 +21,7 @@ export class AddWinsSet<T> implements CRO<T> {
 		this._add(value);
 	}
 
-	_remove(value: T): void {
+	private _remove(value: T): void {
 		if ((this.state.get(value) ?? 0) % 2 === 1) this.state.set(value, 0);
 	}
 
