@@ -26,6 +26,7 @@
 		"react-native-webrtc": "^124.0.3"
 	},
 	"dependencies": {
+		"@bufbuild/protobuf": "^2.0.0",
 		"@chainsafe/libp2p-gossipsub": "^13.1.0",
 		"@chainsafe/libp2p-noise": "^15.1.1",
 		"@chainsafe/libp2p-yamux": "^6.0.2",
@@ -48,7 +49,6 @@
 		"it-map": "^3.1.1",
 		"it-pipe": "^3.0.1",
 		"libp2p": "^1.8.3",
-		"protobufjs": "^7.4.0",
 		"ts-proto": "^2.0.3",
 		"uint8arrays": "^5.1.0"
 	}

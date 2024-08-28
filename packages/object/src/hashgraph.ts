@@ -1,10 +1,10 @@
 import * as crypto from "node:crypto";
 
 type Hash = string;
-export type Operation<T> = { type: number; value: T | null };
+export type Operation<T> = { type: string; value: T | null };
 
 enum OperationType {
-	NOP = -1,
+	NOP = "-1",
 }
 
 export enum ActionType {
@@ -20,7 +20,7 @@ export interface Vertex<T> {
 	// internal Operation type enum converted to number
 	// -1 for NOP
 	operation: Operation<T>;
-	dependencies: Set<Hash>;
+	dependencies: Hash[];
 }
 
 export class HashGraph<T> {
@@ -28,8 +28,8 @@ export class HashGraph<T> {
 	resolveConflicts: (vertices: Vertex<T>[]) => ActionType;
 
 	vertices: Map<Hash, Vertex<T>> = new Map();
-	frontier: Set<Hash> = new Set();
-	forwardEdges: Map<Hash, Set<Hash>> = new Map();
+	frontier: Hash[] = [];
+	forwardEdges: Map<Hash, Hash[]> = new Map();
 	static readonly rootHash: Hash = computeHash(
 		"",
 		{ type: OperationType.NOP, value: null },
@@ -51,11 +51,11 @@ export class HashGraph<T> {
 				type: OperationType.NOP,
 				value: null,
 			},
-			dependencies: new Set(),
+			dependencies: [],
 		};
 		this.vertices.set(HashGraph.rootHash, rootVertex);
-		this.frontier.add(HashGraph.rootHash);
-		this.forwardEdges.set(HashGraph.rootHash, new Set());
+		this.frontier.push(HashGraph.rootHash);
+		this.forwardEdges.set(HashGraph.rootHash, []);
 	}
 
 	addToFrontier(operation: Operation<T>): Hash {
@@ -65,19 +65,22 @@ export class HashGraph<T> {
 			hash,
 			nodeId: this.nodeId,
 			operation,
-			dependencies: new Set(deps),
+			dependencies: deps,
 		};
 
 		this.vertices.set(hash, vertex);
-		this.frontier.add(hash);
+		this.frontier.push(hash);
 
 		// Update forward edges
 		for (const dep of deps) {
 			if (!this.forwardEdges.has(dep)) {
-				this.forwardEdges.set(dep, new Set());
+				this.forwardEdges.set(dep, []);
 			}
-			this.forwardEdges.get(dep)?.add(hash);
-			this.frontier.delete(dep);
+			this.forwardEdges.get(dep)?.push(hash);
+
+			// delete from frontier frontier
+			const index = this.frontier.indexOf(dep);
+			if (index > -1) this.frontier.splice(index, 1);
 		}
 		return hash;
 	}
@@ -102,18 +105,20 @@ export class HashGraph<T> {
 			hash,
 			nodeId,
 			operation,
-			dependencies: new Set(deps),
+			dependencies: deps,
 		};
 		this.vertices.set(hash, vertex);
-		this.frontier.add(hash);
+		this.frontier.push(hash);
 
 		// Update forward edges
 		for (const dep of deps) {
 			if (!this.forwardEdges.has(dep)) {
-				this.forwardEdges.set(dep, new Set());
+				this.forwardEdges.set(dep, []);
 			}
-			this.forwardEdges.get(dep)?.add(hash);
-			this.frontier.delete(dep);
+			this.forwardEdges.get(dep)?.push(hash);
+			// delete from frontier
+			const index = this.frontier.indexOf(dep);
+			if (index > -1) this.frontier.splice(index, 1);
 		}
 
 		return hash;
@@ -129,7 +134,7 @@ export class HashGraph<T> {
 
 			visited.add(hash);
 
-			const children = this.forwardEdges.get(hash) || new Set();
+			const children = this.forwardEdges.get(hash) || [];
 			for (const child of children) {
 				visit(child);
 			}
@@ -266,6 +271,5 @@ function computeHash<T>(
 ): Hash {
 	const serialized = JSON.stringify({ operation, deps, nodeId });
 	const hash = crypto.createHash("sha256").update(serialized).digest("hex");
-
 	return hash;
 }

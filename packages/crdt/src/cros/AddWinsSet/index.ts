@@ -5,13 +5,6 @@ import {
 	type Vertex,
 } from "@topology-foundation/object";
 
-enum OperationType {
-	Add = 0,
-	Remove = 1,
-	Nop = 2,
-}
-
-/// AddWinsSet with support for state and op changes
 export class AddWinsSet<T> implements CRO<T> {
 	state: Map<T, number>;
 
@@ -43,7 +36,7 @@ export class AddWinsSet<T> implements CRO<T> {
 			vertices[0].operation.type !== vertices[1].operation.type &&
 			vertices[0].operation.value === vertices[1].operation.value
 		) {
-			return vertices[0].operation.type === OperationType.Add
+			return vertices[0].operation.type === "add"
 				? ActionType.DropRight
 				: ActionType.DropLeft;
 		}
@@ -54,10 +47,10 @@ export class AddWinsSet<T> implements CRO<T> {
 	mergeCallback(operations: Operation<T>[]): void {
 		for (const op of operations) {
 			switch (op.type) {
-				case OperationType.Add:
+				case "add":
 					if (op.value !== null) this.add(op.value);
 					break;
-				case OperationType.Remove:
+				case "remove":
 					if (op.value !== null) this.remove(op.value);
 					break;
 				default:
