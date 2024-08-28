@@ -193,7 +193,7 @@ export class HashGraph<T> {
 
 			if (shouldIncrementI) {
 				const op = this.vertices.get(order[i])?.operation;
-				if (op && op?.value !== null) result.push(op);
+				if (op && op.value !== null) result.push(op);
 				i++;
 			}
 		}
