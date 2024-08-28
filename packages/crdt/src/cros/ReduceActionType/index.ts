@@ -45,7 +45,7 @@ export class ReduceActionType<T> {
 	}
 
 	linearizeOps(): Operation<T>[] {
-		const order = this.hashGraph.topologicalSort();
+		let order = this.hashGraph.topologicalSort();
 		const result: Operation<T>[] = [];
 		let i = 0;
 
@@ -90,15 +90,19 @@ export class ReduceActionType<T> {
 					const resolved = this.resolveConflicts(concurrentOps);
 
 					switch (resolved.action) {
-						case ActionType.Reduce:
-							// Sort the indices in descending order, so that splice does not mess up the order
-							resolved.indices.sort((a, b) => (a < b ? 1 : -1));
+						case ActionType.Reduce: {
+							const newOrder = [];
 							for (const idx of resolved.indices) {
 								if (idx === i) shouldIncrementI = false;
-								order.splice(idx, 1);
+								order[idx] = "";
 							}
+							for (const val of order) {
+								if (val !== "") newOrder.push(val);
+							}
+							order = newOrder;
 							if (!shouldIncrementI) j = order.length; // Break out of inner loop
 							break;
+						}
 						case ActionType.Nop:
 							j++;
 							break;
