@@ -2,14 +2,13 @@ import * as crypto from "node:crypto";
 import { BitSet } from "./BitSet.js";
 
 type Hash = string;
-const maxN = 1 << 16;
+const maxN = 1 << 5;
 
 class Vertex<T> {
 	constructor(
 		readonly hash: Hash,
 		readonly operation: Operation<T>,
 		readonly dependencies: Set<Hash>,
-		readonly reachablePredecessors: BitSet,
 	) {}
 }
 
@@ -44,12 +43,13 @@ export interface IHashGraph<T> {
 	getAllVertices(): Vertex<T>[];
 }
 
-export class HashGraph<T extends number> {
+export class HashGraph<T> {
 	private vertices: Map<Hash, Vertex<T>> = new Map();
 	private frontier: Set<Hash> = new Set();
 	private forwardEdges: Map<Hash, Set<Hash>> = new Map();
 	private topoSortedIndex: Map<Hash, number> = new Map();
 	private arePredecessorsFresh = false;
+	private reachablePredecessors: Map<number, BitSet> = new Map();
 	rootHash: Hash = "";
 
 	constructor(
@@ -62,12 +62,7 @@ export class HashGraph<T extends number> {
 		// Create and add the NOP root vertex
 		const nopOperation = new Operation(OperationType.Nop, 0 as T);
 		this.rootHash = this.computeHash(nopOperation, [], "");
-		const rootVertex = new Vertex(
-			this.rootHash,
-			nopOperation,
-			new Set(),
-			new BitSet(maxN),
-		);
+		const rootVertex = new Vertex(this.rootHash, nopOperation, new Set());
 		this.vertices.set(this.rootHash, rootVertex);
 		this.frontier.add(this.rootHash);
 		this.forwardEdges.set(this.rootHash, new Set());
@@ -84,7 +79,7 @@ export class HashGraph<T extends number> {
 	addToFrontier(operation: Operation<T>): Hash {
 		const deps = this.getFrontier();
 		const hash = this.computeHash(operation, deps, this.nodeId);
-		const vertex = new Vertex(hash, operation, new Set(deps), new BitSet(maxN));
+		const vertex = new Vertex(hash, operation, new Set(deps));
 
 		this.vertices.set(hash, vertex);
 		this.frontier.add(hash);
@@ -116,7 +111,7 @@ export class HashGraph<T extends number> {
 			return hash; // Vertex already exists
 		}
 
-		const vertex = new Vertex(hash, op, new Set(deps), new BitSet(maxN));
+		const vertex = new Vertex(hash, op, new Set(deps));
 		this.vertices.set(hash, vertex);
 		this.frontier.add(hash);
 
@@ -137,6 +132,7 @@ export class HashGraph<T extends number> {
 		const result: Hash[] = [];
 		const visited = new Set<Hash>();
 		this.topoSortedIndex.clear();
+		this.reachablePredecessors.clear();
 
 		const visit = (hash: Hash) => {
 			if (visited.has(hash)) return;
@@ -155,18 +151,21 @@ export class HashGraph<T extends number> {
 
 		for (let i = 0; i < result.length; i++) {
 			this.topoSortedIndex.set(result[i], i);
-			this.vertices.get(result[i])?.reachablePredecessors.clear();
+			this.reachablePredecessors.set(i, new BitSet(maxN));
 			for (const dep of this.vertices.get(result[i])?.dependencies || []) {
-				const depReachable = this.vertices.get(dep)?.reachablePredecessors;
-				depReachable?.set(i);
+				const depReachable = this.reachablePredecessors.get(
+					this.topoSortedIndex.get(dep) || 0,
+				);
+				depReachable?.set(this.topoSortedIndex.get(dep) || 0);
 				if (depReachable) {
-					this.vertices.get(result[i])?.reachablePredecessors._or(depReachable);
+					this.reachablePredecessors.get(i)?._or(depReachable);
 				}
 			}
 		}
 
 		this.arePredecessorsFresh = true;
-		return result.reverse();
+		result.splice(0, 1); // Remove the Nop root vertex
+		return result;
 	}
 
 	linearizeOps(): Operation<T>[] {
@@ -216,7 +215,7 @@ export class HashGraph<T extends number> {
 
 			if (shouldIncrementI) {
 				const op = this.vertices.get(order[i])?.operation;
-				if (op) result.push();
+				if (op) result.push(op);
 				i++;
 			}
 		}
@@ -231,15 +230,13 @@ export class HashGraph<T extends number> {
 		}
 
 		const test1 =
-			this.vertices
-				.get(hash1)
-				?.reachablePredecessors.get(this.topoSortedIndex.get(hash2) || 0) ||
-			false;
+			this.reachablePredecessors
+				.get(this.topoSortedIndex.get(hash1) || 0)
+				?.get(this.topoSortedIndex.get(hash2) || 0) || false;
 		const test2 =
-			this.vertices
-				.get(hash2)
-				?.reachablePredecessors.get(this.topoSortedIndex.get(hash1) || 0) ||
-			false;
+			this.reachablePredecessors
+				.get(this.topoSortedIndex.get(hash2) || 0)
+				?.get(this.topoSortedIndex.get(hash1) || 0) || false;
 		return test1 || test2;
 	}
 
