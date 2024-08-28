@@ -88,17 +88,17 @@ export class HashGraph<T> {
 	// Time complexity: O(d), where d is the number of dependencies
 	// Space complexity: O(d)
 	addVertex(operation: Operation<T>, deps: Hash[], nodeId: string): Hash {
+		const hash = computeHash(nodeId, operation, deps);
+		if (this.vertices.has(hash)) {
+			return hash; // Vertex already exists
+		}
+
 		// Temporary fix: don't add the vertex if the dependencies are not present in the local HG.
 		if (
 			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
 		) {
 			console.error("Invalid dependency detected.");
 			return "";
-		}
-
-		const hash = computeHash(nodeId, operation, deps);
-		if (this.vertices.has(hash)) {
-			return hash; // Vertex already exists
 		}
 
 		const vertex: Vertex<T> = {
@@ -193,7 +193,7 @@ export class HashGraph<T> {
 
 			if (shouldIncrementI) {
 				const op = this.vertices.get(order[i])?.operation;
-				if (op) result.push();
+				if (op?.value !== null) result.push(op);
 				i++;
 			}
 		}

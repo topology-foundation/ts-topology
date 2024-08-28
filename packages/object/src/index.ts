@@ -57,7 +57,8 @@ function proxyCROHandler<T>(obj: TopologyObject<T>): ProxyHandler<object> {
 			if (typeof target[propKey as keyof object] === "function") {
 				return new Proxy(target[propKey as keyof object], {
 					apply(applyTarget, thisArg, args) {
-						callFn(obj, propKey as string, args);
+						if ((thisArg.operations as string[]).includes(propKey as string))
+							callFn(obj, propKey as string, args);
 						return Reflect.apply(applyTarget, thisArg, args);
 					},
 				});

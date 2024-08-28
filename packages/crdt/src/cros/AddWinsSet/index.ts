@@ -6,18 +6,27 @@ import {
 } from "@topology-foundation/object";
 
 export class AddWinsSet<T> implements CRO<T> {
+	operations: string[] = ["add", "remove"];
 	state: Map<T, number>;
 
 	constructor() {
 		this.state = new Map<T, number>();
 	}
 
-	add(value: T): void {
+	private _add(value: T): void {
 		if ((this.state.get(value) ?? 0) % 2 === 0) this.state.set(value, 1);
 	}
 
-	remove(value: T): void {
+	add(value: T): void {
+		this._add(value);
+	}
+
+	_remove(value: T): void {
 		if ((this.state.get(value) ?? 0) % 2 === 1) this.state.set(value, 0);
+	}
+
+	remove(value: T): void {
+		this._remove(value);
 	}
 
 	contains(value: T): boolean {
@@ -30,7 +39,7 @@ export class AddWinsSet<T> implements CRO<T> {
 			.map(([value, _]) => value);
 	}
 
-	// in this case is an array of length 2
+	// in this case is an array of length 2 and there are only two possible operations
 	resolveConflicts(vertices: Vertex<T>[]): ActionType {
 		if (
 			vertices[0].operation.type !== vertices[1].operation.type &&
@@ -45,13 +54,14 @@ export class AddWinsSet<T> implements CRO<T> {
 
 	// merged at HG level and called as a callback
 	mergeCallback(operations: Operation<T>[]): void {
+		this.state = new Map<T, number>();
 		for (const op of operations) {
 			switch (op.type) {
 				case "add":
-					if (op.value !== null) this.add(op.value);
+					if (op.value !== null) this._add(op.value);
 					break;
 				case "remove":
-					if (op.value !== null) this.remove(op.value);
+					if (op.value !== null) this._remove(op.value);
 					break;
 				default:
 					break;
