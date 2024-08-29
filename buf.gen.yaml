@@ -2,9 +2,11 @@ version: v2
 plugins:
   - local: ./node_modules/ts-proto/protoc-gen-ts_proto
     strategy: directory
-    out: ./packages
+    # out: ./packages/network/src
+    out: ./packages/object/src
     opt:
       - esModuleInterop=true
       - fileSuffix=_pb
 inputs:
-  - directory: ./packages
+  #- directory: ./packages/network/src
+  - directory: ./packages/object/src
