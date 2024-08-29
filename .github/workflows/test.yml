@@ -15,4 +15,5 @@ jobs:
       - shell: bash
         run: |
           pnpm install
-          pnpm test
+          cd packages/object && pnpm build
+          cd ../.. && pnpm test
