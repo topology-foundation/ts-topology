@@ -23,6 +23,9 @@ importers:
       release-it:
         specifier: ^17.6.0
         version: 17.6.0(typescript@5.5.4)
+      ts-proto:
+        specifier: ^2.0.3
+        version: 2.0.3
       typedoc:
         specifier: ^0.26.6
         version: 0.26.6(typescript@5.5.4)
@@ -155,6 +158,9 @@ importers:
 
   packages/network:
     dependencies:
+      '@bufbuild/protobuf':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@chainsafe/libp2p-gossipsub':
         specifier: ^13.1.0
         version: 13.2.0
@@ -221,9 +227,6 @@ importers:
       libp2p:
         specifier: ^1.8.3
         version: 1.9.2
-      protobufjs:
-        specifier: ^7.4.0
-        version: 7.4.0
       ts-proto:
         specifier: ^2.0.3
         version: 2.0.3
@@ -277,9 +280,9 @@ importers:
 
   packages/object:
     dependencies:
-      protobufjs:
-        specifier: ^7.4.0
-        version: 7.4.0
+      '@bufbuild/protobuf':
+        specifier: ^2.0.0
+        version: 2.0.0
       ts-proto:
         specifier: ^2.0.3
         version: 2.0.3

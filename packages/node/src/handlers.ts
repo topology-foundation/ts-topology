@@ -1,6 +1,6 @@
 import type { Stream } from "@libp2p/interface";
 import { Message, Message_MessageType } from "@topology-foundation/network";
-import { TopologyObject } from "@topology-foundation/object";
+import { TopologyObjectBase } from "@topology-foundation/object";
 import * as lp from "it-length-prefixed";
 import type { TopologyNode } from "./index.js";
 
@@ -60,15 +60,14 @@ export async function topologyMessagesHandler(
   operations array doesn't contain the full remote operations array
 */
 function updateHandler(node: TopologyNode, data: Uint8Array) {
-	const object_operations = TopologyObject.decode(data);
+	const object_operations = TopologyObjectBase.decode(data);
 	let object = node.objectStore.get(object_operations.id);
 	if (!object) {
-		object = TopologyObject.create({
+		object = TopologyObjectBase.create({
 			id: object_operations.id,
-			operations: [],
 		});
 	}
-	object.operations.push(...object_operations.operations);
+	object.vertices.push(...object_operations.vertices);
 	node.objectStore.put(object.id, object);
 }
 
@@ -103,22 +102,23 @@ function syncHandler(
 function syncAcceptHandler(node: TopologyNode, data: Uint8Array) {
 	// don't blindly accept, validate the operations
 	// might have have appeared in the meantime
-	const object_operations = TopologyObject.decode(data);
-	let object = node.objectStore.get(object_operations.id);
+	const object_operations = TopologyObjectBase.decode(data);
+	let object: TopologyObjectBase | undefined = node.objectStore.get(
+		object_operations.id,
+	);
 	if (!object) {
-		object = TopologyObject.create({
+		object = TopologyObjectBase.create({
 			id: object_operations.id,
-			operations: [],
 		});
 	}
 
-	object_operations.operations.filter((op) => {
-		if (object?.operations.find((op2) => op.nonce === op2.nonce)) {
+	object_operations.vertices.filter((v1) => {
+		if (object?.vertices.find((v2) => v1.hash === v2.hash)) {
 			return false;
 		}
 		return true;
 	});
-	object.operations.push(...object_operations.operations);
+	object.vertices.push(...object_operations.vertices);
 	node.objectStore.put(object.id, object);
 
 	// TODO missing sending back the diff

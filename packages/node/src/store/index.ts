@@ -1,25 +1,25 @@
-import type { TopologyObject } from "@topology-foundation/object";
+import type { TopologyObjectBase } from "@topology-foundation/object";
 
 export type TopologyObjectStoreCallback = (
 	objectId: string,
-	object: TopologyObject,
+	object: TopologyObjectBase,
 ) => void;
 
 export class TopologyObjectStore {
 	// TODO: should be abstracted in handling multiple types of storage
-	private _store: Map<string, TopologyObject>;
+	private _store: Map<string, TopologyObjectBase>;
 	private _subscriptions: Map<string, TopologyObjectStoreCallback[]>;
 
 	constructor() {
-		this._store = new Map<string, TopologyObject>();
+		this._store = new Map<string, TopologyObjectBase>();
 		this._subscriptions = new Map<string, TopologyObjectStoreCallback[]>();
 	}
 
-	get(objectId: string): TopologyObject | undefined {
+	get(objectId: string): TopologyObjectBase | undefined {
 		return this._store.get(objectId);
 	}
 
-	put(objectId: string, object: TopologyObject) {
+	put(objectId: string, object: TopologyObjectBase) {
 		this._store.set(objectId, object);
 		this._notifySubscribers(objectId, object);
 	}
@@ -31,7 +31,10 @@ export class TopologyObjectStore {
 		this._subscriptions.get(objectId)?.push(callback);
 	}
 
-	private _notifySubscribers(objectId: string, object: TopologyObject): void {
+	private _notifySubscribers(
+		objectId: string,
+		object: TopologyObjectBase,
+	): void {
 		const callbacks = this._subscriptions.get(objectId);
 		if (callbacks) {
 			for (const callback of callbacks) {

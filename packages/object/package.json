@@ -9,6 +9,7 @@
 	"type": "module",
 	"types": "./dist/src/index.d.ts",
 	"files": ["src", "dist", "!dist/test", "!**/*.tsbuildinfo"],
+	"main": "./dist/src/index.js",
 	"exports": {
 		".": {
 			"types": "./dist/src/index.d.ts",
@@ -26,7 +27,7 @@
 		"assemblyscript": "^0.27.29"
 	},
 	"dependencies": {
-		"protobufjs": "^7.4.0",
+		"@bufbuild/protobuf": "^2.0.0",
 		"ts-proto": "^2.0.3"
 	}
 }

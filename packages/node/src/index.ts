@@ -6,7 +6,11 @@ import {
 	TopologyNetworkNode,
 	type TopologyNetworkNodeConfig,
 } from "@topology-foundation/network";
-import { TopologyObject, newTopologyObject } from "@topology-foundation/object";
+import {
+	type CRO,
+	TopologyObjectBase,
+	newTopologyObject,
+} from "@topology-foundation/object";
 import { topologyMessagesHandler } from "./handlers.js";
 import { OPERATIONS, executeObjectOperation } from "./operations.js";
 import { TopologyObjectStore } from "./store/index.js";
@@ -71,9 +75,10 @@ export class TopologyNode {
 		this.networkNode.sendMessage(peerId, [protocol], message);
 	}
 
-	async createObject(id?: string, path?: string, abi?: string) {
+	async createObject<T>(cro: CRO<T>, id?: string, path?: string, abi?: string) {
 		const object = await newTopologyObject(
 			this.networkNode.peerId,
+			cro,
 			path,
 			id,
 			abi,
@@ -81,7 +86,7 @@ export class TopologyNode {
 		executeObjectOperation(
 			this,
 			OPERATIONS.CREATE,
-			TopologyObject.encode(object).finish(),
+			TopologyObjectBase.encode(object).finish(),
 		);
 		this.networkNode.addGroupMessageHandler(object.id, async (e) =>
 			topologyMessagesHandler(this, undefined, e.detail.msg.data),
@@ -90,31 +95,25 @@ export class TopologyNode {
 	}
 
 	updateObject(id: string, operations: { fn: string; args: string[] }[]) {
-		const object = TopologyObject.create({
+		// TODO: needs refactor for working with hash graph
+		const object = TopologyObjectBase.create({
 			id,
-			operations: operations.map((op) => {
-				return {
-					nonce: generateNonce(op.fn, op.args),
-					fn: op.fn,
-					args: op.args,
-				};
-			}),
 		});
 		executeObjectOperation(
 			this,
 			OPERATIONS.UPDATE,
-			TopologyObject.encode(object).finish(),
+			TopologyObjectBase.encode(object).finish(),
 		);
 	}
 
 	async subscribeObject(id: string, fetch?: boolean, peerId?: string) {
-		const object = TopologyObject.create({
+		const object = TopologyObjectBase.create({
 			id,
 		});
 		executeObjectOperation(
 			this,
 			OPERATIONS.SUBSCRIBE,
-			TopologyObject.encode(object).finish(),
+			TopologyObjectBase.encode(object).finish(),
 			fetch,
 			peerId,
 		);
@@ -125,13 +124,13 @@ export class TopologyNode {
 	}
 
 	unsubscribeObject(id: string, purge?: boolean) {
-		const object = TopologyObject.create({
+		const object = TopologyObjectBase.create({
 			id,
 		});
 		executeObjectOperation(
 			this,
 			OPERATIONS.UNSUBSCRIBE,
-			TopologyObject.encode(object).finish(),
+			TopologyObjectBase.encode(object).finish(),
 			purge,
 		);
 	}
@@ -141,14 +140,13 @@ export class TopologyNode {
 		operations: { nonce: string; fn: string; args: string[] }[],
 		peerId?: string,
 	) {
-		const object = TopologyObject.create({
+		const object = TopologyObjectBase.create({
 			id,
-			operations,
 		});
 		executeObjectOperation(
 			this,
 			OPERATIONS.SYNC,
-			TopologyObject.encode(object).finish(),
+			TopologyObjectBase.encode(object).finish(),
 			peerId,
 		);
 	}

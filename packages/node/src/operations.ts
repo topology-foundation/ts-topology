@@ -1,5 +1,5 @@
 import { Message, Message_MessageType } from "@topology-foundation/network";
-import { TopologyObject } from "@topology-foundation/object";
+import { TopologyObjectBase } from "@topology-foundation/object";
 import type { TopologyNode } from "./index.js";
 
 /* Object operations */
@@ -52,7 +52,7 @@ export async function executeObjectOperation(
 
 /* data: { id: string, abi: string, bytecode: Uint8Array } */
 function createObject(node: TopologyNode, data: Uint8Array) {
-	const object = TopologyObject.decode(data);
+	const object = TopologyObjectBase.decode(data);
 	node.networkNode.subscribe(object.id);
 	node.objectStore.put(object.id, object);
 }
@@ -62,18 +62,17 @@ function createObject(node: TopologyNode, data: Uint8Array) {
   operations array doesn't contain the full remote operations array
 */
 function updateObject(node: TopologyNode, data: Uint8Array) {
-	const object_operations = TopologyObject.decode(data);
+	const object_operations = TopologyObjectBase.decode(data);
 	let object = node.objectStore.get(object_operations.id);
 	if (!object) {
-		object = TopologyObject.create({
+		object = TopologyObjectBase.create({
 			id: object_operations.id,
-			operations: [],
 		});
 	}
 
-	for (const op of object_operations.operations) {
-		if (object.operations.some((o) => o.nonce === op.nonce)) continue;
-		object.operations.push(op);
+	for (const v1 of object_operations.vertices) {
+		if (object.vertices.some((v2) => v1.hash === v2.hash)) continue;
+		object.vertices.push(v1);
 	}
 	node.objectStore.put(object.id, object);
 
@@ -91,7 +90,7 @@ async function subscribeObject(
 	fetch?: boolean,
 	peerId?: string,
 ) {
-	const object = TopologyObject.decode(data);
+	const object = TopologyObjectBase.decode(data);
 	node.networkNode.subscribe(object.id);
 
 	if (!fetch) return;
@@ -123,7 +122,7 @@ function unsubscribeObject(
 	data: Uint8Array,
 	purge?: boolean,
 ) {
-	const object = TopologyObject.decode(data);
+	const object = TopologyObjectBase.decode(data);
 	node.networkNode.unsubscribe(object.id);
 	if (!purge) return;
 	node.objectStore.remove(object.id);
@@ -138,7 +137,7 @@ async function syncObject(
 	data: Uint8Array,
 	peerId?: string,
 ) {
-	const object = TopologyObject.decode(data);
+	const object = TopologyObjectBase.decode(data);
 	const message = Message.create({
 		type: Message_MessageType.SYNC,
 		data: data,

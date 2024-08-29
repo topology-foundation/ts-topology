@@ -1,57 +1,71 @@
 import {
 	ActionType,
-	HashGraph,
-	Operation,
-	OperationType,
+	type CRO,
+	type Operation,
+	type Vertex,
 } from "@topology-foundation/object";
 
-/// AddWinsSet with support for state and op changes
-export class AddWinsSet<T> {
-	state: Map<T, number>;
-	hashGraph: HashGraph<T>;
+export class AddWinsSet<T> implements CRO<T> {
+	operations: string[] = ["add", "remove"];
+	state: Map<T, boolean>;
 
-	constructor(nodeId: string) {
-		this.state = new Map<T, number>();
-		this.hashGraph = new HashGraph<T>(nodeId);
+	constructor() {
+		this.state = new Map<T, boolean>();
 	}
 
-	resolveConflicts(op1: Operation<T>, op2: Operation<T>): ActionType {
-		if (op1.type !== op2.type && op1.value === op2.value) {
-			return op1.type === OperationType.Add
+	private _add(value: T): void {
+		if (!this.state.get(value)) this.state.set(value, true);
+	}
+
+	add(value: T): void {
+		this._add(value);
+	}
+
+	private _remove(value: T): void {
+		if (this.state.get(value)) this.state.set(value, false);
+	}
+
+	remove(value: T): void {
+		this._remove(value);
+	}
+
+	contains(value: T): boolean {
+		return this.state.get(value) === true;
+	}
+
+	values(): T[] {
+		return Array.from(this.state.entries())
+			.filter(([_, exists]) => exists)
+			.map(([value, _]) => value);
+	}
+
+	// in this case is an array of length 2 and there are only two possible operations
+	resolveConflicts(vertices: Vertex<T>[]): ActionType {
+		if (
+			vertices[0].operation.type !== vertices[1].operation.type &&
+			vertices[0].operation.value === vertices[1].operation.value
+		) {
+			return vertices[0].operation.type === "add"
 				? ActionType.DropRight
 				: ActionType.DropLeft;
 		}
 		return ActionType.Nop;
 	}
 
-	add(value: T): void {
-		const op = new Operation(OperationType.Add, value);
-		this.state.set(value, (this.state.get(value) || 0) + 1);
-	}
-
-	remove(value: T): void {
-		const op = new Operation(OperationType.Remove, value);
-		this.add(value);
-	}
-
-	getValue(value: T): number {
-		return this.state.get(value) || 0;
-	}
-
-	isInSet(value: T): boolean {
-		const count = this.getValue(value);
-		return count > 0 && count % 2 === 1;
-	}
-
-	values(): T[] {
-		return Array.from(this.state.entries())
-			.filter(([_, count]) => count % 2 === 1)
-			.map(([value, _]) => value);
-	}
-
-	merge(other: AddWinsSet<T>): void {
-		for (const [value, count] of other.state) {
-			this.state.set(value, Math.max(this.getValue(value), count));
+	// merged at HG level and called as a callback
+	mergeCallback(operations: Operation<T>[]): void {
+		this.state = new Map<T, boolean>();
+		for (const op of operations) {
+			switch (op.type) {
+				case "add":
+					if (op.value !== null) this._add(op.value);
+					break;
+				case "remove":
+					if (op.value !== null) this._remove(op.value);
+					break;
+				default:
+					break;
+			}
 		}
 	}
 }
