@@ -77,11 +77,10 @@ export class HashGraph<T> {
 				this.forwardEdges.set(dep, []);
 			}
 			this.forwardEdges.get(dep)?.push(hash);
-
-			// delete from frontier
-			const index = this.frontier.indexOf(dep);
-			if (index > -1) this.frontier.splice(index, 1);
 		}
+
+		const depsSet = new Set(deps);
+		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
 		return hash;
 	}
 
@@ -116,10 +115,10 @@ export class HashGraph<T> {
 				this.forwardEdges.set(dep, []);
 			}
 			this.forwardEdges.get(dep)?.push(hash);
-			// delete from frontier
-			const index = this.frontier.indexOf(dep);
-			if (index > -1) this.frontier.splice(index, 1);
 		}
+
+		const depsSet = new Set(deps);
+		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
 
 		return hash;
 	}
