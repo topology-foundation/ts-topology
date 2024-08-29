@@ -1,3 +1,10 @@
+/* 
+	BitSet is associated with each vertex and is used to store the indices of the vertices that are reachable.
+	In other words, all the vertices causally before in the hashgraph.
+	When processing in the topologically ordered manner, we set the BitSet of the vertex to the bitwise OR of the BitSet of its dependencies.
+	Then, to check if two vertices are causally related, we check if the BitSet of the first vertex contains the index of the second vertex and vice-versa.
+	Algorithm for more optimal causality check inspired by https://stackoverflow.com/a/78133041
+*/
 export class BitSet {
 	private data: Uint32Array;
 
