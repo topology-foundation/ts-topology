@@ -6,32 +6,30 @@ import {
 	type Vertex,
 } from "./hashgraph.js";
 import type { TopologyObjectBase } from "./proto/object_pb.js";
-import { compileWasm } from "./wasm/compiler.js";
 
 export * from "./proto/object_pb.js";
 export * from "./hashgraph.js";
 
-export interface CRO<T> {
-	resolveConflicts: (vertices: Vertex<T>[]) => ActionType;
-	mergeCallback: (operations: Operation<T>[]) => void;
+export interface CRO {
+	resolveConflicts: (vertices: Vertex[]) => ActionType;
+	mergeCallback: (operations: Operation[]) => void;
 }
 
-export interface TopologyObject<T> extends TopologyObjectBase {
-	cro: ProxyHandler<CRO<T>> | null;
-	hashGraph: HashGraph<T>;
+export interface TopologyObject extends TopologyObjectBase {
+	cro: ProxyHandler<CRO> | null;
+	hashGraph: HashGraph;
 }
 
 /* Creates a new TopologyObject */
-export async function newTopologyObject<T>(
+export async function newTopologyObject(
 	nodeId: string,
-	cro: CRO<T>,
-	path?: string,
+	cro: CRO,
 	id?: string,
 	abi?: string,
-): Promise<TopologyObject<T>> {
+): Promise<TopologyObject> {
 	// const bytecode = await compileWasm(path);
 	const bytecode = new Uint8Array();
-	const obj: TopologyObject<T> = {
+	const obj: TopologyObject = {
 		id:
 			id ??
 			crypto
@@ -44,14 +42,14 @@ export async function newTopologyObject<T>(
 		bytecode: bytecode ?? new Uint8Array(),
 		vertices: [],
 		cro: null,
-		hashGraph: new HashGraph<T>(nodeId, cro.resolveConflicts),
+		hashGraph: new HashGraph(nodeId, cro.resolveConflicts),
 	};
 	obj.cro = new Proxy(cro, proxyCROHandler(obj));
 	return obj;
 }
 
 // This function is black magic, it allows us to intercept calls to the CRO object
-function proxyCROHandler<T>(obj: TopologyObject<T>): ProxyHandler<object> {
+function proxyCROHandler(obj: TopologyObject): ProxyHandler<object> {
 	return {
 		get(target, propKey, receiver) {
 			if (typeof target[propKey as keyof object] === "function") {
@@ -61,7 +59,7 @@ function proxyCROHandler<T>(obj: TopologyObject<T>): ProxyHandler<object> {
 							callFn(
 								obj,
 								propKey as string,
-								(args.length === 1 ? args[0] : args) as T,
+								args.length === 1 ? args[0] : args,
 							);
 						return Reflect.apply(applyTarget, thisArg, args);
 					},
@@ -72,17 +70,16 @@ function proxyCROHandler<T>(obj: TopologyObject<T>): ProxyHandler<object> {
 	};
 }
 
-export async function callFn<T>(
-	obj: TopologyObject<T>,
+export async function callFn(
+	obj: TopologyObject,
 	fn: string,
-	args: T,
-): Promise<TopologyObject<T>> {
+	args: unknown,
+): Promise<TopologyObject> {
 	obj.hashGraph.addToFrontier({ type: fn, value: args });
-
 	return obj;
 }
 
-export async function merge<T>(obj: TopologyObject<T>, vertices: Vertex<T>[]) {
+export async function merge(obj: TopologyObject, vertices: Vertex[]) {
 	for (const vertex of vertices) {
 		obj.hashGraph.addVertex(
 			vertex.operation,
@@ -104,5 +101,6 @@ export async function merge<T>(obj: TopologyObject<T>, vertices: Vertex<T>[]) {
 			dependencies: vertex.dependencies,
 		};
 	});
-	(obj.cro as CRO<T>).mergeCallback(operations);
+
+	(obj.cro as CRO).mergeCallback(operations);
 }
