@@ -31,8 +31,6 @@ It's composed by:
 Class that manages the operations of the LSeq data structure. It's composed by the `nodeId` and the `vertices` array that stores all the `Vertex` types of the LSeq.
 It has the following operations:
 
-- **getVertices()**: returns the `vertices` array
-- **getNodeId()**: returns the `nodeId`
 - **insert(index, element)**: inserts the `element` in the `vertices` array at the specified `index`
 - **delete(index)**: deletes the `element` from the `vertices` array at the specified `index`
 - **query()**: return an array with all the elements stored in the `vertices` array

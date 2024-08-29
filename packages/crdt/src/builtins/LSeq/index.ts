@@ -9,68 +9,68 @@ type Vertex<T> = {
 };
 
 export class LSeq<T> {
-    private _vertices: Vertex<T>[];
-    private _nodeId: string;
+    vertices: Vertex<T>[];
+    nodeId: string;
 
     constructor(nodeId: string) {
-        this._nodeId = nodeId;
-        this._vertices = [];
-    }
-
-    getVertices(): Vertex<T>[] {
-        return this._vertices;
-    }
-
-    getNodeId(): string {
-        return this._nodeId;
+        this.nodeId = nodeId;
+        this.vertices = [];
     }
 
     insert(index: number, element: T): void {
-        const left = index === 0 ? [] : this._vertices[index - 1].vPointer.sequence;
-        const right = index === this._vertices.length ? [] : this._vertices[index].vPointer.sequence;
-        const pointer = { sequence: generateSeq(left, right), nodeId: this._nodeId };
-        const idx = this._vertices.findIndex(vertex => compareSeq(vertex.vPointer.nodeId, pointer.nodeId, vertex.vPointer.sequence, pointer.sequence) >= 0);
-        const newVertices = this._vertices;
-        newVertices.splice(idx >= 0 ? idx : this._vertices.length, 0, { vPointer: pointer, element: element });
-        this._vertices = newVertices;
+        const left = index === 0 ? [] : this.vertices[index - 1].vPointer.sequence;
+        const right = index === this.vertices.length ? [] : this.vertices[index].vPointer.sequence;
+        const pointer = { sequence: generateSeq(left, right), nodeId: this.nodeId };
+        const idx = this.vertices.findIndex(vertex => compareSeq(vertex.vPointer.nodeId, pointer.nodeId, vertex.vPointer.sequence, pointer.sequence) >= 0);
+        const newVertices = this.vertices;
+        newVertices.splice(idx >= 0 ? idx : this.vertices.length, 0, { vPointer: pointer, element: element });
+        this.vertices = newVertices;
     }
 
     delete(index: number): void {
         if (index < 0) {
             return;
         }
-        if (index >= this._vertices.length) {
+        if (index >= this.vertices.length) {
             return;
         }
-        const newVertices = this._vertices;
+        const newVertices = this.vertices;
         newVertices.splice(index, 1);
-        this._vertices = newVertices;
+        this.vertices = newVertices;
     }
 
-    query(): T[] {
-        return this._vertices.map(({ element }) => element);
+    list(): T[] {
+        return this.vertices.map(({ element }) => element);
+    }
+
+    query(nodeId: string, sequenceNumber: number[]): Vertex<T>[] {
+        return this.vertices.filter(vertex => vertex.vPointer.nodeId === nodeId && compareArrays(vertex.vPointer.sequence, sequenceNumber) == 0);
     }
 
     merge(otherLSeq: LSeq<T>): void {
-        const newVertices = this._vertices;
-        otherLSeq.getVertices().forEach((value) => {
+        const newVertices = this.vertices;
+        otherLSeq.vertices.forEach((value) => {
             if (!newVertices.some(vertex => vertex.vPointer === value.vPointer)) {
-                const idx = otherLSeq.getVertices().findIndex(vertex => compareSeq(vertex.vPointer.nodeId, value.vPointer.nodeId, vertex.vPointer.sequence, value.vPointer.sequence) == 0);
-                newVertices.splice(idx >= 0 ? idx : this._vertices.length, 0, value);
+                const idx = otherLSeq.vertices.findIndex(vertex => compareSeq(vertex.vPointer.nodeId, value.vPointer.nodeId, vertex.vPointer.sequence, value.vPointer.sequence) == 0);
+                newVertices.splice(idx >= 0 ? idx : this.vertices.length, 0, value);
             }
         });
-        this._vertices = newVertices;
+        this.vertices = newVertices;
     }
 }
 
-function compareSeq(id1: string, id2: string, seq1: number[], seq2: number[]): number {
+function compareArrays(seq1: number[], seq2: number[]): number {
     const len = Math.min(seq1.length, seq2.length);
     for (let i = 0; i < len; i++) {
         if (seq1[i] !== seq2[i]) {
             return seq1[i] - seq2[i];
         }
     }
-    let cmp = seq1.length - seq2.length;
+    return seq1.length - seq2.length;
+}
+
+function compareSeq(id1: string, id2: string, seq1: number[], seq2: number[]): number {
+    let cmp = compareArrays(seq1, seq2);
     if (cmp === 0) {
         cmp = id1.localeCompare(id2);
     }
