@@ -7,14 +7,14 @@ import {
 
 export class AddWinsSet<T> implements CRO<T> {
 	operations: string[] = ["add", "remove"];
-	state: Map<T, number>;
+	state: Map<T, boolean>;
 
 	constructor() {
-		this.state = new Map<T, number>();
+		this.state = new Map<T, boolean>();
 	}
 
 	private _add(value: T): void {
-		if ((this.state.get(value) ?? 0) % 2 === 0) this.state.set(value, 1);
+		if (!this.state.get(value)) this.state.set(value, true);
 	}
 
 	add(value: T): void {
@@ -22,7 +22,7 @@ export class AddWinsSet<T> implements CRO<T> {
 	}
 
 	private _remove(value: T): void {
-		if ((this.state.get(value) ?? 0) % 2 === 1) this.state.set(value, 0);
+		if (this.state.get(value)) this.state.set(value, false);
 	}
 
 	remove(value: T): void {
@@ -30,12 +30,12 @@ export class AddWinsSet<T> implements CRO<T> {
 	}
 
 	contains(value: T): boolean {
-		return (this.state.get(value) ?? 0) % 2 === 1;
+		return this.state.get(value) === true;
 	}
 
 	values(): T[] {
 		return Array.from(this.state.entries())
-			.filter(([_, count]) => count === 1)
+			.filter(([_, exists]) => exists)
 			.map(([value, _]) => value);
 	}
 
@@ -54,7 +54,7 @@ export class AddWinsSet<T> implements CRO<T> {
 
 	// merged at HG level and called as a callback
 	mergeCallback(operations: Operation<T>[]): void {
-		this.state = new Map<T, number>();
+		this.state = new Map<T, boolean>();
 		for (const op of operations) {
 			switch (op.type) {
 				case "add":
