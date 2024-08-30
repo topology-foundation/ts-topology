@@ -1,8 +1,8 @@
 import {
 	ActionType,
+	type Hash,
 	type HashGraph,
 	type Operation,
-	type Hash,
 	type Vertex,
 } from "../hashgraph.js";
 

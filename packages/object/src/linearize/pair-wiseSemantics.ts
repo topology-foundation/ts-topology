@@ -1,4 +1,4 @@
-import { type HashGraph, ActionType, type Operation } from "../hashgraph.js";
+import { ActionType, type HashGraph, type Operation } from "../hashgraph.js";
 
 export function linearizePairWise<T>(hashGraph: HashGraph<T>): Operation<T>[] {
 	const order = hashGraph.topologicalSort();

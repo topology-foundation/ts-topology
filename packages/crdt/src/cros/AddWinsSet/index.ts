@@ -1,9 +1,9 @@
 import {
 	ActionType,
-	type ResolveConflictsType,
-	SemanticsType,
 	type CRO,
 	type Operation,
+	type ResolveConflictsType,
+	SemanticsType,
 	type Vertex,
 } from "@topology-foundation/object";
 

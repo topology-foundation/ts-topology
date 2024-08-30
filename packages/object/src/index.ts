@@ -3,9 +3,9 @@ import {
 	type ActionType,
 	HashGraph,
 	type Operation,
-	type Vertex,
-	type SemanticsType,
 	type ResolveConflictsType,
+	type SemanticsType,
+	type Vertex,
 } from "./hashgraph.js";
 import type { TopologyObjectBase } from "./proto/object_pb.js";
 import { compileWasm } from "./wasm/compiler.js";

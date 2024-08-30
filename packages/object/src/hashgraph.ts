@@ -1,6 +1,6 @@
 import * as crypto from "node:crypto";
-import { linearizePairWise } from "./linearize/pair-wiseSemantics.js";
 import { linearizeMultiVertex } from "./linearize/multi-vertexSemantics.js";
+import { linearizePairWise } from "./linearize/pair-wiseSemantics.js";
 
 export type Hash = string;
 export type Operation<T> = { type: string; value: T | null };
