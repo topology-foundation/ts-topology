@@ -5,13 +5,13 @@ describe("BitSet Test", () => {
 	let bitset: BitSet;
 
 	beforeEach(() => {
-		bitset = new BitSet(1 << 7);
+		// Bitset of size 64
+		bitset = new BitSet(2);
 	});
 
 	test("Test: BitSet", () => {
-		expect(bitset.size()).toBe(1 << 7);
-		bitset.set(0);
-		bitset.set(50);
+		bitset.set(0, true);
+		bitset.set(50, true);
 
 		expect(bitset.get(0)).toBe(true);
 		expect(bitset.get(49)).toBe(false);
@@ -24,11 +24,13 @@ describe("BitSet Test", () => {
 
 		bitset.clear();
 
-		let other: BitSet = new BitSet(1 << 7);
-		expect(other.size()).toBe(1 << 7);
-		other.set(0);
+		let other: BitSet = new BitSet(2);
+		other.set(0, true);
 		other = other.or(bitset);
 		expect(other.get(0)).toBe(true);
+
+		other.set(0, false);
+		expect(other.get(0)).toBe(false);
 
 		other = other.and(bitset);
 		expect(other.get(0)).toBe(false);

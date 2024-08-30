@@ -8,29 +8,33 @@
 export class BitSet {
 	private data: Uint32Array;
 
-	// (index / 32) | 0 is equivalent to Math.floor(index / 32)
-
-	constructor(size: number) {
-		this.data = new Uint32Array(Math.ceil(size / 32));
-	}
-
-	set(index: number): void {
-		const byteIndex = ~~(index / 32);
-		const bitIndex = index % 32;
-		this.data[byteIndex] |= 1 << bitIndex;
+	constructor(size = 1) {
+		// Always start with size 32
+		this.data = new Uint32Array(size);
 	}
 
 	clear(): void {
 		this.data = new Uint32Array(this.data.length);
 	}
 
+	set(index: number, value: boolean): void {
+		// (index / 32) | 0 is equivalent to Math.floor(index / 32)
+		const byteIndex = (index / 32) | 0;
+		const bitIndex = index % 32;
+		// if value is false, and with all 1s except the bit at bitIndex
+		if (value) this.data[byteIndex] |= 1 << bitIndex;
+		else this.data[byteIndex] &= ~(1 << bitIndex);
+	}
+
 	get(index: number): boolean {
+		// (index / 32) | 0 is equivalent to Math.floor(index / 32)
 		const byteIndex = (index / 32) | 0;
 		const bitIndex = index % 32;
 		return (this.data[byteIndex] & (1 << bitIndex)) !== 0;
 	}
 
 	flip(index: number): void {
+		// (index / 32) | 0 is equivalent to Math.floor(index / 32)
 		const byteIndex = (index / 32) | 0;
 		const bitIndex = index % 32;
 		this.data[byteIndex] ^= 1 << bitIndex;
@@ -38,7 +42,7 @@ export class BitSet {
 
 	// AND two bitsets of the same size
 	and(other: BitSet): BitSet {
-		const result = new BitSet(this.size());
+		const result = new BitSet(this.data.length);
 		for (let i = 0; i < this.data.length; i++) {
 			result.data[i] = this.data[i] & other.data[i];
 		}
@@ -47,7 +51,7 @@ export class BitSet {
 
 	// OR two bitsets of the same size
 	or(other: BitSet): BitSet {
-		const result = new BitSet(this.size());
+		const result = new BitSet(this.data.length);
 		for (let i = 0; i < this.data.length; i++) {
 			result.data[i] = this.data[i] | other.data[i];
 		}
@@ -56,7 +60,7 @@ export class BitSet {
 
 	// XOR two bitsets of the same size
 	xor(other: BitSet): BitSet {
-		const result = new BitSet(this.size());
+		const result = new BitSet(this.data.length);
 		for (let i = 0; i < this.data.length; i++) {
 			result.data[i] = this.data[i] ^ other.data[i];
 		}
@@ -64,24 +68,11 @@ export class BitSet {
 	}
 
 	not(): BitSet {
-		const result = new BitSet(this.size());
+		const result = new BitSet(this.data.length * 32);
 		for (let i = 0; i < this.data.length; i++) {
 			result.data[i] = ~this.data[i];
 		}
 		return result;
-	}
-
-	resize(size: number): void {
-		const newData: Uint32Array = new Uint32Array(Math.ceil(size / 32));
-		const length = Math.min(this.data.length, newData.length);
-		for (let i = 0; i < length; i++) {
-			newData[i] = this.data[i];
-		}
-		this.data = newData;
-	}
-
-	size(): number {
-		return this.data.length * 32;
 	}
 
 	toString(): string {

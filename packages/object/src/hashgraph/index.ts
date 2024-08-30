@@ -1,8 +1,8 @@
+import { doesNotMatch } from "node:assert";
 import * as crypto from "node:crypto";
 import { BitSet } from "./bitset.js";
 
 type Hash = string;
-const maxN = 1 << 16;
 export type Operation<T> = { type: string; value: T | null };
 
 enum OperationType {
@@ -37,9 +37,11 @@ export class HashGraph<T> {
 		{ type: OperationType.NOP, value: null },
 		[],
 	);
-	private topoSortedIndex: Map<Hash, number> = new Map();
 	private arePredecessorsFresh = false;
-	private reachablePredecessors: Map<number, BitSet> = new Map();
+	private reachablePredecessors: Map<Hash, BitSet> = new Map();
+	private topoSortedIndex: Map<Hash, number> = new Map();
+	// We start with a bitset of size 1, and double it every time we reach the limit
+	private currentBitsetSize = 1;
 
 	constructor(
 		nodeId: string,
@@ -133,8 +135,8 @@ export class HashGraph<T> {
 	topologicalSort(): Hash[] {
 		const result: Hash[] = [];
 		const visited = new Set<Hash>();
-		this.topoSortedIndex.clear();
 		this.reachablePredecessors.clear();
+		this.topoSortedIndex.clear();
 
 		const visit = (hash: Hash) => {
 			if (visited.has(hash)) return;
@@ -151,18 +153,22 @@ export class HashGraph<T> {
 		visit(HashGraph.rootHash);
 		result.reverse();
 
+		// Double the size until it's enough to hold all the vertices
+		while (this.currentBitsetSize < result.length) this.currentBitsetSize *= 2;
+
 		for (let i = 0; i < result.length; i++) {
 			this.topoSortedIndex.set(result[i], i);
-			this.reachablePredecessors.set(i, new BitSet(maxN));
+			this.reachablePredecessors.set(
+				result[i],
+				new BitSet(this.currentBitsetSize),
+			);
 			for (const dep of this.vertices.get(result[i])?.dependencies || []) {
-				const depReachable = this.reachablePredecessors.get(
-					this.topoSortedIndex.get(dep) || 0,
-				);
-				depReachable?.set(this.topoSortedIndex.get(dep) || 0);
+				const depReachable = this.reachablePredecessors.get(dep);
+				depReachable?.set(this.topoSortedIndex.get(dep) || 0, true);
 				if (depReachable) {
-					const reachable = this.reachablePredecessors.get(i);
+					const reachable = this.reachablePredecessors.get(result[i]);
 					this.reachablePredecessors.set(
-						i,
+						result[i],
 						reachable?.or(depReachable) || depReachable,
 					);
 				}
@@ -170,7 +176,6 @@ export class HashGraph<T> {
 		}
 
 		this.arePredecessorsFresh = true;
-		result.splice(0, 1); // Remove the Nop root vertex
 		return result;
 	}
 
@@ -237,11 +242,11 @@ export class HashGraph<T> {
 
 		const test1 =
 			this.reachablePredecessors
-				.get(this.topoSortedIndex.get(hash1) || 0)
+				.get(hash1)
 				?.get(this.topoSortedIndex.get(hash2) || 0) || false;
 		const test2 =
 			this.reachablePredecessors
-				.get(this.topoSortedIndex.get(hash2) || 0)
+				.get(hash2)
 				?.get(this.topoSortedIndex.get(hash1) || 0) || false;
 		return test1 || test2;
 	}
