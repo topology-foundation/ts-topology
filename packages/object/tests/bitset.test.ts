@@ -1,6 +1,5 @@
-import { Operation, OperationType } from "@topology-foundation/object";
 import { beforeEach, describe, expect, test } from "vitest";
-import { BitSet } from "../src/hashgraph/BitSet";
+import { BitSet } from "../src/hashgraph/bitset.js";
 
 describe("BitSet Test", () => {
 	let bitset: BitSet;
