@@ -178,10 +178,7 @@ export class HashGraph<T> {
 		return result;
 	}
 
-	linearizeOperations(
-		areCausallyRelatedFn: (v1: Hash, v2: Hash) => boolean = this
-			.areCausallyRelated,
-	): Operation<T>[] {
+	linearizeOperations(): Operation<T>[] {
 		const order = this.topologicalSort();
 		const result: Operation<T>[] = [];
 		let i = 0;
@@ -194,7 +191,7 @@ export class HashGraph<T> {
 			while (j < order.length) {
 				const moving = order[j];
 
-				if (!areCausallyRelatedFn(anchor, moving)) {
+				if (!this.areCausallyRelated(anchor, moving)) {
 					const v1 = this.vertices.get(anchor);
 					const v2 = this.vertices.get(moving);
 					let action: ActionType;
@@ -251,46 +248,6 @@ export class HashGraph<T> {
 				.get(hash2)
 				?.get(this.topoSortedIndex.get(hash1) || 0) || false;
 		return test1 || test2;
-	}
-
-	areCausallyRelatedOld(hash1: Hash, hash2: Hash): boolean {
-		const visited = new Set<Hash>();
-		const stack = [hash1];
-
-		while (stack.length > 0) {
-			const current = stack.pop();
-			if (current === hash2) return true;
-			if (current === undefined) continue;
-			visited.add(current);
-
-			const vertex = this.vertices.get(current);
-			if (!vertex) continue;
-			for (const dep of vertex.dependencies) {
-				if (!visited.has(dep)) {
-					stack.push(dep);
-				}
-			}
-		}
-
-		visited.clear();
-		stack.push(hash2);
-
-		while (stack.length > 0) {
-			const current = stack.pop();
-			if (current === hash1) return true;
-			if (current === undefined) continue;
-			visited.add(current);
-
-			const vertex = this.vertices.get(current);
-			if (!vertex) continue;
-			for (const dep of vertex.dependencies) {
-				if (!visited.has(dep)) {
-					stack.push(dep);
-				}
-			}
-		}
-
-		return false;
 	}
 
 	// Time complexity: O(1), Space complexity: O(1)
