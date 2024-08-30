@@ -4,6 +4,8 @@ import {
 	HashGraph,
 	type Operation,
 	type Vertex,
+	type SemanticsType,
+	type ResolveConflictsType,
 } from "./hashgraph.js";
 import type { TopologyObjectBase } from "./proto/object_pb.js";
 import { compileWasm } from "./wasm/compiler.js";
@@ -12,7 +14,8 @@ export * from "./proto/object_pb.js";
 export * from "./hashgraph.js";
 
 export interface CRO<T> {
-	resolveConflicts: (vertices: Vertex<T>[]) => ActionType;
+	semanticsType: SemanticsType;
+	resolveConflicts: (vertices: Vertex<T>[]) => ResolveConflictsType;
 	mergeCallback: (operations: Operation<T>[]) => void;
 }
 
@@ -44,7 +47,11 @@ export async function newTopologyObject<T>(
 		bytecode: bytecode ?? new Uint8Array(),
 		vertices: [],
 		cro: null,
-		hashGraph: new HashGraph<T>(nodeId, cro.resolveConflicts),
+		hashGraph: new HashGraph<T>(
+			nodeId,
+			cro.resolveConflicts,
+			cro.semanticsType,
+		),
 	};
 	obj.cro = new Proxy(cro, proxyCROHandler(obj));
 	return obj;

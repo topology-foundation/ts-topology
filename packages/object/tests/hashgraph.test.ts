@@ -1,16 +1,27 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { AddWinsSet } from "../../crdt/src/cros/AddWinsSet/index.js";
+import { PseudoRandomWinsSet } from "../../crdt/src/cros/PseudoRandomWinsSet/index.js";
 import { type TopologyObject, merge, newTopologyObject } from "../src/index.js";
 
 describe("HashGraph for AddWinSet tests", () => {
 	let obj1: TopologyObject<number>;
 	let obj2: TopologyObject<number>;
 	let obj3: TopologyObject<number>;
+	let obj4: TopologyObject<number>;
+	let obj5: TopologyObject<number>;
+	let obj6: TopologyObject<number>;
+	let obj7: TopologyObject<number>;
+	let obj8: TopologyObject<number>;
 
 	beforeEach(async () => {
 		obj1 = await newTopologyObject("peer1", new AddWinsSet<number>());
 		obj2 = await newTopologyObject("peer2", new AddWinsSet<number>());
 		obj3 = await newTopologyObject("peer3", new AddWinsSet<number>());
+		obj4 = await newTopologyObject("peer4", new PseudoRandomWinsSet<number>());
+		obj5 = await newTopologyObject("peer5", new PseudoRandomWinsSet<number>());
+		obj6 = await newTopologyObject("peer6", new PseudoRandomWinsSet<number>());
+		obj7 = await newTopologyObject("peer7", new PseudoRandomWinsSet<number>());
+		obj8 = await newTopologyObject("peer8", new PseudoRandomWinsSet<number>());
 	});
 
 	test("Test: Add Two Vertices", () => {
@@ -298,5 +309,94 @@ describe("HashGraph for AddWinSet tests", () => {
 			{ type: "add", value: 2 },
 			{ type: "remove", value: 2 },
 		]);
+	});
+
+	test("Test: Giga Chad case", () => {
+		/*
+	                                           __ V6:ADD(3)
+	                                         /
+	              ___  V2:ADD(1) <-- V3:RM(2) <-- V7:RM(1) <-- V8:RM(3)
+	            /                              ______________/
+	  V1:ADD(1)/                              /
+	           \                             /
+	            \ ___  V4:RM(2) <-- V5:ADD(2) <-- V9:RM(1)
+	*/
+
+		const cro4 = obj4.cro as PseudoRandomWinsSet<number>;
+		const cro5 = obj5.cro as PseudoRandomWinsSet<number>;
+		const cro6 = obj6.cro as PseudoRandomWinsSet<number>;
+
+		cro4.add(1);
+		merge(obj5, obj4.hashGraph.getAllVertices());
+
+		cro4.add(1);
+		cro4.remove(2);
+		cro5.remove(2);
+		cro5.add(2);
+
+		merge(obj6, obj4.hashGraph.getAllVertices());
+		cro6.add(3);
+		cro4.remove(1);
+
+		merge(obj4, obj5.hashGraph.getAllVertices());
+		cro4.remove(3);
+		cro5.remove(1);
+
+		merge(obj4, obj5.hashGraph.getAllVertices());
+		merge(obj4, obj6.hashGraph.getAllVertices());
+		merge(obj5, obj4.hashGraph.getAllVertices());
+		merge(obj5, obj6.hashGraph.getAllVertices());
+		merge(obj6, obj4.hashGraph.getAllVertices());
+		merge(obj6, obj5.hashGraph.getAllVertices());
+
+		expect(obj4.hashGraph.vertices).toEqual(obj5.hashGraph.vertices);
+		expect(obj4.hashGraph.vertices).toEqual(obj6.hashGraph.vertices);
+
+		const linearOps = obj4.hashGraph.linearizeOperations();
+		/* 
+			Resolving conflicts:
+			1. V2, V4 => V2 is chosen
+			2. V2, V5 => V5 is chosen
+			3. V3, V5 => V5 is chosen
+			4. V6, V7, V5 => V6 is chosen
+			5. V6, V8, V9 => V6 is chosen
+			Final order: V1, V6
+		*/
+		expect(linearOps).toEqual([
+			{ type: "add", value: 1 },
+			{ type: "add", value: 3 },
+		]);
+	});
+
+	test("Test: Many concurrent operations", () => {
+		/*
+					--- V1:ADD(1) 
+				   /---- V2:ADD(2)
+            V0:Nop -- V3:ADD(3)
+				   \---- V4:ADD(4)
+				    ---- V5:ADD(5)
+        */
+
+		const cro4 = obj4.cro as PseudoRandomWinsSet<number>;
+		const cro5 = obj5.cro as PseudoRandomWinsSet<number>;
+		const cro6 = obj6.cro as PseudoRandomWinsSet<number>;
+		const cro7 = obj7.cro as PseudoRandomWinsSet<number>;
+		const cro8 = obj8.cro as PseudoRandomWinsSet<number>;
+
+		cro4.add(1);
+		cro5.add(2);
+		cro6.add(3);
+		cro7.add(4);
+		cro8.add(5);
+
+		merge(obj5, obj4.hashGraph.getAllVertices());
+		merge(obj6, obj5.hashGraph.getAllVertices());
+		merge(obj7, obj6.hashGraph.getAllVertices());
+		merge(obj8, obj7.hashGraph.getAllVertices());
+		merge(obj4, obj8.hashGraph.getAllVertices());
+
+		const linearOps = obj4.hashGraph.linearizeOperations();
+		// Pseudo-randomly chosen operation
+		expect(linearOps).toEqual([{ type: "add", value: 4 }]);
 	});
 });
