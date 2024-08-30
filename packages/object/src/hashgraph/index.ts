@@ -1,5 +1,5 @@
 import * as crypto from "node:crypto";
-import { BitSet } from "./BitSet.js";
+import { BitSet } from "./bitset.js";
 
 type Hash = string;
 const maxN = 1 << 16;
@@ -160,7 +160,11 @@ export class HashGraph<T> {
 				);
 				depReachable?.set(this.topoSortedIndex.get(dep) || 0);
 				if (depReachable) {
-					this.reachablePredecessors.get(i)?._or(depReachable);
+					const reachable = this.reachablePredecessors.get(i);
+					this.reachablePredecessors.set(
+						i,
+						reachable?.or(depReachable) || depReachable,
+					);
 				}
 			}
 		}

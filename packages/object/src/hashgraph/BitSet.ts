@@ -8,17 +8,15 @@
 export class BitSet {
 	private data: Uint32Array;
 
+	// (index / 32) | 0 is equivalent to Math.floor(index / 32)
+
 	constructor(size: number) {
-		if ((size >> 5) << 5 !== size) {
-			this.data = new Uint32Array((size >> 5) + 1);
-		} else {
-			this.data = new Uint32Array(size >> 5);
-		}
+		this.data = new Uint32Array(Math.ceil(size / 32));
 	}
 
 	set(index: number): void {
-		const byteIndex = index >> 5;
-		const bitIndex = index & 31;
+		const byteIndex = ~~(index / 32);
+		const bitIndex = index % 32;
 		this.data[byteIndex] |= 1 << bitIndex;
 	}
 
@@ -27,14 +25,14 @@ export class BitSet {
 	}
 
 	get(index: number): boolean {
-		const byteIndex = index >> 5;
-		const bitIndex = index & 31;
+		const byteIndex = (index / 32) | 0;
+		const bitIndex = index % 32;
 		return (this.data[byteIndex] & (1 << bitIndex)) !== 0;
 	}
 
 	flip(index: number): void {
-		const byteIndex = index >> 5;
-		const bitIndex = index & 31;
+		const byteIndex = (index / 32) | 0;
+		const bitIndex = index % 32;
 		this.data[byteIndex] ^= 1 << bitIndex;
 	}
 
@@ -56,12 +54,6 @@ export class BitSet {
 		return result;
 	}
 
-	_or(other: BitSet): void {
-		for (let i = 0; i < this.data.length; i++) {
-			this.data[i] |= other.data[i];
-		}
-	}
-
 	// XOR two bitsets of the same size
 	xor(other: BitSet): BitSet {
 		const result = new BitSet(this.size());
@@ -80,12 +72,7 @@ export class BitSet {
 	}
 
 	resize(size: number): void {
-		let newData: Uint32Array;
-		if ((size >> 5) << 5 !== size) {
-			newData = new Uint32Array((size >> 5) + 1);
-		} else {
-			newData = new Uint32Array(size >> 5);
-		}
+		const newData: Uint32Array = new Uint32Array(Math.ceil(size / 32));
 		const length = Math.min(this.data.length, newData.length);
 		for (let i = 0; i < length; i++) {
 			newData[i] = this.data[i];
@@ -94,7 +81,7 @@ export class BitSet {
 	}
 
 	size(): number {
-		return this.data.length << 5;
+		return this.data.length * 32;
 	}
 
 	toString(): string {
