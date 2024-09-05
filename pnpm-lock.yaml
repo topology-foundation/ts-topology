@@ -221,8 +221,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       libp2p:
-        specifier: ^1.8.3
-        version: 1.9.2
+        specifier: ^1.9.3
+        version: 1.9.3
       ts-proto:
         specifier: ^2.0.3
         version: 2.0.3
@@ -3580,8 +3580,8 @@ packages:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
     engines: {node: '>=6'}
 
-  libp2p@1.9.2:
-    resolution: {integrity: sha512-cvzSC3UM9A1w6kb3GO9+iqRwCg/c/4hF6RZTF0SyY5U3xVawXSQPMcB5td9d+20HcNrYm2uWKjlexORllAT2hA==}
+  libp2p@1.9.3:
+    resolution: {integrity: sha512-Yni08xk7V+vwL4EhhblxsO38b3DsJvmDzGuC41z0OrIJDE5K795bLeLAwxWhqf3lSdlq0TeXLjPTE1KETmA1RQ==}
 
   lighthouse-logger@1.4.2:
     resolution: {integrity: sha512-gPWxznF6TKmUHrOQjlVo2UbaL2EJ71mb2CCeRs/2qBpi4L/g4LUVc9+3lKQ6DTUZwJswfM7ainGrLO1+fOqa2g==}
@@ -9345,7 +9345,7 @@ snapshots:
 
   leven@3.1.0: {}
 
-  libp2p@1.9.2:
+  libp2p@1.9.3:
     dependencies:
       '@libp2p/crypto': 4.1.9
       '@libp2p/interface': 1.7.0
