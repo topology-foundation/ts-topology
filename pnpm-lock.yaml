@@ -161,8 +161,8 @@ importers:
         specifier: ^13.1.0
         version: 13.2.0
       '@chainsafe/libp2p-noise':
-        specifier: ^15.1.1
-        version: 15.1.1
+        specifier: ^15.1.2
+        version: 15.1.2
       '@chainsafe/libp2p-yamux':
         specifier: ^6.0.2
         version: 6.0.2
@@ -1045,8 +1045,8 @@ packages:
     resolution: {integrity: sha512-yKGXIJMLeNLa/XeI57HvQKhf1f4LRgBuV1Lrzv9Vo685Szr+qaBATUbMk/aLxpN2rMgibDIS5F8yaeuIUVPh8Q==}
     engines: {npm: '>=8.7.0'}
 
-  '@chainsafe/libp2p-noise@15.1.1':
-    resolution: {integrity: sha512-66EPS8gFTkb1jVCiJoY3+ulG/ZTef7kiNZZZvUOUzsLIZYQTi+7pIDBpgmolzSXdsFb8I2hl5mZsvcbzVZB5gg==}
+  '@chainsafe/libp2p-noise@15.1.2':
+    resolution: {integrity: sha512-o6mqsAbaCBucgdLOOHtkwtGVL1c8RLKhlTnHQY+leazY+thiE1Sm6qPCwsTHKQnWii1q5hDVI2Q0l9QgYi5v4Q==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
 
   '@chainsafe/libp2p-yamux@6.0.2':
@@ -6320,7 +6320,7 @@ snapshots:
       uint8arraylist: 2.4.8
       uint8arrays: 5.1.0
 
-  '@chainsafe/libp2p-noise@15.1.1':
+  '@chainsafe/libp2p-noise@15.1.2':
     dependencies:
       '@chainsafe/as-chacha20poly1305': 0.1.0
       '@chainsafe/as-sha256': 0.4.2
@@ -6871,7 +6871,7 @@ snapshots:
 
   '@libp2p/webrtc@4.1.8(react-native@0.75.1(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(react@18.3.1)(typescript@5.5.4))':
     dependencies:
-      '@chainsafe/libp2p-noise': 15.1.1
+      '@chainsafe/libp2p-noise': 15.1.2
       '@libp2p/interface': 1.7.0
       '@libp2p/interface-internal': 1.3.4
       '@libp2p/peer-id': 4.2.4
@@ -6919,7 +6919,7 @@ snapshots:
 
   '@libp2p/webtransport@4.1.7':
     dependencies:
-      '@chainsafe/libp2p-noise': 15.1.1
+      '@chainsafe/libp2p-noise': 15.1.2
       '@libp2p/interface': 1.7.0
       '@libp2p/peer-id': 4.2.4
       '@libp2p/utils': 5.4.9
