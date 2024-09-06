@@ -16,7 +16,8 @@
 		"docs": "typedoc",
 		"proto-gen": "buf generate",
 		"release": "release-it",
-		"test": "vitest"
+		"test": "vitest",
+		"bench": "vitest bench"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",

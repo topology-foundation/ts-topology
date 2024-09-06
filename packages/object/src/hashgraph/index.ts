@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
 import { BitSet } from "./bitset.js";
 
-type Hash = string;
+export type Hash = string;
 export type Operation<T> = { type: string; value: T | null };
 
 enum OperationType {
@@ -191,7 +191,7 @@ export class HashGraph<T> {
 			while (j < order.length) {
 				const moving = order[j];
 
-				if (!this.areCausallyRelated(anchor, moving)) {
+				if (!this.areCausallyRelatedUsingBitsets(anchor, moving)) {
 					const v1 = this.vertices.get(anchor);
 					const v2 = this.vertices.get(moving);
 					let action: ActionType;
@@ -233,12 +233,11 @@ export class HashGraph<T> {
 		return result;
 	}
 
-	// Time complexity: O(V), Space complexity: O(V)
-	areCausallyRelated(hash1: Hash, hash2: Hash): boolean {
+	// Amortised time complexity: O(1), Amortised space complexity: O(1)
+	areCausallyRelatedUsingBitsets(hash1: Hash, hash2: Hash): boolean {
 		if (!this.arePredecessorsFresh) {
 			this.topologicalSort();
 		}
-
 		const test1 =
 			this.reachablePredecessors
 				.get(hash1)
@@ -248,6 +247,47 @@ export class HashGraph<T> {
 				.get(hash2)
 				?.get(this.topoSortedIndex.get(hash1) || 0) || false;
 		return test1 || test2;
+	}
+
+	// Time complexity: O(V), Space complexity: O(V)
+	areCausallyRelatedUsingBFS(hash1: Hash, hash2: Hash): boolean {
+		const visited = new Set<Hash>();
+		const stack = [hash1];
+
+		while (stack.length > 0) {
+			const current = stack.pop();
+			if (current === hash2) return true;
+			if (current === undefined) continue;
+			visited.add(current);
+
+			const vertex = this.vertices.get(current);
+			if (!vertex) continue;
+			for (const dep of vertex.dependencies) {
+				if (!visited.has(dep)) {
+					stack.push(dep);
+				}
+			}
+		}
+
+		visited.clear();
+		stack.push(hash2);
+
+		while (stack.length > 0) {
+			const current = stack.pop();
+			if (current === hash1) return true;
+			if (current === undefined) continue;
+			visited.add(current);
+
+			const vertex = this.vertices.get(current);
+			if (!vertex) continue;
+			for (const dep of vertex.dependencies) {
+				if (!visited.has(dep)) {
+					stack.push(dep);
+				}
+			}
+		}
+
+		return false;
 	}
 
 	// Time complexity: O(1), Space complexity: O(1)
