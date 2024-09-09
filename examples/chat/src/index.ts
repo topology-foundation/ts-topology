@@ -9,7 +9,7 @@ import { Chat, addMessage, getMessages } from "./objects/chat";
 
 const node = new TopologyNode();
 // CRO = Conflict-free Replicated Object
-let topologyObject: TopologyObject;
+let topologyObject: TopologyObject<Chat>;
 let chatCRO: Chat;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
@@ -91,8 +91,8 @@ async function main() {
 		document.getElementById("createRoom")
 	);
 	button_create.addEventListener("click", async () => {
-		chatCRO = new Chat();
-		topologyObject = await node.createObject();
+		topologyObject = await node.createObject(new Chat());
+		chatCRO = topologyObject.cro as Chat;
 
 		node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
 			// on create/connect
@@ -103,7 +103,7 @@ async function main() {
 
 		node.objectStore.subscribe(topologyObject.id, (_, obj) => {
 			console.log("Received object operations: ", obj);
-			handleObjectOps(chatCRO, obj.operations);
+			handleObjectOps(chatCRO, obj.vertices);
 		});
 
 		(<HTMLButtonElement>document.getElementById("chatId")).innerText =

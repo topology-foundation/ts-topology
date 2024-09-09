@@ -1,6 +1,10 @@
-import { Message, Message_MessageType } from "@topology-foundation/network";
-import { TopologyObjectBase } from "@topology-foundation/object";
+import { NetworkPb } from "@topology-foundation/network";
+import { type TopologyObject, ObjectPb } from "@topology-foundation/object";
 import type { TopologyNode } from "./index.js";
+import {
+	topologyMessagesHandler,
+	topologyObjectChangesHandler,
+} from "./handlers.js";
 
 /* Object operations */
 export enum OPERATIONS {
@@ -17,55 +21,28 @@ export enum OPERATIONS {
 	SYNC = 4,
 }
 
-/* Utility function to execute object operations apart of calling the functions directly */
-export async function executeObjectOperation(
-	node: TopologyNode,
-	operation: OPERATIONS,
-	data: Uint8Array,
-	// biome-ignore lint/suspicious/noExplicitAny: intended to be any
-	...args: any[]
-) {
-	switch (operation) {
-		case OPERATIONS.CREATE:
-			createObject(node, data);
-			break;
-		case OPERATIONS.UPDATE:
-			updateObject(node, data);
-			break;
-		case OPERATIONS.SUBSCRIBE:
-			await subscribeObject(node, data, ...args);
-			break;
-		case OPERATIONS.UNSUBSCRIBE:
-			unsubscribeObject(node, data, ...args);
-			break;
-		case OPERATIONS.SYNC:
-			await syncObject(node, data, ...args);
-			break;
-		default:
-			console.error(
-				"topology::node::executeObjectOperation",
-				"Invalid operation",
-			);
-			break;
-	}
-}
-
-/* data: { id: string, abi: string, bytecode: Uint8Array } */
-function createObject(node: TopologyNode, data: Uint8Array) {
-	const object = TopologyObjectBase.decode(data);
-	node.networkNode.subscribe(object.id);
+export function createObject(node: TopologyNode, object: TopologyObject) {
 	node.objectStore.put(object.id, object);
+	object.subscribe((obj, originFn, vertices) =>
+		topologyObjectChangesHandler(node, obj, originFn, vertices),
+	);
+	node.networkNode.subscribe(object.id);
+	node.networkNode.addGroupMessageHandler(object.id, async (e) =>
+		topologyMessagesHandler(node, undefined, e.detail.msg.data),
+	);
 }
 
 /*
   data: { id: string, operations: {nonce: string, fn: string, args: string[] }[] }
   operations array doesn't contain the full remote operations array
 */
-function updateObject(node: TopologyNode, data: Uint8Array) {
-	const object_operations = TopologyObjectBase.decode(data);
-	let object = node.objectStore.get(object_operations.id);
+export function updateObject(node: TopologyNode, data: Uint8Array) {
+	const object_operations = ObjectPb.TopologyObjectBase.decode(data);
+	let object: ObjectPb.TopologyObjectBase | undefined = node.objectStore.get(
+		object_operations.id,
+	);
 	if (!object) {
-		object = TopologyObjectBase.create({
+		object = ObjectPb.TopologyObjectBase.create({
 			id: object_operations.id,
 		});
 	}
@@ -76,34 +53,33 @@ function updateObject(node: TopologyNode, data: Uint8Array) {
 	}
 	node.objectStore.put(object.id, object);
 
-	const message = Message.create({
-		type: Message_MessageType.UPDATE,
+	const message = NetworkPb.Message.create({
+		type: NetworkPb.Message_MessageType.UPDATE,
 		data: data,
 	});
 	node.networkNode.broadcastMessage(object.id, message);
 }
 
 /* data: { id: string } */
-async function subscribeObject(
+export async function subscribeObject(
 	node: TopologyNode,
-	data: Uint8Array,
-	fetch?: boolean,
+	objectId: string,
+	sync?: boolean,
 	peerId?: string,
 ) {
-	const object = TopologyObjectBase.decode(data);
-	node.networkNode.subscribe(object.id);
+	node.networkNode.subscribe(objectId);
 
-	if (!fetch) return;
+	if (!sync) return;
 	// complies with format, since the operations array is empty
-	const message = Message.create({
+	const message = NetworkPb.Message.create({
 		sender: node.networkNode.peerId,
-		type: Message_MessageType.SYNC,
-		data,
+		type: NetworkPb.Message_MessageType.SYNC,
+		data: new Uint8Array(0),
 	});
 
 	if (!peerId) {
 		await node.networkNode.sendGroupMessageRandomPeer(
-			object.id,
+			objectId,
 			["/topology/message/0.0.1"],
 			message,
 		);
@@ -116,36 +92,33 @@ async function subscribeObject(
 	}
 }
 
-/* data: { id: string } */
-function unsubscribeObject(
+export function unsubscribeObject(
 	node: TopologyNode,
-	data: Uint8Array,
+	objectId: string,
 	purge?: boolean,
 ) {
-	const object = TopologyObjectBase.decode(data);
-	node.networkNode.unsubscribe(object.id);
-	if (!purge) return;
-	node.objectStore.remove(object.id);
+	node.networkNode.unsubscribe(objectId);
+	if (purge) node.objectStore.remove(objectId);
 }
 
 /*
-  data: { id: string, operations: {nonce: string, fn: string, args: string[] }[] }
+  data: { id: string, vertices: Vertex[] }
   operations array contain the full remote operations array
 */
-async function syncObject(
+export async function syncObject(
 	node: TopologyNode,
+	objectId: string,
 	data: Uint8Array,
 	peerId?: string,
 ) {
-	const object = TopologyObjectBase.decode(data);
-	const message = Message.create({
-		type: Message_MessageType.SYNC,
+	const message = NetworkPb.Message.create({
+		type: NetworkPb.Message_MessageType.SYNC,
 		data: data,
 	});
 
 	if (!peerId) {
 		await node.networkNode.sendGroupMessageRandomPeer(
-			object.id,
+			objectId,
 			["/topology/message/0.0.1"],
 			message,
 		);

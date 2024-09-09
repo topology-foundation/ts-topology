@@ -6,8 +6,8 @@ import { Canvas } from "./objects/canvas";
 import { Pixel } from "./objects/pixel";
 
 const node = new TopologyNode();
+let topologyObject: TopologyObject<Canvas>;
 let canvasCRO: Canvas;
-let topologyObject: TopologyObject;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
 let objectPeers: string[] = [];
@@ -62,17 +62,6 @@ async function paint_pixel(pixel: HTMLDivElement) {
 	canvasCRO.paint(node.networkNode.peerId, [x, y], painting);
 	const [r, g, b] = canvasCRO.pixel(x, y).color();
 	pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-
-	node.updateObject(topologyObject.id, [
-		{
-			fn: "paint",
-			args: [
-				node.networkNode.peerId,
-				`${x},${y}`,
-				`${painting[0]},${painting[1]},${painting[2]}`,
-			],
-		},
-	]);
 }
 
 async function init() {
@@ -86,8 +75,8 @@ async function init() {
 
 	const create_button = <HTMLButtonElement>document.getElementById("create");
 	create_button.addEventListener("click", async () => {
-		canvasCRO = new Canvas(5, 10);
-		topologyObject = await node.createObject();
+		topologyObject = await node.createObject(new Canvas(5, 10));
+		canvasCRO = topologyObject.cro as Canvas;
 
 		// message handler for the CRO
 		node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
@@ -98,7 +87,7 @@ async function init() {
 		});
 
 		node.objectStore.subscribe(topologyObject.id, (_, obj) => {
-			handleObjectOps(canvasCRO, obj.operations);
+			handleObjectOps(canvasCRO, obj.vertices);
 		});
 
 		(<HTMLSpanElement>document.getElementById("canvasId")).innerText =
@@ -111,8 +100,8 @@ async function init() {
 		const croId = (<HTMLInputElement>document.getElementById("canvasIdInput"))
 			.value;
 		try {
-			canvasCRO = new Canvas(5, 10);
-			topologyObject = await node.createObject();
+			topologyObject = await node.createObject(new Canvas(5, 10), croId);
+			canvasCRO = topologyObject.cro as Canvas;
 
 			// message handler for the CRO
 			node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
@@ -125,7 +114,7 @@ async function init() {
 			});
 
 			node.objectStore.subscribe(topologyObject.id, (_, obj) => {
-				handleObjectOps(canvasCRO, obj.operations);
+				handleObjectOps(canvasCRO, obj.vertices);
 				render();
 			});
 

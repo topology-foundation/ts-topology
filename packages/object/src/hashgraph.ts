@@ -58,7 +58,7 @@ export class HashGraph {
 		this.forwardEdges.set(HashGraph.rootHash, []);
 	}
 
-	addToFrontier(operation: Operation): Hash {
+	addToFrontier(operation: Operation): Vertex {
 		const deps = this.getFrontier();
 		const hash = computeHash(this.nodeId, operation, deps);
 		const vertex: Vertex = {
@@ -81,7 +81,7 @@ export class HashGraph {
 
 		const depsSet = new Set(deps);
 		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
-		return hash;
+		return vertex;
 	}
 
 	// Time complexity: O(d), where d is the number of dependencies

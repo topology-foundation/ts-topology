@@ -5,8 +5,15 @@ import {
 	gset_create,
 	gset_merge,
 } from "@topology-foundation/crdt";
+import {
+	ActionType,
+	Vertex,
+	type CRO,
+	type Operation,
+} from "@topology-foundation/object";
 
-export class Chat {
+export class Chat implements CRO<Chat> {
+	operations: string[] = ["addMessage"];
 	// store messages as strings in the format (timestamp, message, nodeId)
 	messages: GSet<string>;
 	constructor() {
@@ -23,6 +30,16 @@ export class Chat {
 
 	merge(other: Chat): void {
 		this.messages.merge(other.messages);
+	}
+
+	resolveConflicts(vertices: Vertex<Chat>[]): ActionType {
+		return ActionType.Nop;
+	}
+
+	mergeCallback(operations: Operation<Chat>[]): void {
+		for (const op of operations) {
+			console.log(op);
+		}
 	}
 }
 

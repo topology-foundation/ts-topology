@@ -5,9 +5,12 @@ import {
 	type Operation,
 	type Vertex,
 } from "./hashgraph.js";
-import type { TopologyObjectBase } from "./proto/object_pb.js";
+import type {
+	TopologyObjectBase,
+	Vertex as VertexPb,
+} from "./proto/object_pb.js";
 
-export * from "./proto/object_pb.js";
+export * as ObjectPb from "./proto/object_pb.js";
 export * from "./hashgraph.js";
 
 export interface CRO {
@@ -15,83 +18,71 @@ export interface CRO {
 	mergeCallback: (operations: Operation[]) => void;
 }
 
-export interface TopologyObject extends TopologyObjectBase {
+export type TopologyObjectCallback = (
+	object: TopologyObject,
+	origin: string,
+	vertices: VertexPb[],
+) => void;
+
+export interface ITopologyObject extends TopologyObjectBase {
 	cro: ProxyHandler<CRO> | null;
 	hashGraph: HashGraph;
+	subscriptions: TopologyObjectCallback[];
 }
 
-/* Creates a new TopologyObject */
-export async function newTopologyObject(
-	nodeId: string,
-	cro: CRO,
-	id?: string,
-	abi?: string,
-): Promise<TopologyObject> {
-	// const bytecode = await compileWasm(path);
-	const bytecode = new Uint8Array();
-	const obj: TopologyObject = {
-		id:
+export class TopologyObject implements ITopologyObject {
+	nodeId: string;
+	id: string;
+	abi: string;
+	bytecode: Uint8Array;
+	vertices: VertexPb[];
+	cro: ProxyHandler<CRO> | null;
+	hashGraph: HashGraph;
+	subscriptions: TopologyObjectCallback[];
+
+	constructor(nodeId: string, cro: CRO, id?: string, abi?: string) {
+		this.nodeId = nodeId;
+		this.id =
 			id ??
 			crypto
 				.createHash("sha256")
 				.update(abi ?? "")
 				.update(nodeId)
 				.update(Math.floor(Math.random() * Number.MAX_VALUE).toString())
-				.digest("hex"),
-		abi: abi ?? "",
-		bytecode: bytecode ?? new Uint8Array(),
-		vertices: [],
-		cro: null,
-		hashGraph: new HashGraph(nodeId, cro.resolveConflicts),
-	};
-	obj.cro = new Proxy(cro, proxyCROHandler(obj));
-	return obj;
-}
-
-// This function is black magic, it allows us to intercept calls to the CRO object
-function proxyCROHandler(obj: TopologyObject): ProxyHandler<object> {
-	return {
-		get(target, propKey, receiver) {
-			if (typeof target[propKey as keyof object] === "function") {
-				return new Proxy(target[propKey as keyof object], {
-					apply(applyTarget, thisArg, args) {
-						if ((thisArg.operations as string[]).includes(propKey as string))
-							callFn(
-								obj,
-								propKey as string,
-								args.length === 1 ? args[0] : args,
-							);
-						return Reflect.apply(applyTarget, thisArg, args);
-					},
-				});
-			}
-			return Reflect.get(target, propKey, receiver);
-		},
-	};
-}
-
-export async function callFn(
-	obj: TopologyObject,
-	fn: string,
-	args: unknown,
-): Promise<TopologyObject> {
-	obj.hashGraph.addToFrontier({ type: fn, value: args });
-	return obj;
-}
-
-export async function merge(obj: TopologyObject, vertices: Vertex[]) {
-	for (const vertex of vertices) {
-		obj.hashGraph.addVertex(
-			vertex.operation,
-			vertex.dependencies,
-			vertex.nodeId,
-		);
+				.digest("hex");
+		this.abi = abi ?? "";
+		this.bytecode = new Uint8Array();
+		this.vertices = [];
+		this.cro = new Proxy(cro, this.proxyCROHandler());
+		this.hashGraph = new HashGraph(nodeId, cro.resolveConflicts);
+		this.subscriptions = [];
 	}
 
-	const operations = obj.hashGraph.linearizeOperations();
-	// TODO remove this in favor of RIBLT
-	obj.vertices = obj.hashGraph.getAllVertices().map((vertex) => {
+	// This function is black magic, it allows us to intercept calls to the CRO object
+	proxyCROHandler(): ProxyHandler<object> {
+		const obj = this;
 		return {
+			get(target, propKey, receiver) {
+				if (typeof target[propKey as keyof object] === "function") {
+					return new Proxy(target[propKey as keyof object], {
+						apply(applyTarget, thisArg, args) {
+							if ((thisArg.operations as string[]).includes(propKey as string))
+								obj.callFn(
+									propKey as string,
+									args.length === 1 ? args[0] : args,
+								);
+							return Reflect.apply(applyTarget, thisArg, args);
+						},
+					});
+				}
+				return Reflect.get(target, propKey, receiver);
+			},
+		};
+	}
+
+	callFn(fn: string, args: unknown) {
+		const vertex = this.hashGraph.addToFrontier({ type: fn, value: args });
+		const serializedVertex = {
 			hash: vertex.hash,
 			nodeId: vertex.nodeId,
 			operation: {
@@ -100,7 +91,44 @@ export async function merge(obj: TopologyObject, vertices: Vertex[]) {
 			},
 			dependencies: vertex.dependencies,
 		};
-	});
+		this.vertices.push(serializedVertex);
+		this._notify("callFn", [serializedVertex]);
+	}
 
-	(obj.cro as CRO).mergeCallback(operations);
+	merge(obj: TopologyObject, vertices: Vertex[]) {
+		for (const vertex of vertices) {
+			obj.hashGraph.addVertex(
+				vertex.operation,
+				vertex.dependencies,
+				vertex.nodeId,
+			);
+		}
+
+		const operations = obj.hashGraph.linearizeOperations();
+		// TODO remove this in favor of RIBLT
+		obj.vertices = obj.hashGraph.getAllVertices().map((vertex) => {
+			return {
+				hash: vertex.hash,
+				nodeId: vertex.nodeId,
+				operation: {
+					type: vertex.operation.type,
+					value: vertex.operation.value as string,
+				},
+				dependencies: vertex.dependencies,
+			};
+		});
+
+		(obj.cro as CRO).mergeCallback(operations);
+		this._notify("merge", obj.vertices);
+	}
+
+	subscribe(callback: TopologyObjectCallback) {
+		this.subscriptions.push(callback);
+	}
+
+	private _notify(origin: string, vertices: VertexPb[]) {
+		for (const callback of this.subscriptions) {
+			callback(this, origin, vertices);
+		}
+	}
 }

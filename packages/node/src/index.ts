@@ -1,22 +1,20 @@
 import type { GossipsubMessage } from "@chainsafe/libp2p-gossipsub";
 import type { EventCallback, StreamHandler } from "@libp2p/interface";
 import {
-	Message,
-	Message_MessageType,
+	NetworkPb,
 	TopologyNetworkNode,
 	type TopologyNetworkNodeConfig,
 } from "@topology-foundation/network";
 import {
 	type CRO,
-	TopologyObjectBase,
-	newTopologyObject,
+	TopologyObject,
+	ObjectPb,
 } from "@topology-foundation/object";
 import { topologyMessagesHandler } from "./handlers.js";
-import { OPERATIONS, executeObjectOperation } from "./operations.js";
+import * as operations from "./operations.js";
 import { TopologyObjectStore } from "./store/index.js";
 
 import * as crypto from "node:crypto";
-export * from "./operations.js";
 
 // snake_casing to match the JSON config
 export interface TopologyNodeConfig {
@@ -54,9 +52,9 @@ export class TopologyNode {
 	}
 
 	sendGroupMessage(group: string, data: Uint8Array) {
-		const message = Message.create({
+		const message = NetworkPb.Message.create({
 			sender: this.networkNode.peerId,
-			type: Message_MessageType.CUSTOM,
+			type: NetworkPb.Message_MessageType.CUSTOM,
 			data,
 		});
 		this.networkNode.broadcastMessage(group, message);
@@ -67,56 +65,32 @@ export class TopologyNode {
 	}
 
 	sendCustomMessage(peerId: string, protocol: string, data: Uint8Array) {
-		const message = Message.create({
+		const message = NetworkPb.Message.create({
 			sender: this.networkNode.peerId,
-			type: Message_MessageType.CUSTOM,
+			type: NetworkPb.Message_MessageType.CUSTOM,
 			data,
 		});
 		this.networkNode.sendMessage(peerId, [protocol], message);
 	}
 
-	async createObject<T>(cro: CRO<T>, id?: string, path?: string, abi?: string) {
-		const object = await newTopologyObject(
-			this.networkNode.peerId,
-			cro,
-			path,
-			id,
-			abi,
-		);
-		executeObjectOperation(
-			this,
-			OPERATIONS.CREATE,
-			TopologyObjectBase.encode(object).finish(),
-		);
-		this.networkNode.addGroupMessageHandler(object.id, async (e) =>
-			topologyMessagesHandler(this, undefined, e.detail.msg.data),
-		);
+	async createObject(cro: CRO, id?: string, abi?: string) {
+		const object = new TopologyObject(this.networkNode.peerId, cro, id, abi);
+		operations.createObject(this, object);
+
 		return object;
 	}
 
 	updateObject(id: string, operations: { fn: string; args: string[] }[]) {
 		// TODO: needs refactor for working with hash graph
-		const object = TopologyObjectBase.create({
+		const object = ObjectPb.TopologyObjectBase.create({
 			id,
 		});
-		executeObjectOperation(
-			this,
-			OPERATIONS.UPDATE,
-			TopologyObjectBase.encode(object).finish(),
-		);
 	}
 
 	async subscribeObject(id: string, fetch?: boolean, peerId?: string) {
-		const object = TopologyObjectBase.create({
+		const object = ObjectPb.TopologyObjectBase.create({
 			id,
 		});
-		executeObjectOperation(
-			this,
-			OPERATIONS.SUBSCRIBE,
-			TopologyObjectBase.encode(object).finish(),
-			fetch,
-			peerId,
-		);
 		this.networkNode.addGroupMessageHandler(id, async (e) =>
 			topologyMessagesHandler(this, undefined, e.detail.msg.data),
 		);
@@ -124,31 +98,15 @@ export class TopologyNode {
 	}
 
 	unsubscribeObject(id: string, purge?: boolean) {
-		const object = TopologyObjectBase.create({
+		const object = ObjectPb.TopologyObjectBase.create({
 			id,
 		});
-		executeObjectOperation(
-			this,
-			OPERATIONS.UNSUBSCRIBE,
-			TopologyObjectBase.encode(object).finish(),
-			purge,
-		);
 	}
 
-	async syncObject(
-		id: string,
-		operations: { nonce: string; fn: string; args: string[] }[],
-		peerId?: string,
-	) {
-		const object = TopologyObjectBase.create({
+	async syncObject(id: string, vertices: NetworkPb.Vertex[], peerId?: string) {
+		const object = ObjectPb.TopologyObjectBase.create({
 			id,
 		});
-		executeObjectOperation(
-			this,
-			OPERATIONS.SYNC,
-			TopologyObjectBase.encode(object).finish(),
-			peerId,
-		);
 	}
 }
 

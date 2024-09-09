@@ -1,6 +1,18 @@
 syntax = "proto3";
 package topology.network;
 
+// Supposed to be the RIBLT stuff
+message Vertex {
+	message Operation {
+ 		string type = 1;
+   		string value = 2;
+    }
+    string hash = 1;
+    string nodeId = 2;
+    Operation operation = 3;
+    repeated string dependencies = 4;
+};
+
 message Message {
     enum MessageType {
         UPDATE = 0;
@@ -14,3 +26,18 @@ message Message {
     MessageType type = 2;
     bytes data = 3;
 }
+
+message Update {
+}
+
+message Sync {
+	repeated string vertex_hashes = 1;
+}
+
+message SyncAccept {
+	// not strings
+	repeated Vertex diff = 1;
+	repeated string missing = 2;
+}
+
+message SyncReject { }

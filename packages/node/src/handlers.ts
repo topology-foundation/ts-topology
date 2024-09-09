@@ -1,6 +1,6 @@
 import type { Stream } from "@libp2p/interface";
-import { Message, Message_MessageType } from "@topology-foundation/network";
-import { TopologyObjectBase } from "@topology-foundation/object";
+import { NetworkPb } from "@topology-foundation/network";
+import { type TopologyObject, ObjectPb } from "@topology-foundation/object";
 import * as lp from "it-length-prefixed";
 import type { TopologyNode } from "./index.js";
 
@@ -13,12 +13,14 @@ export async function topologyMessagesHandler(
 	stream?: Stream,
 	data?: Uint8Array,
 ) {
-	let message: Message;
+	let message: NetworkPb.Message;
 	if (stream) {
 		const buf = (await lp.decode(stream.source).return()).value;
-		message = Message.decode(new Uint8Array(buf ? buf.subarray() : []));
+		message = NetworkPb.Message.decode(
+			new Uint8Array(buf ? buf.subarray() : []),
+		);
 	} else if (data) {
-		message = Message.decode(data);
+		message = NetworkPb.Message.decode(data);
 	} else {
 		console.error(
 			"topology::node::messageHandler",
@@ -28,10 +30,10 @@ export async function topologyMessagesHandler(
 	}
 
 	switch (message.type) {
-		case Message_MessageType.UPDATE:
+		case NetworkPb.Message_MessageType.UPDATE:
 			updateHandler(node, message.data);
 			break;
-		case Message_MessageType.SYNC:
+		case NetworkPb.Message_MessageType.SYNC:
 			if (!stream) {
 				console.error("topology::node::messageHandler", "Stream is undefined");
 				return;
@@ -43,10 +45,10 @@ export async function topologyMessagesHandler(
 				message.data,
 			);
 			break;
-		case Message_MessageType.SYNC_ACCEPT:
+		case NetworkPb.Message_MessageType.SYNC_ACCEPT:
 			syncAcceptHandler(node, message.data);
 			break;
-		case Message_MessageType.SYNC_REJECT:
+		case NetworkPb.Message_MessageType.SYNC_REJECT:
 			syncRejectHandler(node, message.data);
 			break;
 		default:
@@ -60,10 +62,10 @@ export async function topologyMessagesHandler(
   operations array doesn't contain the full remote operations array
 */
 function updateHandler(node: TopologyNode, data: Uint8Array) {
-	const object_operations = TopologyObjectBase.decode(data);
+	const object_operations = ObjectPb.TopologyObjectBase.decode(data);
 	let object = node.objectStore.get(object_operations.id);
 	if (!object) {
-		object = TopologyObjectBase.create({
+		object = ObjectPb.TopologyObjectBase.create({
 			id: object_operations.id,
 		});
 	}
@@ -85,9 +87,9 @@ function syncHandler(
 
 	// process, calculate diffs, and send back
 
-	const message = Message.create({
+	const message = NetworkPb.Message.create({
 		sender: node.networkNode.peerId,
-		type: Message_MessageType.SYNC_ACCEPT,
+		type: NetworkPb.Message_MessageType.SYNC_ACCEPT,
 		// add data here
 		data: new Uint8Array(0),
 	});
@@ -102,12 +104,12 @@ function syncHandler(
 function syncAcceptHandler(node: TopologyNode, data: Uint8Array) {
 	// don't blindly accept, validate the operations
 	// might have have appeared in the meantime
-	const object_operations = TopologyObjectBase.decode(data);
-	let object: TopologyObjectBase | undefined = node.objectStore.get(
+	const object_operations = ObjectPb.TopologyObjectBase.decode(data);
+	let object: ObjectPb.TopologyObjectBase | undefined = node.objectStore.get(
 		object_operations.id,
 	);
 	if (!object) {
-		object = TopologyObjectBase.create({
+		object = ObjectPb.TopologyObjectBase.create({
 			id: object_operations.id,
 		});
 	}
@@ -130,4 +132,29 @@ function syncRejectHandler(node: TopologyNode, data: Uint8Array) {
 	// - Retry sync
 	// - Ask sync from another peer
 	// - Do nothing
+}
+
+export function topologyObjectChangesHandler(
+	node: TopologyNode,
+	obj: TopologyObject,
+	originFn: string,
+	vertices: ObjectPb.Vertex[],
+) {
+	switch (originFn) {
+		case "merge":
+			node.objectStore.put(obj.id, obj);
+			break;
+		case "callFn": {
+			node.objectStore.put(obj.id, obj);
+			// send vertices to the pubsub group
+			const message = NetworkPb.Message.create({
+				type: NetworkPb.Message_MessageType.UPDATE,
+				data: ObjectPb.TopologyObjectBase.encode(obj).finish(),
+			});
+			node.networkNode.broadcastMessage(obj.id, message);
+			break;
+		}
+		default:
+			console.error("topology::node::createObject", "Invalid origin function");
+	}
 }

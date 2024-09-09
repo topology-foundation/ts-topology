@@ -1,6 +1,13 @@
 import { Pixel } from "./pixel";
+import {
+	ActionType,
+	type CRO,
+	type Operation,
+} from "@topology-foundation/object";
 
-export class Canvas {
+export class Canvas implements CRO<Canvas> {
+	operations: string[] = ["splash", "paint"];
+
 	width: number;
 	height: number;
 	canvas: Pixel[][];
@@ -14,7 +21,7 @@ export class Canvas {
 	}
 
 	splash(
-		node_id: string,
+		nodeId: string,
 		offset: [number, number],
 		size: [number, number],
 		rgb: [number, number, number],
@@ -24,7 +31,7 @@ export class Canvas {
 
 		for (let x = offset[0]; x < this.width || x < offset[0] + size[0]; x++) {
 			for (let y = offset[1]; y < this.height || y < offset[1] + size[1]; y++) {
-				this.canvas[x][y].paint(node_id, rgb);
+				this.canvas[x][y].paint(nodeId, rgb);
 			}
 		}
 	}
@@ -48,5 +55,16 @@ export class Canvas {
 		this.canvas.forEach((row, x) =>
 			row.forEach((pixel, y) => pixel.merge(peerCanvas.pixel(x, y))),
 		);
+	}
+
+	resolveConflicts(_): ActionType {
+		return ActionType.Nop;
+	}
+
+	mergeCallback(operations: Operation<Canvas>[]): void {
+		for (const op of operations) {
+			if (!op.value) continue;
+			this.merge(op.value);
+		}
 	}
 }
