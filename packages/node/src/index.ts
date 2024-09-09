@@ -76,12 +76,15 @@ export class TopologyNode {
 	) {
 		const object = new TopologyObject(this.networkNode.peerId, cro, id, abi);
 		operations.createObject(this, object);
-		operations.subscribeObject(this, object.id, sync, peerId);
+		operations.subscribeObject(this, object.id);
+		if (sync) {
+			operations.syncObject(this, object.id, peerId);
+		}
 		return object;
 	}
 
-	async subscribeObject(id: string, sync?: boolean, peerId?: string) {
-		return operations.subscribeObject(this, id, sync, peerId);
+	async subscribeObject(id: string) {
+		return operations.subscribeObject(this, id);
 	}
 
 	unsubscribeObject(id: string, purge?: boolean) {

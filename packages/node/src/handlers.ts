@@ -1,7 +1,10 @@
 import type { Stream } from "@libp2p/interface";
-import { NetworkPb } from "@topology-foundation/network";
-import { type TopologyObject, ObjectPb } from "@topology-foundation/object";
-import * as lp from "it-length-prefixed";
+import { NetworkPb, streamToUint8Array } from "@topology-foundation/network";
+import {
+	type TopologyObject,
+	ObjectPb,
+	type Vertex,
+} from "@topology-foundation/object";
 import type { TopologyNode } from "./index.js";
 
 /*
@@ -13,15 +16,10 @@ export async function topologyMessagesHandler(
 	stream?: Stream,
 	data?: Uint8Array,
 ) {
-	console.log("topology::node::messageHandler", stream, data);
 	let message: NetworkPb.Message;
 	if (stream) {
-		console.log("lp decode", lp.decode(stream.source));
-		const buf = (await lp.decode(stream.source).return()).value;
-		console.log(buf);
-		message = NetworkPb.Message.decode(
-			new Uint8Array(buf ? buf.subarray() : []),
-		);
+		const byteArray = await streamToUint8Array(stream);
+		message = NetworkPb.Message.decode(byteArray);
 	} else if (data) {
 		message = NetworkPb.Message.decode(data);
 	} else {
@@ -49,7 +47,16 @@ export async function topologyMessagesHandler(
 			);
 			break;
 		case NetworkPb.Message_MessageType.SYNC_ACCEPT:
-			syncAcceptHandler(node, message.data);
+			if (!stream) {
+				console.error("topology::node::messageHandler", "Stream is undefined");
+				return;
+			}
+			syncAcceptHandler(
+				node,
+				stream.protocol ?? "/topology/message/0.0.1",
+				message.sender,
+				message.data,
+			);
 			break;
 		case NetworkPb.Message_MessageType.SYNC_REJECT:
 			syncRejectHandler(node, message.data);
@@ -66,13 +73,12 @@ export async function topologyMessagesHandler(
 */
 function updateHandler(node: TopologyNode, data: Uint8Array) {
 	const object_operations = ObjectPb.TopologyObjectBase.decode(data);
-	console.log("topology::node::updateHandler", object_operations);
-
 	const object = node.objectStore.get(object_operations.id);
 	if (!object) {
 		console.error("topology::node::updateHandler", "Object not found");
 		return false;
 	}
+
 	for (const v of object_operations.vertices) {
 		const vertex = object.vertices.find((x) => x.hash === v.hash);
 		if (!vertex) {
@@ -94,16 +100,38 @@ function syncHandler(
 	data: Uint8Array,
 ) {
 	// (might send reject) <- TODO: when should we reject?
+	const syncMessage = NetworkPb.Sync.decode(data);
+	const object = node.objectStore.get(syncMessage.objectId);
+	if (!object) {
+		console.error("topology::node::syncHandler", "Object not found");
+		return;
+	}
 
-	// process, calculate diffs, and send back
+	const diff: Set<NetworkPb.Vertex> = new Set(object.vertices);
+	const missing: string[] = [];
+	for (const h of syncMessage.vertexHashes) {
+		const vertex = object.vertices.find((v) => v.hash === h);
+		if (vertex) {
+			diff.delete(vertex);
+		} else {
+			missing.push(h);
+		}
+	}
+
+	if (diff.size === 0 && missing.length === 0) return;
 
 	const message = NetworkPb.Message.create({
 		sender: node.networkNode.peerId,
 		type: NetworkPb.Message_MessageType.SYNC_ACCEPT,
 		// add data here
-		data: new Uint8Array(0),
+		data: NetworkPb.SyncAccept.encode(
+			NetworkPb.SyncAccept.create({
+				objectId: object.id,
+				diff: [...diff],
+				missing,
+			}),
+		).finish(),
 	});
-
 	node.networkNode.sendMessage(sender, [protocol], message);
 }
 
@@ -111,29 +139,59 @@ function syncHandler(
   data: { id: string, operations: {nonce: string, fn: string, args: string[] }[] }
   operations array contain the full remote operations array
 */
-function syncAcceptHandler(node: TopologyNode, data: Uint8Array) {
-	// don't blindly accept, validate the operations
-	// might have have appeared in the meantime
-	const object_operations = ObjectPb.TopologyObjectBase.decode(data);
-	const object: TopologyObject | undefined = node.objectStore.get(
-		object_operations.id,
-	);
+function syncAcceptHandler(
+	node: TopologyNode,
+	protocol: string,
+	sender: string,
+	data: Uint8Array,
+) {
+	const syncAcceptMessage = NetworkPb.SyncAccept.decode(data);
+	const object = node.objectStore.get(syncAcceptMessage.objectId);
 	if (!object) {
 		console.error("topology::node::syncAcceptHandler", "Object not found");
-		return false;
+		return;
 	}
 
-	object_operations.vertices.filter((v1) => {
-		if (object?.vertices.find((v2) => v1.hash === v2.hash)) {
-			return false;
-		}
-		return true;
+	const vertices: Vertex[] = syncAcceptMessage.diff.map((v) => {
+		return {
+			hash: v.hash,
+			nodeId: v.nodeId,
+			operation: {
+				type: v.operation?.type ?? "",
+				value: v.operation?.value,
+			},
+			dependencies: v.dependencies,
+		};
 	});
-	object.vertices.push(...object_operations.vertices);
-	node.objectStore.put(object.id, object);
 
-	return true;
-	// TODO missing sending back the diff
+	if (vertices.length !== 0) {
+		object.merge(vertices);
+		node.objectStore.put(object.id, object);
+	}
+
+	// send missing vertices
+	const diff: NetworkPb.Vertex[] = [];
+	for (const h of syncAcceptMessage.missing) {
+		const vertex = object.vertices.find((v) => v.hash === h);
+		if (vertex) {
+			diff.push(vertex);
+		}
+	}
+
+	if (diff.length === 0) return;
+
+	const message = NetworkPb.Message.create({
+		sender: node.networkNode.peerId,
+		type: NetworkPb.Message_MessageType.SYNC_ACCEPT,
+		data: NetworkPb.SyncAccept.encode(
+			NetworkPb.SyncAccept.create({
+				objectId: object.id,
+				diff,
+				missing: [],
+			}),
+		).finish(),
+	});
+	node.networkNode.sendMessage(sender, [protocol], message);
 }
 
 /* data: { id: string } */
@@ -148,9 +206,7 @@ export function topologyObjectChangesHandler(
 	node: TopologyNode,
 	obj: TopologyObject,
 	originFn: string,
-	vertices: ObjectPb.Vertex[],
 ) {
-	console.log("topology::node::objectChangesHandler", obj, originFn, vertices);
 	switch (originFn) {
 		case "merge":
 			node.objectStore.put(obj.id, obj);
@@ -159,6 +215,7 @@ export function topologyObjectChangesHandler(
 			node.objectStore.put(obj.id, obj);
 			// send vertices to the pubsub group
 			const message = NetworkPb.Message.create({
+				sender: node.networkNode.peerId,
 				type: NetworkPb.Message_MessageType.UPDATE,
 				data: ObjectPb.TopologyObjectBase.encode(obj).finish(),
 			});

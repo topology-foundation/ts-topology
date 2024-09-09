@@ -96,18 +96,18 @@ export class TopologyObject implements ITopologyObject {
 		this._notify("callFn", [serializedVertex]);
 	}
 
-	merge(obj: TopologyObject, vertices: Vertex[]) {
+	merge(vertices: Vertex[]) {
 		for (const vertex of vertices) {
-			obj.hashGraph.addVertex(
+			this.hashGraph.addVertex(
 				vertex.operation,
 				vertex.dependencies,
 				vertex.nodeId,
 			);
 		}
 
-		const operations = obj.hashGraph.linearizeOperations();
+		const operations = this.hashGraph.linearizeOperations();
 		// TODO remove this in favor of RIBLT
-		obj.vertices = obj.hashGraph.getAllVertices().map((vertex) => {
+		this.vertices = this.hashGraph.getAllVertices().map((vertex) => {
 			return {
 				hash: vertex.hash,
 				nodeId: vertex.nodeId,
@@ -119,8 +119,8 @@ export class TopologyObject implements ITopologyObject {
 			};
 		});
 
-		(obj.cro as CRO).mergeCallback(operations);
-		this._notify("merge", obj.vertices);
+		(this.cro as CRO).mergeCallback(operations);
+		this._notify("merge", this.vertices);
 	}
 
 	subscribe(callback: TopologyObjectCallback) {

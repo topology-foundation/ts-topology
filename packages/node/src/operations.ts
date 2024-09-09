@@ -23,46 +23,17 @@ enum OPERATIONS {
 
 export function createObject(node: TopologyNode, object: TopologyObject) {
 	node.objectStore.put(object.id, object);
-	object.subscribe((obj, originFn, vertices) =>
-		topologyObjectChangesHandler(node, obj, originFn, vertices),
+	object.subscribe((obj, originFn, _) =>
+		topologyObjectChangesHandler(node, obj, originFn),
 	);
 }
 
 /* data: { id: string } */
-export async function subscribeObject(
-	node: TopologyNode,
-	objectId: string,
-	sync?: boolean,
-	peerId?: string,
-) {
+export async function subscribeObject(node: TopologyNode, objectId: string) {
 	node.networkNode.subscribe(objectId);
 	node.networkNode.addGroupMessageHandler(objectId, async (e) =>
 		topologyMessagesHandler(node, undefined, e.detail.msg.data),
 	);
-
-	if (!sync) return;
-	// complies with format, since the operations array is empty
-	const message = NetworkPb.Message.create({
-		sender: node.networkNode.peerId,
-		type: NetworkPb.Message_MessageType.SYNC,
-		data: new Uint8Array(0),
-	});
-
-	console.log(message, "message");
-
-	if (!peerId) {
-		await node.networkNode.sendGroupMessageRandomPeer(
-			objectId,
-			["/topology/message/0.0.1"],
-			message,
-		);
-	} else {
-		await node.networkNode.sendMessage(
-			peerId,
-			["/topology/message/0.0.1"],
-			message,
-		);
-	}
 }
 
 export function unsubscribeObject(
@@ -88,9 +59,11 @@ export async function syncObject(
 		return;
 	}
 	const data = NetworkPb.Sync.create({
+		objectId,
 		vertexHashes: object.vertices.map((v) => v.hash),
 	});
 	const message = NetworkPb.Message.create({
+		sender: node.networkNode.peerId,
 		type: NetworkPb.Message_MessageType.SYNC,
 		data: NetworkPb.Sync.encode(data).finish(),
 	});
