@@ -4,12 +4,12 @@ import {
 	HashGraph,
 	type Operation,
 	type Vertex,
-} from "./hashgraph.js";
+} from "./hashgraph/index.js";
 import type { TopologyObjectBase } from "./proto/object_pb.js";
 import { compileWasm } from "./wasm/compiler.js";
 
 export * from "./proto/object_pb.js";
-export * from "./hashgraph.js";
+export * from "./hashgraph/index.js";
 
 export interface CRO<T> {
 	resolveConflicts: (vertices: Vertex<T>[]) => ActionType;
