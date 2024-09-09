@@ -5,16 +5,10 @@ import {
 	TopologyNetworkNode,
 	type TopologyNetworkNodeConfig,
 } from "@topology-foundation/network";
-import {
-	type CRO,
-	TopologyObject,
-	ObjectPb,
-} from "@topology-foundation/object";
+import { type CRO, TopologyObject } from "@topology-foundation/object";
 import { topologyMessagesHandler } from "./handlers.js";
 import * as operations from "./operations.js";
 import { TopologyObjectStore } from "./store/index.js";
-
-import * as crypto from "node:crypto";
 
 // snake_casing to match the JSON config
 export interface TopologyNodeConfig {
@@ -73,48 +67,28 @@ export class TopologyNode {
 		this.networkNode.sendMessage(peerId, [protocol], message);
 	}
 
-	async createObject(cro: CRO, id?: string, abi?: string) {
+	async createObject(
+		cro: CRO,
+		id?: string,
+		abi?: string,
+		sync?: boolean,
+		peerId?: string,
+	) {
 		const object = new TopologyObject(this.networkNode.peerId, cro, id, abi);
 		operations.createObject(this, object);
-
+		operations.subscribeObject(this, object.id, sync, peerId);
 		return object;
 	}
 
-	updateObject(id: string, operations: { fn: string; args: string[] }[]) {
-		// TODO: needs refactor for working with hash graph
-		const object = ObjectPb.TopologyObjectBase.create({
-			id,
-		});
-	}
-
-	async subscribeObject(id: string, fetch?: boolean, peerId?: string) {
-		const object = ObjectPb.TopologyObjectBase.create({
-			id,
-		});
-		this.networkNode.addGroupMessageHandler(id, async (e) =>
-			topologyMessagesHandler(this, undefined, e.detail.msg.data),
-		);
-		return object;
+	async subscribeObject(id: string, sync?: boolean, peerId?: string) {
+		return operations.subscribeObject(this, id, sync, peerId);
 	}
 
 	unsubscribeObject(id: string, purge?: boolean) {
-		const object = ObjectPb.TopologyObjectBase.create({
-			id,
-		});
+		operations.unsubscribeObject(this, id, purge);
 	}
 
-	async syncObject(id: string, vertices: NetworkPb.Vertex[], peerId?: string) {
-		const object = ObjectPb.TopologyObjectBase.create({
-			id,
-		});
+	async syncObject(id: string, peerId?: string) {
+		operations.syncObject(this, id, peerId);
 	}
-}
-
-function generateNonce(fn: string, args: string[]) {
-	return crypto
-		.createHash("sha256")
-		.update(fn)
-		.update(args.join(","))
-		.update(Math.floor(Math.random() * Number.MAX_VALUE).toString())
-		.digest("hex");
 }

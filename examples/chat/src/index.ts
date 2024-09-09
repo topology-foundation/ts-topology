@@ -1,21 +1,21 @@
 import { GSet } from "@topology-foundation/crdt";
 import { TopologyNode } from "@topology-foundation/node";
-import {
-	type TopologyObject,
-	newTopologyObject,
-} from "@topology-foundation/object";
+import type { TopologyObject } from "@topology-foundation/object";
 import { handleObjectOps } from "./handlers";
-import { Chat, addMessage, getMessages } from "./objects/chat";
+import { Chat } from "./objects/chat";
 
 const node = new TopologyNode();
 // CRO = Conflict-free Replicated Object
-let topologyObject: TopologyObject<Chat>;
+let topologyObject: TopologyObject;
 let chatCRO: Chat;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
 let objectPeers: string[] = [];
 
 const render = () => {
+	if (topologyObject)
+		(<HTMLButtonElement>document.getElementById("chatId")).innerText =
+			topologyObject.id;
 	const element_peerId = <HTMLDivElement>document.getElementById("peerId");
 	element_peerId.innerHTML = node.networkNode.peerId;
 
@@ -33,7 +33,7 @@ const render = () => {
 	element_objectPeers.innerHTML = `[${objectPeers.join(", ")}]`;
 
 	if (!chatCRO) return;
-	const chat = getMessages(chatCRO);
+	const chat = chatCRO.getMessages();
 	const element_chat = <HTMLDivElement>document.getElementById("chat");
 	element_chat.innerHTML = "";
 
@@ -59,19 +59,29 @@ async function sendMessage(message: string) {
 		alert("Please create or join a chat room first");
 		return;
 	}
-	console.log(
-		"Sending message: ",
-		`(${timestamp}, ${message}, ${node.networkNode.peerId})`,
-	);
 
-	// call the fn on the chat.ts object and the topologyObject
-	addMessage(chatCRO, timestamp, message, node.networkNode.peerId);
-	node.updateObject(topologyObject.id, [
-		{
-			fn: "addMessage",
-			args: [timestamp, message, node.networkNode.peerId],
-		},
-	]);
+	chatCRO.addMessage(timestamp, message, node.networkNode.peerId);
+	render();
+}
+
+async function createConnectHandlers() {
+	node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
+		// on create/connect
+		if (topologyObject)
+			objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
+		render();
+	});
+
+	node.objectStore.subscribe(topologyObject.id, (_, obj) => {
+		chatCRO.mergeCallback(
+			obj.vertices.map((v) => {
+				return {
+					type: v.operation ? v.operation.type : "",
+					value: v.operation ? v.operation.value : "",
+				};
+			}),
+		);
+	});
 
 	render();
 }
@@ -93,22 +103,7 @@ async function main() {
 	button_create.addEventListener("click", async () => {
 		topologyObject = await node.createObject(new Chat());
 		chatCRO = topologyObject.cro as Chat;
-
-		node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
-			// on create/connect
-			if (topologyObject)
-				objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
-			render();
-		});
-
-		node.objectStore.subscribe(topologyObject.id, (_, obj) => {
-			console.log("Received object operations: ", obj);
-			handleObjectOps(chatCRO, obj.vertices);
-		});
-
-		(<HTMLButtonElement>document.getElementById("chatId")).innerText =
-			topologyObject.id;
-		render();
+		createConnectHandlers();
 	});
 
 	const button_connect = <HTMLButtonElement>document.getElementById("joinRoom");
@@ -122,50 +117,14 @@ async function main() {
 			return;
 		}
 
-		chatCRO = new Chat();
-		topologyObject = await node.subscribeObject(objectId, true);
-
-		// message handler for the CRO
-		node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
-			// on create/connect
-			if (topologyObject)
-				objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
-			render();
-		});
-
-		node.objectStore.subscribe(topologyObject.id, (_, obj) => {
-			console.log("Received object operations: ", obj);
-			handleObjectOps(chatCRO, obj.operations);
-		});
-	});
-
-	const button_fetch = <HTMLButtonElement>(
-		document.getElementById("fetchMessages")
-	);
-	button_fetch.addEventListener("click", async () => {
-		const input: HTMLInputElement = <HTMLInputElement>(
-			document.getElementById("roomInput")
+		topologyObject = await node.createObject(
+			new Chat(),
+			objectId,
+			undefined,
+			true,
 		);
-		const objectId = input.value;
-		try {
-			// biome-ignore lint/suspicious/noExplicitAny: TODO fix this
-			const object: any = node.objectStore.get(objectId);
-			console.log("Object received: ", object);
-
-			const arr: string[] = Array.from(object.chat._set);
-			object.chat._set = new Set<string>(arr);
-			object.chat = Object.assign(
-				new GSet<string>(new Set<string>()),
-				object.chat,
-			);
-			chatCRO = Object.assign(new Chat(), object);
-
-			(<HTMLButtonElement>document.getElementById("chatId")).innerText =
-				topologyObject.id;
-			render();
-		} catch (e) {
-			console.error("Error while connecting to the CRO ", objectId, e);
-		}
+		chatCRO = topologyObject.cro as Chat;
+		createConnectHandlers();
 	});
 
 	const button_send = <HTMLButtonElement>document.getElementById("sendMessage");

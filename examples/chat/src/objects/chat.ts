@@ -7,12 +7,12 @@ import {
 } from "@topology-foundation/crdt";
 import {
 	ActionType,
-	Vertex,
+	type Vertex,
 	type CRO,
 	type Operation,
 } from "@topology-foundation/object";
 
-export class Chat implements CRO<Chat> {
+export class Chat implements CRO {
 	operations: string[] = ["addMessage"];
 	// store messages as strings in the format (timestamp, message, nodeId)
 	messages: GSet<string>;
@@ -21,6 +21,14 @@ export class Chat implements CRO<Chat> {
 	}
 
 	addMessage(timestamp: string, message: string, nodeId: string): void {
+		this._addMessage(timestamp, message, nodeId);
+	}
+
+	private _addMessage(
+		timestamp: string,
+		message: string,
+		nodeId: string,
+	): void {
 		this.messages.add(`(${timestamp}, ${message}, ${nodeId})`);
 	}
 
@@ -32,13 +40,17 @@ export class Chat implements CRO<Chat> {
 		this.messages.merge(other.messages);
 	}
 
-	resolveConflicts(vertices: Vertex<Chat>[]): ActionType {
+	resolveConflicts(vertices: Vertex[]): ActionType {
 		return ActionType.Nop;
 	}
 
-	mergeCallback(operations: Operation<Chat>[]): void {
+	mergeCallback(operations: Operation[]): void {
 		for (const op of operations) {
-			console.log(op);
+			const args = op.value as string[];
+			// just addMessage
+			this.messages.add(`(${args[0]}, ${args[1]}, ${args[2]})`);
+			this._addMessage(args[0], args[1], args[2]);
+			console.log(op, args);
 		}
 	}
 }

@@ -1,7 +1,8 @@
 import * as crypto from "node:crypto";
 
 type Hash = string;
-export type Operation = { type: string; value: unknown | null };
+// biome-ignore lint: value can't be unknown because of protobuf
+export type Operation = { type: string; value: any | null };
 
 enum OperationType {
 	NOP = "-1",

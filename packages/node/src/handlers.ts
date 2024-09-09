@@ -63,14 +63,20 @@ export async function topologyMessagesHandler(
 */
 function updateHandler(node: TopologyNode, data: Uint8Array) {
 	const object_operations = ObjectPb.TopologyObjectBase.decode(data);
-	let object = node.objectStore.get(object_operations.id);
+
+	const object = node.objectStore.get(object_operations.id);
 	if (!object) {
-		object = ObjectPb.TopologyObjectBase.create({
-			id: object_operations.id,
-		});
+		console.error("topology::node::updateHandler", "Object not found");
+		return false;
 	}
-	object.vertices.push(...object_operations.vertices);
+	for (const v of object_operations.vertices) {
+		const vertex = object.vertices.find((x) => x.hash === v.hash);
+		if (!vertex) {
+			object.vertices.push(v);
+		}
+	}
 	node.objectStore.put(object.id, object);
+	return true;
 }
 
 /*
@@ -105,13 +111,12 @@ function syncAcceptHandler(node: TopologyNode, data: Uint8Array) {
 	// don't blindly accept, validate the operations
 	// might have have appeared in the meantime
 	const object_operations = ObjectPb.TopologyObjectBase.decode(data);
-	let object: ObjectPb.TopologyObjectBase | undefined = node.objectStore.get(
+	const object: TopologyObject | undefined = node.objectStore.get(
 		object_operations.id,
 	);
 	if (!object) {
-		object = ObjectPb.TopologyObjectBase.create({
-			id: object_operations.id,
-		});
+		console.error("topology::node::syncAcceptHandler", "Object not found");
+		return false;
 	}
 
 	object_operations.vertices.filter((v1) => {
@@ -123,6 +128,7 @@ function syncAcceptHandler(node: TopologyNode, data: Uint8Array) {
 	object.vertices.push(...object_operations.vertices);
 	node.objectStore.put(object.id, object);
 
+	return true;
 	// TODO missing sending back the diff
 }
 
@@ -140,6 +146,7 @@ export function topologyObjectChangesHandler(
 	originFn: string,
 	vertices: ObjectPb.Vertex[],
 ) {
+	console.log("topology::node::objectChangesHandler", obj, originFn, vertices);
 	switch (originFn) {
 		case "merge":
 			node.objectStore.put(obj.id, obj);

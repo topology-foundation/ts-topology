@@ -1,11 +1,12 @@
 syntax = "proto3";
 package topology.network;
+import "google/protobuf/struct.proto";
 
 // Supposed to be the RIBLT stuff
 message Vertex {
 	message Operation {
  		string type = 1;
-   		string value = 2;
+   		repeated google.protobuf.Value value = 2;
     }
     string hash = 1;
     string nodeId = 2;
@@ -28,16 +29,18 @@ message Message {
 }
 
 message Update {
+	string objectId = 1;
 }
 
 message Sync {
-	repeated string vertex_hashes = 1;
+	string objectId = 1;
+	repeated string vertex_hashes = 2;
 }
 
 message SyncAccept {
-	// not strings
-	repeated Vertex diff = 1;
-	repeated string missing = 2;
+	string objectId = 1;
+	repeated Vertex diff = 2;
+	repeated string missing = 3;
 }
 
 message SyncReject { }

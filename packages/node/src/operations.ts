@@ -7,7 +7,7 @@ import {
 } from "./handlers.js";
 
 /* Object operations */
-export enum OPERATIONS {
+enum OPERATIONS {
 	/* Create a new CRO */
 	CREATE = 0,
 	/* Update operation on a CRO */
@@ -26,38 +26,6 @@ export function createObject(node: TopologyNode, object: TopologyObject) {
 	object.subscribe((obj, originFn, vertices) =>
 		topologyObjectChangesHandler(node, obj, originFn, vertices),
 	);
-	node.networkNode.subscribe(object.id);
-	node.networkNode.addGroupMessageHandler(object.id, async (e) =>
-		topologyMessagesHandler(node, undefined, e.detail.msg.data),
-	);
-}
-
-/*
-  data: { id: string, operations: {nonce: string, fn: string, args: string[] }[] }
-  operations array doesn't contain the full remote operations array
-*/
-export function updateObject(node: TopologyNode, data: Uint8Array) {
-	const object_operations = ObjectPb.TopologyObjectBase.decode(data);
-	let object: ObjectPb.TopologyObjectBase | undefined = node.objectStore.get(
-		object_operations.id,
-	);
-	if (!object) {
-		object = ObjectPb.TopologyObjectBase.create({
-			id: object_operations.id,
-		});
-	}
-
-	for (const v1 of object_operations.vertices) {
-		if (object.vertices.some((v2) => v1.hash === v2.hash)) continue;
-		object.vertices.push(v1);
-	}
-	node.objectStore.put(object.id, object);
-
-	const message = NetworkPb.Message.create({
-		type: NetworkPb.Message_MessageType.UPDATE,
-		data: data,
-	});
-	node.networkNode.broadcastMessage(object.id, message);
 }
 
 /* data: { id: string } */
@@ -68,6 +36,9 @@ export async function subscribeObject(
 	peerId?: string,
 ) {
 	node.networkNode.subscribe(objectId);
+	node.networkNode.addGroupMessageHandler(objectId, async (e) =>
+		topologyMessagesHandler(node, undefined, e.detail.msg.data),
+	);
 
 	if (!sync) return;
 	// complies with format, since the operations array is empty
@@ -102,18 +73,24 @@ export function unsubscribeObject(
 }
 
 /*
-  data: { id: string, vertices: Vertex[] }
-  operations array contain the full remote operations array
+  data: { vertex_hashes: string[] }
 */
 export async function syncObject(
 	node: TopologyNode,
 	objectId: string,
-	data: Uint8Array,
 	peerId?: string,
 ) {
+	const object: TopologyObject | undefined = node.objectStore.get(objectId);
+	if (!object) {
+		console.error("topology::node::syncObject", "Object not found");
+		return;
+	}
+	const data = NetworkPb.Sync.create({
+		vertexHashes: object.vertices.map((v) => v.hash),
+	});
 	const message = NetworkPb.Message.create({
 		type: NetworkPb.Message_MessageType.SYNC,
-		data: data,
+		data: NetworkPb.Sync.encode(data).finish(),
 	});
 
 	if (!peerId) {
