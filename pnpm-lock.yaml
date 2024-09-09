@@ -206,8 +206,8 @@ importers:
         specifier: ^8.1.2
         version: 8.2.0
       '@libp2p/webtransport':
-        specifier: ^4.1.2
-        version: 4.1.7
+        specifier: ^4.1.9
+        version: 4.1.9
       '@multiformats/multiaddr':
         specifier: ^12.3.0
         version: 12.3.0
@@ -1512,8 +1512,8 @@ packages:
   '@libp2p/websockets@8.2.0':
     resolution: {integrity: sha512-UNjqkQ8/emnYswp1ohIIuZCnhI5DlvWF9IaIND2MoTCDavi7yubWfMp8jSWBsAqPnMeLMO8MQ6YlOo4FFC104Q==}
 
-  '@libp2p/webtransport@4.1.7':
-    resolution: {integrity: sha512-8dVGxWbHXztUs9t6VdcW2hmgK5WAxQ9jiyj9Za/2v2JDl1dxhEJH2lFtKl794Nbs+5I03XA9Y5IFxV10to8bUg==}
+  '@libp2p/webtransport@4.1.9':
+    resolution: {integrity: sha512-A48Fl8pm4Tstc5hiOvMbqVKS4/98D0pCn/Cb8iv/RS/EFyfMDBF8qSm4aYN9pXF0m0OepBKP4VG2GAGVqnqfrA==}
 
   '@multiformats/dns@1.0.6':
     resolution: {integrity: sha512-nt/5UqjMPtyvkG9BQYdJ4GfLK3nMqGpFZOzf4hAmIa0sJh2LlS9YKXZ4FgwBDsaHvzZqR/rUFIywIc7pkHNNuw==}
@@ -6917,7 +6917,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@libp2p/webtransport@4.1.7':
+  '@libp2p/webtransport@4.1.9':
     dependencies:
       '@chainsafe/libp2p-noise': 15.1.2
       '@libp2p/interface': 1.7.0
