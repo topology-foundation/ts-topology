@@ -1,7 +1,5 @@
-import { GSet } from "@topology-foundation/crdt";
 import { TopologyNode } from "@topology-foundation/node";
 import type { TopologyObject } from "@topology-foundation/object";
-import { handleObjectOps } from "./handlers";
 import { Chat } from "./objects/chat";
 
 const node = new TopologyNode();

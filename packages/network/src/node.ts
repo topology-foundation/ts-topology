@@ -231,6 +231,7 @@ export class TopologyNetworkNode {
 			const connection = await this._node?.dial(peerId);
 			const stream: Stream = (await connection?.newStream(protocols)) as Stream;
 			const messageBuffer = Message.encode(message).finish();
+			console.log(message);
 			stream.sink(lp.encode([messageBuffer]));
 
 			console.log(

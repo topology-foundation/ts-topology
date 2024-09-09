@@ -13,9 +13,12 @@ export async function topologyMessagesHandler(
 	stream?: Stream,
 	data?: Uint8Array,
 ) {
+	console.log("topology::node::messageHandler", stream, data);
 	let message: NetworkPb.Message;
 	if (stream) {
+		console.log("lp decode", lp.decode(stream.source));
 		const buf = (await lp.decode(stream.source).return()).value;
+		console.log(buf);
 		message = NetworkPb.Message.decode(
 			new Uint8Array(buf ? buf.subarray() : []),
 		);
@@ -63,6 +66,7 @@ export async function topologyMessagesHandler(
 */
 function updateHandler(node: TopologyNode, data: Uint8Array) {
 	const object_operations = ObjectPb.TopologyObjectBase.decode(data);
+	console.log("topology::node::updateHandler", object_operations);
 
 	const object = node.objectStore.get(object_operations.id);
 	if (!object) {

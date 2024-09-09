@@ -48,6 +48,8 @@ export async function subscribeObject(
 		data: new Uint8Array(0),
 	});
 
+	console.log(message, "message");
+
 	if (!peerId) {
 		await node.networkNode.sendGroupMessageRandomPeer(
 			objectId,

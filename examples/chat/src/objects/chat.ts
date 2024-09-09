@@ -47,10 +47,7 @@ export class Chat implements CRO {
 	mergeCallback(operations: Operation[]): void {
 		for (const op of operations) {
 			const args = op.value as string[];
-			// just addMessage
-			this.messages.add(`(${args[0]}, ${args[1]}, ${args[2]})`);
 			this._addMessage(args[0], args[1], args[2]);
-			console.log(op, args);
 		}
 	}
 }
