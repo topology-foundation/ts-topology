@@ -16,7 +16,8 @@
 		"docs": "typedoc",
 		"proto-gen": "buf generate",
 		"release": "release-it",
-		"test": "vitest"
+		"test": "vitest",
+		"bench": "vitest bench"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",
@@ -27,7 +28,7 @@
 		"ts-proto": "^2.0.3",
 		"typedoc": "^0.26.6",
 		"typescript": "^5.5.4",
-		"vite": "^5.4.1",
+		"vite": "^5.4.2",
 		"vite-tsconfig-paths": "^5.0.1",
 		"vitest": "^2.0.5"
 	},

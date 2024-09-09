@@ -4,11 +4,14 @@ import {
 	HashGraph,
 	type Operation,
 	type Vertex,
-} from "./hashgraph.js";
-import { TopologyObjectBase, Vertex as VertexPb } from "./proto/object_pb.js";
+} from "./hashgraph/index.js";
+import {
+	type TopologyObjectBase,
+	Vertex as VertexPb,
+} from "./proto/object_pb.js";
 
 export * as ObjectPb from "./proto/object_pb.js";
-export * from "./hashgraph.js";
+export * from "./hashgraph/index.js";
 
 export interface CRO {
 	resolveConflicts: (vertices: Vertex[]) => ActionType;

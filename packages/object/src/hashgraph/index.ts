@@ -1,4 +1,5 @@
 import * as crypto from "node:crypto";
+import { BitSet } from "./bitset.js";
 
 type Hash = string;
 // biome-ignore lint: value can't be unknown because of protobuf
@@ -36,6 +37,11 @@ export class HashGraph {
 		{ type: OperationType.NOP, value: null },
 		[],
 	);
+	private arePredecessorsFresh = false;
+	private reachablePredecessors: Map<Hash, BitSet> = new Map();
+	private topoSortedIndex: Map<Hash, number> = new Map();
+	// We start with a bitset of size 1, and double it every time we reach the limit
+	private currentBitsetSize = 1;
 
 	constructor(
 		nodeId: string,
@@ -82,6 +88,7 @@ export class HashGraph {
 
 		const depsSet = new Set(deps);
 		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
+		this.arePredecessorsFresh = false;
 		return vertex;
 	}
 
@@ -120,7 +127,7 @@ export class HashGraph {
 
 		const depsSet = new Set(deps);
 		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
-
+		this.arePredecessorsFresh = false;
 		return hash;
 	}
 
@@ -128,6 +135,8 @@ export class HashGraph {
 	topologicalSort(): Hash[] {
 		const result: Hash[] = [];
 		const visited = new Set<Hash>();
+		this.reachablePredecessors.clear();
+		this.topoSortedIndex.clear();
 
 		const visit = (hash: Hash) => {
 			if (visited.has(hash)) return;
@@ -142,8 +151,32 @@ export class HashGraph {
 		};
 		// Start with the root vertex
 		visit(HashGraph.rootHash);
+		result.reverse();
 
-		return result.reverse();
+		// Double the size until it's enough to hold all the vertices
+		while (this.currentBitsetSize < result.length) this.currentBitsetSize *= 2;
+
+		for (let i = 0; i < result.length; i++) {
+			this.topoSortedIndex.set(result[i], i);
+			this.reachablePredecessors.set(
+				result[i],
+				new BitSet(this.currentBitsetSize),
+			);
+			for (const dep of this.vertices.get(result[i])?.dependencies || []) {
+				const depReachable = this.reachablePredecessors.get(dep);
+				depReachable?.set(this.topoSortedIndex.get(dep) || 0, true);
+				if (depReachable) {
+					const reachable = this.reachablePredecessors.get(result[i]);
+					this.reachablePredecessors.set(
+						result[i],
+						reachable?.or(depReachable) || depReachable,
+					);
+				}
+			}
+		}
+
+		this.arePredecessorsFresh = true;
+		return result;
 	}
 
 	linearizeOperations(): Operation[] {
@@ -159,7 +192,7 @@ export class HashGraph {
 			while (j < order.length) {
 				const moving = order[j];
 
-				if (!this.areCausallyRelated(anchor, moving)) {
+				if (!this.areCausallyRelatedUsingBitsets(anchor, moving)) {
 					const v1 = this.vertices.get(anchor);
 					const v2 = this.vertices.get(moving);
 					let action: ActionType;
@@ -201,8 +234,24 @@ export class HashGraph {
 		return result;
 	}
 
+	// Amortised time complexity: O(1), Amortised space complexity: O(1)
+	areCausallyRelatedUsingBitsets(hash1: Hash, hash2: Hash): boolean {
+		if (!this.arePredecessorsFresh) {
+			this.topologicalSort();
+		}
+		const test1 =
+			this.reachablePredecessors
+				.get(hash1)
+				?.get(this.topoSortedIndex.get(hash2) || 0) || false;
+		const test2 =
+			this.reachablePredecessors
+				.get(hash2)
+				?.get(this.topoSortedIndex.get(hash1) || 0) || false;
+		return test1 || test2;
+	}
+
 	// Time complexity: O(V), Space complexity: O(V)
-	areCausallyRelated(hash1: Hash, hash2: Hash): boolean {
+	areCausallyRelatedUsingBFS(hash1: Hash, hash2: Hash): boolean {
 		const visited = new Set<Hash>();
 		const stack = [hash1];
 
