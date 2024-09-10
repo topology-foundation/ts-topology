@@ -40,7 +40,7 @@ jobs:
           echo 'EOF' >> $GITHUB_OUTPUT
       - uses: actions/github-script@v6
         env:
-          BENCHMARK_RESULT: ${{ steps.benchmark-result.outputs.BENCHMARK_RESULT }}
+          BENCHMARK_RESULT: ${{ steps.benchmark-result.outputs.BENCHMARK_RESULT | utf8 }}
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
