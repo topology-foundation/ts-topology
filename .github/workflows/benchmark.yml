@@ -33,8 +33,9 @@ jobs:
             pnpm run bench --outputJson benchmark.json
           fi
           echo 'BENCHMARK_RESULT<<EOF' >> $GITHUB_OUTPUT
+          sed -i -e '$a\' benchmark.json
           cat benchmark.json >> $GITHUB_OUTPUT
-          echo '\nEOF' >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
       - uses: actions/github-script@v6
         with:
           github-token: ${{ github.token }}
