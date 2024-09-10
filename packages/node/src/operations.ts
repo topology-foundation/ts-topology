@@ -23,8 +23,8 @@ enum OPERATIONS {
 
 export function createObject(node: TopologyNode, object: TopologyObject) {
 	node.objectStore.put(object.id, object);
-	object.subscribe((obj, originFn, _) =>
-		topologyObjectChangesHandler(node, obj, originFn),
+	object.subscribe((obj, originFn, vertices) =>
+		topologyObjectChangesHandler(node, obj, originFn, vertices),
 	);
 }
 

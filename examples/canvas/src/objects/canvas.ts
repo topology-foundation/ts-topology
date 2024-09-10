@@ -5,7 +5,7 @@ import {
 	type Operation,
 } from "@topology-foundation/object";
 
-export class Canvas implements CRO<Canvas> {
+export class Canvas implements CRO {
 	operations: string[] = ["splash", "paint"];
 
 	width: number;
@@ -61,7 +61,7 @@ export class Canvas implements CRO<Canvas> {
 		return ActionType.Nop;
 	}
 
-	mergeCallback(operations: Operation<Canvas>[]): void {
+	mergeCallback(operations: Operation[]): void {
 		for (const op of operations) {
 			if (!op.value) continue;
 			this.merge(op.value);

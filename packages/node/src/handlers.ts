@@ -1,9 +1,9 @@
 import type { Stream } from "@libp2p/interface";
 import { NetworkPb, streamToUint8Array } from "@topology-foundation/network";
-import {
-	type TopologyObject,
+import type {
+	TopologyObject,
 	ObjectPb,
-	type Vertex,
+	Vertex,
 } from "@topology-foundation/object";
 import type { TopologyNode } from "./index.js";
 
@@ -72,20 +72,28 @@ export async function topologyMessagesHandler(
   operations array doesn't contain the full remote operations array
 */
 function updateHandler(node: TopologyNode, data: Uint8Array) {
-	const object_operations = ObjectPb.TopologyObjectBase.decode(data);
-	const object = node.objectStore.get(object_operations.id);
+	const updateMessage = NetworkPb.Update.decode(data);
+	const object = node.objectStore.get(updateMessage.objectId);
 	if (!object) {
 		console.error("topology::node::updateHandler", "Object not found");
 		return false;
 	}
 
-	for (const v of object_operations.vertices) {
-		const vertex = object.vertices.find((x) => x.hash === v.hash);
-		if (!vertex) {
-			object.vertices.push(v);
-		}
-	}
+	object.merge(
+		updateMessage.vertices.map((v) => {
+			return {
+				hash: v.hash,
+				nodeId: v.nodeId,
+				operation: {
+					type: v.operation?.type ?? "",
+					value: v.operation?.value,
+				},
+				dependencies: v.dependencies,
+			};
+		}),
+	);
 	node.objectStore.put(object.id, object);
+
 	return true;
 }
 
@@ -206,6 +214,7 @@ export function topologyObjectChangesHandler(
 	node: TopologyNode,
 	obj: TopologyObject,
 	originFn: string,
+	vertices: ObjectPb.Vertex[],
 ) {
 	switch (originFn) {
 		case "merge":
@@ -217,7 +226,12 @@ export function topologyObjectChangesHandler(
 			const message = NetworkPb.Message.create({
 				sender: node.networkNode.peerId,
 				type: NetworkPb.Message_MessageType.UPDATE,
-				data: ObjectPb.TopologyObjectBase.encode(obj).finish(),
+				data: NetworkPb.Update.encode(
+					NetworkPb.Update.create({
+						objectId: obj.id,
+						vertices: vertices,
+					}),
+				).finish(),
 			});
 			node.networkNode.broadcastMessage(obj.id, message);
 			break;

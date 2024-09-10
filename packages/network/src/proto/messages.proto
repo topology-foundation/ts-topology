@@ -30,6 +30,7 @@ message Message {
 
 message Update {
 	string objectId = 1;
+	repeated Vertex vertices = 2;
 }
 
 message Sync {

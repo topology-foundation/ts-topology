@@ -70,18 +70,9 @@ async function createConnectHandlers() {
 		render();
 	});
 
-	node.objectStore.subscribe(topologyObject.id, (_, obj) => {
-		chatCRO.mergeCallback(
-			obj.vertices.map((v) => {
-				return {
-					type: v.operation ? v.operation.type : "",
-					value: v.operation ? v.operation.value : "",
-				};
-			}),
-		);
+	node.objectStore.subscribe(topologyObject.id, (_, _obj) => {
+		render();
 	});
-
-	render();
 }
 
 async function main() {
@@ -102,6 +93,7 @@ async function main() {
 		topologyObject = await node.createObject(new Chat());
 		chatCRO = topologyObject.cro as Chat;
 		createConnectHandlers();
+		render();
 	});
 
 	const button_connect = <HTMLButtonElement>document.getElementById("joinRoom");
@@ -123,6 +115,7 @@ async function main() {
 		);
 		chatCRO = topologyObject.cro as Chat;
 		createConnectHandlers();
+		render();
 	});
 
 	const button_send = <HTMLButtonElement>document.getElementById("sendMessage");

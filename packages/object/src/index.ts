@@ -5,10 +5,7 @@ import {
 	type Operation,
 	type Vertex,
 } from "./hashgraph/index.js";
-import {
-	type TopologyObjectBase,
-	Vertex as VertexPb,
-} from "./proto/object_pb.js";
+import * as ObjectPb from "./proto/object_pb.js";
 
 export * as ObjectPb from "./proto/object_pb.js";
 export * from "./hashgraph/index.js";
@@ -21,10 +18,10 @@ export interface CRO {
 export type TopologyObjectCallback = (
 	object: TopologyObject,
 	origin: string,
-	vertices: VertexPb[],
+	vertices: ObjectPb.Vertex[],
 ) => void;
 
-export interface ITopologyObject extends TopologyObjectBase {
+export interface ITopologyObject extends ObjectPb.TopologyObjectBase {
 	cro: ProxyHandler<CRO> | null;
 	hashGraph: HashGraph;
 	subscriptions: TopologyObjectCallback[];
@@ -35,7 +32,7 @@ export class TopologyObject implements ITopologyObject {
 	id: string;
 	abi: string;
 	bytecode: Uint8Array;
-	vertices: VertexPb[];
+	vertices: ObjectPb.Vertex[];
 	cro: ProxyHandler<CRO> | null;
 	hashGraph: HashGraph;
 	subscriptions: TopologyObjectCallback[];
@@ -83,7 +80,7 @@ export class TopologyObject implements ITopologyObject {
 	// biome-ignore lint: value can't be unknown because of protobuf
 	callFn(fn: string, args: any) {
 		const vertex = this.hashGraph.addToFrontier({ type: fn, value: args });
-		const serializedVertex = VertexPb.create({
+		const serializedVertex = ObjectPb.Vertex.create({
 			hash: vertex.hash,
 			nodeId: vertex.nodeId,
 			operation: {
@@ -127,7 +124,7 @@ export class TopologyObject implements ITopologyObject {
 		this.subscriptions.push(callback);
 	}
 
-	private _notify(origin: string, vertices: VertexPb[]) {
+	private _notify(origin: string, vertices: ObjectPb.Vertex[]) {
 		for (const callback of this.subscriptions) {
 			callback(this, origin, vertices);
 		}
