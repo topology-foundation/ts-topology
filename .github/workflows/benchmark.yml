@@ -36,7 +36,7 @@ jobs:
           fi
           echo 'BENCHMARK_RESULT<<EOF' >> $GITHUB_OUTPUT
           sed -i -e '$a\' benchmark.txt
-          sed -e 's/\x1b\[[0-9;]*m//g'
+          sed -i -e 's/\x1b\[[0-9;]*m//g' benchmark.txt
           cat benchmark.txt >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
           cat benchmark.txt >> $GITHUB_STEP_SUMMARY
