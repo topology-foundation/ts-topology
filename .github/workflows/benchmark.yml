@@ -34,18 +34,16 @@ jobs:
           fi
           echo 'BENCHMARK_RESULT<<EOF' >> $GITHUB_OUTPUT
           cat benchmark.json >> $GITHUB_OUTPUT
-          echo 'EOF' >> $GITHUB_OUTPUT
+          echo '\nEOF' >> $GITHUB_OUTPUT
       - uses: actions/github-script@v6
         with:
           github-token: ${{ github.token }}
-          env:
-            BENCHMARK_RESULT: ${{ steps.benchmark-result.outputs.BENCHMARK_RESULT }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: process.env.BENCHMARK_RESULT
+              body: '${{ steps.benchmark-result.outputs.BENCHMARK_RESULT }}'
             })
       - run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: branch
