@@ -22,7 +22,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",
 		"@release-it-plugins/workspaces": "^4.2.0",
-		"@types/node": "^22.5.0",
+		"@types/node": "^22.5.4",
 		"assemblyscript": "^0.27.29",
 		"release-it": "^17.6.0",
 		"ts-proto": "^2.0.3",
