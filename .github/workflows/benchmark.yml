@@ -28,17 +28,16 @@ jobs:
         id: benchmark-result
         run: |
           if [ -f ./cache/benchmark-main.json ]; then
-            pnpm run bench --outputJson benchmark.json --compare ./cache/benchmark-main.json
+            pnpm run bench --outputJson benchmark.json --compare ./cache/benchmark-main.json > benchmark.txt
           else
-            pnpm run bench --outputJson benchmark.json
+            pnpm run bench --outputJson benchmark.json > benchmark.txt
           fi
           echo 'BENCHMARK_RESULT<<EOF' >> $GITHUB_OUTPUT
-          sed -i -e '$a\' benchmark.json
-          cat benchmark.json >> $GITHUB_OUTPUT
+          sed -i -e '$a\' benchmark.txt
+          cat benchmark.txt >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
       - uses: actions/github-script@v6
         with:
-          github-token: ${{ github.token }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
