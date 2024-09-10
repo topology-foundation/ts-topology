@@ -1,0 +1,40 @@
+name: Benchmark
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  benchmark:
+    name: Performance regression check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Run benchmark
+        run: pnpm run bench --outputJson benchmark.json
+      - name: Download previous benchmark data
+        uses: actions/cache@v4
+        with:
+          path: ./cache
+          key: benchmark
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'customSmallerIsBetter'
+          output-file-path: benchmark.json
+          external-data-json-path: ./cache/benchmark-main.json
+          fail-on-alert: true
+      - shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: branch
+      - name: Store benchmark data
+        if: steps.branch.outputs.branch == 'main'
+        run: cp benchmark.json ./cache/benchmark-main.json
+
+      # Push gh-pages branch by yourself
+      # - name: Push benchmark result
+      #   run: git push 'https://you:${{ secrets.GITHUB_TOKEN }}@github.com/you/repo-name.git' gh-pages:gh-pages
