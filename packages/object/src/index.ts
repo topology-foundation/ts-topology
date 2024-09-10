@@ -85,7 +85,7 @@ export class TopologyObject implements ITopologyObject {
 			nodeId: vertex.nodeId,
 			operation: {
 				type: vertex.operation.type,
-				value: vertex.operation.value,
+				value: [vertex.operation.value],
 			},
 			dependencies: vertex.dependencies,
 		});
@@ -110,7 +110,7 @@ export class TopologyObject implements ITopologyObject {
 				nodeId: vertex.nodeId,
 				operation: {
 					type: vertex.operation.type,
-					value: vertex.operation.value,
+					value: [vertex.operation.value],
 				},
 				dependencies: vertex.dependencies,
 			};
