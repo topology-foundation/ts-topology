@@ -9,6 +9,8 @@ jobs:
   benchmark:
     name: Performance regression check
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
