@@ -25,21 +25,23 @@ jobs:
           cd packages/node
           pnpm build
       - name: Benchmark result
+        id: benchmark-result
         run: |
           if [ -f ./cache/benchmark-main.json ]; then
-            pnpm run bench --outputJson benchmark.json --compare ./cache/benchmark-main.json > output.txt
+            pnpm run bench --outputJson benchmark.json --compare ./cache/benchmark-main.json
           else
-            pnpm run bench --outputJson benchmark.json > output.txt
+            pnpm run bench --outputJson benchmark.json
           fi
-          cat output.txt
+          cat benchmark.json >> $GITHUB_OUTPUT
       - uses: actions/github-script@v6
         with:
+          github-token: ${{ github.token }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: fs.readFileSync('output.txt', 'utf-8')
+              body: {{ steps.benchmark-result.outputs.stdout | toJSON }}}
             })
       - run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: branch
