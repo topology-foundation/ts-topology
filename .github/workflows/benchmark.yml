@@ -15,7 +15,9 @@ jobs:
         with:
           version: 9
       - name: Run benchmark
-        run: pnpm run bench --outputJson benchmark.json
+        run: |
+          pnpm install
+          pnpm run bench --outputJson benchmark.json
       - name: Download previous benchmark data
         uses: actions/cache@v4
         with:
