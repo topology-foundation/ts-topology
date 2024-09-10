@@ -14,32 +14,24 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 9
+      - name: Download previous benchmark data
+        uses: actions/cache@v4
+        with:
+          path: ./cache
+          key: benchmark
       - name: Run benchmark
         run: |
           pnpm install
           cd packages/node
           pnpm build
           cd ../..
-          pnpm run bench --outputJson benchmark.json
-      - name: Download previous benchmark data
-        uses: actions/cache@v4
-        with:
-          path: ./cache
-          key: benchmark
-      - name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
-        with:
-          tool: 'customSmallerIsBetter'
-          output-file-path: benchmark.json
-          external-data-json-path: ./cache/benchmark-main.json
-          fail-on-alert: true
-      - shell: bash
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+          pnpm run bench --outputJson benchmark.json --compare
+      - name: Benchmark result
+        run: |
+          pnpm run bench --compare ./cache/benchmark-main.json > output.txt
+          cat output.txt
+      - run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: branch
-      - name: Store benchmark data
+      - name: Store benchmark dataq
         if: steps.branch.outputs.branch == 'main'
         run: cp benchmark.json ./cache/benchmark-main.json
-
-      # Push gh-pages branch by yourself
-      # - name: Push benchmark result
-      #   run: git push 'https://you:${{ secrets.GITHUB_TOKEN }}@github.com/you/repo-name.git' gh-pages:gh-pages

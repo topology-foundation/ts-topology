@@ -16,7 +16,7 @@
 		"docs": "typedoc",
 		"proto-gen": "buf generate",
 		"release": "release-it",
-		"test": "vitest",
+		"test": "vitest run",
 		"bench": "vitest bench"
 	},
 	"devDependencies": {
