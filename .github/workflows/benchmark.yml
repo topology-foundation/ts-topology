@@ -41,7 +41,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: {{ steps.benchmark-result.outputs.stdout | toJSON }}}
+              body: '${{ steps.benchmark-result.outputs.stdout }}'
             })
       - run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: branch
