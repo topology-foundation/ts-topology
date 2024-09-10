@@ -79,6 +79,9 @@ export class Canvas implements CRO {
 	}
 
 	mergeCallback(operations: Operation[]): void {
+		this.canvas = Array.from(new Array(this.width), () =>
+			Array.from(new Array(this.height), () => new Pixel()),
+		);
 		for (const op of operations) {
 			if (!op.value) continue;
 			switch (op.type) {
