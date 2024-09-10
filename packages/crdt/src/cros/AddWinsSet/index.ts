@@ -43,7 +43,7 @@ export class AddWinsSet<T> implements CRO {
 	resolveConflicts(vertices: Vertex[]): ActionType {
 		if (
 			vertices[0].operation.type !== vertices[1].operation.type &&
-			vertices[0].operation.value === (vertices[1].operation.value as T)
+			vertices[0].operation.value === vertices[1].operation.value
 		) {
 			return vertices[0].operation.type === "add"
 				? ActionType.DropRight
@@ -58,10 +58,10 @@ export class AddWinsSet<T> implements CRO {
 		for (const op of operations) {
 			switch (op.type) {
 				case "add":
-					if (op.value !== null) this._add(op.value as T);
+					if (op.value !== null) this._add(op.value);
 					break;
 				case "remove":
-					if (op.value !== null) this._remove(op.value as T);
+					if (op.value !== null) this._remove(op.value);
 					break;
 				default:
 					break;
