@@ -25,7 +25,11 @@ jobs:
           cd packages/node
           pnpm build
           cd ../..
-          pnpm run bench --outputJson benchmark.json --compare
+          if [ -f ./cache/benchmark-main.json ]; then
+            pnpm run bench --outputJson benchmark.json --compare ./cache/benchmark-main.json
+          else
+            pnpm run bench --outputJson benchmark.json
+          fi
       - name: Benchmark result
         run: |
           pnpm run bench --compare ./cache/benchmark-main.json > output.txt
