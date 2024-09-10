@@ -30,7 +30,7 @@
 		"@types/node": "^22.5.0",
 		"ts-loader": "^9.5.1",
 		"typescript": "^5.5.4",
-		"vite": "^5.4.2",
+		"vite": "^5.4.3",
 		"vite-plugin-node-polyfills": "^0.22.0"
 	}
 }
