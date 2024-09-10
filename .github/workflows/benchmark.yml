@@ -32,7 +32,10 @@ jobs:
           else
             pnpm run bench --outputJson benchmark.json
           fi
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "text<<$EOF" >> $GITHUB_OUTPUT
           cat benchmark.json >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
       - uses: actions/github-script@v6
         with:
           github-token: ${{ github.token }}
