@@ -30,9 +30,9 @@ jobs:
         id: benchmark-result
         run: |
           if [ -f ./cache/benchmark-main.json ]; then
-            pnpm run bench --outputJson benchmark.json --compare ./cache/benchmark-main.json > benchmark.txt
+            pnpm run bench --run --outputJson benchmark.json --compare ./cache/benchmark-main.json > benchmark.txt
           else
-            pnpm run bench --outputJson benchmark.json > benchmark.txt
+            pnpm run bench --run --outputJson benchmark.json > benchmark.txt
           fi
           echo 'BENCHMARK_RESULT<<EOF' >> $GITHUB_OUTPUT
           sed -i -e '$a\' benchmark.txt
@@ -48,7 +48,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: "\`\`\`\n${{steps.benchmark-result.outputs.BENCHMARK_RESULT}}\n\`\`\`"
+              body: "\n\`\`\`\n${{ env.BENCHMARK_RESULT }}\n\`\`\`"
             })
       - run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: branch
