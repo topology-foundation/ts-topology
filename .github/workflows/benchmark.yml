@@ -32,11 +32,11 @@ jobs:
           if [ -f ./cache/benchmark-main.json ]; then
             pnpm run bench --run --outputJson benchmark.json --compare ./cache/benchmark-main.json > benchmark.txt
           else
-            pnpm run bench --run --outputJson benchmark.json > benchmark.txt
+            pnpm run bench --run --outputJson benchmark.json > benchmark-tmp.txt
           fi
+          iconv -f "windows-1252" -t "UTF-8" benchmark-tmp.txt -o benchmark.txt
           echo 'BENCHMARK_RESULT<<EOF' >> $GITHUB_OUTPUT
           sed -i -e '$a\' benchmark.txt
-          sed -i -e 's/\x1b\[[0-9;]*m//g' benchmark.txt
           cat benchmark.txt >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
           cat benchmark.txt >> $GITHUB_STEP_SUMMARY
