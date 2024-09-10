@@ -40,6 +40,7 @@ jobs:
         env:
           BENCHMARK_RESULT: ${{ steps.benchmark-result.outputs.BENCHMARK_RESULT }}
         with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
