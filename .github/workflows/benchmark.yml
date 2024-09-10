@@ -19,21 +19,28 @@ jobs:
         with:
           path: ./cache
           key: benchmark
-      - name: Run benchmark
+      - name: Build
         run: |
           pnpm install
           cd packages/node
           pnpm build
-          cd ../..
-          if [ -f ./cache/benchmark-main.json ]; then
-            pnpm run bench --outputJson benchmark.json --compare ./cache/benchmark-main.json
-          else
-            pnpm run bench --outputJson benchmark.json
-          fi
       - name: Benchmark result
         run: |
-          pnpm run bench --compare ./cache/benchmark-main.json > output.txt
+          if [ -f ./cache/benchmark-main.json ]; then
+            pnpm run bench --outputJson benchmark.json --compare ./cache/benchmark-main.json > output.txt
+          else
+            pnpm run bench --outputJson benchmark.json > output.txt
+          fi
           cat output.txt
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: fs.readFileSync('output.txt', 'utf-8')
+            })
       - run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: branch
       - name: Store benchmark dataq
