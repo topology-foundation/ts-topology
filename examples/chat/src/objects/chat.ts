@@ -7,9 +7,9 @@ import {
 } from "@topology-foundation/crdt";
 import {
 	ActionType,
-	type Vertex,
 	type CRO,
 	type Operation,
+	type Vertex,
 } from "@topology-foundation/object";
 
 export class Chat implements CRO {

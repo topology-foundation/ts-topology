@@ -1,8 +1,8 @@
 import type { Stream } from "@libp2p/interface";
 import { NetworkPb, streamToUint8Array } from "@topology-foundation/network";
 import type {
-	TopologyObject,
 	ObjectPb,
+	TopologyObject,
 	Vertex,
 } from "@topology-foundation/object";
 import type { TopologyNode } from "./index.js";

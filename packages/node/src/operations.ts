@@ -1,10 +1,10 @@
 import { NetworkPb } from "@topology-foundation/network";
-import { type TopologyObject, ObjectPb } from "@topology-foundation/object";
-import type { TopologyNode } from "./index.js";
+import { ObjectPb, type TopologyObject } from "@topology-foundation/object";
 import {
 	topologyMessagesHandler,
 	topologyObjectChangesHandler,
 } from "./handlers.js";
+import type { TopologyNode } from "./index.js";
 
 /* Object operations */
 enum OPERATIONS {

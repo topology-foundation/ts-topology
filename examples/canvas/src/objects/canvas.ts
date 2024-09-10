@@ -1,9 +1,9 @@
-import { Pixel } from "./pixel";
 import {
 	ActionType,
 	type CRO,
 	type Operation,
 } from "@topology-foundation/object";
+import { Pixel } from "./pixel";
 
 export class Canvas implements CRO {
 	operations: string[] = ["splash", "paint"];
