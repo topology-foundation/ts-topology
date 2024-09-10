@@ -48,8 +48,6 @@ describe("AreCausallyDependent benchmark", async () => {
 	}
 
 	bench("Causality check using BFS", async () => {
-		const cro1 = obj1.cro as AddWinsSet<number>;
-
 		for (let i = 0; i < samples; i++) {
 			const result = obj1.hashGraph.areCausallyRelatedUsingBFS(
 				tests[i][0],
@@ -59,8 +57,6 @@ describe("AreCausallyDependent benchmark", async () => {
 	});
 
 	bench("Causality check using Bitsets", async () => {
-		const cro1 = obj1.cro as AddWinsSet<number>;
-
 		for (let i = 0; i < samples; i++) {
 			const result = obj1.hashGraph.areCausallyRelatedUsingBitsets(
 				tests[i][0],
