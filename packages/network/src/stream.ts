@@ -25,7 +25,6 @@ import { pipe } from "it-pipe";
 
 export async function uint8ArrayToStream(stream: Stream, input: Uint8Array) {
 	await pipe(input, (source) => lp.encode([source]), stream.sink);
-	console.log("uint8ArrayToStream", input);
 }
 
 export async function streamToUint8Array(stream: Stream) {
@@ -38,7 +37,6 @@ export async function streamToUint8Array(stream: Stream) {
 			for await (const msg of source) {
 				output.push(msg);
 			}
-			console.log("streamToUint8Array", output);
 			return output[0];
 		},
 	);
