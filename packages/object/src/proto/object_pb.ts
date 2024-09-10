@@ -20,7 +20,7 @@ export interface Vertex {
 
 export interface Vertex_Operation {
   type: string;
-  value: any[];
+  value: any | undefined;
 }
 
 export interface TopologyObjectBase {
@@ -139,7 +139,7 @@ export const Vertex = {
 };
 
 function createBaseVertex_Operation(): Vertex_Operation {
-  return { type: "", value: [] };
+  return { type: "", value: undefined };
 }
 
 export const Vertex_Operation = {
@@ -147,8 +147,8 @@ export const Vertex_Operation = {
     if (message.type !== "") {
       writer.uint32(10).string(message.type);
     }
-    for (const v of message.value) {
-      Value.encode(Value.wrap(v!), writer.uint32(18).fork()).join();
+    if (message.value !== undefined) {
+      Value.encode(Value.wrap(message.value), writer.uint32(18).fork()).join();
     }
     return writer;
   },
@@ -172,7 +172,7 @@ export const Vertex_Operation = {
             break;
           }
 
-          message.value.push(Value.unwrap(Value.decode(reader, reader.uint32())));
+          message.value = Value.unwrap(Value.decode(reader, reader.uint32()));
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -186,7 +186,7 @@ export const Vertex_Operation = {
   fromJSON(object: any): Vertex_Operation {
     return {
       type: isSet(object.type) ? globalThis.String(object.type) : "",
-      value: globalThis.Array.isArray(object?.value) ? [...object.value] : [],
+      value: isSet(object?.value) ? object.value : undefined,
     };
   },
 
@@ -195,7 +195,7 @@ export const Vertex_Operation = {
     if (message.type !== "") {
       obj.type = message.type;
     }
-    if (message.value?.length) {
+    if (message.value !== undefined) {
       obj.value = message.value;
     }
     return obj;
@@ -207,7 +207,7 @@ export const Vertex_Operation = {
   fromPartial<I extends Exact<DeepPartial<Vertex_Operation>, I>>(object: I): Vertex_Operation {
     const message = createBaseVertex_Operation();
     message.type = object.type ?? "";
-    message.value = object.value?.map((e) => e) || [];
+    message.value = object.value ?? undefined;
     return message;
   },
 };

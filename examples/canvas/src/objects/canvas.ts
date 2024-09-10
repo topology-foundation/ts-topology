@@ -26,6 +26,23 @@ export class Canvas implements CRO {
 		size: [number, number],
 		rgb: [number, number, number],
 	): void {
+		this._splash(nodeId, offset, size, rgb);
+	}
+
+	paint(
+		nodeId: string,
+		offset: [number, number],
+		rgb: [number, number, number],
+	): void {
+		this._paint(nodeId, offset, rgb);
+	}
+
+	private _splash(
+		nodeId: string,
+		offset: [number, number],
+		size: [number, number],
+		rgb: [number, number, number],
+	): void {
 		if (offset[0] < 0 || this.width < offset[0]) return;
 		if (offset[1] < 0 || this.height < offset[1]) return;
 
@@ -36,7 +53,7 @@ export class Canvas implements CRO {
 		}
 	}
 
-	paint(
+	private _paint(
 		nodeId: string,
 		offset: [number, number],
 		rgb: [number, number, number],
@@ -64,7 +81,18 @@ export class Canvas implements CRO {
 	mergeCallback(operations: Operation[]): void {
 		for (const op of operations) {
 			if (!op.value) continue;
-			this.merge(op.value);
+			switch (op.type) {
+				case "splash": {
+					const [nodeId, offset, size, rgb] = op.value;
+					this._splash(nodeId, offset, size, rgb);
+					break;
+				}
+				case "paint": {
+					const [nodeId, offset, rgb] = op.value;
+					this._paint(nodeId, offset, rgb);
+					break;
+				}
+			}
 		}
 	}
 }
