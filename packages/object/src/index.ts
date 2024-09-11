@@ -103,7 +103,6 @@ export class TopologyObject implements ITopologyObject {
 		}
 
 		const operations = this.hashGraph.linearizeOperations();
-		// TODO remove this in favor of RIBLT
 		this.vertices = this.hashGraph.getAllVertices().map((vertex) => {
 			return {
 				hash: vertex.hash,

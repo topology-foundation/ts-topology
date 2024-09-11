@@ -9,7 +9,7 @@ import type { TopologyNode } from "./index.js";
 
 /*
   Handler for all CRO messages, including pubsub messages and direct messages
-  You need to setup stream xor data, not both
+  You need to setup stream xor data
 */
 export async function topologyMessagesHandler(
 	node: TopologyNode,
@@ -115,18 +115,18 @@ function syncHandler(
 		return;
 	}
 
-	const diff: Set<NetworkPb.Vertex> = new Set(object.vertices);
-	const missing: string[] = [];
+	const requested: Set<NetworkPb.Vertex> = new Set(object.vertices);
+	const requesting: string[] = [];
 	for (const h of syncMessage.vertexHashes) {
 		const vertex = object.vertices.find((v) => v.hash === h);
 		if (vertex) {
-			diff.delete(vertex);
+			requested.delete(vertex);
 		} else {
-			missing.push(h);
+			requesting.push(h);
 		}
 	}
 
-	if (diff.size === 0 && missing.length === 0) return;
+	if (requested.size === 0 && requesting.length === 0) return;
 
 	const message = NetworkPb.Message.create({
 		sender: node.networkNode.peerId,
@@ -135,8 +135,8 @@ function syncHandler(
 		data: NetworkPb.SyncAccept.encode(
 			NetworkPb.SyncAccept.create({
 				objectId: object.id,
-				diff: [...diff],
-				missing,
+				requested: [...requested],
+				requesting,
 			}),
 		).finish(),
 	});
@@ -160,7 +160,7 @@ function syncAcceptHandler(
 		return;
 	}
 
-	const vertices: Vertex[] = syncAcceptMessage.diff.map((v) => {
+	const vertices: Vertex[] = syncAcceptMessage.requested.map((v) => {
 		return {
 			hash: v.hash,
 			nodeId: v.nodeId,
@@ -178,15 +178,15 @@ function syncAcceptHandler(
 	}
 
 	// send missing vertices
-	const diff: NetworkPb.Vertex[] = [];
-	for (const h of syncAcceptMessage.missing) {
+	const requested: NetworkPb.Vertex[] = [];
+	for (const h of syncAcceptMessage.requesting) {
 		const vertex = object.vertices.find((v) => v.hash === h);
 		if (vertex) {
-			diff.push(vertex);
+			requested.push(vertex);
 		}
 	}
 
-	if (diff.length === 0) return;
+	if (requested.length === 0) return;
 
 	const message = NetworkPb.Message.create({
 		sender: node.networkNode.peerId,
@@ -194,8 +194,8 @@ function syncAcceptHandler(
 		data: NetworkPb.SyncAccept.encode(
 			NetworkPb.SyncAccept.create({
 				objectId: object.id,
-				diff,
-				missing: [],
+				requested,
+				requesting: [],
 			}),
 		).finish(),
 	});

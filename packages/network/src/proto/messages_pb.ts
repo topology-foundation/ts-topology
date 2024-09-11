@@ -92,8 +92,8 @@ export interface Sync {
 
 export interface SyncAccept {
   objectId: string;
-  diff: Vertex[];
-  missing: string[];
+  requested: Vertex[];
+  requesting: string[];
 }
 
 export interface SyncReject {
@@ -521,7 +521,7 @@ export const Sync = {
 };
 
 function createBaseSyncAccept(): SyncAccept {
-  return { objectId: "", diff: [], missing: [] };
+  return { objectId: "", requested: [], requesting: [] };
 }
 
 export const SyncAccept = {
@@ -529,10 +529,10 @@ export const SyncAccept = {
     if (message.objectId !== "") {
       writer.uint32(10).string(message.objectId);
     }
-    for (const v of message.diff) {
+    for (const v of message.requested) {
       Vertex.encode(v!, writer.uint32(18).fork()).join();
     }
-    for (const v of message.missing) {
+    for (const v of message.requesting) {
       writer.uint32(26).string(v!);
     }
     return writer;
@@ -557,14 +557,14 @@ export const SyncAccept = {
             break;
           }
 
-          message.diff.push(Vertex.decode(reader, reader.uint32()));
+          message.requested.push(Vertex.decode(reader, reader.uint32()));
           continue;
         case 3:
           if (tag !== 26) {
             break;
           }
 
-          message.missing.push(reader.string());
+          message.requesting.push(reader.string());
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -578,8 +578,12 @@ export const SyncAccept = {
   fromJSON(object: any): SyncAccept {
     return {
       objectId: isSet(object.objectId) ? globalThis.String(object.objectId) : "",
-      diff: globalThis.Array.isArray(object?.diff) ? object.diff.map((e: any) => Vertex.fromJSON(e)) : [],
-      missing: globalThis.Array.isArray(object?.missing) ? object.missing.map((e: any) => globalThis.String(e)) : [],
+      requested: globalThis.Array.isArray(object?.requested)
+        ? object.requested.map((e: any) => Vertex.fromJSON(e))
+        : [],
+      requesting: globalThis.Array.isArray(object?.requesting)
+        ? object.requesting.map((e: any) => globalThis.String(e))
+        : [],
     };
   },
 
@@ -588,11 +592,11 @@ export const SyncAccept = {
     if (message.objectId !== "") {
       obj.objectId = message.objectId;
     }
-    if (message.diff?.length) {
-      obj.diff = message.diff.map((e) => Vertex.toJSON(e));
+    if (message.requested?.length) {
+      obj.requested = message.requested.map((e) => Vertex.toJSON(e));
     }
-    if (message.missing?.length) {
-      obj.missing = message.missing;
+    if (message.requesting?.length) {
+      obj.requesting = message.requesting;
     }
     return obj;
   },
@@ -603,8 +607,8 @@ export const SyncAccept = {
   fromPartial<I extends Exact<DeepPartial<SyncAccept>, I>>(object: I): SyncAccept {
     const message = createBaseSyncAccept();
     message.objectId = object.objectId ?? "";
-    message.diff = object.diff?.map((e) => Vertex.fromPartial(e)) || [];
-    message.missing = object.missing?.map((e) => e) || [];
+    message.requested = object.requested?.map((e) => Vertex.fromPartial(e)) || [];
+    message.requesting = object.requesting?.map((e) => e) || [];
     return message;
   },
 };

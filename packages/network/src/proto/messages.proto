@@ -40,8 +40,8 @@ message Sync {
 
 message SyncAccept {
 	string objectId = 1;
-	repeated Vertex diff = 2;
-	repeated string missing = 3;
+	repeated Vertex requested = 2;
+	repeated string requesting = 3;
 }
 
 message SyncReject { }
