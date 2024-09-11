@@ -132,7 +132,7 @@ export class HashGraph {
 	}
 
 	// Time complexity: O(V + E), Space complexity: O(V)
-	topologicalSort(): Hash[] {
+	topologicalSort(updateBitsets = false): Hash[] {
 		const result: Hash[] = [];
 		const visited = new Set<Hash>();
 		this.reachablePredecessors.clear();
@@ -152,6 +152,8 @@ export class HashGraph {
 		// Start with the root vertex
 		visit(HashGraph.rootHash);
 		result.reverse();
+
+		if (!updateBitsets) return result;
 
 		// Double the size until it's enough to hold all the vertices
 		while (this.currentBitsetSize < result.length) this.currentBitsetSize *= 2;
@@ -237,7 +239,7 @@ export class HashGraph {
 	// Amortised time complexity: O(1), Amortised space complexity: O(1)
 	areCausallyRelatedUsingBitsets(hash1: Hash, hash2: Hash): boolean {
 		if (!this.arePredecessorsFresh) {
-			this.topologicalSort();
+			this.topologicalSort(true);
 		}
 		const test1 =
 			this.reachablePredecessors
