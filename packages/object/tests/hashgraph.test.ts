@@ -81,6 +81,12 @@ describe("HashGraph for AddWinSet tests", () => {
 		expect(obj1.hashGraph.vertices).toEqual(obj2.hashGraph.vertices);
 
 		const linearOps = obj1.hashGraph.linearizeOperations();
+		console.log(linearOps);
+		console.log([
+			{ type: "add", value: 1 },
+			{ type: "add", value: 2 },
+			{ type: "remove", value: 1 },
+		]);
 		expect(linearOps).toEqual([
 			{ type: "add", value: 1 },
 			{ type: "add", value: 2 },

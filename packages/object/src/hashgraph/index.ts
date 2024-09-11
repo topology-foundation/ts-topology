@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
 import { BitSet } from "./bitset.js";
 
-type Hash = string;
+export type Hash = string;
 // biome-ignore lint: value can't be unknown because of protobuf
 export type Operation = { type: string; value: any | null };
 
@@ -182,7 +182,7 @@ export class HashGraph {
 	}
 
 	linearizeOperations(): Operation[] {
-		const order = this.topologicalSort();
+		const order = this.topologicalSort(true);
 		const result: Operation[] = [];
 		let i = 0;
 
