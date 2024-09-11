@@ -45,16 +45,16 @@ importers:
   examples/canvas:
     dependencies:
       '@topology-foundation/crdt':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../../packages/crdt
       '@topology-foundation/network':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../../packages/object
       crypto-browserify:
         specifier: ^3.12.0
@@ -91,16 +91,16 @@ importers:
   examples/chat:
     dependencies:
       '@topology-foundation/crdt':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../../packages/crdt
       '@topology-foundation/network':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../../packages/object
       assemblyscript:
         specifier: ^0.27.29
@@ -146,7 +146,7 @@ importers:
   packages/crdt:
     devDependencies:
       '@topology-foundation/object':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../object
       assemblyscript:
         specifier: ^0.27.29
@@ -246,13 +246,13 @@ importers:
         specifier: ^1.7.0
         version: 1.7.0
       '@topology-foundation/crdt':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../crdt
       '@topology-foundation/network':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../network
       '@topology-foundation/object':
-        specifier: 0.1.0
+        specifier: 0.1.1-0
         version: link:../object
       commander:
         specifier: ^12.1.0

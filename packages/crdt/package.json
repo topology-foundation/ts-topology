@@ -1,6 +1,6 @@
 {
  "name": "@topology-foundation/crdt",
- "version": "0.1.1-0",
+ "version": "0.1.1-1",
  "license": "MIT",
  "repository": {
   "type": "git",
@@ -34,7 +34,7 @@
   "test": "vitest"
  },
  "devDependencies": {
-  "@topology-foundation/object": "0.1.1-0",
+  "@topology-foundation/object": "0.1.1-1",
   "assemblyscript": "^0.27.29"
  }
 }

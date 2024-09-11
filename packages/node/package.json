@@ -1,6 +1,6 @@
 {
  "name": "@topology-foundation/node",
- "version": "0.1.1-0",
+ "version": "0.1.1-1",
  "license": "MIT",
  "repository": {
   "type": "git",
@@ -37,9 +37,9 @@
  "dependencies": {
   "@chainsafe/libp2p-gossipsub": "^13.1.0",
   "@libp2p/interface": "^1.7.0",
-  "@topology-foundation/crdt": "0.1.1-0",
-  "@topology-foundation/network": "0.1.1-0",
-  "@topology-foundation/object": "0.1.1-0",
+  "@topology-foundation/crdt": "0.1.1-1",
+  "@topology-foundation/network": "0.1.1-1",
+  "@topology-foundation/object": "0.1.1-1",
   "commander": "^12.1.0",
   "it-length-prefixed": "^9.1.0"
  }
