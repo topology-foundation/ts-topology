@@ -5,7 +5,7 @@ import {
 	type Vertex,
 } from "@topology-foundation/object";
 
-export class AddWinsSet<T> implements CRO<T> {
+export class AddWinsSet<T> implements CRO {
 	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
 
@@ -40,7 +40,7 @@ export class AddWinsSet<T> implements CRO<T> {
 	}
 
 	// in this case is an array of length 2 and there are only two possible operations
-	resolveConflicts(vertices: Vertex<T>[]): ActionType {
+	resolveConflicts(vertices: Vertex[]): ActionType {
 		if (
 			vertices[0].operation.type !== vertices[1].operation.type &&
 			vertices[0].operation.value === vertices[1].operation.value
@@ -53,7 +53,7 @@ export class AddWinsSet<T> implements CRO<T> {
 	}
 
 	// merged at HG level and called as a callback
-	mergeCallback(operations: Operation<T>[]): void {
+	mergeCallback(operations: Operation[]): void {
 		this.state = new Map<T, boolean>();
 		for (const op of operations) {
 			switch (op.type) {

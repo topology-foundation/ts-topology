@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { AddWinsSet } from "../../crdt/src/cros/AddWinsSet/index.js";
-import { type TopologyObject, merge, newTopologyObject } from "../src/index.js";
+import { TopologyObject } from "../src/index.js";
 
 describe("HashGraph for AddWinSet tests", () => {
-	let obj1: TopologyObject<number>;
-	let obj2: TopologyObject<number>;
-	let obj3: TopologyObject<number>;
+	let obj1: TopologyObject;
+	let obj2: TopologyObject;
+	let obj3: TopologyObject;
 
 	beforeEach(async () => {
-		obj1 = await newTopologyObject("peer1", new AddWinsSet<number>());
-		obj2 = await newTopologyObject("peer2", new AddWinsSet<number>());
-		obj3 = await newTopologyObject("peer3", new AddWinsSet<number>());
+		obj1 = new TopologyObject("peer1", new AddWinsSet<number>());
+		obj2 = new TopologyObject("peer2", new AddWinsSet<number>());
+		obj3 = new TopologyObject("peer3", new AddWinsSet<number>());
 	});
 
 	test("Test: Add Two Vertices", () => {
@@ -41,12 +41,12 @@ describe("HashGraph for AddWinSet tests", () => {
 		const cro2 = obj2.cro as AddWinsSet<number>;
 
 		cro1.add(1);
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		cro1.remove(1);
 		cro2.add(1);
-		merge(obj1, obj2.hashGraph.getAllVertices());
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		expect(cro1.contains(1)).toBe(true);
 		expect(obj1.hashGraph.vertices).toEqual(obj2.hashGraph.vertices);
@@ -69,18 +69,24 @@ describe("HashGraph for AddWinSet tests", () => {
 		const cro2 = obj2.cro as AddWinsSet<number>;
 
 		cro1.add(1);
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		cro1.remove(1);
 		cro2.add(2);
-		merge(obj1, obj2.hashGraph.getAllVertices());
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		expect(cro1.contains(1)).toBe(false);
 		expect(cro1.contains(2)).toBe(true);
 		expect(obj1.hashGraph.vertices).toEqual(obj2.hashGraph.vertices);
 
 		const linearOps = obj1.hashGraph.linearizeOperations();
+		console.log(linearOps);
+		console.log([
+			{ type: "add", value: 1 },
+			{ type: "add", value: 2 },
+			{ type: "remove", value: 1 },
+		]);
 		expect(linearOps).toEqual([
 			{ type: "add", value: 1 },
 			{ type: "add", value: 2 },
@@ -99,14 +105,14 @@ describe("HashGraph for AddWinSet tests", () => {
 		const cro2 = obj2.cro as AddWinsSet<number>;
 
 		cro1.add(1);
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		cro1.remove(1);
 		cro2.add(1);
 		cro1.add(10);
 		cro2.remove(5);
-		merge(obj1, obj2.hashGraph.getAllVertices());
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		expect(cro1.contains(1)).toBe(true);
 		expect(cro1.contains(10)).toBe(true);
@@ -133,14 +139,14 @@ describe("HashGraph for AddWinSet tests", () => {
 		const cro2 = obj2.cro as AddWinsSet<number>;
 
 		cro1.add(1);
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		cro1.remove(1);
 		cro2.remove(2);
 		cro1.add(2);
 		cro2.add(1);
-		merge(obj1, obj2.hashGraph.getAllVertices());
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		expect(cro1.contains(1)).toBe(true);
 		expect(cro1.contains(2)).toBe(true);
@@ -170,27 +176,27 @@ describe("HashGraph for AddWinSet tests", () => {
 		const cro3 = obj3.cro as AddWinsSet<number>;
 
 		cro1.add(1);
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		cro1.add(1);
 		cro1.remove(2);
 		cro2.remove(2);
 		cro2.add(2);
 
-		merge(obj3, obj1.hashGraph.getAllVertices());
+		obj3.merge(obj1.hashGraph.getAllVertices());
 		cro3.add(3);
 		cro1.remove(1);
 
-		merge(obj1, obj2.hashGraph.getAllVertices());
+		obj1.merge(obj2.hashGraph.getAllVertices());
 		cro1.remove(3);
 		cro2.remove(1);
 
-		merge(obj1, obj2.hashGraph.getAllVertices());
-		merge(obj1, obj3.hashGraph.getAllVertices());
-		merge(obj2, obj1.hashGraph.getAllVertices());
-		merge(obj2, obj3.hashGraph.getAllVertices());
-		merge(obj3, obj1.hashGraph.getAllVertices());
-		merge(obj3, obj2.hashGraph.getAllVertices());
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		obj1.merge(obj3.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
+		obj2.merge(obj3.hashGraph.getAllVertices());
+		obj3.merge(obj1.hashGraph.getAllVertices());
+		obj3.merge(obj2.hashGraph.getAllVertices());
 
 		expect(cro1.contains(1)).toBe(false);
 		expect(cro1.contains(2)).toBe(true);
@@ -225,27 +231,27 @@ describe("HashGraph for AddWinSet tests", () => {
 		const cro3 = obj3.cro as AddWinsSet<number>;
 
 		cro1.add(1);
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		cro1.add(1);
 		cro1.remove(2);
 		cro2.remove(2);
 
-		merge(obj3, obj1.hashGraph.getAllVertices());
+		obj3.merge(obj1.hashGraph.getAllVertices());
 		cro3.add(3);
 		cro1.remove(1);
 
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 		cro2.add(2);
 		cro1.remove(3);
 		cro2.remove(1);
 
-		merge(obj1, obj2.hashGraph.getAllVertices());
-		merge(obj1, obj3.hashGraph.getAllVertices());
-		merge(obj2, obj1.hashGraph.getAllVertices());
-		merge(obj2, obj3.hashGraph.getAllVertices());
-		merge(obj3, obj1.hashGraph.getAllVertices());
-		merge(obj3, obj2.hashGraph.getAllVertices());
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		obj1.merge(obj3.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
+		obj2.merge(obj3.hashGraph.getAllVertices());
+		obj3.merge(obj1.hashGraph.getAllVertices());
+		obj3.merge(obj2.hashGraph.getAllVertices());
 
 		expect(cro1.contains(1)).toBe(false);
 		expect(cro1.contains(2)).toBe(true);
@@ -277,16 +283,16 @@ describe("HashGraph for AddWinSet tests", () => {
 		const cro2 = obj2.cro as AddWinsSet<number>;
 
 		cro1.add(1);
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		cro1.add(2);
 		cro2.remove(2);
 		cro2.remove(2);
-		merge(obj1, obj2.hashGraph.getAllVertices());
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		cro1.remove(2);
-		merge(obj2, obj1.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
 		expect(cro1.contains(1)).toBe(true);
 		expect(cro1.contains(2)).toBe(false);

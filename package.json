@@ -12,12 +12,13 @@
 		"url": "https://github.com/topology-foundation/ts-topology/issues"
 	},
 	"scripts": {
+		"bench": "vitest bench",
 		"biome-check": "biome check",
 		"docs": "typedoc",
+		"postinstall": "pnpm --filter '@topology-foundation/*' build",
 		"proto-gen": "buf generate",
 		"release": "release-it",
-		"test": "vitest",
-		"bench": "vitest bench"
+		"test": "vitest"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",

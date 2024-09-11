@@ -33,6 +33,9 @@ import * as lp from "it-length-prefixed";
 import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
+import { uint8ArrayToStream } from "./stream.js";
+
+export * from "./stream.js";
 
 // snake_casing to match the JSON config
 export interface TopologyNetworkNodeConfig {
@@ -206,13 +209,7 @@ export class TopologyNetworkNode {
 			const connection = await this._node?.dial([multiaddr(`/p2p/${peerId}`)]);
 			const stream = <Stream>await connection?.newStream(protocols);
 			const messageBuffer = Message.encode(message).finish();
-			stream.sink(lp.encode([messageBuffer]));
-
-			// stringToStream(stream, message);
-
-			console.log(
-				`topology::network::sendMessage: Successfuly sent message to peer: ${peerId} with message: ${message}`,
-			);
+			uint8ArrayToStream(stream, messageBuffer);
 		} catch (e) {
 			console.error("topology::network::sendMessage:", e);
 		}
@@ -231,11 +228,7 @@ export class TopologyNetworkNode {
 			const connection = await this._node?.dial(peerId);
 			const stream: Stream = (await connection?.newStream(protocols)) as Stream;
 			const messageBuffer = Message.encode(message).finish();
-			stream.sink(lp.encode([messageBuffer]));
-
-			console.log(
-				`topology::network::sendMessageRandomTopicPeer: Successfuly sent message to peer: ${peerId} with message: ${message}`,
-			);
+			uint8ArrayToStream(stream, messageBuffer);
 		} catch (e) {
 			console.error("topology::network::sendMessageRandomTopicPeer:", e);
 		}

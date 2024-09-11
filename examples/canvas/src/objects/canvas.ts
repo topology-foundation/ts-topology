@@ -1,6 +1,13 @@
+import {
+	ActionType,
+	type CRO,
+	type Operation,
+} from "@topology-foundation/object";
 import { Pixel } from "./pixel";
 
-export class Canvas {
+export class Canvas implements CRO {
+	operations: string[] = ["splash", "paint"];
+
 	width: number;
 	height: number;
 	canvas: Pixel[][];
@@ -14,7 +21,24 @@ export class Canvas {
 	}
 
 	splash(
-		node_id: string,
+		nodeId: string,
+		offset: [number, number],
+		size: [number, number],
+		rgb: [number, number, number],
+	): void {
+		this._splash(nodeId, offset, size, rgb);
+	}
+
+	paint(
+		nodeId: string,
+		offset: [number, number],
+		rgb: [number, number, number],
+	): void {
+		this._paint(nodeId, offset, rgb);
+	}
+
+	private _splash(
+		nodeId: string,
 		offset: [number, number],
 		size: [number, number],
 		rgb: [number, number, number],
@@ -24,12 +48,12 @@ export class Canvas {
 
 		for (let x = offset[0]; x < this.width || x < offset[0] + size[0]; x++) {
 			for (let y = offset[1]; y < this.height || y < offset[1] + size[1]; y++) {
-				this.canvas[x][y].paint(node_id, rgb);
+				this.canvas[x][y].paint(nodeId, rgb);
 			}
 		}
 	}
 
-	paint(
+	private _paint(
 		nodeId: string,
 		offset: [number, number],
 		rgb: [number, number, number],
@@ -48,5 +72,30 @@ export class Canvas {
 		this.canvas.forEach((row, x) =>
 			row.forEach((pixel, y) => pixel.merge(peerCanvas.pixel(x, y))),
 		);
+	}
+
+	resolveConflicts(_): ActionType {
+		return ActionType.Nop;
+	}
+
+	mergeCallback(operations: Operation[]): void {
+		this.canvas = Array.from(new Array(this.width), () =>
+			Array.from(new Array(this.height), () => new Pixel()),
+		);
+		for (const op of operations) {
+			if (!op.value) continue;
+			switch (op.type) {
+				case "splash": {
+					const [nodeId, offset, size, rgb] = op.value;
+					this._splash(nodeId, offset, size, rgb);
+					break;
+				}
+				case "paint": {
+					const [nodeId, offset, rgb] = op.value;
+					this._paint(nodeId, offset, rgb);
+					break;
+				}
+			}
+		}
 	}
 }

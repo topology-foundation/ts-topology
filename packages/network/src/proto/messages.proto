@@ -1,5 +1,18 @@
 syntax = "proto3";
 package topology.network;
+import "google/protobuf/struct.proto";
+
+// Supposed to be the RIBLT stuff
+message Vertex {
+	message Operation {
+ 		string type = 1;
+   		google.protobuf.Value value = 2;
+    }
+    string hash = 1;
+    string nodeId = 2;
+    Operation operation = 3;
+    repeated string dependencies = 4;
+};
 
 message Message {
     enum MessageType {
@@ -14,3 +27,21 @@ message Message {
     MessageType type = 2;
     bytes data = 3;
 }
+
+message Update {
+	string objectId = 1;
+	repeated Vertex vertices = 2;
+}
+
+message Sync {
+	string objectId = 1;
+	repeated string vertex_hashes = 2;
+}
+
+message SyncAccept {
+	string objectId = 1;
+	repeated Vertex requested = 2;
+	repeated string requesting = 3;
+}
+
+message SyncReject { }
