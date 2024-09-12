@@ -7,21 +7,11 @@ describe("HashGraph for AddWinSet tests", () => {
 	let obj1: TopologyObject;
 	let obj2: TopologyObject;
 	let obj3: TopologyObject;
-	let obj4: TopologyObject;
-	let obj5: TopologyObject;
-	let obj6: TopologyObject;
-	let obj7: TopologyObject;
-	let obj8: TopologyObject;
 
 	beforeEach(async () => {
 		obj1 = new TopologyObject("peer1", new AddWinsSet<number>());
 		obj2 = new TopologyObject("peer2", new AddWinsSet<number>());
 		obj3 = new TopologyObject("peer3", new AddWinsSet<number>());
-		obj4 = new TopologyObject("peer4", new PseudoRandomWinsSet<number>());
-		obj5 = new TopologyObject("peer5", new PseudoRandomWinsSet<number>());
-		obj6 = new TopologyObject("peer6", new PseudoRandomWinsSet<number>());
-		obj7 = new TopologyObject("peer7", new PseudoRandomWinsSet<number>());
-		obj8 = new TopologyObject("peer8", new PseudoRandomWinsSet<number>());
 	});
 
 	test("Test: Add Two Vertices", () => {
@@ -92,12 +82,6 @@ describe("HashGraph for AddWinSet tests", () => {
 		expect(obj1.hashGraph.vertices).toEqual(obj2.hashGraph.vertices);
 
 		const linearOps = obj1.hashGraph.linearizeOperations();
-		console.log(linearOps);
-		console.log([
-			{ type: "add", value: 1 },
-			{ type: "add", value: 2 },
-			{ type: "remove", value: 1 },
-		]);
 		expect(linearOps).toEqual([
 			{ type: "add", value: 1 },
 			{ type: "add", value: 2 },
@@ -316,6 +300,22 @@ describe("HashGraph for AddWinSet tests", () => {
 			{ type: "remove", value: 2 },
 		]);
 	});
+});
+
+describe("HashGraph for PseudoRandomWinsSet tests", () => {
+	let obj1: TopologyObject;
+	let obj2: TopologyObject;
+	let obj3: TopologyObject;
+	let obj4: TopologyObject;
+	let obj5: TopologyObject;
+
+	beforeEach(async () => {
+		obj1 = new TopologyObject("peer1", new PseudoRandomWinsSet<number>());
+		obj2 = new TopologyObject("peer2", new PseudoRandomWinsSet<number>());
+		obj3 = new TopologyObject("peer3", new PseudoRandomWinsSet<number>());
+		obj4 = new TopologyObject("peer4", new PseudoRandomWinsSet<number>());
+		obj5 = new TopologyObject("peer5", new PseudoRandomWinsSet<number>());
+	});
 
 	test("Test: Giga Chad case", () => {
 		/*
@@ -328,49 +328,56 @@ describe("HashGraph for AddWinSet tests", () => {
 	            \ ___  V4:RM(2) <-- V5:ADD(2) <-- V9:RM(1)
 	*/
 
-		const cro4 = obj4.cro as PseudoRandomWinsSet<number>;
-		const cro5 = obj5.cro as PseudoRandomWinsSet<number>;
-		const cro6 = obj6.cro as PseudoRandomWinsSet<number>;
+		const cro1 = obj1.cro as PseudoRandomWinsSet<number>;
+		const cro2 = obj2.cro as PseudoRandomWinsSet<number>;
+		const cro3 = obj3.cro as PseudoRandomWinsSet<number>;
 
-		cro4.add(1);
-		merge(obj5, obj4.hashGraph.getAllVertices());
+		cro1.add(1);
+		obj2.merge(obj1.hashGraph.getAllVertices());
 
-		cro4.add(1);
-		cro4.remove(2);
-		cro5.remove(2);
-		cro5.add(2);
+		cro1.add(1);
+		cro1.remove(2);
+		cro2.remove(2);
+		cro2.add(2);
 
-		merge(obj6, obj4.hashGraph.getAllVertices());
-		cro6.add(3);
-		cro4.remove(1);
+		obj3.merge(obj1.hashGraph.getAllVertices());
+		cro3.add(3);
+		cro1.remove(1);
 
-		merge(obj4, obj5.hashGraph.getAllVertices());
-		cro4.remove(3);
-		cro5.remove(1);
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		cro1.remove(3);
+		cro2.remove(1);
 
-		merge(obj4, obj5.hashGraph.getAllVertices());
-		merge(obj4, obj6.hashGraph.getAllVertices());
-		merge(obj5, obj4.hashGraph.getAllVertices());
-		merge(obj5, obj6.hashGraph.getAllVertices());
-		merge(obj6, obj4.hashGraph.getAllVertices());
-		merge(obj6, obj5.hashGraph.getAllVertices());
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		obj1.merge(obj3.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
+		obj2.merge(obj3.hashGraph.getAllVertices());
+		obj3.merge(obj1.hashGraph.getAllVertices());
+		obj3.merge(obj2.hashGraph.getAllVertices());
 
-		expect(obj4.hashGraph.vertices).toEqual(obj5.hashGraph.vertices);
-		expect(obj4.hashGraph.vertices).toEqual(obj6.hashGraph.vertices);
+		expect(obj1.hashGraph.vertices).toEqual(obj2.hashGraph.vertices);
+		expect(obj1.hashGraph.vertices).toEqual(obj3.hashGraph.vertices);
 
-		const linearOps = obj4.hashGraph.linearizeOperations();
+		const linearOpsObj1 = obj1.hashGraph.linearizeOperations();
+		const linearOpsObj2 = obj2.hashGraph.linearizeOperations();
+		const linearOpsObj3 = obj3.hashGraph.linearizeOperations();
+		expect(linearOpsObj1).toEqual(linearOpsObj2);
+		expect(linearOpsObj1).toEqual(linearOpsObj3);
+
 		/* 
 			Resolving conflicts:
-			1. V2, V4 => V2 is chosen
-			2. V2, V5 => V5 is chosen
-			3. V3, V5 => V5 is chosen
-			4. V6, V7, V5 => V6 is chosen
-			5. V6, V8, V9 => V6 is chosen
-			Final order: V1, V6
+			1. V2, V4 => V4 is chosen
+			2. V3, V4 => V3 is chosen
+			3. V3, V5 => V3 is chosen
+			4. V3, V9 => V3 is chosen
+			5. V6, V7 => V6 is chosen
+			6. V6, V8 => V8 is chosen
+			Final order: V1, V3, V8
 		*/
-		expect(linearOps).toEqual([
+		expect(linearOpsObj1).toEqual([
 			{ type: "add", value: 1 },
-			{ type: "add", value: 3 },
+			{ type: "remove", value: 2 },
+			{ type: "remove", value: 3 },
 		]);
 	});
 
@@ -383,26 +390,26 @@ describe("HashGraph for AddWinSet tests", () => {
 				    ---- V5:ADD(5)
         */
 
+		const cro1 = obj1.cro as PseudoRandomWinsSet<number>;
+		const cro2 = obj2.cro as PseudoRandomWinsSet<number>;
+		const cro3 = obj3.cro as PseudoRandomWinsSet<number>;
 		const cro4 = obj4.cro as PseudoRandomWinsSet<number>;
 		const cro5 = obj5.cro as PseudoRandomWinsSet<number>;
-		const cro6 = obj6.cro as PseudoRandomWinsSet<number>;
-		const cro7 = obj7.cro as PseudoRandomWinsSet<number>;
-		const cro8 = obj8.cro as PseudoRandomWinsSet<number>;
 
-		cro4.add(1);
-		cro5.add(2);
-		cro6.add(3);
-		cro7.add(4);
-		cro8.add(5);
+		cro1.add(1);
+		cro2.add(2);
+		cro3.add(3);
+		cro4.add(4);
+		cro5.add(5);
 
-		merge(obj5, obj4.hashGraph.getAllVertices());
-		merge(obj6, obj5.hashGraph.getAllVertices());
-		merge(obj7, obj6.hashGraph.getAllVertices());
-		merge(obj8, obj7.hashGraph.getAllVertices());
-		merge(obj4, obj8.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
+		obj3.merge(obj2.hashGraph.getAllVertices());
+		obj4.merge(obj3.hashGraph.getAllVertices());
+		obj5.merge(obj4.hashGraph.getAllVertices());
+		obj1.merge(obj5.hashGraph.getAllVertices());
 
-		const linearOps = obj4.hashGraph.linearizeOperations();
+		const linearOps = obj1.hashGraph.linearizeOperations();
 		// Pseudo-randomly chosen operation
-		expect(linearOps).toEqual([{ type: "add", value: 4 }]);
+		expect(linearOps).toEqual([{ type: "add", value: 3 }]);
 	});
 });

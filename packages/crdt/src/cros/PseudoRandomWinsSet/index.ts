@@ -26,7 +26,7 @@ function compute_hash(s: string): number {
 	An arbitrary number of concurrent operations can be reduced to a single operation.
 	The winning operation is chosen using a pseudo-random number generator.
 */
-export class PseudoRandomWinsSet<T> implements CRO<T> {
+export class PseudoRandomWinsSet<T> implements CRO {
 	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
 	semanticsType = SemanticsType.multiVertex;
@@ -61,7 +61,7 @@ export class PseudoRandomWinsSet<T> implements CRO<T> {
 			.map(([value, _]) => value);
 	}
 
-	resolveConflicts(vertices: Vertex<T>[]): ResolveConflictsType {
+	resolveConflicts(vertices: Vertex[]): ResolveConflictsType {
 		vertices.sort((a, b) => (a.hash < b.hash ? -1 : 1));
 		const seed: string = vertices.map((vertex) => vertex.hash).join("");
 		const rnd = new Smush32(compute_hash(seed));
@@ -72,7 +72,7 @@ export class PseudoRandomWinsSet<T> implements CRO<T> {
 	}
 
 	// merged at HG level and called as a callback
-	mergeCallback(operations: Operation<T>[]): void {
+	mergeCallback(operations: Operation[]): void {
 		this.state = new Map<T, boolean>();
 		for (const op of operations) {
 			switch (op.type) {

@@ -1,8 +1,12 @@
-import { ActionType, type HashGraph, type Operation } from "../hashgraph.js";
+import {
+	ActionType,
+	type HashGraph,
+	type Operation,
+} from "../hashgraph/index.js";
 
-export function linearizePairWise<T>(hashGraph: HashGraph<T>): Operation<T>[] {
-	const order = hashGraph.topologicalSort();
-	const result: Operation<T>[] = [];
+export function linearizePairWise(hashGraph: HashGraph): Operation[] {
+	const order = hashGraph.topologicalSort(true);
+	const result: Operation[] = [];
 	let i = 0;
 
 	while (i < order.length) {
@@ -13,7 +17,7 @@ export function linearizePairWise<T>(hashGraph: HashGraph<T>): Operation<T>[] {
 		while (j < order.length) {
 			const moving = order[j];
 
-			if (!hashGraph.areCausallyRelated(anchor, moving)) {
+			if (!hashGraph.areCausallyRelatedUsingBitsets(anchor, moving)) {
 				const v1 = hashGraph.vertices.get(anchor);
 				const v2 = hashGraph.vertices.get(moving);
 				let action: ActionType;

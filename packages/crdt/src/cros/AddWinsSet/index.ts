@@ -43,7 +43,7 @@ export class AddWinsSet<T> implements CRO {
 	}
 
 	// in this case is an array of length 2 and there are only two possible operations
-	resolveConflicts(vertices: Vertex<T>[]): ResolveConflictsType {
+	resolveConflicts(vertices: Vertex[]): ResolveConflictsType {
 		if (
 			vertices[0].operation.type !== vertices[1].operation.type &&
 			vertices[0].operation.value === vertices[1].operation.value

@@ -4,14 +4,12 @@ import {
 	type HashGraph,
 	type Operation,
 	type Vertex,
-} from "../hashgraph.js";
+} from "../hashgraph/index.js";
 
-export function linearizeMultiVertex<T>(
-	hashGraph: HashGraph<T>,
-): Operation<T>[] {
-	let order = hashGraph.topologicalSort();
+export function linearizeMultiVertex(hashGraph: HashGraph): Operation[] {
+	let order = hashGraph.topologicalSort(true);
 	const indices: Map<Hash, number> = new Map();
-	const result: Operation<T>[] = [];
+	const result: Operation[] = [];
 	let i = 0;
 
 	while (i < order.length) {
@@ -22,7 +20,7 @@ export function linearizeMultiVertex<T>(
 		while (j < order.length) {
 			const moving = order[j];
 
-			if (!hashGraph.areCausallyRelated(anchor, moving)) {
+			if (!hashGraph.areCausallyRelatedUsingBitsets(anchor, moving)) {
 				const concurrentOps: Hash[] = [];
 				concurrentOps.push(anchor);
 				indices.set(anchor, i);
@@ -32,7 +30,7 @@ export function linearizeMultiVertex<T>(
 				for (; k < order.length; k++) {
 					let add = true;
 					for (const hash of concurrentOps) {
-						if (hashGraph.areCausallyRelated(hash, order[k])) {
+						if (hashGraph.areCausallyRelatedUsingBitsets(hash, order[k])) {
 							add = false;
 							break;
 						}
@@ -43,9 +41,7 @@ export function linearizeMultiVertex<T>(
 					}
 				}
 				const resolved = hashGraph.resolveConflicts(
-					concurrentOps.map(
-						(hash) => hashGraph.vertices.get(hash) as Vertex<T>,
-					),
+					concurrentOps.map((hash) => hashGraph.vertices.get(hash) as Vertex),
 				);
 
 				switch (resolved.action) {
