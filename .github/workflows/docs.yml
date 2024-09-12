@@ -10,11 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - run: |
-          cd packages/node && yarn && yarn build
-          cd ../.. && yarn docs
+          pnpm install --no-frozen-lockfile
+          yarn docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

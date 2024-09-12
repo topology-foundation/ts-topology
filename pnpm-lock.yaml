@@ -15,8 +15,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(release-it@17.6.0(typescript@5.5.4))
       '@types/node':
-        specifier: ^22.5.0
-        version: 22.5.0
+        specifier: ^22.5.4
+        version: 22.5.4
       assemblyscript:
         specifier: ^0.27.29
         version: 0.27.29
@@ -33,28 +33,28 @@ importers:
         specifier: ^5.5.4
         version: 5.5.4
       vite:
-        specifier: ^5.4.1
-        version: 5.4.2(@types/node@22.5.0)(terser@5.31.6)
+        specifier: ^5.4.3
+        version: 5.4.3(@types/node@22.5.4)(terser@5.31.6)
       vite-tsconfig-paths:
         specifier: ^5.0.1
-        version: 5.0.1(typescript@5.5.4)(vite@5.4.2(@types/node@22.5.0)(terser@5.31.6))
+        version: 5.0.1(typescript@5.5.4)(vite@5.4.3(@types/node@22.5.4)(terser@5.31.6))
       vitest:
         specifier: ^2.0.5
-        version: 2.0.5(@types/node@22.5.0)(terser@5.31.6)
+        version: 2.0.5(@types/node@22.5.4)(terser@5.31.6)
 
   examples/canvas:
     dependencies:
       '@topology-foundation/crdt':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../../packages/crdt
       '@topology-foundation/network':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../../packages/object
       crypto-browserify:
         specifier: ^3.12.0
@@ -67,14 +67,14 @@ importers:
         version: 3.0.0
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@22.5.0)(typescript@5.5.4)
+        version: 10.9.2(@types/node@22.5.4)(typescript@5.5.4)
       vm-browserify:
         specifier: ^1.1.2
         version: 1.1.2
     devDependencies:
       '@types/node':
-        specifier: ^22.5.0
-        version: 22.5.0
+        specifier: ^22.5.4
+        version: 22.5.4
       ts-loader:
         specifier: ^9.3.1
         version: 9.5.1(typescript@5.5.4)(webpack@5.94.0)
@@ -82,25 +82,25 @@ importers:
         specifier: ^5.5.4
         version: 5.5.4
       vite:
-        specifier: ^5.4.1
-        version: 5.4.2(@types/node@22.5.0)(terser@5.31.6)
+        specifier: ^5.4.3
+        version: 5.4.3(@types/node@22.5.4)(terser@5.31.6)
       vite-plugin-node-polyfills:
         specifier: ^0.22.0
-        version: 0.22.0(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.0)(terser@5.31.6))
+        version: 0.22.0(rollup@4.21.0)(vite@5.4.3(@types/node@22.5.4)(terser@5.31.6))
 
   examples/chat:
     dependencies:
       '@topology-foundation/crdt':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../../packages/crdt
       '@topology-foundation/network':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../../packages/object
       assemblyscript:
         specifier: ^0.27.29
@@ -119,7 +119,7 @@ importers:
         version: 3.0.0
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@22.5.0)(typescript@5.5.4)
+        version: 10.9.2(@types/node@22.5.4)(typescript@5.5.4)
       uint8arrays:
         specifier: ^5.1.0
         version: 5.1.0
@@ -128,8 +128,8 @@ importers:
         version: 1.1.2
     devDependencies:
       '@types/node':
-        specifier: ^22.5.0
-        version: 22.5.0
+        specifier: ^22.5.4
+        version: 22.5.4
       ts-loader:
         specifier: ^9.5.1
         version: 9.5.1(typescript@5.5.4)(webpack@5.94.0)
@@ -137,11 +137,11 @@ importers:
         specifier: ^5.5.4
         version: 5.5.4
       vite:
-        specifier: ^5.4.1
-        version: 5.4.2(@types/node@22.5.0)(terser@5.31.6)
+        specifier: ^5.4.3
+        version: 5.4.3(@types/node@22.5.4)(terser@5.31.6)
       vite-plugin-node-polyfills:
         specifier: ^0.22.0
-        version: 0.22.0(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.0)(terser@5.31.6))
+        version: 0.22.0(rollup@4.21.0)(vite@5.4.3(@types/node@22.5.4)(terser@5.31.6))
 
   packages/crdt:
     dependencies:
@@ -150,7 +150,7 @@ importers:
         version: 4.0.3
     devDependencies:
       '@topology-foundation/object':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../object
       assemblyscript:
         specifier: ^0.27.29
@@ -165,8 +165,8 @@ importers:
         specifier: ^13.1.0
         version: 13.2.0
       '@chainsafe/libp2p-noise':
-        specifier: ^15.1.1
-        version: 15.1.1
+        specifier: ^15.1.2
+        version: 15.1.2
       '@chainsafe/libp2p-yamux':
         specifier: ^6.0.2
         version: 6.0.2
@@ -204,17 +204,17 @@ importers:
         specifier: ^10.0.2
         version: 10.0.2
       '@libp2p/webrtc':
-        specifier: ^4.1.7
-        version: 4.1.7(react-native@0.75.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(react@18.3.1)(typescript@5.5.4))
+        specifier: ^4.1.8
+        version: 4.1.8(react-native@0.75.1(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(react@18.3.1)(typescript@5.5.4))
       '@libp2p/websockets':
         specifier: ^8.1.2
         version: 8.2.0
       '@libp2p/webtransport':
-        specifier: ^4.1.2
-        version: 4.1.7
+        specifier: ^4.1.9
+        version: 4.1.9
       '@multiformats/multiaddr':
-        specifier: ^12.3.0
-        version: 12.3.0
+        specifier: ^12.3.1
+        version: 12.3.1
       it-length-prefixed:
         specifier: ^9.1.0
         version: 9.1.0
@@ -225,8 +225,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       libp2p:
-        specifier: ^1.8.3
-        version: 1.9.2
+        specifier: ^1.9.4
+        version: 1.9.4
       ts-proto:
         specifier: ^2.0.3
         version: 2.0.3
@@ -250,13 +250,13 @@ importers:
         specifier: ^1.7.0
         version: 1.7.0
       '@topology-foundation/crdt':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../crdt
       '@topology-foundation/network':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../network
       '@topology-foundation/object':
-        specifier: 0.0.23-5
+        specifier: 0.1.1-3
         version: link:../object
       commander:
         specifier: ^12.1.0
@@ -266,17 +266,17 @@ importers:
         version: 9.1.0
     devDependencies:
       '@types/node':
-        specifier: ^22.5.0
-        version: 22.5.0
+        specifier: ^22.5.4
+        version: 22.5.4
       tsx:
-        specifier: 4.18.0
-        version: 4.18.0
+        specifier: 4.19.0
+        version: 4.19.0
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
       vitest:
         specifier: ^2.0.5
-        version: 2.0.5(@types/node@22.5.0)(terser@5.31.6)
+        version: 2.0.5(@types/node@22.5.4)(terser@5.31.6)
 
   packages/object:
     dependencies:
@@ -1049,8 +1049,8 @@ packages:
     resolution: {integrity: sha512-yKGXIJMLeNLa/XeI57HvQKhf1f4LRgBuV1Lrzv9Vo685Szr+qaBATUbMk/aLxpN2rMgibDIS5F8yaeuIUVPh8Q==}
     engines: {npm: '>=8.7.0'}
 
-  '@chainsafe/libp2p-noise@15.1.1':
-    resolution: {integrity: sha512-66EPS8gFTkb1jVCiJoY3+ulG/ZTef7kiNZZZvUOUzsLIZYQTi+7pIDBpgmolzSXdsFb8I2hl5mZsvcbzVZB5gg==}
+  '@chainsafe/libp2p-noise@15.1.2':
+    resolution: {integrity: sha512-o6mqsAbaCBucgdLOOHtkwtGVL1c8RLKhlTnHQY+leazY+thiE1Sm6qPCwsTHKQnWii1q5hDVI2Q0l9QgYi5v4Q==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
 
   '@chainsafe/libp2p-yamux@6.0.2':
@@ -1510,14 +1510,14 @@ packages:
   '@libp2p/utils@5.4.9':
     resolution: {integrity: sha512-0fRdX98WqhTmXU2WEVLegLFxs/kKTtUHanHk5Lzs4oGsIzlPHR7zE6lj/U1WfsFA+Xo1eYQpNLiXEL29hG+Nyw==}
 
-  '@libp2p/webrtc@4.1.7':
-    resolution: {integrity: sha512-8iXs5m0DyfLKqOJAV/nZrtQz6ryrr5iv8fp6ArbWLm/NOwqHkbXwO30ZpRNRm1qmDvKVQilGpNFEC1z1mgheRg==}
+  '@libp2p/webrtc@4.1.8':
+    resolution: {integrity: sha512-fSlEc4i7oi0geThct+GBCZpVbkGOAsf4fbwokGE1Hg7fwv5zjodF3fSyR1nwStZUXVFIdZBM9DjPYpam61Kxng==}
 
   '@libp2p/websockets@8.2.0':
     resolution: {integrity: sha512-UNjqkQ8/emnYswp1ohIIuZCnhI5DlvWF9IaIND2MoTCDavi7yubWfMp8jSWBsAqPnMeLMO8MQ6YlOo4FFC104Q==}
 
-  '@libp2p/webtransport@4.1.7':
-    resolution: {integrity: sha512-8dVGxWbHXztUs9t6VdcW2hmgK5WAxQ9jiyj9Za/2v2JDl1dxhEJH2lFtKl794Nbs+5I03XA9Y5IFxV10to8bUg==}
+  '@libp2p/webtransport@4.1.9':
+    resolution: {integrity: sha512-A48Fl8pm4Tstc5hiOvMbqVKS4/98D0pCn/Cb8iv/RS/EFyfMDBF8qSm4aYN9pXF0m0OepBKP4VG2GAGVqnqfrA==}
 
   '@multiformats/dns@1.0.6':
     resolution: {integrity: sha512-nt/5UqjMPtyvkG9BQYdJ4GfLK3nMqGpFZOzf4hAmIa0sJh2LlS9YKXZ4FgwBDsaHvzZqR/rUFIywIc7pkHNNuw==}
@@ -1531,8 +1531,8 @@ packages:
   '@multiformats/multiaddr-to-uri@10.1.0':
     resolution: {integrity: sha512-ZNwSAx3ssBWwd4y0LKrOsq9xG7LBHboQxnUdSduNc2fTh/NS1UjA2slgUy6KHxH5k9S2DSus0iU2CoyJyN0/pg==}
 
-  '@multiformats/multiaddr@12.3.0':
-    resolution: {integrity: sha512-JQ8Gc/jgucqqvEaDTFN/AvxlYDHEE7lgEWLMYW7hKZkWggER+GvG/tVxUgUxIP8M0vFpvEHKKHE0lKzyMsgi8Q==}
+  '@multiformats/multiaddr@12.3.1':
+    resolution: {integrity: sha512-yoGODQY4nIj41ENJClucS8FtBoe8w682bzbKldEQr9lSlfdHqAsRC+vpJAOBpiMwPps1tHua4kxrDmvprdhoDQ==}
 
   '@noble/ciphers@0.6.0':
     resolution: {integrity: sha512-mIbq/R9QXk5/cTfESb1OKtyFnk7oc1Om/8onA1158K9/OZUQFDEVy55jVTato+xmp3XX6F6Qh0zz0Nc1AxAlRQ==}
@@ -1958,8 +1958,8 @@ packages:
   '@types/node-forge@1.3.11':
     resolution: {integrity: sha512-FQx220y22OKNTqaByeBGqHWYz4cl94tpcxeFdvBo3wjG6XPBuZ0BNgNZRV5J5TFmmcsJ4IzsLkmGRiQbnYsBEQ==}
 
-  '@types/node@22.5.0':
-    resolution: {integrity: sha512-DkFrJOe+rfdHTqqMg0bSNlGlQ85hSoh2TPzZyhHsXnMtligRWpxUySiyw8FY14ITt24HVCiQPWxS3KO/QlGmWg==}
+  '@types/node@22.5.4':
+    resolution: {integrity: sha512-FDuKUJQm/ju9fT/SeX/6+gBzoPzlVCzfzmGkwKvRHQVxi4BntVbyIwf6a4Xn62mrvndLiml6z/UBXIdEVjQLXg==}
 
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
@@ -3590,8 +3590,8 @@ packages:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
     engines: {node: '>=6'}
 
-  libp2p@1.9.2:
-    resolution: {integrity: sha512-cvzSC3UM9A1w6kb3GO9+iqRwCg/c/4hF6RZTF0SyY5U3xVawXSQPMcB5td9d+20HcNrYm2uWKjlexORllAT2hA==}
+  libp2p@1.9.4:
+    resolution: {integrity: sha512-OCMQqJ0Po8jhgb4CilWhI5EWhppn9ENdhg63PQL8Yi1tk2rOwJJt+NBec85AU18zBc0jv7Q6SgQRkzCefAuyIQ==}
 
   lighthouse-logger@1.4.2:
     resolution: {integrity: sha512-gPWxznF6TKmUHrOQjlVo2UbaL2EJ71mb2CCeRs/2qBpi4L/g4LUVc9+3lKQ6DTUZwJswfM7ainGrLO1+fOqa2g==}
@@ -4245,8 +4245,8 @@ packages:
     resolution: {integrity: sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==}
     engines: {node: '>= 0.4'}
 
-  postcss@8.4.41:
-    resolution: {integrity: sha512-TesUflQ0WKZqAvg52PWL6kHgLKP6xB6heTOdoYM0Wt2UHyxNa4K25EZZMgKns3BH1RLVbZCREPpLY0rhnNoHVQ==}
+  postcss@8.4.45:
+    resolution: {integrity: sha512-7KTLTdzdZZYscUc65XmjFiB73vBhBfbPztCYdUNvlaso9PrzjzcmjqBPR0lNGkcVlcO4BjiO5rK/qNz+XAen1Q==}
     engines: {node: ^10 || ^12 || >=14}
 
   prebuild-install@7.1.2:
@@ -4961,8 +4961,8 @@ packages:
   tslib@2.7.0:
     resolution: {integrity: sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==}
 
-  tsx@4.18.0:
-    resolution: {integrity: sha512-a1jaKBSVQkd6yEc1/NI7G6yHFfefIcuf3QJST7ZEyn4oQnxLYrZR5uZAM8UrwUa3Ge8suiZHcNS1gNrEvmobqg==}
+  tsx@4.19.0:
+    resolution: {integrity: sha512-bV30kM7bsLZKZIOCHeMNVMJ32/LuJzLVajkQI/qf92J2Qr08ueLQvW00PUZGiuLPP760UINwupgUj8qrSCPUKg==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -5126,8 +5126,8 @@ packages:
       vite:
         optional: true
 
-  vite@5.4.2:
-    resolution: {integrity: sha512-dDrQTRHp5C1fTFzcSaMxjk6vdpKvT+2/mIdE07Gw2ykehT49O0z/VHS3zZ8iV/Gh8BJJKHWOe5RjaNrW5xf/GA==}
+  vite@5.4.3:
+    resolution: {integrity: sha512-IH+nl64eq9lJjFqU+/yrRnrHPVTlgy42/+IzbOdaFDVlyLgI/wDlf+FCobXLX1cT0X5+7LMyH1mIy2xJdLfo8Q==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -6320,7 +6320,7 @@ snapshots:
       '@libp2p/interface-internal': 1.3.4
       '@libp2p/peer-id': 4.2.4
       '@libp2p/pubsub': 9.0.26
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       denque: 2.1.0
       it-length-prefixed: 9.1.0
       it-pipe: 3.0.1
@@ -6330,7 +6330,7 @@ snapshots:
       uint8arraylist: 2.4.8
       uint8arrays: 5.1.0
 
-  '@chainsafe/libp2p-noise@15.1.1':
+  '@chainsafe/libp2p-noise@15.1.2':
     dependencies:
       '@chainsafe/as-chacha20poly1305': 0.1.0
       '@chainsafe/as-sha256': 0.4.2
@@ -6529,14 +6529,14 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       jest-mock: 29.7.0
 
   '@jest/fake-timers@29.7.0':
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -6549,7 +6549,7 @@ snapshots:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       '@types/yargs': 15.0.19
       chalk: 4.1.2
 
@@ -6558,7 +6558,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       '@types/yargs': 17.0.33
       chalk: 4.1.2
 
@@ -6613,7 +6613,7 @@ snapshots:
       '@libp2p/interface-internal': 1.3.4
       '@libp2p/peer-id': 4.2.4
       '@libp2p/utils': 5.4.9
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       it-first: 3.0.6
       it-length-prefixed: 9.1.0
       it-map: 3.1.1
@@ -6627,7 +6627,7 @@ snapshots:
       '@libp2p/interface': 1.7.0
       '@libp2p/peer-id': 4.2.4
       '@multiformats/mafmt': 12.1.6
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
 
   '@libp2p/circuit-relay-v2@1.1.5':
     dependencies:
@@ -6638,7 +6638,7 @@ snapshots:
       '@libp2p/peer-record': 7.0.25
       '@libp2p/utils': 5.4.9
       '@multiformats/mafmt': 12.1.6
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       any-signal: 4.1.1
       it-protobuf-stream: 1.1.5
       it-stream-types: 2.0.1
@@ -6666,7 +6666,7 @@ snapshots:
       '@libp2p/interface': 1.7.0
       '@libp2p/interface-internal': 1.3.4
       '@libp2p/utils': 5.4.9
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       '@multiformats/multiaddr-matcher': 1.2.4
       delay: 6.0.0
       it-protobuf-stream: 1.1.5
@@ -6680,7 +6680,7 @@ snapshots:
       '@libp2p/logger': 4.0.20
       '@libp2p/peer-id': 4.2.4
       '@libp2p/simple-metrics': 1.1.5
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       cborg: 4.2.3
       it-pipe: 3.0.1
       it-pushable: 3.2.3
@@ -6694,7 +6694,7 @@ snapshots:
       '@libp2p/interface-internal': 1.3.4
       '@libp2p/peer-id': 4.2.4
       '@libp2p/peer-record': 7.0.25
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       '@multiformats/multiaddr-matcher': 1.2.4
       it-drain: 3.0.7
       it-parallel: 3.0.8
@@ -6708,7 +6708,7 @@ snapshots:
     dependencies:
       '@libp2p/interface-peer-id': 2.0.2
       '@libp2p/interfaces': 3.3.2
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       it-stream-types: 2.0.1
       uint8arraylist: 2.4.8
 
@@ -6716,7 +6716,7 @@ snapshots:
     dependencies:
       '@libp2p/interface': 1.7.0
       '@libp2p/peer-collections': 5.2.9
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       progress-events: 1.0.1
       uint8arraylist: 2.4.8
 
@@ -6734,7 +6734,7 @@ snapshots:
 
   '@libp2p/interface@1.7.0':
     dependencies:
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       it-pushable: 3.2.3
       it-stream-types: 2.0.1
       multiformats: 13.2.2
@@ -6746,7 +6746,7 @@ snapshots:
   '@libp2p/logger@4.0.20':
     dependencies:
       '@libp2p/interface': 1.7.0
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       interface-datastore: 8.3.0
       multiformats: 13.2.2
       weald: 1.0.2
@@ -6757,7 +6757,7 @@ snapshots:
       '@libp2p/interface-internal': 1.3.4
       '@libp2p/peer-id': 4.2.4
       '@libp2p/utils': 5.4.9
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       '@types/multicast-dns': 7.2.4
       dns-packet: 5.6.1
       multicast-dns: 7.2.5
@@ -6801,7 +6801,7 @@ snapshots:
       '@libp2p/interface': 1.7.0
       '@libp2p/peer-id': 4.2.4
       '@libp2p/utils': 5.4.9
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       protons-runtime: 5.5.0
       uint8-varint: 2.0.4
       uint8arraylist: 2.4.8
@@ -6813,7 +6813,7 @@ snapshots:
       '@libp2p/peer-collections': 5.2.9
       '@libp2p/peer-id': 4.2.4
       '@libp2p/peer-record': 7.0.25
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       interface-datastore: 8.3.0
       it-all: 3.0.6
       mortice: 3.0.4
@@ -6827,7 +6827,7 @@ snapshots:
       '@libp2p/interface': 1.7.0
       '@libp2p/interface-internal': 1.3.4
       '@libp2p/peer-id': 4.2.4
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       protons-runtime: 5.5.0
       uint8arraylist: 2.4.8
       uint8arrays: 4.0.10
@@ -6861,7 +6861,7 @@ snapshots:
       '@libp2p/crypto': 4.1.9
       '@libp2p/interface': 1.7.0
       '@libp2p/logger': 4.0.20
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       '@multiformats/multiaddr-matcher': 1.2.4
       '@sindresorhus/fnv1a': 3.1.0
       '@types/murmurhash3js-revisited': 3.0.3
@@ -6879,15 +6879,15 @@ snapshots:
       uint8arraylist: 2.4.8
       uint8arrays: 5.1.0
 
-  '@libp2p/webrtc@4.1.7(react-native@0.75.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(react@18.3.1)(typescript@5.5.4))':
+  '@libp2p/webrtc@4.1.8(react-native@0.75.1(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(react@18.3.1)(typescript@5.5.4))':
     dependencies:
-      '@chainsafe/libp2p-noise': 15.1.1
+      '@chainsafe/libp2p-noise': 15.1.2
       '@libp2p/interface': 1.7.0
       '@libp2p/interface-internal': 1.3.4
       '@libp2p/peer-id': 4.2.4
       '@libp2p/utils': 5.4.9
       '@multiformats/mafmt': 12.1.6
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       '@multiformats/multiaddr-matcher': 1.2.4
       detect-browser: 5.3.0
       it-length-prefixed: 9.1.0
@@ -6914,7 +6914,7 @@ snapshots:
       '@libp2p/interface': 1.7.0
       '@libp2p/utils': 5.4.9
       '@multiformats/mafmt': 12.1.6
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       '@multiformats/multiaddr-to-uri': 10.1.0
       '@types/ws': 8.5.12
       it-ws: 6.1.5
@@ -6927,13 +6927,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@libp2p/webtransport@4.1.7':
+  '@libp2p/webtransport@4.1.9':
     dependencies:
-      '@chainsafe/libp2p-noise': 15.1.1
+      '@chainsafe/libp2p-noise': 15.1.2
       '@libp2p/interface': 1.7.0
       '@libp2p/peer-id': 4.2.4
       '@libp2p/utils': 5.4.9
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       '@multiformats/multiaddr-matcher': 1.2.4
       it-stream-types: 2.0.1
       multiformats: 13.2.2
@@ -6954,23 +6954,22 @@ snapshots:
 
   '@multiformats/mafmt@12.1.6':
     dependencies:
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
 
   '@multiformats/multiaddr-matcher@1.2.4':
     dependencies:
       '@chainsafe/is-ip': 2.0.2
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       multiformats: 13.2.2
 
   '@multiformats/multiaddr-to-uri@10.1.0':
     dependencies:
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
 
-  '@multiformats/multiaddr@12.3.0':
+  '@multiformats/multiaddr@12.3.1':
     dependencies:
       '@chainsafe/is-ip': 2.0.2
       '@chainsafe/netmask': 2.0.0
-      '@libp2p/interface': 1.7.0
       '@multiformats/dns': 1.0.6
       multiformats: 13.2.2
       uint8-varint: 2.0.4
@@ -7524,6 +7523,16 @@ snapshots:
     dependencies:
       '@types/node': 22.5.0
 
+  '@types/eslint-scope@3.7.7':
+    dependencies:
+      '@types/eslint': 9.6.0
+      '@types/estree': 1.0.5
+
+  '@types/eslint@9.6.0':
+    dependencies:
+      '@types/estree': 1.0.5
+      '@types/json-schema': 7.0.15
+
   '@types/estree@1.0.5': {}
 
   '@types/hast@3.0.4':
@@ -7549,15 +7558,15 @@ snapshots:
   '@types/multicast-dns@7.2.4':
     dependencies:
       '@types/dns-packet': 5.6.5
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
 
   '@types/murmurhash3js-revisited@3.0.3': {}
 
   '@types/node-forge@1.3.11':
     dependencies:
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
 
-  '@types/node@22.5.0':
+  '@types/node@22.5.4':
     dependencies:
       undici-types: 6.19.8
 
@@ -7567,7 +7576,7 @@ snapshots:
 
   '@types/ws@8.5.12':
     dependencies:
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -8064,7 +8073,7 @@ snapshots:
 
   chrome-launcher@0.15.2:
     dependencies:
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -8075,7 +8084,7 @@ snapshots:
 
   chromium-edge-launcher@0.2.0:
     dependencies:
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -9210,7 +9219,7 @@ snapshots:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       jest-mock: 29.7.0
       jest-util: 29.7.0
 
@@ -9231,13 +9240,13 @@ snapshots:
   jest-mock@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       jest-util: 29.7.0
 
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -9254,13 +9263,13 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -9355,7 +9364,7 @@ snapshots:
 
   leven@3.1.0: {}
 
-  libp2p@1.9.2:
+  libp2p@1.9.4:
     dependencies:
       '@libp2p/crypto': 4.1.9
       '@libp2p/interface': 1.7.0
@@ -9368,7 +9377,7 @@ snapshots:
       '@libp2p/peer-store': 10.1.5
       '@libp2p/utils': 5.4.9
       '@multiformats/dns': 1.0.6
-      '@multiformats/multiaddr': 12.3.0
+      '@multiformats/multiaddr': 12.3.1
       '@multiformats/multiaddr-matcher': 1.2.4
       any-signal: 4.1.1
       datastore-core: 9.2.9
@@ -10128,7 +10137,7 @@ snapshots:
 
   possible-typed-array-names@1.0.0: {}
 
-  postcss@8.4.41:
+  postcss@8.4.45:
     dependencies:
       nanoid: 3.3.7
       picocolors: 1.0.1
@@ -10191,7 +10200,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       long: 5.2.3
 
   protocols@2.0.1: {}
@@ -10923,14 +10932,14 @@ snapshots:
       typescript: 5.5.4
       webpack: 5.94.0
 
-  ts-node@10.9.2(@types/node@22.5.0)(typescript@5.5.4):
+  ts-node@10.9.2(@types/node@22.5.4)(typescript@5.5.4):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       acorn: 8.12.1
       acorn-walk: 8.3.3
       arg: 4.1.3
@@ -10963,7 +10972,7 @@ snapshots:
 
   tslib@2.7.0: {}
 
-  tsx@4.18.0:
+  tsx@4.19.0:
     dependencies:
       esbuild: 0.23.1
       get-tsconfig: 4.7.6
@@ -11102,13 +11111,13 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite-node@2.0.5(@types/node@22.5.0)(terser@5.31.6):
+  vite-node@2.0.5(@types/node@22.5.4)(terser@5.31.6):
     dependencies:
       cac: 6.7.14
       debug: 4.3.6
       pathe: 1.1.2
       tinyrainbow: 1.2.0
-      vite: 5.4.2(@types/node@22.5.0)(terser@5.31.6)
+      vite: 5.4.3(@types/node@22.5.4)(terser@5.31.6)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -11120,36 +11129,36 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-node-polyfills@0.22.0(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.0)(terser@5.31.6)):
+  vite-plugin-node-polyfills@0.22.0(rollup@4.21.0)(vite@5.4.3(@types/node@22.5.4)(terser@5.31.6)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.21.1)
       node-stdlib-browser: 1.2.0
-      vite: 5.4.2(@types/node@22.5.0)(terser@5.31.6)
+      vite: 5.4.3(@types/node@22.5.4)(terser@5.31.6)
     transitivePeerDependencies:
       - rollup
 
-  vite-tsconfig-paths@5.0.1(typescript@5.5.4)(vite@5.4.2(@types/node@22.5.0)(terser@5.31.6)):
+  vite-tsconfig-paths@5.0.1(typescript@5.5.4)(vite@5.4.3(@types/node@22.5.4)(terser@5.31.6)):
     dependencies:
       debug: 4.3.6
       globrex: 0.1.2
       tsconfck: 3.1.1(typescript@5.5.4)
     optionalDependencies:
-      vite: 5.4.2(@types/node@22.5.0)(terser@5.31.6)
+      vite: 5.4.3(@types/node@22.5.4)(terser@5.31.6)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@5.4.2(@types/node@22.5.0)(terser@5.31.6):
+  vite@5.4.3(@types/node@22.5.4)(terser@5.31.6):
     dependencies:
       esbuild: 0.21.5
-      postcss: 8.4.41
-      rollup: 4.21.1
+      postcss: 8.4.45
+      rollup: 4.21.0
     optionalDependencies:
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
       fsevents: 2.3.3
       terser: 5.31.6
 
-  vitest@2.0.5(@types/node@22.5.0)(terser@5.31.6):
+  vitest@2.0.5(@types/node@22.5.4)(terser@5.31.6):
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@vitest/expect': 2.0.5
@@ -11167,11 +11176,11 @@ snapshots:
       tinybench: 2.9.0
       tinypool: 1.0.1
       tinyrainbow: 1.2.0
-      vite: 5.4.2(@types/node@22.5.0)(terser@5.31.6)
-      vite-node: 2.0.5(@types/node@22.5.0)(terser@5.31.6)
+      vite: 5.4.3(@types/node@22.5.4)(terser@5.31.6)
+      vite-node: 2.0.5(@types/node@22.5.4)(terser@5.31.6)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 22.5.0
+      '@types/node': 22.5.4
     transitivePeerDependencies:
       - less
       - lightningcss

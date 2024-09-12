@@ -1,24 +1,27 @@
 import type { Stream } from "@libp2p/interface";
-import { Message, Message_MessageType } from "@topology-foundation/network";
-import { TopologyObjectBase } from "@topology-foundation/object";
-import * as lp from "it-length-prefixed";
+import { NetworkPb, streamToUint8Array } from "@topology-foundation/network";
+import type {
+	ObjectPb,
+	TopologyObject,
+	Vertex,
+} from "@topology-foundation/object";
 import type { TopologyNode } from "./index.js";
 
 /*
   Handler for all CRO messages, including pubsub messages and direct messages
-  You need to setup stream xor data, not both
+  You need to setup stream xor data
 */
 export async function topologyMessagesHandler(
 	node: TopologyNode,
 	stream?: Stream,
 	data?: Uint8Array,
 ) {
-	let message: Message;
+	let message: NetworkPb.Message;
 	if (stream) {
-		const buf = (await lp.decode(stream.source).return()).value;
-		message = Message.decode(new Uint8Array(buf ? buf.subarray() : []));
+		const byteArray = await streamToUint8Array(stream);
+		message = NetworkPb.Message.decode(byteArray);
 	} else if (data) {
-		message = Message.decode(data);
+		message = NetworkPb.Message.decode(data);
 	} else {
 		console.error(
 			"topology::node::messageHandler",
@@ -28,10 +31,10 @@ export async function topologyMessagesHandler(
 	}
 
 	switch (message.type) {
-		case Message_MessageType.UPDATE:
+		case NetworkPb.Message_MessageType.UPDATE:
 			updateHandler(node, message.data);
 			break;
-		case Message_MessageType.SYNC:
+		case NetworkPb.Message_MessageType.SYNC:
 			if (!stream) {
 				console.error("topology::node::messageHandler", "Stream is undefined");
 				return;
@@ -43,10 +46,19 @@ export async function topologyMessagesHandler(
 				message.data,
 			);
 			break;
-		case Message_MessageType.SYNC_ACCEPT:
-			syncAcceptHandler(node, message.data);
+		case NetworkPb.Message_MessageType.SYNC_ACCEPT:
+			if (!stream) {
+				console.error("topology::node::messageHandler", "Stream is undefined");
+				return;
+			}
+			syncAcceptHandler(
+				node,
+				stream.protocol ?? "/topology/message/0.0.1",
+				message.sender,
+				message.data,
+			);
 			break;
-		case Message_MessageType.SYNC_REJECT:
+		case NetworkPb.Message_MessageType.SYNC_REJECT:
 			syncRejectHandler(node, message.data);
 			break;
 		default:
@@ -60,15 +72,29 @@ export async function topologyMessagesHandler(
   operations array doesn't contain the full remote operations array
 */
 function updateHandler(node: TopologyNode, data: Uint8Array) {
-	const object_operations = TopologyObjectBase.decode(data);
-	let object = node.objectStore.get(object_operations.id);
+	const updateMessage = NetworkPb.Update.decode(data);
+	const object = node.objectStore.get(updateMessage.objectId);
 	if (!object) {
-		object = TopologyObjectBase.create({
-			id: object_operations.id,
-		});
+		console.error("topology::node::updateHandler", "Object not found");
+		return false;
 	}
-	object.vertices.push(...object_operations.vertices);
+
+	object.merge(
+		updateMessage.vertices.map((v) => {
+			return {
+				hash: v.hash,
+				nodeId: v.nodeId,
+				operation: {
+					type: v.operation?.type ?? "",
+					value: v.operation?.value,
+				},
+				dependencies: v.dependencies,
+			};
+		}),
+	);
 	node.objectStore.put(object.id, object);
+
+	return true;
 }
 
 /*
@@ -82,16 +108,38 @@ function syncHandler(
 	data: Uint8Array,
 ) {
 	// (might send reject) <- TODO: when should we reject?
+	const syncMessage = NetworkPb.Sync.decode(data);
+	const object = node.objectStore.get(syncMessage.objectId);
+	if (!object) {
+		console.error("topology::node::syncHandler", "Object not found");
+		return;
+	}
 
-	// process, calculate diffs, and send back
+	const requested: Set<NetworkPb.Vertex> = new Set(object.vertices);
+	const requesting: string[] = [];
+	for (const h of syncMessage.vertexHashes) {
+		const vertex = object.vertices.find((v) => v.hash === h);
+		if (vertex) {
+			requested.delete(vertex);
+		} else {
+			requesting.push(h);
+		}
+	}
 
-	const message = Message.create({
+	if (requested.size === 0 && requesting.length === 0) return;
+
+	const message = NetworkPb.Message.create({
 		sender: node.networkNode.peerId,
-		type: Message_MessageType.SYNC_ACCEPT,
+		type: NetworkPb.Message_MessageType.SYNC_ACCEPT,
 		// add data here
-		data: new Uint8Array(0),
+		data: NetworkPb.SyncAccept.encode(
+			NetworkPb.SyncAccept.create({
+				objectId: object.id,
+				requested: [...requested],
+				requesting,
+			}),
+		).finish(),
 	});
-
 	node.networkNode.sendMessage(sender, [protocol], message);
 }
 
@@ -99,29 +147,59 @@ function syncHandler(
   data: { id: string, operations: {nonce: string, fn: string, args: string[] }[] }
   operations array contain the full remote operations array
 */
-function syncAcceptHandler(node: TopologyNode, data: Uint8Array) {
-	// don't blindly accept, validate the operations
-	// might have have appeared in the meantime
-	const object_operations = TopologyObjectBase.decode(data);
-	let object: TopologyObjectBase | undefined = node.objectStore.get(
-		object_operations.id,
-	);
+function syncAcceptHandler(
+	node: TopologyNode,
+	protocol: string,
+	sender: string,
+	data: Uint8Array,
+) {
+	const syncAcceptMessage = NetworkPb.SyncAccept.decode(data);
+	const object = node.objectStore.get(syncAcceptMessage.objectId);
 	if (!object) {
-		object = TopologyObjectBase.create({
-			id: object_operations.id,
-		});
+		console.error("topology::node::syncAcceptHandler", "Object not found");
+		return;
 	}
 
-	object_operations.vertices.filter((v1) => {
-		if (object?.vertices.find((v2) => v1.hash === v2.hash)) {
-			return false;
-		}
-		return true;
+	const vertices: Vertex[] = syncAcceptMessage.requested.map((v) => {
+		return {
+			hash: v.hash,
+			nodeId: v.nodeId,
+			operation: {
+				type: v.operation?.type ?? "",
+				value: v.operation?.value,
+			},
+			dependencies: v.dependencies,
+		};
 	});
-	object.vertices.push(...object_operations.vertices);
-	node.objectStore.put(object.id, object);
 
-	// TODO missing sending back the diff
+	if (vertices.length !== 0) {
+		object.merge(vertices);
+		node.objectStore.put(object.id, object);
+	}
+
+	// send missing vertices
+	const requested: NetworkPb.Vertex[] = [];
+	for (const h of syncAcceptMessage.requesting) {
+		const vertex = object.vertices.find((v) => v.hash === h);
+		if (vertex) {
+			requested.push(vertex);
+		}
+	}
+
+	if (requested.length === 0) return;
+
+	const message = NetworkPb.Message.create({
+		sender: node.networkNode.peerId,
+		type: NetworkPb.Message_MessageType.SYNC_ACCEPT,
+		data: NetworkPb.SyncAccept.encode(
+			NetworkPb.SyncAccept.create({
+				objectId: object.id,
+				requested,
+				requesting: [],
+			}),
+		).finish(),
+	});
+	node.networkNode.sendMessage(sender, [protocol], message);
 }
 
 /* data: { id: string } */
@@ -130,4 +208,35 @@ function syncRejectHandler(node: TopologyNode, data: Uint8Array) {
 	// - Retry sync
 	// - Ask sync from another peer
 	// - Do nothing
+}
+
+export function topologyObjectChangesHandler(
+	node: TopologyNode,
+	obj: TopologyObject,
+	originFn: string,
+	vertices: ObjectPb.Vertex[],
+) {
+	switch (originFn) {
+		case "merge":
+			node.objectStore.put(obj.id, obj);
+			break;
+		case "callFn": {
+			node.objectStore.put(obj.id, obj);
+			// send vertices to the pubsub group
+			const message = NetworkPb.Message.create({
+				sender: node.networkNode.peerId,
+				type: NetworkPb.Message_MessageType.UPDATE,
+				data: NetworkPb.Update.encode(
+					NetworkPb.Update.create({
+						objectId: obj.id,
+						vertices: vertices,
+					}),
+				).finish(),
+			});
+			node.networkNode.broadcastMessage(obj.id, message);
+			break;
+		}
+		default:
+			console.error("topology::node::createObject", "Invalid origin function");
+	}
 }

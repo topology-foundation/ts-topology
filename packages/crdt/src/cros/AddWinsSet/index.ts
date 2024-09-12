@@ -7,7 +7,7 @@ import {
 	type Vertex,
 } from "@topology-foundation/object";
 
-export class AddWinsSet<T> implements CRO<T> {
+export class AddWinsSet<T> implements CRO {
 	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
 	semanticsType = SemanticsType.pairWise;
@@ -56,7 +56,7 @@ export class AddWinsSet<T> implements CRO<T> {
 	}
 
 	// merged at HG level and called as a callback
-	mergeCallback(operations: Operation<T>[]): void {
+	mergeCallback(operations: Operation[]): void {
 		this.state = new Map<T, boolean>();
 		for (const op of operations) {
 			switch (op.type) {

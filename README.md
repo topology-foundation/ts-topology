@@ -41,3 +41,14 @@ This repository is a monorepo that contains the following packages:
 # Examples
 
 All the examples are located in the `examples` directory. Currently, there is only one example, which is a simple canvas where you can paint pixels. You can also look into the [counter-splash](https://github.com/topology-foundation/counter-splash) (demo for EthCC 2024) repository for a more complex example.
+
+# Usage
+
+This workspae has all packages and examples linked together, so you can run the following commands to start the development:
+
+```bash
+# pnpm
+pnpm install
+```
+
+The postinstall script will build all the packages. In case you have errors, please manually build every package inside the folder `packages`.
