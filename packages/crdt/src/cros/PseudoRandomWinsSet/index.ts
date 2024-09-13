@@ -68,7 +68,7 @@ export class PseudoRandomWinsSet<T> implements CRO {
 		const chosen = rnd.int() % vertices.length;
 		const hashes: Hash[] = vertices.map((vertex) => vertex.hash);
 		hashes.splice(chosen, 1);
-		return { action: ActionType.Reduce, vertices: hashes };
+		return { action: ActionType.Drop, vertices: hashes };
 	}
 
 	// merged at HG level and called as a callback

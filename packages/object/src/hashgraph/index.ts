@@ -16,7 +16,7 @@ export enum ActionType {
 	DropRight = 1,
 	Nop = 2,
 	Swap = 3,
-	Reduce = 4,
+	Drop = 4,
 }
 
 export enum SemanticsType {

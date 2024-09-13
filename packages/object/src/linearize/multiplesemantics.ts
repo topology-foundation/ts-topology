@@ -45,7 +45,7 @@ export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 				);
 
 				switch (resolved.action) {
-					case ActionType.Reduce: {
+					case ActionType.Drop: {
 						const newOrder = [];
 						for (const hash of resolved.vertices || []) {
 							if (indices.get(hash) === i) shouldIncrementI = false;
