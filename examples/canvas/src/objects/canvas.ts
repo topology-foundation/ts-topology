@@ -4,7 +4,6 @@ import {
 	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
-	type Vertex,
 } from "@topology-foundation/object";
 import { Pixel } from "./pixel";
 
