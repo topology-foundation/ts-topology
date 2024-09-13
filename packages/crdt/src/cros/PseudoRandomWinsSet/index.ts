@@ -11,7 +11,7 @@ import {
 
 const MOD = 1e9 + 9;
 
-function compute_hash(s: string): number {
+function computeHash(s: string): number {
 	let hash = 0;
 	for (let i = 0; i < s.length; i++) {
 		// Same as hash = hash * 31 + s.charCodeAt(i);
@@ -64,7 +64,7 @@ export class PseudoRandomWinsSet<T> implements CRO {
 	resolveConflicts(vertices: Vertex[]): ResolveConflictsType {
 		vertices.sort((a, b) => (a.hash < b.hash ? -1 : 1));
 		const seed: string = vertices.map((vertex) => vertex.hash).join("");
-		const rnd = new Smush32(compute_hash(seed));
+		const rnd = new Smush32(computeHash(seed));
 		const chosen = rnd.int() % vertices.length;
 		const hashes: Hash[] = vertices.map((vertex) => vertex.hash);
 		hashes.splice(chosen, 1);
