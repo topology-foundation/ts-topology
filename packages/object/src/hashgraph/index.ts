@@ -1,6 +1,6 @@
 import * as crypto from "node:crypto";
-import { linearizeMultiple } from "../linearize/multiplesemantics.js";
-import { linearizePair } from "../linearize/pairsemantics.js";
+import { linearizeMultiple } from "../linearize/multipleSemantics.js";
+import { linearizePair } from "../linearize/pairSemantics.js";
 import { BitSet } from "./bitset.js";
 
 export type Hash = string;
