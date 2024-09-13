@@ -6,7 +6,7 @@ import {
 	type Vertex,
 } from "../hashgraph/index.js";
 
-export function linearizeMultiVertex(hashGraph: HashGraph): Operation[] {
+export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 	let order = hashGraph.topologicalSort(true);
 	const indices: Map<Hash, number> = new Map();
 	const result: Operation[] = [];

@@ -10,7 +10,7 @@ import {
 export class AddWinsSet<T> implements CRO {
 	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
-	semanticsType = SemanticsType.pairWise;
+	semanticsType = SemanticsType.pair;
 
 	constructor() {
 		this.state = new Map<T, boolean>();

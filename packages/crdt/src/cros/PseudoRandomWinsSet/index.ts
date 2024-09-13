@@ -29,7 +29,7 @@ function compute_hash(s: string): number {
 export class PseudoRandomWinsSet<T> implements CRO {
 	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
-	semanticsType = SemanticsType.multiVertex;
+	semanticsType = SemanticsType.multiple;
 
 	constructor() {
 		this.state = new Map<T, boolean>();

@@ -4,7 +4,7 @@ import {
 	type Operation,
 } from "../hashgraph/index.js";
 
-export function linearizePairWise(hashGraph: HashGraph): Operation[] {
+export function linearizePair(hashGraph: HashGraph): Operation[] {
 	const order = hashGraph.topologicalSort(true);
 	const result: Operation[] = [];
 	let i = 0;

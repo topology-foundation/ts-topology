@@ -1,6 +1,6 @@
 import * as crypto from "node:crypto";
-import { linearizeMultiVertex } from "../linearize/multi-vertexSemantics.js";
-import { linearizePairWise } from "../linearize/pair-wiseSemantics.js";
+import { linearizeMultiple } from "../linearize/multiplesemantics.js";
+import { linearizePair } from "../linearize/pairsemantics.js";
 import { BitSet } from "./bitset.js";
 
 export type Hash = string;
@@ -20,8 +20,8 @@ export enum ActionType {
 }
 
 export enum SemanticsType {
-	pairWise = 0,
-	multiVertex = 1,
+	pair = 0,
+	multiple = 1,
 }
 
 // In the case of multi-vertex semantics, we are returning an array of vertices (their hashes) to be reduced.
@@ -200,10 +200,10 @@ export class HashGraph {
 
 	linearizeOperations(): Operation[] {
 		switch (this.semanticsType) {
-			case SemanticsType.pairWise:
-				return linearizePairWise(this);
-			case SemanticsType.multiVertex:
-				return linearizeMultiVertex(this);
+			case SemanticsType.pair:
+				return linearizePair(this);
+			case SemanticsType.multiple:
+				return linearizeMultiple(this);
 			default:
 				return [];
 		}
