@@ -13,6 +13,7 @@ export * as ObjectPb from "./proto/object_pb.js";
 export * from "./hashgraph/index.js";
 
 export interface CRO {
+	operations: string[];
 	semanticsType: SemanticsType;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
 	mergeCallback: (operations: Operation[]) => void;
