@@ -2,11 +2,14 @@ import {
 	ActionType,
 	type CRO,
 	type Operation,
+	type ResolveConflictsType,
+	SemanticsType,
 } from "@topology-foundation/object";
 import { Pixel } from "./pixel";
 
 export class Canvas implements CRO {
 	operations: string[] = ["splash", "paint"];
+	semanticsType: SemanticsType = SemanticsType.pair;
 
 	width: number;
 	height: number;
@@ -74,8 +77,8 @@ export class Canvas implements CRO {
 		);
 	}
 
-	resolveConflicts(_): ActionType {
-		return ActionType.Nop;
+	resolveConflicts(_): ResolveConflictsType {
+		return { action: ActionType.Nop };
 	}
 
 	mergeCallback(operations: Operation[]): void {

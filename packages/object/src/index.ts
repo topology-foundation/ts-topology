@@ -3,6 +3,8 @@ import {
 	type ActionType,
 	HashGraph,
 	type Operation,
+	type ResolveConflictsType,
+	type SemanticsType,
 	type Vertex,
 } from "./hashgraph/index.js";
 import * as ObjectPb from "./proto/object_pb.js";
@@ -11,7 +13,9 @@ export * as ObjectPb from "./proto/object_pb.js";
 export * from "./hashgraph/index.js";
 
 export interface CRO {
-	resolveConflicts: (vertices: Vertex[]) => ActionType;
+	operations: string[];
+	semanticsType: SemanticsType;
+	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
 	mergeCallback: (operations: Operation[]) => void;
 }
 
@@ -51,7 +55,11 @@ export class TopologyObject implements ITopologyObject {
 		this.bytecode = new Uint8Array();
 		this.vertices = [];
 		this.cro = new Proxy(cro, this.proxyCROHandler());
-		this.hashGraph = new HashGraph(nodeId, cro.resolveConflicts);
+		this.hashGraph = new HashGraph(
+			nodeId,
+			cro.resolveConflicts,
+			cro.semanticsType,
+		);
 		this.subscriptions = [];
 	}
 

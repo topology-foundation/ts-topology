@@ -1,16 +1,35 @@
+import { Smush32 } from "@thi.ng/random";
 import {
 	ActionType,
 	type CRO,
+	type Hash,
 	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
 } from "@topology-foundation/object";
 
-export class AddWinsSet<T> implements CRO {
+const MOD = 1e9 + 9;
+
+function computeHash(s: string): number {
+	let hash = 0;
+	for (let i = 0; i < s.length; i++) {
+		// Same as hash = hash * 31 + s.charCodeAt(i);
+		hash = (hash << 5) - hash + s.charCodeAt(i);
+		hash %= MOD;
+	}
+	return hash;
+}
+
+/* 	
+	Example implementation of multi-vertex semantics that uses the reduce action type.
+	An arbitrary number of concurrent operations can be reduced to a single operation.
+	The winning operation is chosen using a pseudo-random number generator.
+*/
+export class PseudoRandomWinsSet<T> implements CRO {
 	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
-	semanticsType = SemanticsType.pair;
+	semanticsType = SemanticsType.multiple;
 
 	constructor() {
 		this.state = new Map<T, boolean>();
@@ -42,17 +61,14 @@ export class AddWinsSet<T> implements CRO {
 			.map(([value, _]) => value);
 	}
 
-	// in this case is an array of length 2 and there are only two possible operations
 	resolveConflicts(vertices: Vertex[]): ResolveConflictsType {
-		if (
-			vertices[0].operation.type !== vertices[1].operation.type &&
-			vertices[0].operation.value === vertices[1].operation.value
-		) {
-			return vertices[0].operation.type === "add"
-				? { action: ActionType.DropRight }
-				: { action: ActionType.DropLeft };
-		}
-		return { action: ActionType.Nop };
+		vertices.sort((a, b) => (a.hash < b.hash ? -1 : 1));
+		const seed: string = vertices.map((vertex) => vertex.hash).join("");
+		const rnd = new Smush32(computeHash(seed));
+		const chosen = rnd.int() % vertices.length;
+		const hashes: Hash[] = vertices.map((vertex) => vertex.hash);
+		hashes.splice(chosen, 1);
+		return { action: ActionType.Drop, vertices: hashes };
 	}
 
 	// merged at HG level and called as a callback

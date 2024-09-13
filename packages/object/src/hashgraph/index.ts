@@ -1,4 +1,6 @@
 import * as crypto from "node:crypto";
+import { linearizeMultiple } from "../linearize/multipleSemantics.js";
+import { linearizePair } from "../linearize/pairSemantics.js";
 import { BitSet } from "./bitset.js";
 
 export type Hash = string;
@@ -14,7 +16,19 @@ export enum ActionType {
 	DropRight = 1,
 	Nop = 2,
 	Swap = 3,
+	Drop = 4,
 }
+
+export enum SemanticsType {
+	pair = 0,
+	multiple = 1,
+}
+
+// In the case of multi-vertex semantics, we are returning an array of vertices (their hashes) to be reduced.
+export type ResolveConflictsType = {
+	action: ActionType;
+	vertices?: Hash[];
+};
 
 export interface Vertex {
 	hash: Hash;
@@ -27,7 +41,8 @@ export interface Vertex {
 
 export class HashGraph {
 	nodeId: string;
-	resolveConflicts: (vertices: Vertex[]) => ActionType;
+	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
+	semanticsType: SemanticsType;
 
 	vertices: Map<Hash, Vertex> = new Map();
 	frontier: Hash[] = [];
@@ -45,10 +60,12 @@ export class HashGraph {
 
 	constructor(
 		nodeId: string,
-		resolveConflicts: (vertices: Vertex[]) => ActionType,
+		resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType,
+		semanticsType: SemanticsType,
 	) {
 		this.nodeId = nodeId;
 		this.resolveConflicts = resolveConflicts;
+		this.semanticsType = semanticsType;
 
 		// Create and add the NOP root vertex
 		const rootVertex: Vertex = {
@@ -182,58 +199,14 @@ export class HashGraph {
 	}
 
 	linearizeOperations(): Operation[] {
-		const order = this.topologicalSort(true);
-		const result: Operation[] = [];
-		let i = 0;
-
-		while (i < order.length) {
-			const anchor = order[i];
-			let j = i + 1;
-			let shouldIncrementI = true;
-
-			while (j < order.length) {
-				const moving = order[j];
-
-				if (!this.areCausallyRelatedUsingBitsets(anchor, moving)) {
-					const v1 = this.vertices.get(anchor);
-					const v2 = this.vertices.get(moving);
-					let action: ActionType;
-					if (!v1 || !v2) {
-						action = ActionType.Nop;
-					} else {
-						action = this.resolveConflicts([v1, v2]);
-					}
-
-					switch (action) {
-						case ActionType.DropLeft:
-							order.splice(i, 1);
-							j = order.length; // Break out of inner loop
-							shouldIncrementI = false;
-							continue; // Continue outer loop without incrementing i
-						case ActionType.DropRight:
-							order.splice(j, 1);
-							continue; // Continue with the same j
-						case ActionType.Swap:
-							[order[i], order[j]] = [order[j], order[i]];
-							j = order.length; // Break out of inner loop
-							break;
-						case ActionType.Nop:
-							j++;
-							break;
-					}
-				} else {
-					j++;
-				}
-			}
-
-			if (shouldIncrementI) {
-				const op = this.vertices.get(order[i])?.operation;
-				if (op && op.value !== null) result.push(op);
-				i++;
-			}
+		switch (this.semanticsType) {
+			case SemanticsType.pair:
+				return linearizePair(this);
+			case SemanticsType.multiple:
+				return linearizeMultiple(this);
+			default:
+				return [];
 		}
-
-		return result;
 	}
 
 	// Amortised time complexity: O(1), Amortised space complexity: O(1)

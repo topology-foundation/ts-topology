@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { AddWinsSet } from "../../crdt/src/cros/AddWinsSet/index.js";
+import { PseudoRandomWinsSet } from "../../crdt/src/cros/PseudoRandomWinsSet/index.js";
 import { TopologyObject } from "../src/index.js";
 
 describe("HashGraph for AddWinSet tests", () => {
@@ -81,12 +82,6 @@ describe("HashGraph for AddWinSet tests", () => {
 		expect(obj1.hashGraph.vertices).toEqual(obj2.hashGraph.vertices);
 
 		const linearOps = obj1.hashGraph.linearizeOperations();
-		console.log(linearOps);
-		console.log([
-			{ type: "add", value: 1 },
-			{ type: "add", value: 2 },
-			{ type: "remove", value: 1 },
-		]);
 		expect(linearOps).toEqual([
 			{ type: "add", value: 1 },
 			{ type: "add", value: 2 },
@@ -304,5 +299,53 @@ describe("HashGraph for AddWinSet tests", () => {
 			{ type: "add", value: 2 },
 			{ type: "remove", value: 2 },
 		]);
+	});
+});
+
+describe("HashGraph for PseudoRandomWinsSet tests", () => {
+	let obj1: TopologyObject;
+	let obj2: TopologyObject;
+	let obj3: TopologyObject;
+	let obj4: TopologyObject;
+	let obj5: TopologyObject;
+
+	beforeEach(async () => {
+		obj1 = new TopologyObject("peer1", new PseudoRandomWinsSet<number>());
+		obj2 = new TopologyObject("peer2", new PseudoRandomWinsSet<number>());
+		obj3 = new TopologyObject("peer3", new PseudoRandomWinsSet<number>());
+		obj4 = new TopologyObject("peer4", new PseudoRandomWinsSet<number>());
+		obj5 = new TopologyObject("peer5", new PseudoRandomWinsSet<number>());
+	});
+
+	test("Test: Many concurrent operations", () => {
+		/*
+					--- V1:ADD(1) 
+				   /---- V2:ADD(2)
+            V0:Nop -- V3:ADD(3)
+				   \---- V4:ADD(4)
+				    ---- V5:ADD(5)
+        */
+
+		const cro1 = obj1.cro as PseudoRandomWinsSet<number>;
+		const cro2 = obj2.cro as PseudoRandomWinsSet<number>;
+		const cro3 = obj3.cro as PseudoRandomWinsSet<number>;
+		const cro4 = obj4.cro as PseudoRandomWinsSet<number>;
+		const cro5 = obj5.cro as PseudoRandomWinsSet<number>;
+
+		cro1.add(1);
+		cro2.add(2);
+		cro3.add(3);
+		cro4.add(4);
+		cro5.add(5);
+
+		obj2.merge(obj1.hashGraph.getAllVertices());
+		obj3.merge(obj2.hashGraph.getAllVertices());
+		obj4.merge(obj3.hashGraph.getAllVertices());
+		obj5.merge(obj4.hashGraph.getAllVertices());
+		obj1.merge(obj5.hashGraph.getAllVertices());
+
+		const linearOps = obj1.hashGraph.linearizeOperations();
+		// Pseudo-randomly chosen operation
+		expect(linearOps).toEqual([{ type: "add", value: 3 }]);
 	});
 });

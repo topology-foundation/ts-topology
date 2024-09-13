@@ -36,5 +36,8 @@
  "devDependencies": {
   "@topology-foundation/object": "0.1.1",
   "assemblyscript": "^0.27.29"
+ },
+ "dependencies": {
+  "@thi.ng/random": "^4.0.3"
  }
 }
