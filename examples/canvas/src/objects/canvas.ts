@@ -10,7 +10,7 @@ import { Pixel } from "./pixel";
 
 export class Canvas implements CRO {
 	operations: string[] = ["splash", "paint"];
-	semanticsType: SemanticsType = SemanticsType.multiple;
+	semanticsType: SemanticsType = SemanticsType.pair;
 
 	width: number;
 	height: number;
@@ -78,7 +78,7 @@ export class Canvas implements CRO {
 		);
 	}
 
-	resolveConflicts(vertices: Vertex[]): ResolveConflictsType {
+	resolveConflicts(_): ResolveConflictsType {
 		return { action: ActionType.Nop };
 	}
 
