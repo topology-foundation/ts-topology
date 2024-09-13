@@ -9,11 +9,14 @@ import {
 	ActionType,
 	type CRO,
 	type Operation,
+	type ResolveConflictsType,
+	SemanticsType,
 	type Vertex,
 } from "@topology-foundation/object";
 
 export class Chat implements CRO {
 	operations: string[] = ["addMessage"];
+	semanticsType: SemanticsType = SemanticsType.pair;
 	// store messages as strings in the format (timestamp, message, nodeId)
 	messages: GSet<string>;
 	constructor() {
@@ -40,8 +43,8 @@ export class Chat implements CRO {
 		this.messages.merge(other.messages);
 	}
 
-	resolveConflicts(vertices: Vertex[]): ActionType {
-		return ActionType.Nop;
+	resolveConflicts(vertices: Vertex[]): ResolveConflictsType {
+		return { action: ActionType.Nop };
 	}
 
 	mergeCallback(operations: Operation[]): void {
