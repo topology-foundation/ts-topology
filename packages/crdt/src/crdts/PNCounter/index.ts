@@ -42,3 +42,36 @@ export class PNCounter {
 		this._decrements.merge(peerCounter.decrements());
 	}
 }
+
+/// AssemblyScript functions
+export function pncounter_create(increments: GCounter, decrements: GCounter): PNCounter {
+	return new PNCounter(increments, decrements);
+}
+
+export function pncounter_value(counter: PNCounter): number {
+	return counter.value();
+}
+
+export function pncounter_increments(counter: PNCounter): GCounter {
+	return counter.increments();
+}
+
+export function pncounter_decrements(counter: PNCounter): GCounter {
+	return counter.decrements();
+}
+
+export function pncounter_increment(counter: PNCounter, nodeId: string, amount: number): void {
+	counter.increment(nodeId, amount);
+}
+
+export function pncounter_decrement(counter: PNCounter, nodeId: string, amount: number): void {
+	counter.decrement(nodeId, amount);
+}
+
+export function pncounter_compare(counter: PNCounter, peerCounter: PNCounter): boolean {
+	return counter.compare(peerCounter);
+}
+
+export function pncounter_merge(counter: PNCounter, peerCounter: PNCounter): void {
+	counter.merge(peerCounter);
+}

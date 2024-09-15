@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Topology - Grid</title>
+  </head>
+  <body>
+    <div>
+      <h1>Topology Protocol - Grid</h1>
+      <p>Your peer ID <span id="peerId"></span></p>
+      <p>Connected to CRO ID: <span id="gridId"></span></p>
+      <p>Peers: <span id="peers"></span></p>
+      <p>Discovery_peers: <span id="discoveryPeers"></span></p>
+      <p>Object_peers: <span id="objectPeers"></span></p>
+
+      <input id="gridInput" type="text" placeholder="Grid ID" />
+      <button id="joinGrid">Connect</button>
+      <button id="createGrid">Create Grid</button>
+    </div>
+
+    <div
+      id="grid"
+      style="
+        position: relative;
+        width: 100%;
+        height: 60vh;
+        border: 1px solid black;
+        overflow: hidden;
+      "
+    >
+      <!-- Users will appear here -->
+    </div>
+
+    <script type="module" src="/src/index.ts"></script>
+  </body>
+</html>
