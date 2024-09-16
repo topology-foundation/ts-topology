@@ -74,8 +74,8 @@ const render = () => {
 		if (position) {
 			const div = document.createElement("div");
 			div.style.position = "absolute";
-			div.style.left = `${centerX + position.x * 50 + 5}px`; // Center the circle
-			div.style.top = `${centerY - position.y * 50 + 5}px`; // Center the circle
+			div.style.left = `${centerX + position.x * 50 + 2}px`; // Center the circle
+			div.style.top = `${centerY - position.y * 50 + 2}px`; // Center the circle
 			div.style.width = "40px";
 			div.style.height = "40px";
 			div.style.backgroundColor = color;
