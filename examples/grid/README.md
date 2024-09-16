@@ -1,22 +1,19 @@
 # Topology Protocol Example
 
-This is an example of Topology Protocol usage in a chat system where a user can create or connect to a chat room, send and read the messages sent in the group chat.
+This is an example that uses Topology Protocol to implement a 2D grid space where users appear to be circles and can move around the integer grid one grid at a time.
 
 ## Specifics
 
-Messages are represented as strings in the format (timestamp, content, senderId). Chat is a class which extends TopologyObject and has Gset\<string> as an attribute to store the list of messages.
+The Grid CRO has a mapping from user id (node id concacenated with a randomly assigned color string) to the user's position on the grid. The CRO leverages the underlying hash graph for conflict-free consistency. The mergeCallback function receives the linearised operations returned from the underlying hash graph, and recomputes the user-position mapping from those operations.
 
 ## How to run locally
 
 After cloning the repository, run the following commands:
 
 ```bash
-cd ts-topology/examples/chat
-yarn
-yarn build
-yarn dev
+cd ts-topology/examples/grid
+pnpm dev
 ```
-
 Debugging is made easier by setting the mode in `webpack.config.js` to "development":
 
 ```js
