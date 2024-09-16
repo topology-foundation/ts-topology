@@ -83,17 +83,22 @@ const render = () => {
 			div.style.transition = "background-color 1s ease-in-out";
 			div.style.animation = `glow-${id} 0.5s infinite alternate`;
 
+			// Add black border for the current user's circle
+			if (id === userId) {
+				div.style.border = "3px solid black";
+			}
+
 			// Create dynamic keyframes for the glow effect
 			const style = document.createElement("style");
 			style.innerHTML = `
 			@keyframes glow-${id} {
-				0% {
-					background-color: ${hexToRgba(color, 0.5)};
-				}
-				100% {
-					background-color: ${hexToRgba(color, 1)};
-				}
-			}`;
+                0% {
+                    background-color: ${hexToRgba(color, 0.5)};
+                }
+                100% {
+                    background-color: ${hexToRgba(color, 1)};
+                }
+            }`;
 			document.head.appendChild(style);
 
 			element_grid.appendChild(div);

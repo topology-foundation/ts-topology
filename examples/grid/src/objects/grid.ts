@@ -19,37 +19,42 @@ import {
 export class Grid implements CRO {
 	operations: string[] = ["addUser", "moveUser"];
 	semanticsType: SemanticsType = SemanticsType.pair;
-	positions: GMap<string, { x: PNCounter, y: PNCounter }>;
+    positions: Map<string, { x: number, y: number }>;
 
 	constructor() {
-		this.positions = gmap_create<string, { x: PNCounter, y: PNCounter }>();
+		this.positions = new Map<string, { x: number, y: number }>();
 	}
 
-	addUser(userId: string, color: string): void {
+    addUser(userId: string, color: string): void {
+        this._addUser(userId, color);
+    }
+
+	private _addUser(userId: string, color: string): void {
 		const userColorString = `${userId}:${color}`;
-		this.positions.add(userColorString, {
-			x: pncounter_create(gcounter_create({userId: 0}), gcounter_create({userId: 0})),
-			y: pncounter_create(gcounter_create({userId: 0}), gcounter_create({userId: 0}))
-		});
+		this.positions.set(userColorString, {x: 0, y: 0});
 	}
 
-	moveUser(userId: string, direction: string): void {
-		const userColorString = [...this.positions.map.keys()].find(u => u.startsWith(`${userId}:`));
+    moveUser(userId: string, direction: string): void {
+        this._moveUser(userId, direction);
+    }
+
+	private _moveUser(userId: string, direction: string): void {
+		const userColorString = [...this.positions.keys()].find(u => u.startsWith(`${userId}:`));
 		if (userColorString) {
 			const position = this.positions.get(userColorString);
 			if (position) {
 				switch (direction) {
 					case "U":
-						position.y.increment(userId, 1);
+						position.y += 1;
 						break;
 					case "D":
-						position.y.increment(userId, -1);
+						position.y -= 1;
 						break;
 					case "L":
-						position.x.increment(userId, -1);
+						position.x -= 1;
 						break;
 					case "R":
-						position.x.increment(userId, 1);
+						position.x += 1;
 						break;
 				}
 			}
@@ -57,36 +62,42 @@ export class Grid implements CRO {
 	}
 
 	getUsers(): string[] {
-		return [...this.positions.map.keys()];
+		return [...this.positions.keys()];
 	}
 
 	getUserPosition(userColorString: string): { x: number, y: number } | undefined {
 		const position = this.positions.get(userColorString);
 		if (position) {
-			return { x: position.x.value(), y: position.y.value() };
+			return position
 		}
 		return undefined;
-	}
-
-	merge(other: Grid): void {
-		for (const [key, value] of other.positions.map) {
-			if (!this.positions.has(key)) {
-				this.positions.add(key, value);
-			} else {
-				const currentPosition = this.positions.get(key);
-				if (currentPosition) {
-					currentPosition.x.merge(value.x);
-					currentPosition.y.merge(value.y);
-				}
-			}
-		}
 	}
 
 	resolveConflicts(vertices: Vertex[]): ResolveConflictsType {
 		return { action: ActionType.Nop };
 	}
 
-	mergeCallback(operations: Operation[]): void {}
+	mergeCallback(operations: Operation[]): void {
+        // reset this.positions
+        this.positions = new Map<string, { x: number, y: number }>();
+
+        // apply operations to this.positions
+		for (const op of operations) {
+			if (!op.value) continue;
+			switch (op.type) {
+				case "addUser": {
+					const [userId, color] = op.value;
+					this._addUser(userId, color);
+					break;
+				}
+				case "moveUser": {
+					const [userId, direction] = op.value;
+					this._moveUser(userId, direction);
+					break;
+				}
+			}
+		}
+    }
 }
 
 export function createGrid(): Grid {
