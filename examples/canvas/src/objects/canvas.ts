@@ -24,24 +24,18 @@ export class Canvas implements CRO {
 	}
 
 	splash(
-		nodeId: string,
 		offset: [number, number],
 		size: [number, number],
 		rgb: [number, number, number],
 	): void {
-		this._splash(nodeId, offset, size, rgb);
+		this._splash(offset, size, rgb);
 	}
 
-	paint(
-		nodeId: string,
-		offset: [number, number],
-		rgb: [number, number, number],
-	): void {
-		this._paint(nodeId, offset, rgb);
+	paint(offset: [number, number], rgb: [number, number, number]): void {
+		this._paint(offset, rgb);
 	}
 
 	private _splash(
-		nodeId: string,
 		offset: [number, number],
 		size: [number, number],
 		rgb: [number, number, number],
@@ -51,20 +45,19 @@ export class Canvas implements CRO {
 
 		for (let x = offset[0]; x < this.width || x < offset[0] + size[0]; x++) {
 			for (let y = offset[1]; y < this.height || y < offset[1] + size[1]; y++) {
-				this.canvas[x][y].paint(nodeId, rgb);
+				this.canvas[x][y].paint(rgb);
 			}
 		}
 	}
 
 	private _paint(
-		nodeId: string,
 		offset: [number, number],
 		rgb: [number, number, number],
 	): void {
 		if (offset[0] < 0 || this.canvas.length < offset[0]) return;
 		if (offset[1] < 0 || this.canvas[offset[0]].length < offset[1]) return;
 
-		this.canvas[offset[0]][offset[1]].paint(nodeId, rgb);
+		this.canvas[offset[0]][offset[1]].paint(rgb);
 	}
 
 	pixel(x: number, y: number): Pixel {

@@ -35,14 +35,14 @@ const render = () => {
 	const element_chat = <HTMLDivElement>document.getElementById("chat");
 	element_chat.innerHTML = "";
 
-	if (chat.set.size === 0) {
+	if (chat.size === 0) {
 		const div = document.createElement("div");
 		div.innerHTML = "No messages yet";
 		div.style.padding = "10px";
 		element_chat.appendChild(div);
 		return;
 	}
-	for (const message of [...chat.set].sort()) {
+	for (const message of [...chat].sort()) {
 		const div = document.createElement("div");
 		div.innerHTML = message;
 		div.style.padding = "10px";
