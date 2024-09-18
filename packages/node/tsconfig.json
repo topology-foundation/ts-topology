@@ -5,7 +5,7 @@
 	},
 	"references": [
 		{
-			"path": "../crdt"
+			"path": "../blueprints"
 		},
 		{
 			"path": "../network"
