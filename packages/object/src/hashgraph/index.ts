@@ -47,11 +47,15 @@ export class HashGraph {
 	vertices: Map<Hash, Vertex> = new Map();
 	frontier: Hash[] = [];
 	forwardEdges: Map<Hash, Hash[]> = new Map();
-	static readonly rootHash: Hash = computeHash(
+	/*
+	computeHash(
 		"",
-		{ type: OperationType.NOP, value: null },
+		{ type: OperationType.NOP },
 		[],
-	);
+	)
+	*/
+	static readonly rootHash: Hash =
+		"ee075937c2a6c8ccf8d94fb2a130c596d3dbcc32910b6e744ad55c3e41b41ad6";
 	private arePredecessorsFresh = false;
 	private reachablePredecessors: Map<Hash, BitSet> = new Map();
 	private topoSortedIndex: Map<Hash, number> = new Map();
