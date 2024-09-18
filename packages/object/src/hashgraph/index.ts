@@ -50,7 +50,7 @@ export class HashGraph {
 	/*
 	computeHash(
 		"",
-		{ type: OperationType.NOP, value: null },
+		{ type: OperationType.NOP },
 		[],
 	)
 	*/
