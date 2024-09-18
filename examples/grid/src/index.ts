@@ -11,25 +11,109 @@ let objectPeers: string[] = [];
 const userId = Math.random().toString(36).substring(2);
 const userColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 
+const formatNodeId = (id: string): string => {
+    return `${id.slice(0, 4)}...${id.slice(-4)}`;
+};
+
+const colorMap: Map<string, string> = new Map();
+
+const hashCode = (str: string): number => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = (hash << 5) - hash + str.charCodeAt(i);
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
+
+const rgbToHsl = (r: number, g: number, b: number): [number, number, number] => {
+    r /= 255, g /= 255, b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = 0, s, l = (max + min) / 2; // Initialize h with a default value
+
+    if (max === min) {
+        h = s = 0; // achromatic
+    } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+    return [h * 360, s, l];
+};
+
+const hslToRgb = (h: number, s: number, l: number): [number, number, number] => {
+    let r, g, b;
+
+    if (s === 0) {
+        r = g = b = l; // achromatic
+    } else {
+        const hue2rgb = (p: number, q: number, t: number) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+            return p;
+        };
+
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h / 360 + 1 / 3);
+        g = hue2rgb(p, q, h / 360);
+        b = hue2rgb(p, q, h / 360 - 1 / 3);
+    }
+
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+};
+
+const getColorForNodeId = (id: string): string => {
+    if (!colorMap.has(id)) {
+        const hash = hashCode(id);
+        let r = (hash & 0xFF0000) >> 16;
+        let g = (hash & 0x00FF00) >> 8;
+        let b = (hash & 0x0000FF);
+
+        // Convert to HSL and adjust lightness to be below 50%
+        let [h, s, l] = rgbToHsl(r, g, b);
+        l = l * 0.5; // Set lightness to below 50%
+
+        // Convert back to RGB
+        [r, g, b] = hslToRgb(h, s, l);
+        const color = `rgb(${r}, ${g}, ${b})`;
+        colorMap.set(id, color);
+    }
+    return colorMap.get(id)!;
+};
+
 const render = () => {
-	if (topologyObject)
-		(<HTMLButtonElement>document.getElementById("gridId")).innerText =
-			topologyObject.id;
+	if (topologyObject) {
+		const gridIdElement = <HTMLSpanElement>document.getElementById("gridId");
+		gridIdElement.innerText = topologyObject.id;
+		document.getElementById("copyGridId")!.style.display = "inline"; // Show the button
+	} else {
+		document.getElementById("copyGridId")!.style.display = "none"; // Hide the button
+	}
+
 	const element_peerId = <HTMLDivElement>document.getElementById("peerId");
-	element_peerId.innerHTML = node.networkNode.peerId;
+	element_peerId.innerHTML = `<strong style="color: ${getColorForNodeId(node.networkNode.peerId)};">${formatNodeId(node.networkNode.peerId)}</strong>`;
 
 	const element_peers = <HTMLDivElement>document.getElementById("peers");
-	element_peers.innerHTML = `[${peers.join(", ")}]`;
+	element_peers.innerHTML = `[${peers.map(peer => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
 
 	const element_discoveryPeers = <HTMLDivElement>(
 		document.getElementById("discoveryPeers")
 	);
-	element_discoveryPeers.innerHTML = `[${discoveryPeers.join(", ")}]`;
+	element_discoveryPeers.innerHTML = `[${discoveryPeers.map(peer => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
 
 	const element_objectPeers = <HTMLDivElement>(
 		document.getElementById("objectPeers")
 	);
-	element_objectPeers.innerHTML = `[${objectPeers.join(", ")}]`;
+	element_objectPeers.innerHTML = `[${objectPeers.map(peer => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
 
 	if (!gridCRO) return;
 	const users = gridCRO.getUsers();
@@ -74,10 +158,10 @@ const render = () => {
 		if (position) {
 			const div = document.createElement("div");
 			div.style.position = "absolute";
-			div.style.left = `${centerX + position.x * 50 + 2}px`; // Center the circle
-			div.style.top = `${centerY - position.y * 50 + 2}px`; // Center the circle
-			div.style.width = "40px";
-			div.style.height = "40px";
+			div.style.left = `${centerX + position.x * 50 - 20}px`; // Center the circle
+			div.style.top = `${centerY - position.y * 50 - 20}px`; // Center the circle
+			div.style.width = "34px";
+			div.style.height = "34px";
 			div.style.backgroundColor = color;
 			div.style.borderRadius = "50%";
 			div.style.transition = "background-color 1s ease-in-out";
@@ -214,6 +298,16 @@ async function main() {
 		if (event.key === "a") moveUser("L");
 		if (event.key === "s") moveUser("D");
 		if (event.key === "d") moveUser("R");
+	});
+
+	const copyButton = <HTMLButtonElement>document.getElementById("copyGridId");
+	copyButton.addEventListener("click", () => {
+		const gridIdText = (<HTMLSpanElement>document.getElementById("gridId")).innerText;
+		navigator.clipboard.writeText(gridIdText).then(() => {
+			alert("Grid CRO ID copied to clipboard!");
+		}).catch(err => {
+			console.error("Failed to copy: ", err);
+		});
 	});
 }
 
