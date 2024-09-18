@@ -8,8 +8,7 @@ let gridCRO: Grid;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
 let objectPeers: string[] = [];
-const userId = Math.random().toString(36).substring(2);
-const userColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+// const userId = Math.random().toString(36).substring(2);
 
 const formatNodeId = (id: string): string => {
     return `${id.slice(0, 4)}...${id.slice(-4)}`;
@@ -71,6 +70,10 @@ const hslToRgb = (h: number, s: number, l: number): [number, number, number] => 
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 };
 
+const rgbToHex = (r: number, g: number, b: number): string => {
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+};
+
 const getColorForNodeId = (id: string): string => {
     if (!colorMap.has(id)) {
         const hash = hashCode(id);
@@ -84,7 +87,7 @@ const getColorForNodeId = (id: string): string => {
 
         // Convert back to RGB
         [r, g, b] = hslToRgb(h, s, l);
-        const color = `rgb(${r}, ${g}, ${b})`;
+        const color = rgbToHex(r, g, b); // Convert RGB to hex
         colorMap.set(id, color);
     }
     return colorMap.get(id)!;
@@ -168,7 +171,7 @@ const render = () => {
 			div.style.animation = `glow-${id} 0.5s infinite alternate`;
 
 			// Add black border for the current user's circle
-			if (id === userId) {
+			if (id === node.networkNode.peerId) {
 				div.style.border = "3px solid black";
 			}
 
@@ -206,7 +209,7 @@ async function addUser() {
         return;
     }
 
-    gridCRO.addUser(userId, userColor);
+    gridCRO.addUser(node.networkNode.peerId, getColorForNodeId(node.networkNode.peerId));
     render();
 
     // testing
@@ -226,7 +229,7 @@ async function moveUser(direction: string) {
 		return;
 	}
 
-	gridCRO.moveUser(userId, direction);
+	gridCRO.moveUser(node.networkNode.peerId, direction);
 	render();
 
     // testing
