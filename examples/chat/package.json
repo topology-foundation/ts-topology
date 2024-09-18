@@ -1,7 +1,7 @@
 {
   "name": "topology-example-chat",
   "version": "0.1.1",
-  "description": "Topology Protocol Chat Exmaple",
+  "description": "Topology Protocol Chat Example",
   "main": "src/index.ts",
   "repository": "https://github.com/topology-foundation/ts-topology.git",
   "license": "MIT",
@@ -13,7 +13,7 @@
     "start": "ts-node ./src/index.ts"
   },
   "dependencies": {
-    "@topology-foundation/crdt": "0.1.1",
+    "@topology-foundation/blueprints": "0.1.1",
     "@topology-foundation/network": "0.1.1",
     "@topology-foundation/node": "0.1.1",
     "@topology-foundation/object": "0.1.1",
