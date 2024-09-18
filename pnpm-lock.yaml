@@ -45,16 +45,16 @@ importers:
   examples/canvas:
     dependencies:
       '@topology-foundation/crdt':
-        specifier: 0.1.1-3
-        version: link:../../packages/crdt
+        specifier: 0.1.1
+        version: 0.1.1
       '@topology-foundation/network':
-        specifier: 0.1.1-3
+        specifier: 0.1.1
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.1-3
+        specifier: 0.1.1
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.1-3
+        specifier: 0.1.1
         version: link:../../packages/object
       crypto-browserify:
         specifier: ^3.12.0
@@ -86,21 +86,21 @@ importers:
         version: 5.4.3(@types/node@22.5.4)(terser@5.31.6)
       vite-plugin-node-polyfills:
         specifier: ^0.22.0
-        version: 0.22.0(rollup@4.21.0)(vite@5.4.3(@types/node@22.5.4)(terser@5.31.6))
+        version: 0.22.0(rollup@4.21.1)(vite@5.4.3(@types/node@22.5.4)(terser@5.31.6))
 
   examples/chat:
     dependencies:
       '@topology-foundation/crdt':
-        specifier: 0.1.1-3
-        version: link:../../packages/crdt
+        specifier: 0.1.1
+        version: 0.1.1
       '@topology-foundation/network':
-        specifier: 0.1.1-3
+        specifier: 0.1.1
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.1-3
+        specifier: 0.1.1
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.1-3
+        specifier: 0.1.1
         version: link:../../packages/object
       assemblyscript:
         specifier: ^0.27.29
@@ -141,16 +141,16 @@ importers:
         version: 5.4.3(@types/node@22.5.4)(terser@5.31.6)
       vite-plugin-node-polyfills:
         specifier: ^0.22.0
-        version: 0.22.0(rollup@4.21.0)(vite@5.4.3(@types/node@22.5.4)(terser@5.31.6))
+        version: 0.22.0(rollup@4.21.1)(vite@5.4.3(@types/node@22.5.4)(terser@5.31.6))
 
-  packages/crdt:
+  packages/blueprints:
     dependencies:
       '@thi.ng/random':
         specifier: ^4.0.3
         version: 4.0.3
     devDependencies:
       '@topology-foundation/object':
-        specifier: 0.1.1-3
+        specifier: 0.1.1
         version: link:../object
       assemblyscript:
         specifier: ^0.27.29
@@ -205,7 +205,7 @@ importers:
         version: 10.0.2
       '@libp2p/webrtc':
         specifier: ^4.1.8
-        version: 4.1.8(react-native@0.75.1(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(react@18.3.1)(typescript@5.5.4))
+        version: 4.1.8(react-native@0.75.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(react@18.3.1)(typescript@5.5.4))
       '@libp2p/websockets':
         specifier: ^8.1.2
         version: 8.2.0
@@ -249,14 +249,14 @@ importers:
       '@libp2p/interface':
         specifier: ^1.7.0
         version: 1.7.0
-      '@topology-foundation/crdt':
-        specifier: 0.1.1-3
-        version: link:../crdt
+      '@topology-foundation/blueprints':
+        specifier: 0.1.1
+        version: link:../blueprints
       '@topology-foundation/network':
-        specifier: 0.1.1-3
+        specifier: 0.1.1
         version: link:../network
       '@topology-foundation/object':
-        specifier: 0.1.1-3
+        specifier: 0.1.1
         version: link:../object
       commander:
         specifier: ^12.1.0
@@ -1909,6 +1909,9 @@ packages:
 
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
+
+  '@topology-foundation/crdt@0.1.1':
+    resolution: {integrity: sha512-wWEK5gkzux73rin5oycOxTsxQhxZuX29H2gZivRs9Sg8zLnEs/7fZFSf/iRGMZy5Qp/dV7qRgbrxcOaMBw9B7Q==}
 
   '@tsconfig/node10@1.0.11':
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
@@ -6879,7 +6882,7 @@ snapshots:
       uint8arraylist: 2.4.8
       uint8arrays: 5.1.0
 
-  '@libp2p/webrtc@4.1.8(react-native@0.75.1(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(react@18.3.1)(typescript@5.5.4))':
+  '@libp2p/webrtc@4.1.8(react-native@0.75.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(react@18.3.1)(typescript@5.5.4))':
     dependencies:
       '@chainsafe/libp2p-noise': 15.1.2
       '@libp2p/interface': 1.7.0
@@ -7511,6 +7514,8 @@ snapshots:
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
+  '@topology-foundation/crdt@0.1.1': {}
+
   '@tsconfig/node10@1.0.11': {}
 
   '@tsconfig/node12@1.0.11': {}
@@ -7521,17 +7526,7 @@ snapshots:
 
   '@types/dns-packet@5.6.5':
     dependencies:
-      '@types/node': 22.5.0
-
-  '@types/eslint-scope@3.7.7':
-    dependencies:
-      '@types/eslint': 9.6.0
-      '@types/estree': 1.0.5
-
-  '@types/eslint@9.6.0':
-    dependencies:
-      '@types/estree': 1.0.5
-      '@types/json-schema': 7.0.15
+      '@types/node': 22.5.4
 
   '@types/estree@1.0.5': {}
 
@@ -11129,7 +11124,7 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-node-polyfills@0.22.0(rollup@4.21.0)(vite@5.4.3(@types/node@22.5.4)(terser@5.31.6)):
+  vite-plugin-node-polyfills@0.22.0(rollup@4.21.1)(vite@5.4.3(@types/node@22.5.4)(terser@5.31.6)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.21.1)
       node-stdlib-browser: 1.2.0
@@ -11152,7 +11147,7 @@ snapshots:
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.45
-      rollup: 4.21.0
+      rollup: 4.21.1
     optionalDependencies:
       '@types/node': 22.5.4
       fsevents: 2.3.3

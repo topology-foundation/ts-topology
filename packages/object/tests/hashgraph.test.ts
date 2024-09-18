@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { AddWinsSet } from "../../crdt/src/cros/AddWinsSet/index.js";
-import { PseudoRandomWinsSet } from "../../crdt/src/cros/PseudoRandomWinsSet/index.js";
+import { AddWinsSet } from "../../blueprints/src/AddWinsSet/index.js";
+import { PseudoRandomWinsSet } from "../../blueprints/src/PseudoRandomWinsSet/index.js";
 import { TopologyObject } from "../src/index.js";
 
 describe("HashGraph for AddWinSet tests", () => {
@@ -319,7 +319,7 @@ describe("HashGraph for PseudoRandomWinsSet tests", () => {
 
 	test("Test: Many concurrent operations", () => {
 		/*
-					--- V1:ADD(1) 
+					--- V1:ADD(1)
 				   /---- V2:ADD(2)
             V0:Nop -- V3:ADD(3)
 				   \---- V4:ADD(4)

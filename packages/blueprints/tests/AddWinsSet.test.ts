@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { AddWinsSet } from "../src/cros/AddWinsSet/index.js";
+import { AddWinsSet } from "../src/AddWinsSet/index.js";
 
 describe("HashGraph for AddWinSet tests", () => {
 	let cro: AddWinsSet<number>;
