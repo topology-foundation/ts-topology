@@ -71,12 +71,6 @@ export class Canvas implements CRO {
 		return this.canvas[x][y];
 	}
 
-	merge(peerCanvas: Canvas): void {
-		this.canvas.forEach((row, x) =>
-			row.forEach((pixel, y) => pixel.merge(peerCanvas.pixel(x, y))),
-		);
-	}
-
 	resolveConflicts(_): ResolveConflictsType {
 		return { action: ActionType.Nop };
 	}
