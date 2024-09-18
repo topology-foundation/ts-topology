@@ -161,10 +161,15 @@ const render = () => {
 		if (position) {
 			const div = document.createElement("div");
 			div.style.position = "absolute";
-			div.style.left = `${centerX + position.x * 50 - 20}px`; // Center the circle
-			div.style.top = `${centerY - position.y * 50 - 20}px`; // Center the circle
-			div.style.width = "34px";
-			div.style.height = "34px";
+			div.style.left = `${centerX + position.x * 50 + 5}px`; // Center the circle
+			div.style.top = `${centerY - position.y * 50 + 5}px`; // Center the circle
+            if (id === node.networkNode.peerId) {
+    			div.style.width = `${34}px`;
+	    		div.style.height = `${34}px`;
+            } else {
+                div.style.width = `${34+6}px`;
+	    		div.style.height = `${34+6}px`;
+            }
 			div.style.backgroundColor = color;
 			div.style.borderRadius = "50%";
 			div.style.transition = "background-color 1s ease-in-out";
