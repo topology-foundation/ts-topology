@@ -216,15 +216,6 @@ async function addUser() {
 
     gridCRO.addUser(node.networkNode.peerId, getColorForNodeId(node.networkNode.peerId));
     render();
-
-    // testing
-    const users = gridCRO.getUsers();
-    console.log('users', users);
-    for (const userColorString of users) {
-        const position = gridCRO.getUserPosition(userColorString);
-        console.log('userColorString', userColorString, 'position', JSON.stringify(position, null, 2));
-    }
-    console.log('----------------------------------');
 }
 
 async function moveUser(direction: string) {
@@ -236,15 +227,6 @@ async function moveUser(direction: string) {
 
 	gridCRO.moveUser(node.networkNode.peerId, direction);
 	render();
-
-    // testing
-    const users = gridCRO.getUsers();
-    console.log('users', users);
-    for (const userColorString of users) {
-		const position = gridCRO.getUserPosition(userColorString);
-        console.log('userColorString', userColorString, 'position', JSON.stringify(position, null, 2));
-    }
-    console.log('----------------------------------');
 }
 
 async function createConnectHandlers() {
@@ -312,7 +294,8 @@ async function main() {
 	copyButton.addEventListener("click", () => {
 		const gridIdText = (<HTMLSpanElement>document.getElementById("gridId")).innerText;
 		navigator.clipboard.writeText(gridIdText).then(() => {
-			alert("Grid CRO ID copied to clipboard!");
+			// alert("Grid CRO ID copied to clipboard!");
+            console.log("Grid CRO ID copied to clipboard")
 		}).catch(err => {
 			console.error("Failed to copy: ", err);
 		});
