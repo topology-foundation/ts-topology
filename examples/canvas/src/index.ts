@@ -45,7 +45,7 @@ function paint_pixel(pixel: HTMLDivElement) {
 		random_int(256),
 		random_int(256),
 	];
-	canvasCRO.paint(node.networkNode.peerId, [x, y], painting);
+	canvasCRO.paint([x, y], painting);
 	const [r, g, b] = canvasCRO.pixel(x, y).color();
 	pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 }

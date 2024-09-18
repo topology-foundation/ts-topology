@@ -20,7 +20,7 @@
 	"options": {
 		"lib": {
 			"@topology-foundation/crdt": [
-				"../node_modules/@topology-foundation/crdt/src/index.asc.ts"
+				"./node_modules/@topology-foundation/blueprints/src/index.asc.ts"
 			]
 		}
 	}

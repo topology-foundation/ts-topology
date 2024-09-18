@@ -15,8 +15,8 @@ export async function compileWasm(path: string) {
 				return fs
 					.readFileSync(filename, "utf8")
 					.replace(
-						"@topology-foundation/crdt",
-						"@topology-foundation/crdt/src/index.asc",
+						"@topology-foundation/blueprints",
+						"@topology-foundation/blueprints/src/index.asc",
 					);
 			},
 			writeFile: (

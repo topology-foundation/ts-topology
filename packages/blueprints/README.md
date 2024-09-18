@@ -1,6 +1,6 @@
-# Conflict-free Replicated Data Types (CRDTs)
+# Topology Blueprints
 
-This package contains the CRDT implementations intended to use as builtins for the Topology Protocol.
+This package contains the CRO blueprints intended to be used by other CROs.
 
 ## Usage
 
@@ -8,10 +8,10 @@ This package is intended to be used as a dependency for the Topology Protocol. H
 
 ```bash
 # yarn
-yarn add @topology-foundation/crdt
+yarn add @topology-foundation/blueprints
 
 # npm
-npm install @topology-foundation/crdt
+npm install @topology-foundation/blueprints
 ```
 
 ### Build
@@ -29,9 +29,3 @@ To run the tests, you can run:
 ```bash
 yarn test
 ```
-
-## CRDTs Implementations
-- [x] G-Counter
-- [x] PN-Counter
-- [x] G-Set
-- [x] 2P-Set

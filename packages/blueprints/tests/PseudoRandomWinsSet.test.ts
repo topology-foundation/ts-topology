@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { AddWinsSet } from "../src/cros/AddWinsSet/index.js";
+import { PseudoRandomWinsSet } from "../src/PseudoRandomWinsSet/index.js";
 
-describe("HashGraph for AddWinSet tests", () => {
-	let cro: AddWinsSet<number>;
+describe("HashGraph for PseudoRandomWinsSet tests", () => {
+	let cro: PseudoRandomWinsSet<number>;
 
 	beforeEach(() => {
-		cro = new AddWinsSet();
+		cro = new PseudoRandomWinsSet();
 	});
 
 	test("Test: Add", () => {

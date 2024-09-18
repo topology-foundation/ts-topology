@@ -17,7 +17,7 @@
 	},
 	"options": {
 		"lib": {
-			"@topology-foundation/crdt": ["../crdt/src/index.asc.ts"]
+			"@topology-foundation/blueprints": ["../blueprints/src/index.asc.ts"]
 		}
 	}
 }
