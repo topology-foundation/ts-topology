@@ -13,7 +13,6 @@
     "start": "ts-node ./src/index.ts"
   },
   "dependencies": {
-    "@topology-foundation/crdt": "0.1.1",
     "@topology-foundation/network": "0.1.1",
     "@topology-foundation/node": "0.1.1",
     "@topology-foundation/object": "0.1.1",
