@@ -10,10 +10,10 @@ import {
 export class Grid implements CRO {
 	operations: string[] = ["addUser", "moveUser"];
 	semanticsType: SemanticsType = SemanticsType.pair;
-	positions: Map<string, { x: number, y: number }>;
+	positions: Map<string, { x: number; y: number }>;
 
 	constructor() {
-		this.positions = new Map<string, { x: number, y: number }>();
+		this.positions = new Map<string, { x: number; y: number }>();
 	}
 
 	addUser(userId: string, color: string): void {
@@ -22,7 +22,7 @@ export class Grid implements CRO {
 
 	private _addUser(userId: string, color: string): void {
 		const userColorString = `${userId}:${color}`;
-		this.positions.set(userColorString, {x: 0, y: 0});
+		this.positions.set(userColorString, { x: 0, y: 0 });
 	}
 
 	moveUser(userId: string, direction: string): void {
@@ -30,7 +30,9 @@ export class Grid implements CRO {
 	}
 
 	private _moveUser(userId: string, direction: string): void {
-		const userColorString = [...this.positions.keys()].find(u => u.startsWith(`${userId}:`));
+		const userColorString = [...this.positions.keys()].find((u) =>
+			u.startsWith(`${userId}:`),
+		);
 		if (userColorString) {
 			const position = this.positions.get(userColorString);
 			if (position) {
@@ -56,7 +58,9 @@ export class Grid implements CRO {
 		return [...this.positions.keys()];
 	}
 
-	getUserPosition(userColorString: string): { x: number, y: number } | undefined {
+	getUserPosition(
+		userColorString: string,
+	): { x: number; y: number } | undefined {
 		const position = this.positions.get(userColorString);
 		if (position) {
 			return position;
@@ -70,7 +74,7 @@ export class Grid implements CRO {
 
 	mergeCallback(operations: Operation[]): void {
 		// reset this.positions
-		this.positions = new Map<string, { x: number, y: number }>();
+		this.positions = new Map<string, { x: number; y: number }>();
 
 		// apply operations to this.positions
 		for (const op of operations) {

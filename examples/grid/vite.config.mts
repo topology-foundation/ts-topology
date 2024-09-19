@@ -6,9 +6,7 @@ export default defineConfig({
 	build: {
 		target: "esnext",
 	},
-	plugins: [
-		nodePolyfills(),
-	],
+	plugins: [nodePolyfills()],
 	optimizeDeps: {
 		esbuildOptions: {
 			target: "esnext",

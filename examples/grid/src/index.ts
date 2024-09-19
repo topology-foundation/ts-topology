@@ -1,7 +1,7 @@
 import { TopologyNode } from "@topology-foundation/node";
 import type { TopologyObject } from "@topology-foundation/object";
 import { Grid } from "./objects/grid";
-import { rgbToHsl, hslToRgb, rgbToHex } from "./util/color";
+import { hslToRgb, rgbToHex, rgbToHsl } from "./util/color";
 
 const node = new TopologyNode();
 let topologyObject: TopologyObject;
@@ -28,9 +28,9 @@ const hashCode = (str: string): number => {
 const getColorForNodeId = (id: string): string => {
 	if (!colorMap.has(id)) {
 		const hash = hashCode(id);
-		let r = (hash & 0xFF0000) >> 16;
-		let g = (hash & 0x00FF00) >> 8;
-		let b = (hash & 0x0000FF);
+		let r = (hash & 0xff0000) >> 16;
+		let g = (hash & 0x00ff00) >> 8;
+		let b = hash & 0x0000ff;
 
 		// Convert to HSL and adjust lightness to be below 50%
 		let [h, s, l] = rgbToHsl(r, g, b);
@@ -41,7 +41,7 @@ const getColorForNodeId = (id: string): string => {
 		const color = rgbToHex(r, g, b); // Convert RGB to hex
 		colorMap.set(id, color);
 	}
-	return colorMap.get(id) || '#000000';
+	return colorMap.get(id) || "#000000";
 };
 
 const render = () => {
@@ -63,17 +63,17 @@ const render = () => {
 	element_peerId.innerHTML = `<strong style="color: ${getColorForNodeId(node.networkNode.peerId)};">${formatNodeId(node.networkNode.peerId)}</strong>`;
 
 	const element_peers = <HTMLDivElement>document.getElementById("peers");
-	element_peers.innerHTML = `[${peers.map(peer => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
+	element_peers.innerHTML = `[${peers.map((peer) => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
 
 	const element_discoveryPeers = <HTMLDivElement>(
 		document.getElementById("discoveryPeers")
 	);
-	element_discoveryPeers.innerHTML = `[${discoveryPeers.map(peer => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
+	element_discoveryPeers.innerHTML = `[${discoveryPeers.map((peer) => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
 
 	const element_objectPeers = <HTMLDivElement>(
 		document.getElementById("objectPeers")
 	);
-	element_objectPeers.innerHTML = `[${objectPeers.map(peer => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
+	element_objectPeers.innerHTML = `[${objectPeers.map((peer) => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
 
 	if (!gridCRO) return;
 	const users = gridCRO.getUsers();
@@ -112,7 +112,7 @@ const render = () => {
 	}
 
 	for (const userColorString of users) {
-		const [id, color] = userColorString.split(':');
+		const [id, color] = userColorString.split(":");
 		const position = gridCRO.getUserPosition(userColorString);
 
 		if (position) {
@@ -171,7 +171,10 @@ async function addUser() {
 		return;
 	}
 
-	gridCRO.addUser(node.networkNode.peerId, getColorForNodeId(node.networkNode.peerId));
+	gridCRO.addUser(
+		node.networkNode.peerId,
+		getColorForNodeId(node.networkNode.peerId),
+	);
 	render();
 }
 
@@ -249,13 +252,17 @@ async function main() {
 
 	const copyButton = <HTMLButtonElement>document.getElementById("copyGridId");
 	copyButton.addEventListener("click", () => {
-		const gridIdText = (<HTMLSpanElement>document.getElementById("gridId")).innerText;
-		navigator.clipboard.writeText(gridIdText).then(() => {
-			// alert("Grid CRO ID copied to clipboard!");
-			console.log("Grid CRO ID copied to clipboard")
-		}).catch(err => {
-			console.error("Failed to copy: ", err);
-		});
+		const gridIdText = (<HTMLSpanElement>document.getElementById("gridId"))
+			.innerText;
+		navigator.clipboard
+			.writeText(gridIdText)
+			.then(() => {
+				// alert("Grid CRO ID copied to clipboard!");
+				console.log("Grid CRO ID copied to clipboard");
+			})
+			.catch((err) => {
+				console.error("Failed to copy: ", err);
+			});
 	});
 }
 
