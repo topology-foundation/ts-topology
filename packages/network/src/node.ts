@@ -77,6 +77,7 @@ export class TopologyNetworkNode {
 					return false;
 				},
 			},
+			metrics: devToolsMetrics(),
 			peerDiscovery: [
 				pubsubPeerDiscovery({
 					interval: 10_000,
