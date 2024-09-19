@@ -1,0 +1,27 @@
+{
+	"entries": ["./src/objects/chat.ts"],
+	"targets": {
+		"debug": {
+			"outFile": "dist/asc/debug.wasm",
+			"textFile": "dist/asc/debug.wat",
+			"sourceMap": true,
+			"debug": true
+		},
+		"release": {
+			"outFile": "dist/asc/release.wasm",
+			"textFile": "dist/asc/release.wat",
+			"sourceMap": false,
+			"optimizeLevel": 3,
+			"shrinkLevel": 0,
+			"converge": false,
+			"noAssert": false
+		}
+	},
+	"options": {
+		"lib": {
+			"@topology-foundation/blueprints": [
+				"../node_modules/@topology-foundation/blueprints/src/index.asc.ts"
+			]
+		}
+	}
+}
