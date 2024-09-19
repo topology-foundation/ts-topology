@@ -1,7 +1,7 @@
 {
-  "name": "topology-example-chat",
+  "name": "topology-example-grid",
   "version": "0.1.1",
-  "description": "Topology Protocol Chat Exmaple",
+  "description": "Topology Protocol Grid Exmaple",
   "main": "src/index.ts",
   "repository": "https://github.com/topology-foundation/ts-topology.git",
   "license": "MIT",
