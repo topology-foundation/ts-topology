@@ -24,10 +24,10 @@ const hashCode = (str: string): number => {
 	return hash;
 };
 
-const rgbToHsl = (r_: number, g_: number, b_: number): [number, number, number] => {
-	const r = r_ / 255;
-	const g = g_ / 255;
-	const b = b_ / 255;
+const rgbToHsl = (rInt: number, gInt: number, bInt: number): [number, number, number] => {
+	const r = rInt / 255;
+	const g = gInt / 255;
+	const b = bInt / 255;
 	const max = Math.max(r, g, b);
 	const min = Math.min(r, g, b);
 	let h = 0;
@@ -37,12 +37,12 @@ const rgbToHsl = (r_: number, g_: number, b_: number): [number, number, number] 
 	if (max === min) {
 		h = s = 0; // achromatic
 	} else {
-		const d = max - min;
-		s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+		const chromaticity = max - min;
+		s = l > 0.5 ? chromaticity / (2 - max - min) : chromaticity / (max + min);
 		switch (max) {
-			case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-			case g: h = (b - r) / d + 2; break;
-			case b: h = (r - g) / d + 4; break;
+			case r: h = (g - b) / chromaticity + (g < b ? 6 : 0); break;
+			case g: h = (b - r) / chromaticity + 2; break;
+			case b: h = (r - g) / chromaticity + 4; break;
 		}
 		h /= 6;
 	}
