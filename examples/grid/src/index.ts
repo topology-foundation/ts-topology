@@ -8,7 +8,6 @@ let gridCRO: Grid;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
 let objectPeers: string[] = [];
-// const userId = Math.random().toString(36).substring(2);
 
 const formatNodeId = (id: string): string => {
 	return `${id.slice(0, 4)}...${id.slice(-4)}`;
