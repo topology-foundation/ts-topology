@@ -145,9 +145,6 @@ importers:
 
   examples/grid:
     dependencies:
-      '@topology-foundation/crdt':
-        specifier: 0.1.1
-        version: 0.1.1
       '@topology-foundation/network':
         specifier: 0.1.1
         version: link:../../packages/network
@@ -2047,9 +2044,6 @@ packages:
 
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
-
-  '@topology-foundation/crdt@0.1.1':
-    resolution: {integrity: sha512-wWEK5gkzux73rin5oycOxTsxQhxZuX29H2gZivRs9Sg8zLnEs/7fZFSf/iRGMZy5Qp/dV7qRgbrxcOaMBw9B7Q==}
 
   '@tsconfig/node10@1.0.11':
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
@@ -7839,8 +7833,6 @@ snapshots:
       '@thi.ng/errors': 2.5.15
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
-
-  '@topology-foundation/crdt@0.1.1': {}
 
   '@tsconfig/node10@1.0.11': {}
 

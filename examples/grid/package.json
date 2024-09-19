@@ -1,6 +1,6 @@
 {
   "name": "topology-example-grid",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Topology Protocol Grid Exmaple",
   "main": "src/index.ts",
   "repository": "https://github.com/topology-foundation/ts-topology.git",
@@ -13,9 +13,9 @@
     "start": "ts-node ./src/index.ts"
   },
   "dependencies": {
-    "@topology-foundation/network": "0.1.1",
-    "@topology-foundation/node": "0.1.1",
-    "@topology-foundation/object": "0.1.1",
+    "@topology-foundation/network": "0.2.0",
+    "@topology-foundation/node": "0.2.0",
+    "@topology-foundation/object": "0.2.0",
     "assemblyscript": "^0.27.29",
     "crypto-browserify": "^3.12.0",
     "memfs": "^4.11.1",
