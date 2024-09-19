@@ -25,10 +25,15 @@ const hashCode = (str: string): number => {
     return hash;
 };
 
-const rgbToHsl = (r: number, g: number, b: number): [number, number, number] => {
-    r /= 255, g /= 255, b /= 255;
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h = 0, s, l = (max + min) / 2; // Initialize h with a default value
+const rgbToHsl = (r_: number, g_: number, b_: number): [number, number, number] => {
+    let r = r_ / 255;
+    let g = g_ / 255;
+    let b = b_ / 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h = 0;
+    let s;
+    let l = (max + min) / 2; // Initialize h with a default value
 
     if (max === min) {
         h = s = 0; // achromatic
@@ -46,12 +51,15 @@ const rgbToHsl = (r: number, g: number, b: number): [number, number, number] => 
 };
 
 const hslToRgb = (h: number, s: number, l: number): [number, number, number] => {
-    let r, g, b;
+    let r;
+    let g
+    let b;
 
     if (s === 0) {
         r = g = b = l; // achromatic
     } else {
-        const hue2rgb = (p: number, q: number, t: number) => {
+        const hue2rgb = (p: number, q: number, t_: number) => {
+            let t = t_;
             if (t < 0) t += 1;
             if (t > 1) t -= 1;
             if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -90,16 +98,22 @@ const getColorForNodeId = (id: string): string => {
         const color = rgbToHex(r, g, b); // Convert RGB to hex
         colorMap.set(id, color);
     }
-    return colorMap.get(id)!;
+    return colorMap.get(id) || '#000000';
 };
 
 const render = () => {
 	if (topologyObject) {
 		const gridIdElement = <HTMLSpanElement>document.getElementById("gridId");
 		gridIdElement.innerText = topologyObject.id;
-		document.getElementById("copyGridId")!.style.display = "inline"; // Show the button
+        const copyGridIdButton = document.getElementById("copyGridId");
+		if (copyGridIdButton) {
+			copyGridIdButton.style.display = "inline"; // Show the button
+		}
 	} else {
-		document.getElementById("copyGridId")!.style.display = "none"; // Hide the button
+		const copyGridIdButton = document.getElementById("copyGridId");
+		if (copyGridIdButton) {
+			copyGridIdButton.style.display = "none"; // Hide the button
+		}
 	}
 
 	const element_peerId = <HTMLDivElement>document.getElementById("peerId");
@@ -200,7 +214,7 @@ const render = () => {
 
 // Helper function to convert hex color to rgba
 function hexToRgba(hex: string, alpha: number) {
-	const bigint = parseInt(hex.slice(1), 16);
+	const bigint = Number.parseInt(hex.slice(1), 16);
 	const r = (bigint >> 16) & 255;
 	const g = (bigint >> 8) & 255;
 	const b = bigint & 255;
