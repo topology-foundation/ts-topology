@@ -11,101 +11,101 @@ let objectPeers: string[] = [];
 // const userId = Math.random().toString(36).substring(2);
 
 const formatNodeId = (id: string): string => {
-    return `${id.slice(0, 4)}...${id.slice(-4)}`;
+	return `${id.slice(0, 4)}...${id.slice(-4)}`;
 };
 
 const colorMap: Map<string, string> = new Map();
 
 const hashCode = (str: string): number => {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = (hash << 5) - hash + str.charCodeAt(i);
-        hash |= 0; // Convert to 32bit integer
-    }
-    return hash;
+	let hash = 0;
+	for (let i = 0; i < str.length; i++) {
+		hash = (hash << 5) - hash + str.charCodeAt(i);
+		hash |= 0; // Convert to 32bit integer
+	}
+	return hash;
 };
 
 const rgbToHsl = (r_: number, g_: number, b_: number): [number, number, number] => {
-    const r = r_ / 255;
-    const g = g_ / 255;
-    const b = b_ / 255;
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    let h = 0;
-    let s: number;
-    const l = (max + min) / 2; // Initialize h with a default value
+	const r = r_ / 255;
+	const g = g_ / 255;
+	const b = b_ / 255;
+	const max = Math.max(r, g, b);
+	const min = Math.min(r, g, b);
+	let h = 0;
+	let s: number;
+	const l = (max + min) / 2; // Initialize h with a default value
 
-    if (max === min) {
-        h = s = 0; // achromatic
-    } else {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
-        }
-        h /= 6;
-    }
-    return [h * 360, s, l];
+	if (max === min) {
+		h = s = 0; // achromatic
+	} else {
+		const d = max - min;
+		s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+		switch (max) {
+			case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+			case g: h = (b - r) / d + 2; break;
+			case b: h = (r - g) / d + 4; break;
+		}
+		h /= 6;
+	}
+	return [h * 360, s, l];
 };
 
 const hslToRgb = (h: number, s: number, l: number): [number, number, number] => {
-    let r: number;
-    let g: number;
-    let b: number;
+	let r: number;
+	let g: number;
+	let b: number;
 
-    if (s === 0) {
-        r = g = b = l; // achromatic
-    } else {
-        const hue2rgb = (p: number, q: number, t_: number) => {
-            let t = t_;
-            if (t < 0) t += 1;
-            if (t > 1) t -= 1;
-            if (t < 1 / 6) return p + (q - p) * 6 * t;
-            if (t < 1 / 2) return q;
-            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-            return p;
-        };
+	if (s === 0) {
+		r = g = b = l; // achromatic
+	} else {
+		const hue2rgb = (p: number, q: number, t_: number) => {
+			let t = t_;
+			if (t < 0) t += 1;
+			if (t > 1) t -= 1;
+			if (t < 1 / 6) return p + (q - p) * 6 * t;
+			if (t < 1 / 2) return q;
+			if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+			return p;
+		};
 
-        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        const p = 2 * l - q;
-        r = hue2rgb(p, q, h / 360 + 1 / 3);
-        g = hue2rgb(p, q, h / 360);
-        b = hue2rgb(p, q, h / 360 - 1 / 3);
-    }
+		const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+		const p = 2 * l - q;
+		r = hue2rgb(p, q, h / 360 + 1 / 3);
+		g = hue2rgb(p, q, h / 360);
+		b = hue2rgb(p, q, h / 360 - 1 / 3);
+	}
 
-    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+	return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 };
 
 const rgbToHex = (r: number, g: number, b: number): string => {
-    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+	return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 };
 
 const getColorForNodeId = (id: string): string => {
-    if (!colorMap.has(id)) {
-        const hash = hashCode(id);
-        let r = (hash & 0xFF0000) >> 16;
-        let g = (hash & 0x00FF00) >> 8;
-        let b = (hash & 0x0000FF);
+	if (!colorMap.has(id)) {
+		const hash = hashCode(id);
+		let r = (hash & 0xFF0000) >> 16;
+		let g = (hash & 0x00FF00) >> 8;
+		let b = (hash & 0x0000FF);
 
-        // Convert to HSL and adjust lightness to be below 50%
-        let [h, s, l] = rgbToHsl(r, g, b);
-        l = l * 0.5; // Set lightness to below 50%
+		// Convert to HSL and adjust lightness to be below 50%
+		let [h, s, l] = rgbToHsl(r, g, b);
+		l = l * 0.5; // Set lightness to below 50%
 
-        // Convert back to RGB
-        [r, g, b] = hslToRgb(h, s, l);
-        const color = rgbToHex(r, g, b); // Convert RGB to hex
-        colorMap.set(id, color);
-    }
-    return colorMap.get(id) || '#000000';
+		// Convert back to RGB
+		[r, g, b] = hslToRgb(h, s, l);
+		const color = rgbToHex(r, g, b); // Convert RGB to hex
+		colorMap.set(id, color);
+	}
+	return colorMap.get(id) || '#000000';
 };
 
 const render = () => {
 	if (topologyObject) {
 		const gridIdElement = <HTMLSpanElement>document.getElementById("gridId");
 		gridIdElement.innerText = topologyObject.id;
-        const copyGridIdButton = document.getElementById("copyGridId");
+		const copyGridIdButton = document.getElementById("copyGridId");
 		if (copyGridIdButton) {
 			copyGridIdButton.style.display = "inline"; // Show the button
 		}
@@ -177,13 +177,13 @@ const render = () => {
 			div.style.position = "absolute";
 			div.style.left = `${centerX + position.x * 50 + 5}px`; // Center the circle
 			div.style.top = `${centerY - position.y * 50 + 5}px`; // Center the circle
-            if (id === node.networkNode.peerId) {
-    			div.style.width = `${34}px`;
-	    		div.style.height = `${34}px`;
-            } else {
-                div.style.width = `${34+6}px`;
-	    		div.style.height = `${34+6}px`;
-            }
+			if (id === node.networkNode.peerId) {
+				div.style.width = `${34}px`;
+				div.style.height = `${34}px`;
+			} else {
+				div.style.width = `${34 + 6}px`;
+				div.style.height = `${34 + 6}px`;
+			}
 			div.style.backgroundColor = color;
 			div.style.borderRadius = "50%";
 			div.style.transition = "background-color 1s ease-in-out";
@@ -198,13 +198,13 @@ const render = () => {
 			const style = document.createElement("style");
 			style.innerHTML = `
 			@keyframes glow-${id} {
-                0% {
-                    background-color: ${hexToRgba(color, 0.5)};
-                }
-                100% {
-                    background-color: ${hexToRgba(color, 1)};
-                }
-            }`;
+				0% {
+					background-color: ${hexToRgba(color, 0.5)};
+				}
+				100% {
+					background-color: ${hexToRgba(color, 1)};
+				}
+			}`;
 			document.head.appendChild(style);
 
 			element_grid.appendChild(div);
@@ -222,14 +222,14 @@ function hexToRgba(hex: string, alpha: number) {
 }
 
 async function addUser() {
-    if (!gridCRO) {
-        console.error("Grid CRO not initialized");
-        alert("Please create or join a grid first");
-        return;
-    }
+	if (!gridCRO) {
+		console.error("Grid CRO not initialized");
+		alert("Please create or join a grid first");
+		return;
+	}
 
-    gridCRO.addUser(node.networkNode.peerId, getColorForNodeId(node.networkNode.peerId));
-    render();
+	gridCRO.addUser(node.networkNode.peerId, getColorForNodeId(node.networkNode.peerId));
+	render();
 }
 
 async function moveUser(direction: string) {
@@ -272,29 +272,29 @@ async function main() {
 		topologyObject = await node.createObject(new Grid());
 		gridCRO = topologyObject.cro as Grid;
 		createConnectHandlers();
-        await addUser();
+		await addUser();
 		render();
 	});
 
 	const button_connect = <HTMLButtonElement>document.getElementById("joinGrid");
 	button_connect.addEventListener("click", async () => {
-        const croId = (<HTMLInputElement>document.getElementById("gridInput"))
+		const croId = (<HTMLInputElement>document.getElementById("gridInput"))
 			.value;
-        try {
-            topologyObject = await node.createObject(
-                new Grid(),
-                croId,
-                undefined,
-                true,
-            );
-            gridCRO = topologyObject.cro as Grid;
-            createConnectHandlers();
-            await addUser();
-            render();
-            console.log("Succeeded in connecting with CRO", croId);
-        } catch (e) {
-            console.error("Error while connecting with CRO", croId, e);
-        }
+		try {
+			topologyObject = await node.createObject(
+				new Grid(),
+				croId,
+				undefined,
+				true,
+			);
+			gridCRO = topologyObject.cro as Grid;
+			createConnectHandlers();
+			await addUser();
+			render();
+			console.log("Succeeded in connecting with CRO", croId);
+		} catch (e) {
+			console.error("Error while connecting with CRO", croId, e);
+		}
 	});
 
 	document.addEventListener("keydown", (event) => {
@@ -309,7 +309,7 @@ async function main() {
 		const gridIdText = (<HTMLSpanElement>document.getElementById("gridId")).innerText;
 		navigator.clipboard.writeText(gridIdText).then(() => {
 			// alert("Grid CRO ID copied to clipboard!");
-            console.log("Grid CRO ID copied to clipboard")
+			console.log("Grid CRO ID copied to clipboard")
 		}).catch(err => {
 			console.error("Failed to copy: ", err);
 		});
