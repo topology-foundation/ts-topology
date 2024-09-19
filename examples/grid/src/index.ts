@@ -26,14 +26,14 @@ const hashCode = (str: string): number => {
 };
 
 const rgbToHsl = (r_: number, g_: number, b_: number): [number, number, number] => {
-    let r = r_ / 255;
-    let g = g_ / 255;
-    let b = b_ / 255;
+    const r = r_ / 255;
+    const g = g_ / 255;
+    const b = b_ / 255;
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
     let h = 0;
-    let s;
-    let l = (max + min) / 2; // Initialize h with a default value
+    let s: number;
+    const l = (max + min) / 2; // Initialize h with a default value
 
     if (max === min) {
         h = s = 0; // achromatic
@@ -51,9 +51,9 @@ const rgbToHsl = (r_: number, g_: number, b_: number): [number, number, number] 
 };
 
 const hslToRgb = (h: number, s: number, l: number): [number, number, number] => {
-    let r;
-    let g
-    let b;
+    let r: number;
+    let g: number;
+    let b: number;
 
     if (s === 0) {
         r = g = b = l; // achromatic
