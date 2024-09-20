@@ -5,6 +5,7 @@ import {
 	topologyObjectChangesHandler,
 } from "./handlers.js";
 import type { TopologyNode } from "./index.js";
+import { Logger } from "./utility/utility.js";
 
 /* Object operations */
 enum OPERATIONS {
@@ -55,7 +56,7 @@ export async function syncObject(
 ) {
 	const object: TopologyObject | undefined = node.objectStore.get(objectId);
 	if (!object) {
-		console.error("topology::node::syncObject", "Object not found");
+		Logger.debug("topology::node::syncObject", "Object not found");
 		return;
 	}
 	const data = NetworkPb.Sync.create({

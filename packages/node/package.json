@@ -1,46 +1,48 @@
 {
- "name": "@topology-foundation/node",
- "version": "0.2.0",
- "license": "MIT",
- "repository": {
-  "type": "git",
-  "url": "git+https://github.com/topology-foundation/ts-topology.git"
- },
- "type": "module",
- "types": "./dist/src/index.d.ts",
- "files": [
-  "src",
-  "dist",
-  "!dist/test",
-  "!**/*.tsbuildinfo"
- ],
- "exports": {
-  ".": {
-   "types": "./dist/src/index.d.ts",
-   "import": "./dist/src/index.js"
+  "name": "@topology-foundation/node",
+  "version": "0.2.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/topology-foundation/ts-topology.git"
+  },
+  "type": "module",
+  "types": "./dist/src/index.d.ts",
+  "files": [
+    "src",
+    "dist",
+    "!dist/test",
+    "!**/*.tsbuildinfo"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist/ node_modules/",
+    "cli": "tsx ./src/run.ts",
+    "prebuild": "node -p \"'export const VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
+    "prepack": "tsc -b",
+    "test": "vitest",
+    "dev": "pnpm build && cross-env DEBUG_MODE=true pnpm cli"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "cross-env": "^7.0.3",
+    "tsx": "4.19.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  },
+  "dependencies": {
+    "@chainsafe/libp2p-gossipsub": "^13.1.0",
+    "@libp2p/interface": "^1.7.0",
+    "@topology-foundation/blueprints": "0.2.0",
+    "@topology-foundation/network": "0.2.0",
+    "@topology-foundation/object": "0.2.0",
+    "commander": "^12.1.0",
+    "it-length-prefixed": "^9.1.0"
   }
- },
- "scripts": {
-  "build": "tsc -b",
-  "clean": "rm -rf dist/ node_modules/",
-  "cli": "tsx ./src/run.ts",
-  "prebuild": "node -p \"'export const VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
-  "prepack": "tsc -b",
-  "test": "vitest"
- },
- "devDependencies": {
-  "@types/node": "^22.5.4",
-  "tsx": "4.19.0",
-  "typescript": "^5.5.4",
-  "vitest": "^2.0.5"
- },
- "dependencies": {
-  "@chainsafe/libp2p-gossipsub": "^13.1.0",
-  "@libp2p/interface": "^1.7.0",
-  "@topology-foundation/blueprints": "0.2.0",
-  "@topology-foundation/network": "0.2.0",
-  "@topology-foundation/object": "0.2.0",
-  "commander": "^12.1.0",
-  "it-length-prefixed": "^9.1.0"
- }
 }

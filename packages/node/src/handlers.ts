@@ -6,6 +6,7 @@ import type {
 	Vertex,
 } from "@topology-foundation/object";
 import type { TopologyNode } from "./index.js";
+import { Logger } from "./utility/utility.js";
 
 /*
   Handler for all CRO messages, including pubsub messages and direct messages
@@ -23,7 +24,7 @@ export async function topologyMessagesHandler(
 	} else if (data) {
 		message = NetworkPb.Message.decode(data);
 	} else {
-		console.error(
+		Logger.debug(
 			"topology::node::messageHandler",
 			"Stream and data are undefined",
 		);
@@ -36,7 +37,7 @@ export async function topologyMessagesHandler(
 			break;
 		case NetworkPb.Message_MessageType.SYNC:
 			if (!stream) {
-				console.error("topology::node::messageHandler", "Stream is undefined");
+				Logger.debug("topology::node::messageHandler", "Stream is undefined");
 				return;
 			}
 			syncHandler(
@@ -48,7 +49,7 @@ export async function topologyMessagesHandler(
 			break;
 		case NetworkPb.Message_MessageType.SYNC_ACCEPT:
 			if (!stream) {
-				console.error("topology::node::messageHandler", "Stream is undefined");
+				Logger.debug("topology::node::messageHandler", "Stream is undefined");
 				return;
 			}
 			syncAcceptHandler(
@@ -62,7 +63,7 @@ export async function topologyMessagesHandler(
 			syncRejectHandler(node, message.data);
 			break;
 		default:
-			console.error("topology::node::messageHandler", "Invalid operation");
+			Logger.debug("topology::node::messageHandler", "Invalid operation");
 			break;
 	}
 }
@@ -75,7 +76,7 @@ function updateHandler(node: TopologyNode, data: Uint8Array) {
 	const updateMessage = NetworkPb.Update.decode(data);
 	const object = node.objectStore.get(updateMessage.objectId);
 	if (!object) {
-		console.error("topology::node::updateHandler", "Object not found");
+		Logger.debug("topology::node::updateHandler", "Object not found");
 		return false;
 	}
 
@@ -111,7 +112,7 @@ function syncHandler(
 	const syncMessage = NetworkPb.Sync.decode(data);
 	const object = node.objectStore.get(syncMessage.objectId);
 	if (!object) {
-		console.error("topology::node::syncHandler", "Object not found");
+		Logger.debug("topology::node::syncHandler", "Object not found");
 		return;
 	}
 
@@ -156,7 +157,7 @@ function syncAcceptHandler(
 	const syncAcceptMessage = NetworkPb.SyncAccept.decode(data);
 	const object = node.objectStore.get(syncAcceptMessage.objectId);
 	if (!object) {
-		console.error("topology::node::syncAcceptHandler", "Object not found");
+		Logger.debug("topology::node::syncAcceptHandler", "Object not found");
 		return;
 	}
 
@@ -237,6 +238,6 @@ export function topologyObjectChangesHandler(
 			break;
 		}
 		default:
-			console.error("topology::node::createObject", "Invalid origin function");
+			Logger.debug("topology::node::createObject", "Invalid origin function");
 	}
 }
