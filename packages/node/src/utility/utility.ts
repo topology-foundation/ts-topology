@@ -3,7 +3,7 @@ import fs from "node:fs";
 
 
 export class Logger {
-  private static debugMode: boolean = false;
+  private static debugMode: string|boolean = process.env.debugMode || false;
  
   static logToFile(message: string) {
     const logFilePath = "logs/debug.log";

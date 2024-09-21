@@ -45,16 +45,16 @@ importers:
   examples/canvas:
     dependencies:
       '@topology-foundation/blueprints':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/blueprints
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/object
       crypto-browserify:
         specifier: ^3.12.0
@@ -91,16 +91,16 @@ importers:
   examples/chat:
     dependencies:
       '@topology-foundation/blueprints':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/blueprints
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/object
       assemblyscript:
         specifier: ^0.27.29
@@ -146,13 +146,13 @@ importers:
   examples/grid:
     dependencies:
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/object
       assemblyscript:
         specifier: ^0.27.29
@@ -205,7 +205,7 @@ importers:
         version: 4.0.3
     devDependencies:
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../object
       assemblyscript:
         specifier: ^0.27.29
@@ -305,13 +305,13 @@ importers:
         specifier: ^1.7.0
         version: 1.7.0
       '@topology-foundation/blueprints':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../blueprints
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../network
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../object
       commander:
         specifier: ^12.1.0
@@ -323,6 +323,9 @@ importers:
       '@types/node':
         specifier: ^22.5.4
         version: 22.5.4
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
       tsx:
         specifier: 4.19.0
         version: 4.19.0
@@ -2691,6 +2694,11 @@ packages:
 
   create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+
+  cross-env@7.0.3:
+    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
+    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
+    hasBin: true
 
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -8583,6 +8591,10 @@ snapshots:
       sha.js: 2.4.11
 
   create-require@1.1.1: {}
+
+  cross-env@7.0.3:
+    dependencies:
+      cross-spawn: 7.0.3
 
   cross-spawn@7.0.3:
     dependencies:
