@@ -87,6 +87,7 @@ export class TopologyObject implements ITopologyObject {
 
 	// biome-ignore lint: value can't be unknown because of protobuf
 	callFn(fn: string, args: any) {
+		// Since we are creating a vertex with known values, the operation should not be undefined.
 		const vertex = this.hashGraph.addToFrontier({ type: fn, value: args });
 		const serializedVertex = ObjectPb.Vertex.create({
 			hash: vertex.hash,
@@ -103,6 +104,11 @@ export class TopologyObject implements ITopologyObject {
 
 	merge(vertices: Vertex[]) {
 		for (const vertex of vertices) {
+			// Vertex operation is expected to be defined, if its not defined we ignore it and continue.
+			if (!vertex.operation) {
+				continue;
+			}
+
 			this.hashGraph.addVertex(
 				vertex.operation,
 				vertex.dependencies,
@@ -112,6 +118,10 @@ export class TopologyObject implements ITopologyObject {
 
 		const operations = this.hashGraph.linearizeOperations();
 		this.vertices = this.hashGraph.getAllVertices().map((vertex) => {
+			// Again, we are filtering out vertices with undefined operations.
+			if (!vertex.operation) {
+				return;
+			}
 			return {
 				hash: vertex.hash,
 				nodeId: vertex.nodeId,
@@ -121,7 +131,7 @@ export class TopologyObject implements ITopologyObject {
 				},
 				dependencies: vertex.dependencies,
 			};
-		});
+		}).filter((vertex) => vertex !== undefined);
 
 		(this.cro as CRO).mergeCallback(operations);
 		this._notify("merge", this.vertices);

@@ -1,11 +1,13 @@
 import * as crypto from "node:crypto";
 import { linearizeMultiple } from "../linearize/multipleSemantics.js";
 import { linearizePair } from "../linearize/pairSemantics.js";
+import { Vertex_Operation as Operation, Vertex } from "../proto/object_pb.js";
 import { BitSet } from "./bitset.js";
 
+// Reexporting the Vertex and Operation types from the protobuf file
+export { Vertex, Operation };
+
 export type Hash = string;
-// biome-ignore lint: value can't be unknown because of protobuf
-export type Operation = { type: string; value: any | null };
 
 enum OperationType {
 	NOP = "-1",
@@ -29,15 +31,6 @@ export type ResolveConflictsType = {
 	action: ActionType;
 	vertices?: Hash[];
 };
-
-export interface Vertex {
-	hash: Hash;
-	nodeId: string;
-	// internal Operation type enum converted to number
-	// -1 for NOP
-	operation: Operation;
-	dependencies: Hash[];
-}
 
 export class HashGraph {
 	nodeId: string;
@@ -86,10 +79,14 @@ export class HashGraph {
 		this.forwardEdges.set(HashGraph.rootHash, []);
 	}
 
-	addToFrontier(operation: Operation): Vertex {
+	/**
+	 * @param operation - The operation to be added
+	 * @returns The vertex that was added, with the operation being defined rather than undefined.
+	 */
+	addToFrontier(operation: Operation): Omit<Vertex, "operation"> & { operation: Operation } {
 		const deps = this.getFrontier();
 		const hash = computeHash(this.nodeId, operation, deps);
-		const vertex: Vertex = {
+		const vertex = {
 			hash,
 			nodeId: this.nodeId,
 			operation,
