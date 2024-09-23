@@ -45,16 +45,16 @@ importers:
   examples/canvas:
     dependencies:
       '@topology-foundation/blueprints':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/blueprints
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/object
       crypto-browserify:
         specifier: ^3.12.0
@@ -91,16 +91,16 @@ importers:
   examples/chat:
     dependencies:
       '@topology-foundation/blueprints':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/blueprints
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/object
       assemblyscript:
         specifier: ^0.27.29
@@ -146,13 +146,13 @@ importers:
   examples/grid:
     dependencies:
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/object
       assemblyscript:
         specifier: ^0.27.29
@@ -205,7 +205,7 @@ importers:
         version: 4.0.3
     devDependencies:
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../object
       assemblyscript:
         specifier: ^0.27.29
@@ -220,8 +220,8 @@ importers:
         specifier: ^13.1.0
         version: 13.2.0
       '@chainsafe/libp2p-noise':
-        specifier: ^15.1.2
-        version: 15.1.2
+        specifier: ^16.0.0
+        version: 16.0.0
       '@chainsafe/libp2p-yamux':
         specifier: ^6.0.2
         version: 6.0.2
@@ -305,13 +305,13 @@ importers:
         specifier: ^1.7.0
         version: 1.7.0
       '@topology-foundation/blueprints':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../blueprints
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../network
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../object
       commander:
         specifier: ^12.1.0
@@ -1108,6 +1108,9 @@ packages:
     resolution: {integrity: sha512-o6mqsAbaCBucgdLOOHtkwtGVL1c8RLKhlTnHQY+leazY+thiE1Sm6qPCwsTHKQnWii1q5hDVI2Q0l9QgYi5v4Q==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
 
+  '@chainsafe/libp2p-noise@16.0.0':
+    resolution: {integrity: sha512-8rqr8V1RD2/lVbfL0Bb//N8iPOFof11cUe8v8z8xJT7fUhCAbtCCSM4jbwI4HCnw0MvHLmcpmAfDCFRwcWzoeA==}
+
   '@chainsafe/libp2p-yamux@6.0.2':
     resolution: {integrity: sha512-S5OkLHqYhEVMQQ4BTgnRANEIbGTQhaC23glCgBwGdeoTRtMpIozwDiPfljFLCm0RYWdCRJw9oFztO95KUHjptA==}
 
@@ -1498,6 +1501,9 @@ packages:
   '@libp2p/crypto@4.1.9':
     resolution: {integrity: sha512-8Cf2VKh0uC/rQLvTLSloIOMqUvf4jsSTHXgjWQRf47lDNJlNNI0wSv2S6gakT72GZsRV/jCjYwKPqRlsa5S0iA==}
 
+  '@libp2p/crypto@5.0.1':
+    resolution: {integrity: sha512-j7X4ISdWHnIJh752bl70z+3R4LdB8xftFU0ShOuuHg9ETTViHa3O0AK5v1HxyaSXE/uhXhfwjVH3vxn8ECQl/A==}
+
   '@libp2p/dcutr@1.1.5':
     resolution: {integrity: sha512-1zDhZxLxrl+yqIAG9KzyLu3gzyvOT7UYTislw4EwhcMGMviot/pgR87SSVqbT+HDpAoj1sM/3F5VUT/sCDa9WA==}
 
@@ -1525,6 +1531,9 @@ packages:
   '@libp2p/interface@1.7.0':
     resolution: {integrity: sha512-/zFyaIaIGW0aihhsH7/93vQdpWInUzFocxF11RO/029Y6h0SVjs24HHbils+DqaFDTqN+L7oNlBx2rM2MnmTjA==}
 
+  '@libp2p/interface@2.0.1':
+    resolution: {integrity: sha512-zDAgu+ZNiYZxVsmcvCeNCLMnGORwLMMI8w0k2YcHwolATsv2q7QG3KpakmyKjH4m7C0hT86lGgf1sgGobPssYA==}
+
   '@libp2p/interfaces@3.3.2':
     resolution: {integrity: sha512-p/M7plbrxLzuQchvNwww1Was7ZeGE2NaOFulMaZBYIihU8z3fhaV+a033OqnC/0NTX/yhfdNOG7znhYq3XoR/g==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
@@ -1546,6 +1555,9 @@ packages:
 
   '@libp2p/peer-id@4.2.4':
     resolution: {integrity: sha512-mvvsVxt4HkF14BrTNKbqr14VObW+KBJBWu1Oe6BFCoDttGMQLaI+PdduE1r6Tquntv5IONBqoITgD7ow5dQ+vQ==}
+
+  '@libp2p/peer-id@5.0.1':
+    resolution: {integrity: sha512-HwoW7dQ/o4NQ+5PQThOzMK2OHMRicmTZxVuMjbjWcPNnNWb8x/5vwjzdEUfqXimHYdZTIpy2PMMq6Jf4zvculQ==}
 
   '@libp2p/peer-record@7.0.25':
     resolution: {integrity: sha512-b54P3cSeQniW/HPJjBVbeF3KaVUQkWa431gotuIFUS1PYgtz69uzkRrVY6Qt+RBb4R4fcmH4K4jWyZi3xyLGfQ==}
@@ -6579,6 +6591,26 @@ snapshots:
       uint8arrays: 5.1.0
       wherearewe: 2.0.1
 
+  '@chainsafe/libp2p-noise@16.0.0':
+    dependencies:
+      '@chainsafe/as-chacha20poly1305': 0.1.0
+      '@chainsafe/as-sha256': 0.4.2
+      '@libp2p/crypto': 5.0.1
+      '@libp2p/interface': 2.0.1
+      '@libp2p/peer-id': 5.0.1
+      '@noble/ciphers': 0.6.0
+      '@noble/curves': 1.5.0
+      '@noble/hashes': 1.4.0
+      it-length-prefixed: 9.1.0
+      it-length-prefixed-stream: 1.2.0
+      it-pair: 2.0.6
+      it-pipe: 3.0.1
+      it-stream-types: 2.0.1
+      protons-runtime: 5.5.0
+      uint8arraylist: 2.4.8
+      uint8arrays: 5.1.0
+      wherearewe: 2.0.1
+
   '@chainsafe/libp2p-yamux@6.0.2':
     dependencies:
       '@libp2p/interface': 1.7.0
@@ -6890,6 +6922,17 @@ snapshots:
       uint8arraylist: 2.4.8
       uint8arrays: 5.1.0
 
+  '@libp2p/crypto@5.0.1':
+    dependencies:
+      '@libp2p/interface': 2.0.1
+      '@noble/curves': 1.5.0
+      '@noble/hashes': 1.4.0
+      asn1js: 3.0.5
+      multiformats: 13.2.2
+      protons-runtime: 5.5.0
+      uint8arraylist: 2.4.8
+      uint8arrays: 5.1.0
+
   '@libp2p/dcutr@1.1.5':
     dependencies:
       '@libp2p/interface': 1.7.0
@@ -6970,6 +7013,15 @@ snapshots:
       progress-events: 1.0.1
       uint8arraylist: 2.4.8
 
+  '@libp2p/interface@2.0.1':
+    dependencies:
+      '@multiformats/multiaddr': 12.3.1
+      it-pushable: 3.2.3
+      it-stream-types: 2.0.1
+      multiformats: 13.2.2
+      progress-events: 1.0.1
+      uint8arraylist: 2.4.8
+
   '@libp2p/interfaces@3.3.2': {}
 
   '@libp2p/logger@4.0.20':
@@ -7021,6 +7073,13 @@ snapshots:
   '@libp2p/peer-id@4.2.4':
     dependencies:
       '@libp2p/interface': 1.7.0
+      multiformats: 13.2.2
+      uint8arrays: 5.1.0
+
+  '@libp2p/peer-id@5.0.1':
+    dependencies:
+      '@libp2p/crypto': 5.0.1
+      '@libp2p/interface': 2.0.1
       multiformats: 13.2.2
       uint8arrays: 5.1.0
 
