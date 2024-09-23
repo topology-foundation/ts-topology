@@ -2,7 +2,6 @@ import * as crypto from "node:crypto";
 import {
 	HashGraph,
 	type Operation,
-	OperationType,
 	type ResolveConflictsType,
 	type SemanticsType,
 	type Vertex,
@@ -91,7 +90,7 @@ export class TopologyObject implements ITopologyObject {
 		const serializedVertex = ObjectPb.Vertex.create({
 			hash: vertex.hash,
 			nodeId: vertex.nodeId,
-			operation: vertex.operation ?? { type: OperationType.NOP },
+			operation: vertex.operation,
 			dependencies: vertex.dependencies,
 		});
 		this.vertices.push(serializedVertex);
@@ -113,17 +112,7 @@ export class TopologyObject implements ITopologyObject {
 		}
 
 		const operations = this.hashGraph.linearizeOperations();
-		this.vertices = this.hashGraph
-			.getAllVertices()
-			.filter((vertex) => vertex.operation !== undefined)
-			.map((vertex) => {
-				return {
-					hash: vertex.hash,
-					nodeId: vertex.nodeId,
-					operation: vertex.operation,
-					dependencies: vertex.dependencies,
-				};
-			});
+		this.vertices = this.hashGraph.getAllVertices();
 
 		(this.cro as CRO).mergeCallback(operations);
 		this._notify("merge", this.vertices);
