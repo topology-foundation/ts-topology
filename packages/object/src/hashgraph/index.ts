@@ -83,13 +83,13 @@ export class HashGraph {
 	 * @param operation - The operation to be added
 	 * @returns The vertex that was added, with the operation being defined rather than undefined.
 	 */
-	addToFrontier(operation: Operation): Omit<Vertex, "operation"> & { operation: Operation } {
+	addToFrontier(operation: Operation): Vertex {
 		const deps = this.getFrontier();
 		const hash = computeHash(this.nodeId, operation, deps);
 		const vertex = {
 			hash,
 			nodeId: this.nodeId,
-			operation,
+			operation ?? { type: OperationType.NOP },
 			dependencies: deps,
 		};
 
