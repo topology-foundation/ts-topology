@@ -41,6 +41,7 @@
   "@topology-foundation/network": "0.2.0",
   "@topology-foundation/object": "0.2.0",
   "commander": "^12.1.0",
-  "it-length-prefixed": "^9.1.0"
+  "it-length-prefixed": "^9.1.0",
+  "tslog": "^4.9.3"
  }
 }
