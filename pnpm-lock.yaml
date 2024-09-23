@@ -45,16 +45,16 @@ importers:
   examples/canvas:
     dependencies:
       '@topology-foundation/blueprints':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/blueprints
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/object
       crypto-browserify:
         specifier: ^3.12.0
@@ -91,16 +91,16 @@ importers:
   examples/chat:
     dependencies:
       '@topology-foundation/blueprints':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/blueprints
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/object
       assemblyscript:
         specifier: ^0.27.29
@@ -146,13 +146,13 @@ importers:
   examples/grid:
     dependencies:
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/network
       '@topology-foundation/node':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/node
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../../packages/object
       assemblyscript:
         specifier: ^0.27.29
@@ -205,7 +205,7 @@ importers:
         version: 4.0.3
     devDependencies:
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../object
       assemblyscript:
         specifier: ^0.27.29
@@ -305,17 +305,20 @@ importers:
         specifier: ^1.7.0
         version: 1.7.0
       '@topology-foundation/blueprints':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../blueprints
       '@topology-foundation/network':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../network
       '@topology-foundation/object':
-        specifier: 0.1.1
+        specifier: 0.2.0
         version: link:../object
       commander:
         specifier: ^12.1.0
         version: 12.1.0
+      google-protobuf:
+        specifier: ^3.21.2
+        version: 3.21.4
       it-length-prefixed:
         specifier: ^9.1.0
         version: 9.1.0
@@ -3215,6 +3218,9 @@ packages:
 
   globrex@0.1.2:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
+
+  google-protobuf@3.21.4:
+    resolution: {integrity: sha512-MnG7N936zcKTco4Jd2PX2U96Kf9PxygAPKBug+74LHzmHXmceN16MmRcdgZv+DGef/S9YvQAfRsNCn4cjf9yyQ==}
 
   gopd@1.0.1:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
@@ -9129,6 +9135,8 @@ snapshots:
       unicorn-magic: 0.1.0
 
   globrex@0.1.2: {}
+
+  google-protobuf@3.21.4: {}
 
   gopd@1.0.1:
     dependencies:
