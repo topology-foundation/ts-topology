@@ -319,6 +319,9 @@ importers:
       it-length-prefixed:
         specifier: ^9.1.0
         version: 9.1.0
+      tslog:
+        specifier: ^4.9.3
+        version: 4.9.3
     devDependencies:
       '@types/node':
         specifier: ^22.5.4
@@ -5185,6 +5188,10 @@ packages:
 
   tslib@2.7.0:
     resolution: {integrity: sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==}
+
+  tslog@4.9.3:
+    resolution: {integrity: sha512-oDWuGVONxhVEBtschLf2cs/Jy8i7h1T+CpdkTNWQgdAF7DhRo2G8vMCgILKe7ojdEkLhICWgI1LYSSKaJsRgcw==}
+    engines: {node: '>=16'}
 
   tsx@4.19.0:
     resolution: {integrity: sha512-bV30kM7bsLZKZIOCHeMNVMJ32/LuJzLVajkQI/qf92J2Qr08ueLQvW00PUZGiuLPP760UINwupgUj8qrSCPUKg==}
@@ -11397,6 +11404,8 @@ snapshots:
       typescript: 5.5.4
 
   tslib@2.7.0: {}
+
+  tslog@4.9.3: {}
 
   tsx@4.19.0:
     dependencies:
