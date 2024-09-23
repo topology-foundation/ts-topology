@@ -9,7 +9,7 @@ export { Vertex, Operation };
 
 export type Hash = string;
 
-enum OperationType {
+export enum OperationType {
 	NOP = "-1",
 }
 
@@ -79,17 +79,14 @@ export class HashGraph {
 		this.forwardEdges.set(HashGraph.rootHash, []);
 	}
 
-	/**
-	 * @param operation - The operation to be added
-	 * @returns The vertex that was added, with the operation being defined rather than undefined.
-	 */
 	addToFrontier(operation: Operation): Vertex {
 		const deps = this.getFrontier();
 		const hash = computeHash(this.nodeId, operation, deps);
-		const vertex = {
+
+		const vertex: Vertex = {
 			hash,
 			nodeId: this.nodeId,
-			operation ?? { type: OperationType.NOP },
+			operation: operation ?? { type: OperationType.NOP },
 			dependencies: deps,
 		};
 

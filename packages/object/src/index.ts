@@ -1,8 +1,8 @@
 import * as crypto from "node:crypto";
 import {
-	type ActionType,
 	HashGraph,
 	type Operation,
+	OperationType,
 	type ResolveConflictsType,
 	type SemanticsType,
 	type Vertex,
@@ -91,10 +91,7 @@ export class TopologyObject implements ITopologyObject {
 		const serializedVertex = ObjectPb.Vertex.create({
 			hash: vertex.hash,
 			nodeId: vertex.nodeId,
-			operation: {
-				type: vertex.operation.type,
-				value: vertex.operation.value,
-			},
+			operation: vertex.operation ?? { type: OperationType.NOP },
 			dependencies: vertex.dependencies,
 		});
 		this.vertices.push(serializedVertex);
@@ -116,20 +113,17 @@ export class TopologyObject implements ITopologyObject {
 		}
 
 		const operations = this.hashGraph.linearizeOperations();
-		this.vertices = this.hashGraph.getAllVertices().map((vertex) => {
-			if (!vertex.operation) {
-				return;
-			}
-			return {
-				hash: vertex.hash,
-				nodeId: vertex.nodeId,
-				operation: {
-					type: vertex.operation.type,
-					value: vertex.operation.value,
-				},
-				dependencies: vertex.dependencies,
-			};
-		}).filter((vertex) => vertex !== undefined);
+		this.vertices = this.hashGraph
+			.getAllVertices()
+			.filter((vertex) => vertex.operation !== undefined)
+			.map((vertex) => {
+				return {
+					hash: vertex.hash,
+					nodeId: vertex.nodeId,
+					operation: vertex.operation,
+					dependencies: vertex.dependencies,
+				};
+			});
 
 		(this.cro as CRO).mergeCallback(operations);
 		this._notify("merge", this.vertices);
