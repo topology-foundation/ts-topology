@@ -67,11 +67,10 @@ export class TopologyNetworkNode {
 		}
 
 		this._node = await createLibp2p({
-			peerId: peerId,
 			addresses: {
 				listen: this._config?.addresses ? this._config.addresses : ["/webrtc"],
 			},
-			connectionEncryption: [noise()],
+			connectionEncrypters: [noise()],
 			connectionGater: {
 				denyDialMultiaddr: () => {
 					return false;
@@ -95,9 +94,7 @@ export class TopologyNetworkNode {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
 				identify: identify(),
-				pubsub: gossipsub({
-					allowPublishToZeroTopicPeers: true,
-				}),
+				pubsub: gossipsub(),
 			},
 			streamMuxers: [yamux()],
 			transports: [

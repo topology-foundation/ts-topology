@@ -6575,7 +6575,7 @@ snapshots:
     dependencies:
       '@libp2p/crypto': 5.0.2
       '@libp2p/interface': 2.1.0
-      '@libp2p/interface-internal': 2.0.1
+      '@libp2p/interface-internal': 2.0.2
       '@libp2p/peer-id': 5.0.2
       '@libp2p/pubsub': 10.0.2
       '@multiformats/multiaddr': 12.3.1
