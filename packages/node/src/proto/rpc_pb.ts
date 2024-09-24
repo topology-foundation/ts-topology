@@ -382,18 +382,18 @@ export const GetCroHashGraphResponse: MessageFns<GetCroHashGraphResponse> = {
   },
 };
 
-export interface Rpc {
+export interface TopologyRpc {
   subscribeCro(request: SubscribeCroRequest): Promise<SubscribeCroResponse>;
   unsubscribeCro(request: UnsubscribeCroRequest): Promise<UnsubscribeCroRequest>;
   getCroHashGraph(request: GetCroHashGraphRequest): Promise<GetCroHashGraphResponse>;
 }
 
-export const RpcServiceName = "topology.rpc.Rpc";
-export class RpcClientImpl implements Rpc {
+export const TopologyRpcServiceName = "topology.rpc.TopologyRpc";
+export class TopologyRpcClientImpl implements TopologyRpc {
   private readonly rpc: Rpc;
   private readonly service: string;
   constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || RpcServiceName;
+    this.service = opts?.service || TopologyRpcServiceName;
     this.rpc = rpc;
     this.subscribeCro = this.subscribeCro.bind(this);
     this.unsubscribeCro = this.unsubscribeCro.bind(this);

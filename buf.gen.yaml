@@ -7,6 +7,10 @@ plugins:
     opt:
       - esModuleInterop=true
       - fileSuffix=_pb
+  - remote: buf.build/grpc/node
+    out: ./packages
+    opt:
+      - ts_proto_opt=esModuleInterop=true
 inputs:
   - directory: ./packages
     exclude_paths:

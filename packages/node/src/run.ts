@@ -1,13 +1,14 @@
 import fs from "node:fs";
 import { program } from "./cli/index.js";
 import { TopologyNode, type TopologyNodeConfig } from "./index.js";
+import { init as rpc_init } from "./rpc/index.js";
 
 async function startNode(config?: TopologyNodeConfig) {
 	const node = new TopologyNode(config);
 	node.start();
 }
 
-const run = () => {
+const run = async () => {
 	program.parse(process.argv);
 	const opts = program.opts();
 	let config: TopologyNodeConfig | undefined;
@@ -15,7 +16,8 @@ const run = () => {
 		config = JSON.parse(fs.readFileSync(opts.config, "utf8"));
 	}
 
-	startNode(config);
+	// await startNode(config);
+	rpc_init();
 };
 
 run();

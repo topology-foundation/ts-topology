@@ -37,6 +37,7 @@
  },
  "dependencies": {
   "@chainsafe/libp2p-gossipsub": "^13.1.0",
+  "@grpc/grpc-js": "^1.11.3",
   "@libp2p/interface": "^1.7.0",
   "@topology-foundation/blueprints": "0.2.0",
   "@topology-foundation/network": "0.2.0",
