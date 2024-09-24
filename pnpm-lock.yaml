@@ -241,8 +241,8 @@ importers:
         specifier: ^1.1.4
         version: 1.1.5
       '@libp2p/devtools-metrics':
-        specifier: ^0.2.5
-        version: 0.2.5
+        specifier: ^1.0.1
+        version: 1.0.1
       '@libp2p/identify':
         specifier: ^2.1.4
         version: 2.1.5
@@ -1504,8 +1504,8 @@ packages:
   '@libp2p/dcutr@1.1.5':
     resolution: {integrity: sha512-1zDhZxLxrl+yqIAG9KzyLu3gzyvOT7UYTislw4EwhcMGMviot/pgR87SSVqbT+HDpAoj1sM/3F5VUT/sCDa9WA==}
 
-  '@libp2p/devtools-metrics@0.2.5':
-    resolution: {integrity: sha512-JYETw4TYOhS3DfEzjEL1pMm6LQiyMnkIVfSsfj+ExnHgWfkdy/jXe8dd/IkSyp0OBX7Lf2Qe7Gu9nqm6GhssYQ==}
+  '@libp2p/devtools-metrics@1.0.1':
+    resolution: {integrity: sha512-UMA+pKlfEn88ls/pCLWmaEA43pmy673/StgKBiEZVuzRnfkxNbRM3CNzb35JXFI9QrwcCOG0u5X4f7ousXNhag==}
 
   '@libp2p/identify@2.1.5':
     resolution: {integrity: sha512-uVghY2KfZ3ffDkPmcivfiRDlq1h5rCcoHAW+Kb7JF2qrDfg6BgHAn6IRN4pe/DnYXOuJXIIm6+jjcReTPGBKBQ==}
@@ -1580,8 +1580,8 @@ packages:
   '@libp2p/pubsub@9.0.26':
     resolution: {integrity: sha512-69sFv5DAHSXrQdu4THX9WSZuEfCjEbbk6bKiTtbNGpq1Vaf57rjsTWk/EXMS/veeMl95xJs3/BR7dQal2PtJmw==}
 
-  '@libp2p/simple-metrics@1.1.5':
-    resolution: {integrity: sha512-4EK1dsBysbJ9TZmqo0wSbKE/QnCucFBFmyZrH0kIt85N7dvhf8l20kdPuNctVOzh9pmY6oBxz6dZm+idl+cpMg==}
+  '@libp2p/simple-metrics@1.1.7':
+    resolution: {integrity: sha512-lhpAZ7bvgqMwvfdVscG5/vHBjJbKfOqFpkfW+YpnB7Yv52LqjKKjWD5PhkrDV84rKudL58FDlUItObwRSdXgUg==}
 
   '@libp2p/utils@5.4.9':
     resolution: {integrity: sha512-0fRdX98WqhTmXU2WEVLegLFxs/kKTtUHanHk5Lzs4oGsIzlPHR7zE6lj/U1WfsFA+Xo1eYQpNLiXEL29hG+Nyw==}
@@ -6942,13 +6942,13 @@ snapshots:
       protons-runtime: 5.5.0
       uint8arraylist: 2.4.8
 
-  '@libp2p/devtools-metrics@0.2.5':
+  '@libp2p/devtools-metrics@1.0.1':
     dependencies:
-      '@libp2p/interface': 1.7.0
-      '@libp2p/interface-internal': 1.3.4
-      '@libp2p/logger': 4.0.20
-      '@libp2p/peer-id': 4.2.4
-      '@libp2p/simple-metrics': 1.1.5
+      '@libp2p/interface': 2.0.1
+      '@libp2p/interface-internal': 2.0.1
+      '@libp2p/logger': 5.0.1
+      '@libp2p/peer-id': 5.0.1
+      '@libp2p/simple-metrics': 1.1.7
       '@multiformats/multiaddr': 12.3.1
       cborg: 4.2.3
       it-pipe: 3.0.1
@@ -7170,10 +7170,10 @@ snapshots:
       uint8arraylist: 2.4.8
       uint8arrays: 5.1.0
 
-  '@libp2p/simple-metrics@1.1.5':
+  '@libp2p/simple-metrics@1.1.7':
     dependencies:
-      '@libp2p/interface': 1.7.0
-      '@libp2p/logger': 4.0.20
+      '@libp2p/interface': 2.0.1
+      '@libp2p/logger': 5.0.1
       it-foreach: 2.1.1
       it-stream-types: 2.0.1
 
