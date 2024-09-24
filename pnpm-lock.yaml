@@ -307,9 +307,6 @@ importers:
       commander:
         specifier: ^12.1.0
         version: 12.1.0
-      it-length-prefixed:
-        specifier: ^9.1.0
-        version: 9.1.0
     devDependencies:
       '@types/node':
         specifier: ^22.5.4
