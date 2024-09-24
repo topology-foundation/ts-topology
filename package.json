@@ -20,6 +20,7 @@
 		"biome-check": "biome check",
 		"clean": "pnpm --filter '@topology-foundation/*' clean",
 		"docs": "typedoc",
+		"postinstall": "pnpm --filter '@topology-foundation/*' build",
 		"proto-gen": "buf generate",
 		"release": "release-it",
 		"test": "vitest"
