@@ -35,8 +35,6 @@
   "vitest": "^2.0.5"
  },
  "dependencies": {
-  "@chainsafe/libp2p-gossipsub": "^14.1.0",
-  "@libp2p/interface": "^2.1.0",
   "@topology-foundation/blueprints": "0.2.0",
   "@topology-foundation/network": "0.2.0",
   "@topology-foundation/object": "0.2.0",
