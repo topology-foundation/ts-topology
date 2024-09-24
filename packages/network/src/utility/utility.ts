@@ -5,8 +5,9 @@ interface LoggerConfig {
 }
 
 interface MyLogObject {
-  message: string;
-  context: string;
+  message?: string;
+  context?: string;
+  [key: string]: any; 
 }
 
 const logLevelMapping: Record<string, number> = {
@@ -18,6 +19,7 @@ const logLevelMapping: Record<string, number> = {
   fatal: 5,
 };
 
+
 const isBrowser = (): boolean => {
   return (
     typeof window !== "undefined" && typeof window.document !== "undefined"
@@ -26,43 +28,67 @@ const isBrowser = (): boolean => {
 
 class Logger {
   private log: TsLogger<MyLogObject>;
+  private isBrowser: boolean;
 
   constructor(config: LoggerConfig) {
     const logLevel = logLevelMapping[config.log_level] || 2;
+    this.isBrowser = isBrowser();
 
-    if (isBrowser()) {
-      // Configure for browser environment
+    if (this.isBrowser) {
       this.log = new TsLogger({
         minLevel: logLevel,
         type: "pretty",
         name: "BrowserLogger",
+        prettyLogTemplate: "{{message}}", 
+        prettyLogTimeZone: "local",
+        prettyInspectOptions: {
+          colors: true,
+          depth: 5, 
+        },
       });
     } else {
-      // Configure for CLI environment
       this.log = new TsLogger({
         minLevel: logLevel,
       });
     }
   }
 
-  debug(context: string, message: string) {
-    this.log.debug(`[${context}] ${message}`);
+
+  private logMessage(
+    level: keyof TsLogger<MyLogObject>,
+    context: string,
+    message: string | object
+  ) {
+    if (this.isBrowser) {
+      this.log.debug({ context, message }); 
+    } else {
+      this.log.debug(
+        typeof message === "object"
+          ? JSON.stringify({ context, ...message }, null, 2) 
+          : `[${context}] ${message}`
+      );
+    }
   }
 
-  info(context: string, message: string) {
-    this.log.info(`[${context}] ${message}`);
+
+  debug(context: string, message: string | object) {
+    this.logMessage("debug", context, message);
   }
 
-  warn(context: string, message: string) {
-    this.log.warn(`[${context}] ${message}`);
+  info(context: string, message: string | object) {
+    this.logMessage("info", context, message);
   }
 
-  error(context: string, message: string) {
-    this.log.error(`[${context}] ${message}`);
+  warn(context: string, message: string | object) {
+    this.logMessage("warn", context, message);
   }
 
-  fatal(context: string, message: string) {
-    this.log.fatal(`[${context}] ${message}`);
+  error(context: string, message: string | object) {
+    this.logMessage("error", context, message);
+  }
+
+  fatal(context: string, message: string | object) {
+    this.logMessage("fatal", context, message);
   }
 }
 
