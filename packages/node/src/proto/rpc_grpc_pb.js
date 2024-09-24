@@ -1,7 +1,5 @@
 // GENERATED CODE -- DO NOT EDIT!
 
-import * as grpc from "@grpc/grpc-js";
-
 import * as node_src_proto_rpc_pb from './rpc_pb.js';
 
 function serialize_topology_rpc_GetCroHashGraphRequest(arg) {

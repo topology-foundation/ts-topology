@@ -2,11 +2,12 @@ version: v2
 managed:
   enabled: true
 plugins:
-  - remote: buf.build/community/stephenh-ts-proto
+  - local: ./node_modules/ts-proto/protoc-gen-ts_proto
     out: ./packages
     opt:
       - esModuleInterop=true
       - fileSuffix=_pb
+      - ts_proto_opt=outputServices=grpc-js
   - remote: buf.build/grpc/node
     out: ./packages
     opt:
