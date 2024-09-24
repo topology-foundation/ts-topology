@@ -53,7 +53,7 @@
   "it-length-prefixed": "^9.1.0",
   "it-map": "^3.1.1",
   "it-pipe": "^3.0.1",
-  "libp2p": "^1.9.4",
+  "libp2p": "^2.0.2",
   "ts-proto": "^2.0.3",
   "uint8arrays": "^5.1.0"
  }
