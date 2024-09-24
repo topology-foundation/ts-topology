@@ -2,9 +2,14 @@ version: v2
 managed:
   enabled: true
 plugins:
-  - local: ./node_modules/ts-proto/protoc-gen-ts_proto
-    strategy: directory
+  - remote: buf.build/community/stephenh-ts-proto
     out: ./packages
     opt:
       - esModuleInterop=true
       - fileSuffix=_pb
+inputs:
+  - directory: ./packages
+    exclude_paths:
+      - packages/node/node_modules
+      - packages/network/node_modules
+      - packages/object/node_modules

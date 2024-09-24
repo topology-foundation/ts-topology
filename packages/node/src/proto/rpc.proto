@@ -1,18 +1,10 @@
 syntax = "proto3";
 package topology.rpc;
-import "google/api/http.proto";
-import "google/api/annotations.proto";
 
 service Rpc {
-	rpc subscribeCro    (SubscribeCroRequest    ) returns (SubscribeCroResponse    ) {
-		option (google.api.http).get = "/topopology/cro/subscribe/{cro_id}";
-	};
-	rpc unsubscribeCro  (UnsubscribeCroRequest  ) returns (UnsubscribeCroRequest   ) {
-		option (google.api.http).get = "/topopology/cro/subscribe/{cro_id}";
-	};
-	rpc getCroHashGraph (GetCroHashGraphRequest ) returns (GetCroHashGraphResponse ) {
-		option (google.api.http).get = "/topopology/cro/subscribe/{cro_id}";
-	};
+	rpc subscribeCro    (SubscribeCroRequest    ) returns (SubscribeCroResponse    );
+	rpc unsubscribeCro  (UnsubscribeCroRequest  ) returns (UnsubscribeCroRequest   );
+	rpc getCroHashGraph (GetCroHashGraphRequest ) returns (GetCroHashGraphResponse );
 }
 
 message SubscribeCroRequest {
@@ -21,7 +13,7 @@ message SubscribeCroRequest {
 
 message SubscribeCroResponse {
 	// can return error codes if different than 0
-	int return_code = 1;
+	int32 return_code = 1;
 }
 
 message UnsubscribeCroRequest {
@@ -30,14 +22,14 @@ message UnsubscribeCroRequest {
 
 message UnsubscribeCroResponse {
 	// can return error codes if different than 0
-	int return_code = 1;
+	int32 return_code = 1;
 }
 
-message getCroHashGraphRequest {
+message GetCroHashGraphRequest {
 	string cro_id = 1;
 }
 
-message getCroHashGraphResponse {
+message GetCroHashGraphResponse {
 	// linearized vertices hashes
 	repeated string vertices_hashes = 1;
 }

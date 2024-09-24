@@ -1,14 +1,11 @@
 version: v2
 modules:
-  - path: packages
-  - includes:
-      - packages/network
-      - packages/object
-  - excludes:
-      - node_modules
+  - path: packages/node
+    excludes:
+      - packages/node/node_modules
+  - path: packages/network
+    excludes:
       - packages/network/node_modules
+  - path: packages/object
+    excludes:
       - packages/object/node_modules
-      - examples/canvas/node_modules
-      - examples/chat/node_modules
-deps:
-  - buf.build/googleapis/googleapis
