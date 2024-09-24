@@ -11,6 +11,7 @@ import {
 	circuitRelayServer,
 	circuitRelayTransport,
 } from "@libp2p/circuit-relay-v2";
+import { generateKeyPairFromSeed } from "@libp2p/crypto/keys";
 import { dcutr } from "@libp2p/dcutr";
 import { devToolsMetrics } from "@libp2p/devtools-metrics";
 import { identify } from "@libp2p/identify";
@@ -32,10 +33,9 @@ import { webSockets } from "@libp2p/websockets";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
 import { type Libp2p, createLibp2p } from "libp2p";
+import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
-import { generateKeyPairFromSeed } from "@libp2p/crypto/keys";
-import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 
 export * from "./stream.js";
 
