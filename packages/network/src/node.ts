@@ -17,6 +17,7 @@ import { identify } from "@libp2p/identify";
 import type {
 	Ed25519PeerId,
 	EventCallback,
+	PrivateKey,
 	PubSub,
 	RSAPeerId,
 	Secp256k1PeerId,
@@ -33,6 +34,8 @@ import { multiaddr } from "@multiformats/multiaddr";
 import { type Libp2p, createLibp2p } from "libp2p";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
+import { generateKeyPairFromSeed } from "@libp2p/crypto/keys";
+import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 
 export * from "./stream.js";
 
@@ -56,17 +59,17 @@ export class TopologyNetworkNode {
 	}
 
 	async start() {
-		let peerId:
-			| Ed25519PeerId
-			| Secp256k1PeerId
-			| RSAPeerId
-			| URLPeerId
-			| undefined = undefined;
+		let privateKey = undefined;
 		if (this._config?.private_key_seed) {
-			peerId = peerIdFromString(this._config.private_key_seed);
+			const tmp = this._config.private_key_seed.padEnd(32, "0");
+			privateKey = await generateKeyPairFromSeed(
+				"Ed25519",
+				uint8ArrayFromString(tmp),
+			);
 		}
 
 		this._node = await createLibp2p({
+			privateKey,
 			addresses: {
 				listen: this._config?.addresses ? this._config.addresses : ["/webrtc"],
 			},
