@@ -295,6 +295,12 @@ importers:
 
   packages/node:
     dependencies:
+      '@chainsafe/libp2p-gossipsub':
+        specifier: ^14.1.0
+        version: 14.1.0
+      '@libp2p/interface':
+        specifier: ^2.1.0
+        version: 2.1.0
       '@topology-foundation/blueprints':
         specifier: 0.2.0
         version: link:../blueprints
