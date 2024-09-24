@@ -5,8 +5,12 @@ import {
 	topologyObjectChangesHandler,
 } from "./handlers.js";
 import type { TopologyNode } from "./index.js";
-import { Logger } from "./utility/utility.js";
+import Logger from "./utility/utility.js";
+const config = {
+  log_level: "debug", // You can pass different levels for different packages
+};
 
+const logger = new Logger(config);
 /* Object operations */
 enum OPERATIONS {
 	/* Create a new CRO */
@@ -56,7 +60,7 @@ export async function syncObject(
 ) {
 	const object: TopologyObject | undefined = node.objectStore.get(objectId);
 	if (!object) {
-		Logger.debug("topology::node::syncObject", "Object not found");
+		logger.debug("topology::node::syncObject", "Object not found");
 		return;
 	}
 	const data = NetworkPb.Sync.create({

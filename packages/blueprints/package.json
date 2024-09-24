@@ -38,6 +38,7 @@
   "assemblyscript": "^0.27.29"
  },
  "dependencies": {
-  "@thi.ng/random": "^4.0.3"
+  "@thi.ng/random": "^4.0.3",
+  "tslog": "^4.9.3"
  }
 }

@@ -18,13 +18,12 @@ const logLevelMapping: Record<string, number> = {
   fatal: 5,
 };
 
- 
 const isBrowser = (): boolean => {
   return (
     typeof window !== "undefined" && typeof window.document !== "undefined"
   );
 };
- 
+
 class Logger {
   private log: TsLogger<MyLogObject>;
 

@@ -1,39 +1,63 @@
-import { test, expect, vi } from "vitest";
-import { Logger } from "../src/utility/utility"; // Adjust the path to your Logger
+import { describe, it, expect, vi, beforeAll, afterAll } from "vitest";
+import Logger from "../src/utility/utility"; // Adjust the path to your Logger
 
-test("Logger.debug should not log when debug mode is off", () => {
- 
-  const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+describe("Logger", () => {
 
-  
-  Logger.setDebugMode(false);
+  beforeAll(() => {
+    // Mock console methods
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "info").mockImplementation(() => {});
+  });
 
- 
-  Logger.debug("test::debug", "This should not appear");
+  afterAll(() => {
+    // Restore console methods after tests
+    vi.restoreAllMocks();
+  });
 
+  it("should log debug messages when log level is 'debug'", () => {
+    const logger = new Logger({ log_level: "debug" });
+    logger.debug("TestContext", "This is a debug message");
 
-  expect(logSpy).not.toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining("[TestContext] This is a debug message")
+    );
+  });
 
+  it("should log info messages when log level is 'info'", () => {
+    const logger = new Logger({ log_level: "info" });
+    logger.info("TestContext", "This is an info message");
 
-  logSpy.mockRestore();
-});
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining("[TestContext] This is an info message")
+    );
+  });
 
-test("Logger.debug should log when debug mode is on", () => {
+  it("should log warn messages when log level is 'warn'", () => {
+    const logger = new Logger({ log_level: "warn" });
+    logger.warn("TestContext", "This is a warn message");
 
-  const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining("[TestContext] This is a warn message")
+    );
+  });
 
-  Logger.setDebugMode(true); 
+  it("should log error messages when log level is 'error'", () => {
+    const logger = new Logger({ log_level: "error" });
+    logger.error("TestContext", "This is an error message");
 
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining("[TestContext] This is an error message")
+    );
+  });
 
-  Logger.debug("test::debug", "This should appear");
+  it("should log fatal messages when log level is 'fatal'", () => {
+    const logger = new Logger({ log_level: "fatal" });
+    logger.fatal("TestContext", "This is a fatal message");
 
-
-  expect(logSpy).toHaveBeenCalledWith(
-    expect.stringMatching(
-      /^\[DEBUG\] \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z - test::debug This should appear$/
-    )
-  );
-
- 
-  logSpy.mockRestore();
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining("[TestContext] This is a fatal message")
+    );
+  });
 });
