@@ -262,8 +262,8 @@ importers:
         specifier: ^4.1.8
         version: 4.1.8(react-native@0.75.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.3.5)(react@18.3.1)(typescript@5.5.4))
       '@libp2p/websockets':
-        specifier: ^8.1.2
-        version: 8.2.0
+        specifier: ^9.0.1
+        version: 9.0.1
       '@libp2p/webtransport':
         specifier: ^4.1.9
         version: 4.1.9
@@ -1592,8 +1592,8 @@ packages:
   '@libp2p/webrtc@4.1.8':
     resolution: {integrity: sha512-fSlEc4i7oi0geThct+GBCZpVbkGOAsf4fbwokGE1Hg7fwv5zjodF3fSyR1nwStZUXVFIdZBM9DjPYpam61Kxng==}
 
-  '@libp2p/websockets@8.2.0':
-    resolution: {integrity: sha512-UNjqkQ8/emnYswp1ohIIuZCnhI5DlvWF9IaIND2MoTCDavi7yubWfMp8jSWBsAqPnMeLMO8MQ6YlOo4FFC104Q==}
+  '@libp2p/websockets@9.0.1':
+    resolution: {integrity: sha512-bV/t22l3KdFbW7I9aMyfdIEkBtAVEeZQuB6NvsTv2lUfn77UtQsOgk0c3btoxVk8bUgX28wERPoskOuhedAj3Q==}
 
   '@libp2p/webtransport@4.1.9':
     resolution: {integrity: sha512-A48Fl8pm4Tstc5hiOvMbqVKS4/98D0pCn/Cb8iv/RS/EFyfMDBF8qSm4aYN9pXF0m0OepBKP4VG2GAGVqnqfrA==}
@@ -7257,10 +7257,10 @@ snapshots:
       - react-native
       - supports-color
 
-  '@libp2p/websockets@8.2.0':
+  '@libp2p/websockets@9.0.1':
     dependencies:
-      '@libp2p/interface': 1.7.0
-      '@libp2p/utils': 5.4.9
+      '@libp2p/interface': 2.0.1
+      '@libp2p/utils': 6.0.1
       '@multiformats/mafmt': 12.1.6
       '@multiformats/multiaddr': 12.3.1
       '@multiformats/multiaddr-to-uri': 10.1.0
