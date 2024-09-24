@@ -15,21 +15,23 @@ import { generateKeyPairFromSeed } from "@libp2p/crypto/keys";
 import { dcutr } from "@libp2p/dcutr";
 import { devToolsMetrics } from "@libp2p/devtools-metrics";
 import { identify } from "@libp2p/identify";
-import type { PrivateKey } from "@libp2p/interface";
-import {
-	type EventCallback,
-	EventHandler,
-	type PubSub,
-	type Stream,
-	type StreamHandler,
+import type {
+	Ed25519PeerId,
+	EventCallback,
+	PrivateKey,
+	PubSub,
+	RSAPeerId,
+	Secp256k1PeerId,
+	Stream,
+	StreamHandler,
+	URLPeerId,
 } from "@libp2p/interface";
-import { createFromPrivKey } from "@libp2p/peer-id-factory";
+import { peerIdFromString } from "@libp2p/peer-id";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
-import * as lp from "it-length-prefixed";
 import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
@@ -57,7 +59,7 @@ export class TopologyNetworkNode {
 	}
 
 	async start() {
-		let privateKey: PrivateKey | undefined = undefined;
+		let privateKey = undefined;
 		if (this._config?.private_key_seed) {
 			const tmp = this._config.private_key_seed.padEnd(32, "0");
 			privateKey = await generateKeyPairFromSeed(
@@ -67,11 +69,11 @@ export class TopologyNetworkNode {
 		}
 
 		this._node = await createLibp2p({
-			peerId: privateKey ? await createFromPrivKey(privateKey) : undefined,
+			privateKey,
 			addresses: {
 				listen: this._config?.addresses ? this._config.addresses : ["/webrtc"],
 			},
-			connectionEncryption: [noise()],
+			connectionEncrypters: [noise()],
 			connectionGater: {
 				denyDialMultiaddr: () => {
 					return false;
@@ -95,9 +97,7 @@ export class TopologyNetworkNode {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
 				identify: identify(),
-				pubsub: gossipsub({
-					allowPublishToZeroTopicPeers: true,
-				}),
+				pubsub: gossipsub(),
 			},
 			streamMuxers: [yamux()],
 			transports: [
