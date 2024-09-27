@@ -1,76 +1,47 @@
-import {
-	ActionType,
-	type Hash,
-	type HashGraph,
-	type Operation,
-	type Vertex,
-} from "../hashgraph/index.js";
+import { HashGraph, Operation, Vertex } from "../hashgraph/index.js";
 
 export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
-	let order = hashGraph.topologicalSort(true);
-	const indices: Map<Hash, number> = new Map();
+	const sortedVertices = hashGraph.topologicalSort();
 	const result: Operation[] = [];
-	let i = 0;
+	const addedValues = new Set<any>();
+	const concurrentOps: Map<string, Vertex[]> = new Map();
 
-	while (i < order.length) {
-		const anchor = order[i];
-		let j = i + 1;
-		let shouldIncrementI = true;
-
-		while (j < order.length) {
-			const moving = order[j];
-
-			if (!hashGraph.areCausallyRelatedUsingBitsets(anchor, moving)) {
-				const concurrentOps: Hash[] = [];
-				concurrentOps.push(anchor);
-				indices.set(anchor, i);
-				concurrentOps.push(moving);
-				indices.set(moving, j);
-				let k = j + 1;
-				for (; k < order.length; k++) {
-					let add = true;
-					for (const hash of concurrentOps) {
-						if (hashGraph.areCausallyRelatedUsingBitsets(hash, order[k])) {
-							add = false;
-							break;
-						}
-					}
-					if (add) {
-						concurrentOps.push(order[k]);
-						indices.set(order[k], k);
-					}
-				}
-				const resolved = hashGraph.resolveConflicts(
-					concurrentOps.map((hash) => hashGraph.vertices.get(hash) as Vertex),
-				);
-
-				switch (resolved.action) {
-					case ActionType.Drop: {
-						const newOrder = [];
-						for (const hash of resolved.vertices || []) {
-							if (indices.get(hash) === i) shouldIncrementI = false;
-							order[indices.get(hash) || -1] = "";
-						}
-						for (const val of order) {
-							if (val !== "") newOrder.push(val);
-						}
-						order = newOrder;
-						if (!shouldIncrementI) j = order.length; // Break out of inner loop
-						break;
-					}
-					case ActionType.Nop:
-						j++;
-						break;
-				}
-			} else {
-				j++;
+	for (const hash of sortedVertices) {
+		const vertex = hashGraph.getVertex(hash);
+		if (vertex && vertex.operation) {
+			const key = `${vertex.operation.type}-${vertex.operation.value}`;
+			if (!concurrentOps.has(key)) {
+				concurrentOps.set(key, []);
 			}
+			concurrentOps.get(key)!.push(vertex);
 		}
+	}
 
-		if (shouldIncrementI) {
-			const op = hashGraph.vertices.get(order[i])?.operation;
-			if (op && op.value !== null) result.push(op);
-			i++;
+	for (const [_, vertices] of concurrentOps) {
+		if (vertices.length > 1) {
+			const { action, vertices: droppedVertices } = hashGraph.resolveConflicts(vertices);
+			if (droppedVertices) {
+				const keptVertex = vertices.find(v => !droppedVertices.includes(v.hash));
+				if (keptVertex && keptVertex.operation) {
+					result.push(keptVertex.operation);
+					if (keptVertex.operation.type === 'add') {
+						addedValues.add(keptVertex.operation.value);
+					} else if (keptVertex.operation.type === 'remove') {
+						addedValues.delete(keptVertex.operation.value);
+					}
+				}
+			}
+		} else if (vertices.length === 1) {
+			const vertex = vertices[0];
+			if (vertex.operation) {
+				if (vertex.operation.type === 'add') {
+					result.push(vertex.operation);
+					addedValues.add(vertex.operation.value);
+				} else if (vertex.operation.type === 'remove' && addedValues.has(vertex.operation.value)) {
+					result.push(vertex.operation);
+					addedValues.delete(vertex.operation.value);
+				}
+			}
 		}
 	}
 

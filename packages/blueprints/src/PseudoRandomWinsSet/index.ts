@@ -62,13 +62,19 @@ export class PseudoRandomWinsSet<T> implements CRO {
 	}
 
 	resolveConflicts(vertices: Vertex[]): ResolveConflictsType {
-		vertices.sort((a, b) => (a.hash < b.hash ? -1 : 1));
-		const seed: string = vertices.map((vertex) => vertex.hash).join("");
-		const rnd = new Smush32(computeHash(seed));
-		const chosen = rnd.int() % vertices.length;
-		const hashes: Hash[] = vertices.map((vertex) => vertex.hash);
-		hashes.splice(chosen, 1);
-		return { action: ActionType.Drop, vertices: hashes };
+		if (vertices.length <= 1) {
+			return { action: ActionType.Nop };
+		}
+
+		// Select a random vertex
+		const randomIndex = Math.floor(Math.random() * vertices.length);
+		const selectedVertex = vertices[randomIndex];
+
+		// Return the action to keep only the selected vertex
+		return {
+			action: ActionType.Drop,
+			vertices: vertices.filter(v => v.hash !== selectedVertex.hash).map(v => v.hash)
+		};
 	}
 
 	// merged at HG level and called as a callback
