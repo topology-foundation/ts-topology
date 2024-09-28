@@ -15,7 +15,7 @@ import { generateKeyPairFromSeed } from "@libp2p/crypto/keys";
 import { dcutr } from "@libp2p/dcutr";
 import { devToolsMetrics } from "@libp2p/devtools-metrics";
 import { identify } from "@libp2p/identify";
-import type { PrivateKey } from "@libp2p/interface";
+import type { Ed25519PeerId, PeerId, PeerInfo, PrivateKey, RSAPeerId, Secp256k1PeerId, URLPeerId } from "@libp2p/interface";
 import {
 	type EventCallback,
 	EventHandler,
@@ -34,6 +34,8 @@ import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
+import { KadDHT, kadDHT } from "@libp2p/kad-dht";
+import { peerIdFromString } from "@libp2p/peer-id";
 
 export * from "./stream.js";
 
@@ -49,6 +51,7 @@ export class TopologyNetworkNode {
 	private _config?: TopologyNetworkNodeConfig;
 	private _node?: Libp2p;
 	private _pubsub?: PubSub<GossipsubEvents>;
+	private _dht?: KadDHT;
 
 	peerId = "";
 
@@ -95,9 +98,10 @@ export class TopologyNetworkNode {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
 				identify: identify(),
-				pubsub: gossipsub({
-					allowPublishToZeroTopicPeers: true,
-				}),
+				// pubsub: gossipsub({  // I believe this need to be removed since we are not longer going to use pubsub
+				// 	allowPublishToZeroTopicPeers: true,
+				// }),
+				dht : kadDHT()
 			},
 			streamMuxers: [yamux()],
 			transports: [
@@ -121,7 +125,8 @@ export class TopologyNetworkNode {
 			}
 		}
 
-		this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
+		// this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
+		this._dht = this._node.services.dht as KadDHT;
 		this.peerId = this._node.peerId.toString();
 
 		console.log(
@@ -247,5 +252,78 @@ export class TopologyNetworkNode {
 
 	addMessageHandler(protocol: string | string[], handler: StreamHandler) {
 		this._node?.handle(protocol, handler);
+	}
+
+	/**
+	 * 
+	 * @param peer_id The peer_id to search for
+	 * @returns The PeerInfo object if the peer was found, undefined if the peer was not found or the DHT is not initialized
+	 */
+
+	async findPeer(peer_id: string): Promise<PeerInfo | undefined> {
+		if (!this._dht) {
+			console.error("DHT not initialized. Please run .start()");
+			return undefined;
+		}
+	
+		try {
+			const peer = await this._dht?.findPeer(peerIdFromString(peer_id));
+			console.log("Peer found: ", peer);
+			for await (const event of peer) {
+				if (event.name === 'FINAL_PEER') {
+					const finalPeer = event.peer;
+					return finalPeer;
+				}
+			}
+			return undefined;
+		} catch (e) {
+			console.error("Error finding peer: ", e);
+			return undefined;
+		}
+	}
+
+	/**
+	 * 
+	 * @param key  The key to search for
+	 * @param value  The value to search for
+	 * @returns The value `true` if the data was put on the DHT successfully, `false` if not and undefined if the DHT is not initialized
+	 */
+	async putDataOnDHT(key : Uint8Array, value : Uint8Array) : Promise<boolean | undefined>{
+		if (!this._dht) {
+			console.error("DHT not initialized. Please run .start()");
+			return undefined;
+		}
+
+		try {
+			await this._dht.put(key, value);
+			console.log("Successfully stored data in DHT");
+			return true;
+		}catch (e){
+			console.error("Error storing data in DHT : ", e);
+			return false;
+		}
+	}
+
+	/**
+	 * 
+	 * @param key The key to search for
+	 * @returns The value if the data was found, undefined if the data was not found or the DHT is not initialized
+	 */
+	async getDataFromDHT(key : Uint8Array) : Promise<Uint8Array | undefined>{
+		if (!this._dht) {
+			console.error("DHT not initialized. Please run .start()");
+			return undefined;
+		}
+
+		try {
+			const data = await this._dht.get(key);
+			for await (const event of data){
+				if (event.name == "VALUE"){
+					return event.value;
+				}
+			}
+		}catch (e){
+			console.error("Error retrieving data from DHT : ", e);
+		}
 	}
 }
