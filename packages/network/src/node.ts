@@ -156,6 +156,9 @@ export class TopologyNetworkNode {
 		try {
 			this._pubsub?.subscribe(topic);
 			this._pubsub?.getPeers();
+
+			
+
 			console.log(
 				"topology::network::subscribe: Successfuly subscribed the topic",
 				topic,
