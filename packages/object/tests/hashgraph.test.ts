@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { AddWinsSet } from "../../blueprints/src/AddWinsSet/index.js";
 import { PseudoRandomWinsSet } from "../../blueprints/src/PseudoRandomWinsSet/index.js";
-import { TopologyObject } from "../src/index.js";
+import { type Operation, OperationType, TopologyObject } from "../src/index.js";
 
 describe("HashGraph for AddWinSet tests", () => {
 	let obj1: TopologyObject;
@@ -347,5 +347,43 @@ describe("HashGraph for PseudoRandomWinsSet tests", () => {
 		const linearOps = obj1.hashGraph.linearizeOperations();
 		// Pseudo-randomly chosen operation
 		expect(linearOps).toEqual([{ type: "add", value: 3 }]);
+	});
+});
+
+describe("HashGraph for undefined operations tests", () => {
+	let obj1: TopologyObject;
+	let obj2: TopologyObject;
+
+	beforeEach(async () => {
+		obj1 = new TopologyObject("peer1", new AddWinsSet<number>());
+		obj2 = new TopologyObject("peer2", new AddWinsSet<number>());
+	});
+
+	test("Test: merge should skip undefined operations", () => {
+		const cro1 = obj1.cro as AddWinsSet<number>;
+		const cro2 = obj2.cro as AddWinsSet<number>;
+
+		cro1.add(1);
+		cro2.add(2);
+
+		// Set one of the vertice from cro1 to have undefined operation
+		obj1.hashGraph.getAllVertices()[1].operation = undefined;
+
+		obj2.merge(obj1.hashGraph.getAllVertices());
+
+		const linearOps = obj2.hashGraph.linearizeOperations();
+		// Should only have one, since we skipped the undefined operations
+		expect(linearOps).toEqual([{ type: "add", value: 2 }]);
+	});
+
+	test("Test: addToFrontier with undefined operation return Vertex with NoOp operation", () => {
+		// Forcefully pass an undefined value
+		const createdVertex = obj1.hashGraph.addToFrontier(
+			undefined as unknown as Operation,
+		);
+
+		expect(createdVertex.operation).toEqual({
+			type: OperationType.NOP,
+		} as Operation);
 	});
 });
