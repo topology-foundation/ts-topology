@@ -96,6 +96,7 @@ export class TopologyNetworkNode {
 								"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
 							],
 				}),
+
 			],
 			services: {
 				autonat: autoNAT(),
@@ -150,7 +151,7 @@ export class TopologyNetworkNode {
 		);
 	}
 
-	subscribe(topic: string) {
+	async subscribe(topic: string) {
 		if (!this._node) {
 			console.error(
 				"topology::network::subscribe: Node not initialized, please run .start()",
@@ -162,6 +163,12 @@ export class TopologyNetworkNode {
 			this._pubsub?.subscribe(topic);
 			this._pubsub?.getPeers();
 			this.anouncePeerOnDHT(topic, this._node.peerId);
+
+			// connect to all peers on the topic
+			const peers = await this.getPeersOnTopicFromDHT(topic);
+			for (const peerId of peers){
+				await this._node.dial(peerId);
+			}
 
 			console.log(
 				"topology::network::subscribe: Successfuly subscribed the topic",
