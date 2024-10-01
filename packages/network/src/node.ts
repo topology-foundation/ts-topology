@@ -34,8 +34,11 @@ import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
-import { KadDHT, kadDHT } from "@libp2p/kad-dht";
+import { KadDHT, kadDHT, ValueEvent } from "@libp2p/kad-dht";
 import { peerIdFromString } from "@libp2p/peer-id";
+import { fromString as uint8FromString } from 'uint8arrays/from-string';
+import { toString as uint8ToString } from "uint8arrays";
+import last from "it-last";
 
 export * from "./stream.js";
 
@@ -98,10 +101,12 @@ export class TopologyNetworkNode {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
 				identify: identify(),
-				// pubsub: gossipsub({  // I believe this need to be removed since we are not longer going to use pubsub
-				// 	allowPublishToZeroTopicPeers: true,
-				// }),
-				dht : kadDHT()
+				pubsub: gossipsub({ 
+					allowPublishToZeroTopicPeers: true,
+				}),
+				dht : kadDHT({
+
+				})
 			},
 			streamMuxers: [yamux()],
 			transports: [
@@ -125,9 +130,9 @@ export class TopologyNetworkNode {
 			}
 		}
 
-		// this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
-		this._dht = this._node.services.dht as KadDHT;
+		this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
 		this.peerId = this._node.peerId.toString();
+		this._dht = this._node.services.dht as KadDHT;
 
 		console.log(
 			"topology::network::start: Successfuly started topology network w/ peer_id",
@@ -156,8 +161,7 @@ export class TopologyNetworkNode {
 		try {
 			this._pubsub?.subscribe(topic);
 			this._pubsub?.getPeers();
-
-			
+			this.anouncePeerOnDHT(topic, this._node.peerId);
 
 			console.log(
 				"topology::network::subscribe: Successfuly subscribed the topic",
@@ -178,6 +182,8 @@ export class TopologyNetworkNode {
 
 		try {
 			this._pubsub?.unsubscribe(topic);
+			this.removePeerFromDHT(topic, this._node.peerId);
+			
 			console.log(
 				"topology::network::unsubscribe: Successfuly unsubscribed the topic",
 				topic,
@@ -259,34 +265,6 @@ export class TopologyNetworkNode {
 
 	/**
 	 * 
-	 * @param peer_id The peer_id to search for
-	 * @returns The PeerInfo object if the peer was found, undefined if the peer was not found or the DHT is not initialized
-	 */
-
-	async findPeer(peer_id: string): Promise<PeerInfo | undefined> {
-		if (!this._dht) {
-			console.error("DHT not initialized. Please run .start()");
-			return undefined;
-		}
-	
-		try {
-			const peer = await this._dht?.findPeer(peerIdFromString(peer_id));
-			console.log("Peer found: ", peer);
-			for await (const event of peer) {
-				if (event.name === 'FINAL_PEER') {
-					const finalPeer = event.peer;
-					return finalPeer;
-				}
-			}
-			return undefined;
-		} catch (e) {
-			console.error("Error finding peer: ", e);
-			return undefined;
-		}
-	}
-
-	/**
-	 * 
 	 * @param key  The key to search for
 	 * @param value  The value to search for
 	 * @returns The value `true` if the data was put on the DHT successfully, `false` if not and undefined if the DHT is not initialized
@@ -298,7 +276,7 @@ export class TopologyNetworkNode {
 		}
 
 		try {
-			await this._dht.put(key, value);
+			await this._dht?.put(key, value);
 			console.log("Successfully stored data in DHT");
 			return true;
 		}catch (e){
@@ -328,5 +306,38 @@ export class TopologyNetworkNode {
 		}catch (e){
 			console.error("Error retrieving data from DHT : ", e);
 		}
+	}
+
+	async anouncePeerOnDHT(topic : string, peer_id : PeerId){
+		let peersSet = await this.getPeersOnTopicFromDHT(topic);
+		peersSet.add(peer_id);
+		let newPeers = JSON.stringify(Array.from(peersSet));
+		let newPeersUint8 = uint8FromString(newPeers);	
+		let uint8Topic = uint8ArrayFromString(topic);
+		await this.putDataOnDHT(uint8Topic, newPeersUint8);	
+	}
+
+	async removePeerFromDHT(topic : string, peerId : PeerId){
+		let peersSet = await this.getPeersOnTopicFromDHT(topic);
+		peersSet.delete(peerId);
+		let newPeers = JSON.stringify(Array.from(peersSet));
+		let newPeersUint8 = uint8FromString(newPeers);	
+		let uint8Topic = uint8ArrayFromString(topic);
+		await this.putDataOnDHT(uint8Topic, newPeersUint8);
+	}
+
+	async getPeersOnTopicFromDHT(topic : string) : Promise<Set<PeerId>>{
+		let uint8Topic = uint8ArrayFromString(topic);
+		let peersOnTopic = await this._dht?.get(uint8Topic);
+		let peersSet = new Set<PeerId>();
+		if( peersOnTopic ){
+			let lastResult = await last(peersOnTopic) as ValueEvent;
+			if(lastResult){
+				let uint8Peers = lastResult.value;
+				let peersArray = JSON.parse(uint8ToString(uint8Peers));
+				peersSet = new Set(peersArray);		
+			}
+		}
+		return peersSet;
 	}
 }
