@@ -18,33 +18,32 @@ import { identify } from "@libp2p/identify";
 
 import type {
 	Ed25519PeerId,
+	EventCallback,
+	EventHandler,
 	PeerId,
 	PeerInfo,
 	PrivateKey,
-	RSAPeerId,
-	URLPeerId,
-	EventCallback,
-	EventHandler,
 	PubSub,
+	RSAPeerId,
+	Secp256k1PeerId,
 	Stream,
 	StreamHandler,
-	Secp256k1PeerId,
+	URLPeerId,
 } from "@libp2p/interface";
 
+import { type KadDHT, type ValueEvent, kadDHT } from "@libp2p/kad-dht";
 import { peerIdFromString } from "@libp2p/peer-id";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
+import last from "it-last";
 import { type Libp2p, createLibp2p } from "libp2p";
+import { toString as uint8ToString } from "uint8arrays";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
-import { type KadDHT, kadDHT, type ValueEvent } from "@libp2p/kad-dht";
-import { fromString as uint8FromString } from "uint8arrays/from-string";
-import { toString as uint8ToString } from "uint8arrays";
-import last from "it-last";
 
 export * from "./stream.js";
 
@@ -330,7 +329,7 @@ export class TopologyNetworkNode {
 		const peersSet = await this.getPeersOnTopicFromDHT(topic);
 		peersSet.add(peer_id);
 		const newPeers = JSON.stringify(Array.from(peersSet));
-		const newPeersUint8 = uint8FromString(newPeers);
+		const newPeersUint8 = uint8ArrayFromString(newPeers);
 		const uint8Topic = uint8ArrayFromString(topic);
 		await this.putDataOnDHT(uint8Topic, newPeersUint8);
 	}
@@ -345,7 +344,7 @@ export class TopologyNetworkNode {
 		const peersSet = await this.getPeersOnTopicFromDHT(topic);
 		peersSet.delete(peerId);
 		const newPeers = JSON.stringify(Array.from(peersSet));
-		const newPeersUint8 = uint8FromString(newPeers);
+		const newPeersUint8 = uint8ArrayFromString(newPeers);
 		const uint8Topic = uint8ArrayFromString(topic);
 		await this.putDataOnDHT(uint8Topic, newPeersUint8);
 	}
