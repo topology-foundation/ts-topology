@@ -107,7 +107,7 @@ export class TopologyNetworkNode {
         autonat: autoNAT(),
         dcutr: dcutr(),
         identify: identify(),
-        dht: kadDHT({}),
+        dht: kadDHT(),
         pubsub: gossipsub(),
       },
       streamMuxers: [yamux()],
