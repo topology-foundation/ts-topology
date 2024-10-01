@@ -183,7 +183,7 @@ export class TopologyNetworkNode {
 		try {
 			this._pubsub?.unsubscribe(topic);
 			this.removePeerFromDHT(topic, this._node.peerId);
-			
+
 			console.log(
 				"topology::network::unsubscribe: Successfuly unsubscribed the topic",
 				topic,
@@ -308,7 +308,14 @@ export class TopologyNetworkNode {
 		}
 	}
 
-	async anouncePeerOnDHT(topic : string, peer_id : PeerId){
+	/*
+	 * Anounce the peer on the DHT
+	 * @param topic The topic to anounce the peer on
+	 * @param peer_id The peer to anounce
+	 * @returns nothing
+	 * */
+
+	async anouncePeerOnDHT(topic : string, peer_id : PeerId) : Promise<void> {
 		let peersSet = await this.getPeersOnTopicFromDHT(topic);
 		peersSet.add(peer_id);
 		let newPeers = JSON.stringify(Array.from(peersSet));
@@ -317,7 +324,13 @@ export class TopologyNetworkNode {
 		await this.putDataOnDHT(uint8Topic, newPeersUint8);	
 	}
 
-	async removePeerFromDHT(topic : string, peerId : PeerId){
+	/*
+	 * Remove the peer from the DHT
+	 * @param topic The topic to remove the peer from
+	 * @param peer_id The peer to remove
+	 * @returns nothing
+	 * */
+	async removePeerFromDHT(topic : string, peerId : PeerId) : Promise<void>{
 		let peersSet = await this.getPeersOnTopicFromDHT(topic);
 		peersSet.delete(peerId);
 		let newPeers = JSON.stringify(Array.from(peersSet));
@@ -326,6 +339,12 @@ export class TopologyNetworkNode {
 		await this.putDataOnDHT(uint8Topic, newPeersUint8);
 	}
 
+
+	/*
+	 * Get the peers on a topic from the DHT
+	 * @param topic The topic to get the peers from
+	 * @returns A set of PeerId
+	 * */
 	async getPeersOnTopicFromDHT(topic : string) : Promise<Set<PeerId>>{
 		let uint8Topic = uint8ArrayFromString(topic);
 		let peersOnTopic = await this._dht?.get(uint8Topic);
