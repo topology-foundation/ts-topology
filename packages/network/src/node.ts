@@ -31,7 +31,12 @@ import type {
 	URLPeerId,
 } from "@libp2p/interface";
 
-import { type KadDHT, type ValueEvent, kadDHT } from "@libp2p/kad-dht";
+import {
+	type KadDHT,
+	type ValueEvent,
+	kadDHT,
+	removePublicAddressesMapper,
+} from "@libp2p/kad-dht";
 import { peerIdFromString } from "@libp2p/peer-id";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
@@ -82,7 +87,7 @@ export class TopologyNetworkNode {
 			addresses: {
 				listen: this._config?.addresses ? this._config.addresses : ["/webrtc"],
 			},
-      connectionEncrypters: [noise()],
+			connectionEncrypters: [noise()],
 			connectionGater: {
 				denyDialMultiaddr: () => {
 					return false;
@@ -106,7 +111,7 @@ export class TopologyNetworkNode {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
 				identify: identify(),
-				dht: kadDHT(),
+				dht: kadDHT({}),
 				pubsub: gossipsub(),
 			},
 			streamMuxers: [yamux()],
