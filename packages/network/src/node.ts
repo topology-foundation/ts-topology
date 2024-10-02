@@ -82,7 +82,7 @@ export class TopologyNetworkNode {
 			addresses: {
 				listen: this._config?.addresses ? this._config.addresses : ["/webrtc"],
 			},
-			connectionEncryption: [noise()],
+      connectionEncrypters: [noise()],
 			connectionGater: {
 				denyDialMultiaddr: () => {
 					return false;

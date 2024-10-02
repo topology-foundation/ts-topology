@@ -50,7 +50,7 @@ export class TopologyNetworkNode {
             metrics: devToolsMetrics(),
             peerDiscovery: [
                 pubsubPeerDiscovery({
-                    interval: 10_000,
+                    interval: 10000,
                     topics: ["topology::discovery"],
                 }),
                 bootstrap({

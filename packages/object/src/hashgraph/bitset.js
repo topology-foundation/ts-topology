@@ -1,0 +1,76 @@
+/*
+    BitSet is associated with each vertex and is used to store the indices of the vertices that are reachable.
+    In other words, all the vertices causally before in the hashgraph.
+    When processing in the topologically ordered manner, we set the BitSet of the vertex to the bitwise OR of the BitSet of its dependencies.
+    Then, to check if two vertices are causally related, we check if the BitSet of the first vertex contains the index of the second vertex and vice-versa.
+    Algorithm for more optimal causality check inspired by https://stackoverflow.com/a/78133041
+*/
+export class BitSet {
+    data;
+    constructor(size = 1) {
+        // Always start with size 32
+        this.data = new Uint32Array(size);
+    }
+    clear() {
+        this.data = new Uint32Array(this.data.length);
+    }
+    set(index, value) {
+        // (index / 32) | 0 is equivalent to Math.floor(index / 32)
+        const byteIndex = (index / 32) | 0;
+        const bitIndex = index % 32;
+        // if value is false, and with all 1s except the bit at bitIndex
+        if (value)
+            this.data[byteIndex] |= 1 << bitIndex;
+        else
+            this.data[byteIndex] &= ~(1 << bitIndex);
+    }
+    get(index) {
+        // (index / 32) | 0 is equivalent to Math.floor(index / 32)
+        const byteIndex = (index / 32) | 0;
+        const bitIndex = index % 32;
+        return (this.data[byteIndex] & (1 << bitIndex)) !== 0;
+    }
+    flip(index) {
+        // (index / 32) | 0 is equivalent to Math.floor(index / 32)
+        const byteIndex = (index / 32) | 0;
+        const bitIndex = index % 32;
+        this.data[byteIndex] ^= 1 << bitIndex;
+    }
+    // AND two bitsets of the same size
+    and(other) {
+        const result = new BitSet(this.data.length);
+        for (let i = 0; i < this.data.length; i++) {
+            result.data[i] = this.data[i] & other.data[i];
+        }
+        return result;
+    }
+    // OR two bitsets of the same size
+    or(other) {
+        const result = new BitSet(this.data.length);
+        for (let i = 0; i < this.data.length; i++) {
+            result.data[i] = this.data[i] | other.data[i];
+        }
+        return result;
+    }
+    // XOR two bitsets of the same size
+    xor(other) {
+        const result = new BitSet(this.data.length);
+        for (let i = 0; i < this.data.length; i++) {
+            result.data[i] = this.data[i] ^ other.data[i];
+        }
+        return result;
+    }
+    not() {
+        const result = new BitSet(this.data.length * 32);
+        for (let i = 0; i < this.data.length; i++) {
+            result.data[i] = ~this.data[i];
+        }
+        return result;
+    }
+    toString() {
+        return Array.from(this.data)
+            .reverse()
+            .map((int) => int.toString(2).padStart(32, "0"))
+            .join("");
+    }
+}
