@@ -3,12 +3,6 @@ import { program } from "./cli/index.js";
 import { TopologyNode, type TopologyNodeConfig } from "./index.js";
 import { init as rpc_init } from "./rpc/index.js";
 
-async function startNode(config?: TopologyNodeConfig) {
-	const node = new TopologyNode(config);
-	await node.start();
-	return node;
-}
-
 const run = async () => {
 	program.parse(process.argv);
 	const opts = program.opts();
@@ -17,7 +11,8 @@ const run = async () => {
 		config = JSON.parse(fs.readFileSync(opts.config, "utf8"));
 	}
 
-	const node = await startNode(config);
+	const node = new TopologyNode(config)
+	await node.start()
 	rpc_init(node);
 };
 
