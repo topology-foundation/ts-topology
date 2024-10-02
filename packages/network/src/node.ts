@@ -15,9 +15,13 @@ import { generateKeyPairFromSeed } from "@libp2p/crypto/keys";
 import { dcutr } from "@libp2p/dcutr";
 import { devToolsMetrics } from "@libp2p/devtools-metrics";
 import { identify } from "@libp2p/identify";
+
 import type {
 	Ed25519PeerId,
 	EventCallback,
+	EventHandler,
+	PeerId,
+	PeerInfo,
 	PrivateKey,
 	PubSub,
 	RSAPeerId,
@@ -26,13 +30,22 @@ import type {
 	StreamHandler,
 	URLPeerId,
 } from "@libp2p/interface";
+
+import {
+	type KadDHT,
+	type ValueEvent,
+	kadDHT,
+	removePublicAddressesMapper,
+} from "@libp2p/kad-dht";
 import { peerIdFromString } from "@libp2p/peer-id";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
+import last from "it-last";
 import { type Libp2p, createLibp2p } from "libp2p";
+import { toString as uint8ToString } from "uint8arrays";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
@@ -51,6 +64,7 @@ export class TopologyNetworkNode {
 	private _config?: TopologyNetworkNodeConfig;
 	private _node?: Libp2p;
 	private _pubsub?: PubSub<GossipsubEvents>;
+	private _dht?: KadDHT;
 
 	peerId = "";
 
@@ -97,6 +111,7 @@ export class TopologyNetworkNode {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
 				identify: identify(),
+				dht: kadDHT({}),
 				pubsub: gossipsub(),
 			},
 			streamMuxers: [yamux()],
@@ -123,6 +138,7 @@ export class TopologyNetworkNode {
 
 		this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
 		this.peerId = this._node.peerId.toString();
+		this._dht = this._node.services.dht as KadDHT;
 
 		console.log(
 			"topology::network::start: Successfuly started topology network w/ peer_id",
@@ -140,7 +156,7 @@ export class TopologyNetworkNode {
 		);
 	}
 
-	subscribe(topic: string) {
+	async subscribe(topic: string) {
 		if (!this._node) {
 			console.error(
 				"topology::network::subscribe: Node not initialized, please run .start()",
@@ -151,6 +167,14 @@ export class TopologyNetworkNode {
 		try {
 			this._pubsub?.subscribe(topic);
 			this._pubsub?.getPeers();
+			this.anouncePeerOnDHT(topic, this._node.peerId);
+
+			// connect to all peers on the topic
+			const peers = await this.getPeersOnTopicFromDHT(topic);
+			for (const peerId of peers) {
+				await this._node.dial(peerId);
+			}
+
 			console.log(
 				"topology::network::subscribe: Successfuly subscribed the topic",
 				topic,
@@ -170,6 +194,8 @@ export class TopologyNetworkNode {
 
 		try {
 			this._pubsub?.unsubscribe(topic);
+			this.removePeerFromDHT(topic, this._node.peerId);
+
 			console.log(
 				"topology::network::unsubscribe: Successfuly unsubscribed the topic",
 				topic,
@@ -247,5 +273,104 @@ export class TopologyNetworkNode {
 
 	addMessageHandler(protocol: string | string[], handler: StreamHandler) {
 		this._node?.handle(protocol, handler);
+	}
+
+	/**
+	 *
+	 * @param key  The key to search for
+	 * @param value  The value to search for
+	 * @returns The value `true` if the data was put on the DHT successfully, `false` if not and undefined if the DHT is not initialized
+	 */
+	async putDataOnDHT(
+		key: Uint8Array,
+		value: Uint8Array,
+	): Promise<boolean | undefined> {
+		if (!this._dht) {
+			console.error("DHT not initialized. Please run .start()");
+			return undefined;
+		}
+
+		try {
+			await this._dht?.put(key, value);
+			console.log("Successfully stored data in DHT");
+			return true;
+		} catch (e) {
+			console.error("Error storing data in DHT : ", e);
+			return false;
+		}
+	}
+
+	/**
+	 *
+	 * @param key The key to search for
+	 * @returns The value if the data was found, undefined if the data was not found or the DHT is not initialized
+	 */
+	async getDataFromDHT(key: Uint8Array): Promise<Uint8Array | undefined> {
+		if (!this._dht) {
+			console.error("DHT not initialized. Please run .start()");
+			return undefined;
+		}
+
+		try {
+			const data = await this._dht.get(key);
+			for await (const event of data) {
+				if (event.name === "VALUE") {
+					return event.value;
+				}
+			}
+		} catch (e) {
+			console.error("Error retrieving data from DHT : ", e);
+		}
+	}
+
+	/*
+	 * Anounce the peer on the DHT
+	 * @param topic The topic to anounce the peer on
+	 * @param peer_id The peer to anounce
+	 * @returns nothing
+	 * */
+
+	async anouncePeerOnDHT(topic: string, peer_id: PeerId): Promise<void> {
+		const peersSet = await this.getPeersOnTopicFromDHT(topic);
+		peersSet.add(peer_id);
+		const newPeers = JSON.stringify(Array.from(peersSet));
+		const newPeersUint8 = uint8ArrayFromString(newPeers);
+		const uint8Topic = uint8ArrayFromString(topic);
+		await this.putDataOnDHT(uint8Topic, newPeersUint8);
+	}
+
+	/*
+	 * Remove the peer from the DHT
+	 * @param topic The topic to remove the peer from
+	 * @param peer_id The peer to remove
+	 * @returns nothing
+	 * */
+	async removePeerFromDHT(topic: string, peerId: PeerId): Promise<void> {
+		const peersSet = await this.getPeersOnTopicFromDHT(topic);
+		peersSet.delete(peerId);
+		const newPeers = JSON.stringify(Array.from(peersSet));
+		const newPeersUint8 = uint8ArrayFromString(newPeers);
+		const uint8Topic = uint8ArrayFromString(topic);
+		await this.putDataOnDHT(uint8Topic, newPeersUint8);
+	}
+
+	/*
+	 * Get the peers on a topic from the DHT
+	 * @param topic The topic to get the peers from
+	 * @returns A set of PeerId
+	 * */
+	async getPeersOnTopicFromDHT(topic: string): Promise<Set<PeerId>> {
+		const uint8Topic = uint8ArrayFromString(topic);
+		const peersOnTopic = await this._dht?.get(uint8Topic);
+		let peersSet = new Set<PeerId>();
+		if (peersOnTopic) {
+			const lastResult = (await last(peersOnTopic)) as ValueEvent;
+			if (lastResult) {
+				const uint8Peers = lastResult.value;
+				const peersArray = JSON.parse(uint8ToString(uint8Peers));
+				peersSet = new Set(peersArray);
+			}
+		}
+		return peersSet;
 	}
 }
