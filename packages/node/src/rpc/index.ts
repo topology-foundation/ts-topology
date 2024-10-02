@@ -3,28 +3,73 @@ import * as grpc from "@grpc/grpc-js";
 import { TopologyRpcService } from "../proto/rpc_grpc_pb.js";
 import type { ServerUnaryCall, sendUnaryData } from "@grpc/grpc-js";
 import type {
+	GetCroHashGraphRequest,
+	GetCroHashGraphResponse,
 	SubscribeCroRequest,
 	SubscribeCroResponse,
+	UnsubscribeCroRequest,
+	UnsubscribeCroResponse,
 } from "../proto/rpc_pb.js";
+import type { TopologyNode } from "../index.js";
 
-function subscribeCro(
-	call: ServerUnaryCall<SubscribeCroRequest, SubscribeCroResponse>,
-	callback: sendUnaryData<SubscribeCroResponse>,
-) {
-	const response: SubscribeCroResponse = {
-		returnCode: 0,
-	};
-	callback(null, response);
-}
+export function init(node: TopologyNode) {
+	function subscribeCro(
+		call: ServerUnaryCall<SubscribeCroRequest, SubscribeCroResponse>,
+		callback: sendUnaryData<SubscribeCroResponse>,
+	) {
+		let returnCode = 0;
+		try {
+			node.subscribeObject(call.request.croId);
+		} catch (e) {
+			console.error(e);
+			returnCode = 1;
+		}
 
-export function init() {
+		const response: SubscribeCroResponse = {
+			returnCode,
+		};
+		callback(null, response);
+	}
+
+	function unsubscribeCro(
+		call: ServerUnaryCall<UnsubscribeCroRequest, UnsubscribeCroResponse>,
+		callback: sendUnaryData<UnsubscribeCroResponse>,
+	) {
+		let returnCode = 0;
+		try {
+			node.unsubscribeObject(call.request.croId);
+		} catch (e) {
+			console.error(e);
+			returnCode = 1;
+		}
+
+		const response: UnsubscribeCroResponse = {
+			returnCode,
+		};
+		callback(null, response);
+	}
+
+	function getCroHashGraph(
+		_: ServerUnaryCall<GetCroHashGraphRequest, GetCroHashGraphResponse>,
+		callback: sendUnaryData<GetCroHashGraphResponse>,
+	) {
+		const response: GetCroHashGraphResponse = {
+			verticesHashes: [],
+		};
+		callback(null, response);
+	}
+
 	const server = new grpc.Server();
-	server.addService(TopologyRpcService, { subscribeCro });
+	server.addService(TopologyRpcService, {
+		subscribeCro,
+		unsubscribeCro,
+		getCroHashGraph,
+	});
 	server.bindAsync(
 		"0.0.0.0:6969",
 		grpc.ServerCredentials.createInsecure(),
 		(_error, _port) => {
-			console.log(_port);
+			console.log("running grpc in port:", _port);
 		},
 	);
 }

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package topology.rpc;
+package topology.node;
 
 service TopologyRpc {
 	rpc subscribeCro    (SubscribeCroRequest    ) returns (SubscribeCroResponse    );

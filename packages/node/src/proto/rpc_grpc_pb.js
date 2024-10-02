@@ -1,97 +1,82 @@
-// GENERATED CODE -- DO NOT EDIT!
-
 import * as node_src_proto_rpc_pb from './rpc_pb.js';
 
-function serialize_topology_rpc_GetCroHashGraphRequest(arg) {
-  if (!(arg instanceof node_src_proto_rpc_pb.GetCroHashGraphRequest)) {
-    throw new Error('Expected argument of type topology.rpc.GetCroHashGraphRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
+function serialize_topology_node_GetCroHashGraphRequest(arg) {
+	let encoded = node_src_proto_rpc_pb.GetCroHashGraphRequest.encode(arg).finish()
+	return Buffer.from(encoded);
 }
 
-function deserialize_topology_rpc_GetCroHashGraphRequest(buffer_arg) {
-  return node_src_proto_rpc_pb.GetCroHashGraphRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_topology_node_GetCroHashGraphRequest(buffer_arg) {
+  return node_src_proto_rpc_pb.GetCroHashGraphRequest.decode(new Uint8Array(buffer_arg));
 }
 
-function serialize_topology_rpc_GetCroHashGraphResponse(arg) {
-  if (!(arg instanceof node_src_proto_rpc_pb.GetCroHashGraphResponse)) {
-    throw new Error('Expected argument of type topology.rpc.GetCroHashGraphResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
+function serialize_topology_node_GetCroHashGraphResponse(arg) {
+	let encoded = node_src_proto_rpc_pb.GetCroHashGraphResponse.encode(arg).finish()
+	return Buffer.from(encoded);
 }
 
-function deserialize_topology_rpc_GetCroHashGraphResponse(buffer_arg) {
-  return node_src_proto_rpc_pb.GetCroHashGraphResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_topology_node_GetCroHashGraphResponse(buffer_arg) {
+  return node_src_proto_rpc_pb.GetCroHashGraphResponse.decode(new Uint8Array(buffer_arg));
 }
 
-function serialize_topology_rpc_SubscribeCroRequest(arg) {
-  if (!(arg instanceof node_src_proto_rpc_pb.SubscribeCroRequest)) {
-    throw new Error('Expected argument of type topology.rpc.SubscribeCroRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
+function serialize_topology_node_SubscribeCroRequest(arg) {
+	let encoded = node_src_proto_rpc_pb.SubscribeCroRequest.encode(arg).finish()
+	return Buffer.from(encoded);
 }
 
-function deserialize_topology_rpc_SubscribeCroRequest(buffer_arg) {
-  return node_src_proto_rpc_pb.SubscribeCroRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_topology_node_SubscribeCroRequest(buffer_arg) {
+  return node_src_proto_rpc_pb.SubscribeCroRequest.decode(new Uint8Array(buffer_arg));
 }
 
-function serialize_topology_rpc_SubscribeCroResponse(arg) {
-  if (!(arg instanceof node_src_proto_rpc_pb.SubscribeCroResponse)) {
-    throw new Error('Expected argument of type topology.rpc.SubscribeCroResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
+function serialize_topology_node_SubscribeCroResponse(arg) {
+	let encoded = node_src_proto_rpc_pb.SubscribeCroResponse.encode(arg).finish()
+  return Buffer.from(encoded);
 }
 
-function deserialize_topology_rpc_SubscribeCroResponse(buffer_arg) {
-  return node_src_proto_rpc_pb.SubscribeCroResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_topology_node_SubscribeCroResponse(buffer_arg) {
+  return node_src_proto_rpc_pb.SubscribeCroResponse.decode(new Uint8Array(buffer_arg));
 }
 
-function serialize_topology_rpc_UnsubscribeCroRequest(arg) {
-  if (!(arg instanceof node_src_proto_rpc_pb.UnsubscribeCroRequest)) {
-    throw new Error('Expected argument of type topology.rpc.UnsubscribeCroRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
+function serialize_topology_node_UnsubscribeCroRequest(arg) {
+	let encoded = node_src_proto_rpc_pb.UnsubscribeCroRequest.encode(arg).finish()
+	return Buffer.from(encoded);
 }
 
-function deserialize_topology_rpc_UnsubscribeCroRequest(buffer_arg) {
-  return node_src_proto_rpc_pb.UnsubscribeCroRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_topology_node_UnsubscribeCroRequest(buffer_arg) {
+  return node_src_proto_rpc_pb.UnsubscribeCroRequest.decode(new Uint8Array(buffer_arg));
 }
-
 
 export const TopologyRpcService = {
   subscribeCro: {
-    path: '/topology.rpc.TopologyRpc/subscribeCro',
+    path: '/topology.node.TopologyRpc/subscribeCro',
     requestStream: false,
     responseStream: false,
     requestType: node_src_proto_rpc_pb.SubscribeCroRequest,
     responseType: node_src_proto_rpc_pb.SubscribeCroResponse,
-    requestSerialize: serialize_topology_rpc_SubscribeCroRequest,
-    requestDeserialize: deserialize_topology_rpc_SubscribeCroRequest,
-    responseSerialize: serialize_topology_rpc_SubscribeCroResponse,
-    responseDeserialize: deserialize_topology_rpc_SubscribeCroResponse,
+    requestSerialize: serialize_topology_node_SubscribeCroRequest,
+    requestDeserialize: deserialize_topology_node_SubscribeCroRequest,
+    responseSerialize: serialize_topology_node_SubscribeCroResponse,
+    responseDeserialize: deserialize_topology_node_SubscribeCroResponse,
   },
   unsubscribeCro: {
-    path: '/topology.rpc.TopologyRpc/unsubscribeCro',
+    path: '/topology.node.TopologyRpc/unsubscribeCro',
     requestStream: false,
     responseStream: false,
     requestType: node_src_proto_rpc_pb.UnsubscribeCroRequest,
     responseType: node_src_proto_rpc_pb.UnsubscribeCroRequest,
-    requestSerialize: serialize_topology_rpc_UnsubscribeCroRequest,
-    requestDeserialize: deserialize_topology_rpc_UnsubscribeCroRequest,
-    responseSerialize: serialize_topology_rpc_UnsubscribeCroRequest,
-    responseDeserialize: deserialize_topology_rpc_UnsubscribeCroRequest,
+    requestSerialize: serialize_topology_node_UnsubscribeCroRequest,
+    requestDeserialize: deserialize_topology_node_UnsubscribeCroRequest,
+    responseSerialize: serialize_topology_node_UnsubscribeCroRequest,
+    responseDeserialize: deserialize_topology_node_UnsubscribeCroRequest,
   },
   getCroHashGraph: {
-    path: '/topology.rpc.TopologyRpc/getCroHashGraph',
+    path: '/topology.node.TopologyRpc/getCroHashGraph',
     requestStream: false,
     responseStream: false,
     requestType: node_src_proto_rpc_pb.GetCroHashGraphRequest,
     responseType: node_src_proto_rpc_pb.GetCroHashGraphResponse,
-    requestSerialize: serialize_topology_rpc_GetCroHashGraphRequest,
-    requestDeserialize: deserialize_topology_rpc_GetCroHashGraphRequest,
-    responseSerialize: serialize_topology_rpc_GetCroHashGraphResponse,
-    responseDeserialize: deserialize_topology_rpc_GetCroHashGraphResponse,
+    requestSerialize: serialize_topology_node_GetCroHashGraphRequest,
+    requestDeserialize: deserialize_topology_node_GetCroHashGraphRequest,
+    responseSerialize: serialize_topology_node_GetCroHashGraphResponse,
+    responseDeserialize: deserialize_topology_node_GetCroHashGraphResponse,
   },
 };
-
-// exports.TopologyRpcClient = grpc.makeGenericClientConstructor(TopologyRpcService);

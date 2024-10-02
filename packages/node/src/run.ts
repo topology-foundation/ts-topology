@@ -5,7 +5,8 @@ import { init as rpc_init } from "./rpc/index.js";
 
 async function startNode(config?: TopologyNodeConfig) {
 	const node = new TopologyNode(config);
-	node.start();
+	await node.start();
+	return node;
 }
 
 const run = async () => {
@@ -16,8 +17,8 @@ const run = async () => {
 		config = JSON.parse(fs.readFileSync(opts.config, "utf8"));
 	}
 
-	// await startNode(config);
-	rpc_init();
+	const node = await startNode(config);
+	rpc_init(node);
 };
 
 run();

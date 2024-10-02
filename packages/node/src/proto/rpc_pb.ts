@@ -7,7 +7,7 @@
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
-export const protobufPackage = "topology.rpc";
+export const protobufPackage = "topology.node";
 
 export interface SubscribeCroRequest {
   croId: string;
@@ -388,7 +388,7 @@ export interface TopologyRpc {
   getCroHashGraph(request: GetCroHashGraphRequest): Promise<GetCroHashGraphResponse>;
 }
 
-export const TopologyRpcServiceName = "topology.rpc.TopologyRpc";
+export const TopologyRpcServiceName = "topology.node.TopologyRpc";
 export class TopologyRpcClientImpl implements TopologyRpc {
   private readonly rpc: Rpc;
   private readonly service: string;
