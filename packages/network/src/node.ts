@@ -7,12 +7,21 @@ import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { autoNAT } from "@libp2p/autonat";
 import { bootstrap } from "@libp2p/bootstrap";
-import { circuitRelayServer, circuitRelayTransport } from "@libp2p/circuit-relay-v2";
+import {
+	circuitRelayServer,
+	circuitRelayTransport,
+} from "@libp2p/circuit-relay-v2";
 import { generateKeyPairFromSeed } from "@libp2p/crypto/keys";
 import { dcutr } from "@libp2p/dcutr";
 import { devToolsMetrics } from "@libp2p/devtools-metrics";
 import { identify } from "@libp2p/identify";
-import type { EventCallback, PeerId, PubSub, Stream, StreamHandler } from "@libp2p/interface";
+import type {
+	EventCallback,
+	PeerId,
+	PubSub,
+	Stream,
+	StreamHandler,
+} from "@libp2p/interface";
 import { type KadDHT, type ValueEvent, kadDHT } from "@libp2p/kad-dht";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
@@ -34,7 +43,7 @@ export interface TopologyNetworkNodeConfig {
 	bootstrap?: boolean;
 	bootstrap_peers?: string[];
 	private_key_seed?: string;
-	topic_discovery_peers_threshold? : number;
+	topic_discovery_peers_threshold?: number;
 }
 
 export class TopologyNetworkNode {
@@ -148,7 +157,10 @@ export class TopologyNetworkNode {
 
 			// connect to all peers on the topic
 			const peers = await this.getPeersOnTopicFromDHT(topic);
-			if (this._config?.topic_discovery_peers_threshold && peers.size < this._config.topic_discovery_peers_threshold) {
+			if (
+				this._config?.topic_discovery_peers_threshold &&
+				peers.size < this._config.topic_discovery_peers_threshold
+			) {
 				for (const peerId of peers) {
 					if (peerId.toString() !== this._node.peerId.toString()) {
 						this._node.dial(peerId);
@@ -261,21 +273,25 @@ export class TopologyNetworkNode {
 	 * @param value  The value to search for
 	 * @returns The value `true` if the data was put on the DHT successfully, `false` if not and undefined if the DHT is not initialized
 	 */
-	async putDataOnDHT(
-		key: Uint8Array,
-		value: Uint8Array,
-	): Promise<boolean> {
+	async putDataOnDHT(key: Uint8Array, value: Uint8Array): Promise<boolean> {
 		if (!this._dht) {
-			console.error("topology::network::topic::discovery: DHT not initialized. Please run .start()");
+			console.error(
+				"topology::network::topic::discovery: DHT not initialized. Please run .start()",
+			);
 			return false;
 		}
 
 		try {
 			await this._dht?.put(key, value);
-			console.log("topology::network::topic::discovery: Successfully saved on DHT");
+			console.log(
+				"topology::network::topic::discovery: Successfully saved on DHT",
+			);
 			return true;
 		} catch (e) {
-			console.error("topology::network::topic::discovery: Error storing data on DHT : ", e);
+			console.error(
+				"topology::network::topic::discovery: Error storing data on DHT : ",
+				e,
+			);
 			return false;
 		}
 	}
