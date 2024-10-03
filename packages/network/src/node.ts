@@ -7,37 +7,13 @@ import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { autoNAT } from "@libp2p/autonat";
 import { bootstrap } from "@libp2p/bootstrap";
-import {
-	circuitRelayServer,
-	circuitRelayTransport,
-} from "@libp2p/circuit-relay-v2";
+import { circuitRelayServer, circuitRelayTransport } from "@libp2p/circuit-relay-v2";
 import { generateKeyPairFromSeed } from "@libp2p/crypto/keys";
 import { dcutr } from "@libp2p/dcutr";
 import { devToolsMetrics } from "@libp2p/devtools-metrics";
 import { identify } from "@libp2p/identify";
-
-import type {
-	Ed25519PeerId,
-	EventCallback,
-	EventHandler,
-	PeerId,
-	PeerInfo,
-	PrivateKey,
-	PubSub,
-	RSAPeerId,
-	Secp256k1PeerId,
-	Stream,
-	StreamHandler,
-	URLPeerId,
-} from "@libp2p/interface";
-
-import {
-	type KadDHT,
-	type ValueEvent,
-	kadDHT,
-	removePublicAddressesMapper,
-} from "@libp2p/kad-dht";
-import { peerIdFromString } from "@libp2p/peer-id";
+import type { EventCallback, PeerId, PubSub, Stream, StreamHandler } from "@libp2p/interface";
+import { type KadDHT, type ValueEvent, kadDHT } from "@libp2p/kad-dht";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
@@ -45,7 +21,7 @@ import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
 import last from "it-last";
 import { type Libp2p, createLibp2p } from "libp2p";
-import { toString as uint8ToString } from "uint8arrays";
+import { toString as uint8ArrayToString } from "uint8arrays";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
@@ -58,6 +34,7 @@ export interface TopologyNetworkNodeConfig {
 	bootstrap?: boolean;
 	bootstrap_peers?: string[];
 	private_key_seed?: string;
+	topic_discovery_peers_threshold? : number;
 }
 
 export class TopologyNetworkNode {
@@ -111,7 +88,7 @@ export class TopologyNetworkNode {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
 				identify: identify(),
-				dht: kadDHT({}),
+				dht: kadDHT(),
 				pubsub: gossipsub(),
 			},
 			streamMuxers: [yamux()],
@@ -167,18 +144,21 @@ export class TopologyNetworkNode {
 		try {
 			this._pubsub?.subscribe(topic);
 			this._pubsub?.getPeers();
-			this.anouncePeerOnDHT(topic, this._node.peerId);
+			this.announcePeerOnDHT(topic, this._node.peerId);
 
 			// connect to all peers on the topic
 			const peers = await this.getPeersOnTopicFromDHT(topic);
-			for (const peerId of peers) {
-				await this._node.dial(peerId);
+			if (this._config?.topic_discovery_peers_threshold && peers.size < this._config.topic_discovery_peers_threshold) {
+				for (const peerId of peers) {
+					if (peerId.toString() !== this._node.peerId.toString()) {
+						this._node.dial(peerId);
+						console.log(
+							"topology::network::subscribe: Successfuly subscribed the topic",
+							topic,
+						);
+					}
+				}
 			}
-
-			console.log(
-				"topology::network::subscribe: Successfuly subscribed the topic",
-				topic,
-			);
 		} catch (e) {
 			console.error("topology::network::subscribe:", e);
 		}
@@ -284,53 +264,30 @@ export class TopologyNetworkNode {
 	async putDataOnDHT(
 		key: Uint8Array,
 		value: Uint8Array,
-	): Promise<boolean | undefined> {
+	): Promise<boolean> {
 		if (!this._dht) {
-			console.error("DHT not initialized. Please run .start()");
-			return undefined;
+			console.error("topology::network::topic::discovery: DHT not initialized. Please run .start()");
+			return false;
 		}
 
 		try {
 			await this._dht?.put(key, value);
-			console.log("Successfully stored data in DHT");
+			console.log("topology::network::topic::discovery: Successfully saved on DHT");
 			return true;
 		} catch (e) {
-			console.error("Error storing data in DHT : ", e);
+			console.error("topology::network::topic::discovery: Error storing data on DHT : ", e);
 			return false;
 		}
 	}
 
-	/**
-	 *
-	 * @param key The key to search for
-	 * @returns The value if the data was found, undefined if the data was not found or the DHT is not initialized
-	 */
-	async getDataFromDHT(key: Uint8Array): Promise<Uint8Array | undefined> {
-		if (!this._dht) {
-			console.error("DHT not initialized. Please run .start()");
-			return undefined;
-		}
-
-		try {
-			const data = await this._dht.get(key);
-			for await (const event of data) {
-				if (event.name === "VALUE") {
-					return event.value;
-				}
-			}
-		} catch (e) {
-			console.error("Error retrieving data from DHT : ", e);
-		}
-	}
-
 	/*
-	 * Anounce the peer on the DHT
-	 * @param topic The topic to anounce the peer on
-	 * @param peer_id The peer to anounce
+	 * Announce the peer on the DHT
+	 * @param topic The topic to announce the peer on
+	 * @param peer_id The peer to announce
 	 * @returns nothing
 	 * */
 
-	async anouncePeerOnDHT(topic: string, peer_id: PeerId): Promise<void> {
+	async announcePeerOnDHT(topic: string, peer_id: PeerId): Promise<void> {
 		const peersSet = await this.getPeersOnTopicFromDHT(topic);
 		peersSet.add(peer_id);
 		const newPeers = JSON.stringify(Array.from(peersSet));
@@ -361,13 +318,13 @@ export class TopologyNetworkNode {
 	 * */
 	async getPeersOnTopicFromDHT(topic: string): Promise<Set<PeerId>> {
 		const uint8Topic = uint8ArrayFromString(topic);
-		const peersOnTopic = await this._dht?.get(uint8Topic);
+		const peersOnTopic = this._dht?.get(uint8Topic);
 		let peersSet = new Set<PeerId>();
 		if (peersOnTopic) {
 			const lastResult = (await last(peersOnTopic)) as ValueEvent;
 			if (lastResult) {
 				const uint8Peers = lastResult.value;
-				const peersArray = JSON.parse(uint8ToString(uint8Peers));
+				const peersArray = JSON.parse(uint8ArrayToString(uint8Peers));
 				peersSet = new Set(peersArray);
 			}
 		}
