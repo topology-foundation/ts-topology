@@ -28,7 +28,6 @@ import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
-import last from "it-last";
 import { type Libp2p, createLibp2p } from "libp2p";
 import { toString as uint8ArrayToString } from "uint8arrays";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
@@ -337,11 +336,12 @@ export class TopologyNetworkNode {
 		const peersOnTopic = this._dht?.get(uint8Topic);
 		let peersSet = new Set<PeerId>();
 		if (peersOnTopic) {
-			const lastResult = (await last(peersOnTopic)) as ValueEvent;
-			if (lastResult) {
-				const uint8Peers = lastResult.value;
-				const peersArray = JSON.parse(uint8ArrayToString(uint8Peers));
-				peersSet = new Set(peersArray);
+			for await (const evt of peersOnTopic) {
+				if (evt.name === "VALUE") {
+					const uint8Peers = evt.value;
+					const peersArray = JSON.parse(uint8ArrayToString(uint8Peers));
+					peersSet = new Set(peersArray);
+				}
 			}
 		}
 		return peersSet;
