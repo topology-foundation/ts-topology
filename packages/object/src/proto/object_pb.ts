@@ -2,7 +2,7 @@
 // versions:
 //   protoc-gen-ts_proto  v2.0.3
 //   protoc               unknown
-// source: crdt/node_modules/@topology-foundation/object/src/proto/object.proto
+// source: blueprints/node_modules/@topology-foundation/object/src/proto/object.proto
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";

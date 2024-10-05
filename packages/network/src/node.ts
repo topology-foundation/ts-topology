@@ -16,17 +16,11 @@ import { dcutr } from "@libp2p/dcutr";
 import { devToolsMetrics } from "@libp2p/devtools-metrics";
 import { identify } from "@libp2p/identify";
 import type {
-	Ed25519PeerId,
 	EventCallback,
-	PrivateKey,
 	PubSub,
-	RSAPeerId,
-	Secp256k1PeerId,
 	Stream,
 	StreamHandler,
-	URLPeerId,
 } from "@libp2p/interface";
-import { peerIdFromString } from "@libp2p/peer-id";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
@@ -44,6 +38,7 @@ export interface TopologyNetworkNodeConfig {
 	addresses?: string[];
 	bootstrap?: boolean;
 	bootstrap_peers?: string[];
+	browser_metrics?: boolean;
 	private_key_seed?: string;
 }
 
@@ -79,7 +74,7 @@ export class TopologyNetworkNode {
 					return false;
 				},
 			},
-			metrics: devToolsMetrics(),
+			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
 			peerDiscovery: [
 				pubsubPeerDiscovery({
 					interval: 10_000,

@@ -8,9 +8,7 @@ export default defineConfig({
 	},
 	plugins: [
 		nodePolyfills({
-			overrides: {
-				fs: "memfs",
-			},
+			overrides: {},
 		}),
 	],
 	optimizeDeps: {

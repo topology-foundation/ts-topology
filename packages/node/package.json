@@ -29,6 +29,7 @@
   "test": "vitest"
  },
  "devDependencies": {
+  "@bufbuild/protobuf": "^2.0.0",
   "@types/node": "^22.5.4",
   "tsx": "4.19.1",
   "typescript": "^5.5.4",
@@ -36,10 +37,12 @@
  },
  "dependencies": {
   "@chainsafe/libp2p-gossipsub": "^14.1.0",
+  "@grpc/grpc-js": "^1.11.3",
   "@libp2p/interface": "^2.1.0",
   "@topology-foundation/blueprints": "0.2.0",
   "@topology-foundation/network": "0.2.0",
   "@topology-foundation/object": "0.2.0",
-  "commander": "^12.1.0"
+  "commander": "^12.1.0",
+  "google-protobuf": "^3.21.2"
  }
 }
