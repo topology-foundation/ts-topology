@@ -8,8 +8,7 @@ export default defineConfig({
 	},
 	plugins: [
 		nodePolyfills({
-			overrides: {
-			},
+			overrides: {},
 		}),
 	],
 	optimizeDeps: {
