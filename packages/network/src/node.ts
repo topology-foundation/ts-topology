@@ -21,7 +21,6 @@ import type {
 	Stream,
 	StreamHandler,
 } from "@libp2p/interface";
-import { prometheusMetrics } from "@libp2p/prometheus-metrics";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
@@ -77,7 +76,7 @@ export class TopologyNetworkNode {
 			},
 			metrics: this._config?.browser_metrics
 				? devToolsMetrics()
-				: prometheusMetrics(),
+				: undefined,
 			peerDiscovery: [
 				pubsubPeerDiscovery({
 					interval: 10_000,
@@ -87,8 +86,8 @@ export class TopologyNetworkNode {
 					list: this._config?.bootstrap_peers
 						? this._config.bootstrap_peers
 						: [
-								"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-							],
+							"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+						],
 				}),
 			],
 			services: {
