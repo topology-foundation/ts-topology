@@ -16,17 +16,11 @@ import { dcutr } from "@libp2p/dcutr";
 import { devToolsMetrics } from "@libp2p/devtools-metrics";
 import { identify } from "@libp2p/identify";
 import type {
-	Ed25519PeerId,
 	EventCallback,
-	PrivateKey,
 	PubSub,
-	RSAPeerId,
-	Secp256k1PeerId,
 	Stream,
 	StreamHandler,
-	URLPeerId,
 } from "@libp2p/interface";
-import { peerIdFromString } from "@libp2p/peer-id";
 import { prometheusMetrics } from '@libp2p/prometheus-metrics'
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
