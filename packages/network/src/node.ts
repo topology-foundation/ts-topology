@@ -89,8 +89,8 @@ export class TopologyNetworkNode {
 					list: this._config?.bootstrap_peers
 						? this._config.bootstrap_peers
 						: [
-							"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-						],
+								"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+							],
 				}),
 			],
 			services: {
@@ -135,11 +135,10 @@ export class TopologyNetworkNode {
 		this._node.addEventListener("peer:discovery", (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
 			for (const ma of e.detail.multiaddrs) {
-				this._node?.dial(ma)
+				this._node?.dial(ma);
 			}
-			console.log("::start::peer::discovery", e.detail)
-		}
-		);
+			console.log("::start::peer::discovery", e.detail);
+		});
 		this._node.addEventListener("peer:identify", (e) =>
 			console.log("::start::peer::identify", e.detail),
 		);
