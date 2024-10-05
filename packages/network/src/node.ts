@@ -132,9 +132,13 @@ export class TopologyNetworkNode {
 		this._node.addEventListener("peer:connect", (e) =>
 			console.log("::start::peer::connect", e.detail),
 		);
-		this._node.addEventListener("peer:discovery", (e) =>
-			console.log("::start::peer::discovery", e.detail),
-		);
+		this._node.addEventListener("peer:discovery", (e) => {
+			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
+			for (const ma of e.detail.multiaddrs) {
+				this._node?.dial(ma);
+			}
+			console.log("::start::peer::discovery", e.detail);
+		});
 		this._node.addEventListener("peer:identify", (e) =>
 			console.log("::start::peer::identify", e.detail),
 		);

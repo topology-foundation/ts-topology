@@ -76,12 +76,12 @@ export class Canvas implements CRO {
 			if (!op.value) continue;
 			switch (op.type) {
 				case "splash": {
-					const [nodeId, offset, size, rgb] = op.value;
+					const [offset, size, rgb] = op.value;
 					this._splash(offset, size, rgb);
 					break;
 				}
 				case "paint": {
-					const [nodeId, offset, rgb] = op.value;
+					const [offset, rgb] = op.value;
 					this._paint(offset, rgb);
 					break;
 				}
