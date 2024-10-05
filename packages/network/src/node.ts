@@ -27,6 +27,7 @@ import type {
 	URLPeerId,
 } from "@libp2p/interface";
 import { peerIdFromString } from "@libp2p/peer-id";
+import { prometheusMetrics } from '@libp2p/prometheus-metrics'
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
@@ -44,6 +45,7 @@ export interface TopologyNetworkNodeConfig {
 	addresses?: string[];
 	bootstrap?: boolean;
 	bootstrap_peers?: string[];
+	browser_metrics?: boolean;
 	private_key_seed?: string;
 }
 
@@ -70,7 +72,6 @@ export class TopologyNetworkNode {
 
 		this._node = await createLibp2p({
 			privateKey,
-			start: false,
 			addresses: {
 				listen: this._config?.addresses ? this._config.addresses : ["/webrtc"],
 			},
@@ -80,7 +81,7 @@ export class TopologyNetworkNode {
 					return false;
 				},
 			},
-			metrics: devToolsMetrics(),
+			metrics: this._config?.browser_metrics ? devToolsMetrics() : prometheusMetrics(),
 			peerDiscovery: [
 				pubsubPeerDiscovery({
 					interval: 10_000,

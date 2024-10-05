@@ -1,7 +1,8 @@
 import * as grpc from "@grpc/grpc-js";
 
-import { TopologyRpcService } from "../proto/rpc_grpc_pb.js";
 import type { ServerUnaryCall, sendUnaryData } from "@grpc/grpc-js";
+import type { TopologyNode } from "../index.js";
+import { TopologyRpcService } from "../proto/rpc_grpc_pb.js";
 import type {
 	GetCroHashGraphRequest,
 	GetCroHashGraphResponse,
@@ -10,7 +11,6 @@ import type {
 	UnsubscribeCroRequest,
 	UnsubscribeCroResponse,
 } from "../proto/rpc_pb.js";
-import type { TopologyNode } from "../index.js";
 
 export function init(node: TopologyNode) {
 	function subscribeCro(
@@ -50,11 +50,22 @@ export function init(node: TopologyNode) {
 	}
 
 	function getCroHashGraph(
-		_: ServerUnaryCall<GetCroHashGraphRequest, GetCroHashGraphResponse>,
+		call: ServerUnaryCall<GetCroHashGraphRequest, GetCroHashGraphResponse>,
 		callback: sendUnaryData<GetCroHashGraphResponse>,
 	) {
+		const hashes: string[] = [];
+		try {
+			const object = node.objectStore.get(call.request.croId);
+			if (!object) throw Error("cro not found");
+			for (const v of object.hashGraph.getAllVertices()) {
+				hashes.push(v.hash);
+			}
+		} catch (e) {
+			console.error(e);
+		}
+
 		const response: GetCroHashGraphResponse = {
-			verticesHashes: [],
+			verticesHashes: hashes,
 		};
 		callback(null, response);
 	}

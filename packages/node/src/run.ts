@@ -11,8 +11,8 @@ const run = async () => {
 		config = JSON.parse(fs.readFileSync(opts.config, "utf8"));
 	}
 
-	const node = new TopologyNode(config)
-	await node.start()
+	const node = new TopologyNode(config);
+	await node.start();
 	rpc_init(node);
 };
 
