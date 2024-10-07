@@ -37,7 +37,7 @@
   "@chainsafe/libp2p-yamux": "^7.0.0",
   "@libp2p/autonat": "^2.0.2",
   "@libp2p/bootstrap": "^11.0.2",
-  "@libp2p/circuit-relay-v2": "^2.0.2",
+  "@libp2p/circuit-relay-v2": "^2.1.2",
   "@libp2p/crypto": "^5.0.2",
   "@libp2p/dcutr": "^2.0.2",
   "@libp2p/devtools-metrics": "^1.1.0",
