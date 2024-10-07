@@ -198,8 +198,8 @@ importers:
   packages/blueprints:
     dependencies:
       '@thi.ng/random':
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^4.1.0
+        version: 4.1.0
     devDependencies:
       '@topology-foundation/object':
         specifier: 0.2.0
@@ -2046,16 +2046,16 @@ packages:
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
 
-  '@thi.ng/api@8.11.10':
-    resolution: {integrity: sha512-X2Dc3uArqR5IpGPs12do6w6SZI+h3HQM/sWAE3URXFZMuKuWrUtK4ollHv5Ubx96rSJvhzxk2TjJW0ek+c8cSg==}
+  '@thi.ng/api@8.11.11':
+    resolution: {integrity: sha512-/GKDIgyQXA7JKxwgJ6W5xgQVHIWXmoPnWHsNqfg7aIyYNpfMYtjLjao2+nXmZhwjizullMahJPH7Xrrm6o/vyg==}
     engines: {node: '>=18'}
 
-  '@thi.ng/errors@2.5.16':
-    resolution: {integrity: sha512-xFFJg7mGTqitbvc5Ta/CwJ7lX09g916DYJYGaR7bG7IKKqcVuC3iHhymxqWS0iC8R4mwljU+ztonBJtp+62ZaQ==}
+  '@thi.ng/errors@2.5.17':
+    resolution: {integrity: sha512-ohBAZcGNEIEOgJ9BPH4tjIsOjVgsnMGh4a2j63r6El68efr8RRN4G+GNkDaqV/jk9wbHKZZPt2t6suJMliPyxg==}
     engines: {node: '>=18'}
 
-  '@thi.ng/random@4.0.4':
-    resolution: {integrity: sha512-jgpOX9X0nPQUBZg+DME4yQk+BwOOLuh+cMzVJIDZaSb/Ns0uNjJEyyrgHDP+XFFTtkFEgZymDtqStZPuSHFLLQ==}
+  '@thi.ng/random@4.1.0':
+    resolution: {integrity: sha512-XXiqGNmvCnpy3kVdetZrYaQ9WVFYdGQ51cOb/3d8h2bhSh5y/h3Pf/L0KOZzmIorKDDJ/Ymi1SN67NhpPiEcoA==}
     engines: {node: '>=18'}
 
   '@tootallnate/quickjs-emscripten@0.23.0':
@@ -7947,14 +7947,14 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@thi.ng/api@8.11.10': {}
+  '@thi.ng/api@8.11.11': {}
 
-  '@thi.ng/errors@2.5.16': {}
+  '@thi.ng/errors@2.5.17': {}
 
-  '@thi.ng/random@4.0.4':
+  '@thi.ng/random@4.1.0':
     dependencies:
-      '@thi.ng/api': 8.11.10
-      '@thi.ng/errors': 2.5.16
+      '@thi.ng/api': 8.11.11
+      '@thi.ng/errors': 2.5.17
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
