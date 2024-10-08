@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org"
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install
       - run: npm publish --provenance --workspace packages --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: "20.x"
           registry-url: "https://npm.pkg.github.com"
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install
       - run: npm publish --provenance --workspace packages --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

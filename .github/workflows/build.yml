@@ -14,7 +14,7 @@ jobs:
           version: 9
       - shell: bash
         run: |
-          pnpm install --no-frozen-lockfile
+          pnpm install
 
   build-example-canvas:
     runs-on: ubuntu-latest
@@ -25,7 +25,7 @@ jobs:
           version: 9
       - shell: bash
         run: |
-          pnpm install --no-frozen-lockfile
+          pnpm install
           cd examples/canvas
           pnpm build
 
@@ -38,6 +38,6 @@ jobs:
           version: 9
       - shell: bash
         run: |
-          pnpm install --no-frozen-lockfile
+          pnpm install
           cd examples/chat
           pnpm build

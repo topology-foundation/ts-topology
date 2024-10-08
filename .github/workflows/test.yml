@@ -14,5 +14,5 @@ jobs:
           version: 9
       - shell: bash
         run: |
-          pnpm install --no-frozen-lockfile
+          pnpm install
           pnpm test
