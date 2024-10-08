@@ -9,29 +9,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
       - uses: pnpm/action-setup@v4
         with:
           version: 9
       - shell: bash
         run: |
-          pnpm install
+          pnpm install --no-frozen-lockfile
 
   build-example-canvas:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
       - uses: pnpm/action-setup@v4
         with:
           version: 9
       - shell: bash
         run: |
-          pnpm install
+          pnpm install --no-frozen-lockfile
           cd examples/canvas
           pnpm build
 
@@ -39,14 +33,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
       - uses: pnpm/action-setup@v4
         with:
           version: 9
       - shell: bash
         run: |
-          pnpm install
+          pnpm install --no-frozen-lockfile
           cd examples/chat
           pnpm build
