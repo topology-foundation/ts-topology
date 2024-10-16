@@ -3,7 +3,7 @@ package topology.node;
 
 service TopologyRpc {
 	rpc subscribeCro    (SubscribeCroRequest    ) returns (SubscribeCroResponse    );
-	rpc unsubscribeCro  (UnsubscribeCroRequest  ) returns (UnsubscribeCroRequest   );
+	rpc unsubscribeCro  (UnsubscribeCroRequest  ) returns (UnsubscribeCroResponse  );
 	rpc getCroHashGraph (GetCroHashGraphRequest ) returns (GetCroHashGraphResponse );
 }
 

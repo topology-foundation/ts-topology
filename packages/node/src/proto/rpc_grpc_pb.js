@@ -45,6 +45,15 @@ function deserialize_topology_node_UnsubscribeCroRequest(buffer_arg) {
   return node_src_proto_rpc_pb.UnsubscribeCroRequest.decode(new Uint8Array(buffer_arg));
 }
 
+function serialize_topology_node_UnsubscribeCroResponse(arg) {
+	let encoded = node_src_proto_rpc_pb.UnsubscribeCroResponse.encode(arg).finish()
+	return Buffer.from(encoded);
+}
+
+function deserialize_topology_node_UnsubscribeCroResponse(buffer_arg) {
+  return node_src_proto_rpc_pb.UnsubscribeCroResponse.decode(new Uint8Array(buffer_arg));
+}
+
 export const TopologyRpcService = {
   subscribeCro: {
     path: '/topology.node.TopologyRpc/subscribeCro',
@@ -62,11 +71,11 @@ export const TopologyRpcService = {
     requestStream: false,
     responseStream: false,
     requestType: node_src_proto_rpc_pb.UnsubscribeCroRequest,
-    responseType: node_src_proto_rpc_pb.UnsubscribeCroRequest,
+    responseType: node_src_proto_rpc_pb.UnsubscribeCroResponse,
     requestSerialize: serialize_topology_node_UnsubscribeCroRequest,
     requestDeserialize: deserialize_topology_node_UnsubscribeCroRequest,
-    responseSerialize: serialize_topology_node_UnsubscribeCroRequest,
-    responseDeserialize: deserialize_topology_node_UnsubscribeCroRequest,
+    responseSerialize: serialize_topology_node_UnsubscribeCroResponse,
+    responseDeserialize: deserialize_topology_node_UnsubscribeCroResponse,
   },
   getCroHashGraph: {
     path: '/topology.node.TopologyRpc/getCroHashGraph',
