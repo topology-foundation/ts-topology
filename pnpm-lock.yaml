@@ -284,8 +284,8 @@ importers:
         version: 5.1.0
     devDependencies:
       '@libp2p/interface':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.3
+        version: 2.1.3
       react-native-webrtc:
         specifier: ^124.0.3
         version: 124.0.4(react-native@0.75.4(@babel/core@7.25.7)(@babel/preset-env@7.25.7(@babel/core@7.25.7))(@types/react@18.3.11)(react@18.3.1)(typescript@5.6.2))
@@ -299,8 +299,8 @@ importers:
         specifier: ^1.11.3
         version: 1.12.0
       '@libp2p/interface':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^2.1.3
+        version: 2.1.3
       '@topology-foundation/blueprints':
         specifier: 0.2.0
         version: link:../blueprints
@@ -1518,8 +1518,8 @@ packages:
   '@libp2p/interface-internal@2.0.7':
     resolution: {integrity: sha512-numJBYHajL7W1BuURkQ4tlZ4sUGNGI3GWkhTmL2fS+LxYS2hUVTxcemHtUZGpcJQ17GiCqq+j4GE3bkBagOb0g==}
 
-  '@libp2p/interface@2.1.2':
-    resolution: {integrity: sha512-uD4NapC+1qGX7RmgC1aehQm3pMs1MpO1DwuhUlAo1M6CyNxfs1Ha9jhg2T+G4u4CAJM6wffZTyPGnKnrR+M8Fw==}
+  '@libp2p/interface@2.1.3':
+    resolution: {integrity: sha512-t1i2LWcnTGJEr7fDMslA8wYwBzJP81QKBlrBHoGhXxqqpRQa9035roCh/Akuw5RUgjKE47/ezjuzo90aWsJB8g==}
 
   '@libp2p/logger@5.1.0':
     resolution: {integrity: sha512-hmkk1TONYRe+kKs5QTxkayIfj9qicp8hcrJ1Ac9QfTW/jdaUlnqd1uop4QcOD5GV6qNMq+v1qaMFWFYSN9RcPA==}
@@ -6543,7 +6543,7 @@ snapshots:
   '@chainsafe/libp2p-gossipsub@14.1.0':
     dependencies:
       '@libp2p/crypto': 5.0.4
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/peer-id': 5.0.4
       '@libp2p/pubsub': 10.0.7
@@ -6562,7 +6562,7 @@ snapshots:
       '@chainsafe/as-chacha20poly1305': 0.1.0
       '@chainsafe/as-sha256': 0.4.2
       '@libp2p/crypto': 5.0.4
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/peer-id': 5.0.4
       '@noble/ciphers': 0.6.0
       '@noble/curves': 1.6.0
@@ -6579,7 +6579,7 @@ snapshots:
 
   '@chainsafe/libp2p-yamux@7.0.1':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/utils': 6.1.0
       get-iterator: 2.0.1
       it-foreach: 2.1.1
@@ -6850,7 +6850,7 @@ snapshots:
 
   '@libp2p/autonat@2.0.7':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/peer-id': 5.0.4
       '@libp2p/utils': 6.1.0
@@ -6866,7 +6866,7 @@ snapshots:
 
   '@libp2p/bootstrap@11.0.7':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/peer-id': 5.0.4
       '@multiformats/mafmt': 12.1.6
@@ -6874,7 +6874,7 @@ snapshots:
 
   '@libp2p/circuit-relay-v2@2.1.2':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/peer-collections': 6.0.7
       '@libp2p/peer-id': 5.0.4
@@ -6895,7 +6895,7 @@ snapshots:
 
   '@libp2p/crypto@5.0.4':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@noble/curves': 1.6.0
       '@noble/hashes': 1.5.0
       asn1js: 3.0.5
@@ -6906,7 +6906,7 @@ snapshots:
 
   '@libp2p/dcutr@2.0.7':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/utils': 6.1.0
       '@multiformats/multiaddr': 12.3.1
@@ -6918,7 +6918,7 @@ snapshots:
 
   '@libp2p/devtools-metrics@1.1.5':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/logger': 5.1.0
       '@libp2p/peer-id': 5.0.4
@@ -6934,7 +6934,7 @@ snapshots:
   '@libp2p/identify@3.0.7':
     dependencies:
       '@libp2p/crypto': 5.0.4
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/peer-id': 5.0.4
       '@libp2p/peer-record': 8.0.7
@@ -6951,13 +6951,13 @@ snapshots:
 
   '@libp2p/interface-internal@2.0.7':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/peer-collections': 6.0.7
       '@multiformats/multiaddr': 12.3.1
       progress-events: 1.0.1
       uint8arraylist: 2.4.8
 
-  '@libp2p/interface@2.1.2':
+  '@libp2p/interface@2.1.3':
     dependencies:
       '@multiformats/multiaddr': 12.3.1
       it-pushable: 3.2.3
@@ -6968,7 +6968,7 @@ snapshots:
 
   '@libp2p/logger@5.1.0':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@multiformats/multiaddr': 12.3.1
       interface-datastore: 8.3.1
       multiformats: 13.3.0
@@ -6976,7 +6976,7 @@ snapshots:
 
   '@libp2p/mdns@11.0.7':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/peer-id': 5.0.4
       '@libp2p/utils': 6.1.0
@@ -6987,7 +6987,7 @@ snapshots:
 
   '@libp2p/multistream-select@6.0.5':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       it-length-prefixed: 9.1.0
       it-length-prefixed-stream: 1.2.0
       it-stream-types: 2.0.2
@@ -6999,7 +6999,7 @@ snapshots:
 
   '@libp2p/peer-collections@6.0.7':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/peer-id': 5.0.4
       '@libp2p/utils': 6.1.0
       multiformats: 13.3.0
@@ -7007,14 +7007,14 @@ snapshots:
   '@libp2p/peer-id@5.0.4':
     dependencies:
       '@libp2p/crypto': 5.0.4
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       multiformats: 13.3.0
       uint8arrays: 5.1.0
 
   '@libp2p/peer-record@8.0.7':
     dependencies:
       '@libp2p/crypto': 5.0.4
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/peer-id': 5.0.4
       '@libp2p/utils': 6.1.0
       '@multiformats/multiaddr': 12.3.1
@@ -7027,7 +7027,7 @@ snapshots:
   '@libp2p/peer-store@11.0.7':
     dependencies:
       '@libp2p/crypto': 5.0.4
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/peer-collections': 6.0.7
       '@libp2p/peer-id': 5.0.4
       '@libp2p/peer-record': 8.0.7
@@ -7043,7 +7043,7 @@ snapshots:
   '@libp2p/pubsub-peer-discovery@11.0.0':
     dependencies:
       '@libp2p/crypto': 5.0.4
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/peer-id': 5.0.4
       '@multiformats/multiaddr': 12.3.1
@@ -7054,7 +7054,7 @@ snapshots:
   '@libp2p/pubsub@10.0.7':
     dependencies:
       '@libp2p/crypto': 5.0.4
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/peer-collections': 6.0.7
       '@libp2p/peer-id': 5.0.4
@@ -7069,7 +7069,7 @@ snapshots:
 
   '@libp2p/simple-metrics@1.2.3':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/logger': 5.1.0
       it-foreach: 2.1.1
       it-stream-types: 2.0.2
@@ -7079,7 +7079,7 @@ snapshots:
     dependencies:
       '@chainsafe/is-ip': 2.0.2
       '@libp2p/crypto': 5.0.4
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/logger': 5.1.0
       '@multiformats/multiaddr': 12.3.1
       '@sindresorhus/fnv1a': 3.1.0
@@ -7103,7 +7103,7 @@ snapshots:
   '@libp2p/webrtc@5.0.10(react-native@0.75.4(@babel/core@7.25.7)(@babel/preset-env@7.25.7(@babel/core@7.25.7))(@types/react@18.3.11)(react@18.3.1)(typescript@5.6.2))':
     dependencies:
       '@chainsafe/libp2p-noise': 16.0.0
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/peer-id': 5.0.4
       '@libp2p/utils': 6.1.0
@@ -7133,7 +7133,7 @@ snapshots:
 
   '@libp2p/websockets@9.0.7':
     dependencies:
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/utils': 6.1.0
       '@multiformats/mafmt': 12.1.6
       '@multiformats/multiaddr': 12.3.1
@@ -7152,7 +7152,7 @@ snapshots:
   '@libp2p/webtransport@5.0.10':
     dependencies:
       '@chainsafe/libp2p-noise': 16.0.0
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/peer-id': 5.0.4
       '@libp2p/utils': 6.1.0
       '@multiformats/multiaddr': 12.3.1
@@ -9675,7 +9675,7 @@ snapshots:
   libp2p@2.1.6:
     dependencies:
       '@libp2p/crypto': 5.0.4
-      '@libp2p/interface': 2.1.2
+      '@libp2p/interface': 2.1.3
       '@libp2p/interface-internal': 2.0.7
       '@libp2p/logger': 5.1.0
       '@libp2p/multistream-select': 6.0.5
