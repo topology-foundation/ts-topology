@@ -1,8 +1,20 @@
-import { TopologyNode } from "@topology-foundation/node";
+import { TopologyNode, type TopologyNodeConfig } from "@topology-foundation/node";
 import type { TopologyObject } from "@topology-foundation/object";
 import { Chat } from "./objects/chat";
 
-const node = new TopologyNode();
+const node_config : TopologyNodeConfig = {
+	network_config: {
+		bootstrap_peers : [
+			// "/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+			"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP"
+
+		],
+		bootstrap : false,
+		"addresses": ["/webrtc"],
+	},
+};
+
+const node = new TopologyNode(node_config);
 // CRO = Conflict-free Replicated Object
 let topologyObject: TopologyObject;
 let chatCRO: Chat;

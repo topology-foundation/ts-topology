@@ -63,6 +63,24 @@ export class TopologyNetworkNode {
 			);
 		}
 
+		const bootstrap_nodes_list = this._config?.bootstrap_peers
+			? this._config.bootstrap_peers
+			: [
+					"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+				];
+		console.log("HERE ARE THE BOOTSTRAP NODES", bootstrap_nodes_list);
+
+		const _pubsubPeerDiscovery = pubsubPeerDiscovery({
+			interval: 10_000,
+			topics: ["topology::discovery"],
+		});
+		
+		const peer_discovery = bootstrap_nodes_list.length ? [
+			_pubsubPeerDiscovery,
+			bootstrap({
+				list: bootstrap_nodes_list,
+			})] : [ _pubsubPeerDiscovery ];
+
 		this._node = await createLibp2p({
 			privateKey,
 			addresses: {
@@ -75,19 +93,7 @@ export class TopologyNetworkNode {
 				},
 			},
 			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
-			peerDiscovery: [
-				pubsubPeerDiscovery({
-					interval: 10_000,
-					topics: ["topology::discovery"],
-				}),
-				bootstrap({
-					list: this._config?.bootstrap_peers
-						? this._config.bootstrap_peers
-						: [
-								"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-							],
-				}),
-			],
+			peerDiscovery: peer_discovery,
 			services: {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
@@ -106,6 +112,7 @@ export class TopologyNetworkNode {
 				webTransport(),
 			],
 		});
+		
 
 		if (this._config?.bootstrap)
 			this._node.services.relay = circuitRelayServer();
@@ -115,6 +122,8 @@ export class TopologyNetworkNode {
 				this._node.dial(multiaddr(addr));
 			}
 		}
+
+		
 
 		this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
 		this.peerId = this._node.peerId.toString();
