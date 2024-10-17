@@ -3,7 +3,7 @@
 		"addresses": [ "/ip4/0.0.0.0/tcp/50000/ws", "/ip4/0.0.0.0/tcp/50001"],
 		"bootstrap": true,
 		"bootstrap_peers": [
-			"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP"
+			
 		],
 		"private_key_seed": "bootstrap"
 	}

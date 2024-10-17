@@ -1,17 +1,34 @@
-import { TopologyNode, type TopologyNodeConfig } from "@topology-foundation/node";
+import {
+	TopologyNode,
+	type TopologyNodeConfig,
+} from "@topology-foundation/node";
 import type { TopologyObject } from "@topology-foundation/object";
 import { Chat } from "./objects/chat";
 
-const node_config : TopologyNodeConfig = {
-	network_config: {
-		bootstrap_peers : [
-			"/ip4/192.168.1.126/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ"
-		],
-		bootstrap : false,
-	},
-};
+let node_config : TopologyNodeConfig = {};
+
+if (import.meta.env.VITE_TOPOLOGY_MODE === "local") {
+	// After running the local boostrap node, replace the local_peer_id with the peer id of the local node
+	const local_peer_id = "";
+	const local_bootstrap_peer_ip = "127.0.0.1";
+
+	if(!local_peer_id) {
+		console.error("topology::network::start::bootstrap: Set local_peer_id in `/examples/chat/src/index.ts` file with the peer id of the local bootstrap node");
+		process.exit(1);
+	}
+
+	node_config = {
+		network_config: {
+			bootstrap_peers: [
+				`/ip4/${local_bootstrap_peer_ip}/tcp/50000/ws/p2p/${local_peer_id}`,
+			],
+			bootstrap: false,
+		},
+	};
+}
 
 const node = new TopologyNode(node_config);
+
 // CRO = Conflict-free Replicated Object
 let topologyObject: TopologyObject;
 let chatCRO: Chat;
