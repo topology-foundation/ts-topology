@@ -1,8 +1,7 @@
 {
 	"network_config": {
 		"addresses": ["/webrtc"],
-		"bootstrap_peers": [
-		],
+		"bootstrap_peers": [],
 		"private_key_seed": "node"
 	}
 }

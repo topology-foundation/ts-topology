@@ -24,7 +24,7 @@ import type {
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
-import * as filters from '@libp2p/websockets/filters'
+import * as filters from "@libp2p/websockets/filters";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
 import { type Libp2p, createLibp2p } from "libp2p";
@@ -74,12 +74,15 @@ export class TopologyNetworkNode {
 			interval: 10_000,
 			topics: ["topology::discovery"],
 		});
-		
-		const peer_discovery = bootstrap_nodes_list.length ? [
-			_pubsubPeerDiscovery,
-			bootstrap({
-				list: bootstrap_nodes_list,
-			})] : [ _pubsubPeerDiscovery ];
+
+		const peer_discovery = bootstrap_nodes_list.length
+			? [
+					_pubsubPeerDiscovery,
+					bootstrap({
+						list: bootstrap_nodes_list,
+					}),
+				]
+			: [_pubsubPeerDiscovery];
 
 		this._node = await createLibp2p({
 			privateKey,
@@ -109,12 +112,11 @@ export class TopologyNetworkNode {
 				webRTC(),
 				webRTCDirect(),
 				webSockets({
-					filter: filters.all
-				  }),
+					filter: filters.all,
+				}),
 				webTransport(),
 			],
 		});
-		
 
 		if (this._config?.bootstrap)
 			this._node.services.relay = circuitRelayServer();
