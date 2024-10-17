@@ -10,7 +10,7 @@ let node_config: TopologyNodeConfig = {};
 if (import.meta.env.VITE_TOPOLOGY_MODE === "local") {
 	// After running the local boostrap node, replace the local_peer_id with the peer id of the local node
 	const local_peer_id = "12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ";
-	const local_bootstrap_peer_ip = "127.0.0.1";
+	const local_bootstrap_peer_ip = "127.0.0.1"; // This is the IP of the local bootstrap node, replace it with the IP of the local node
 
 	if (!local_peer_id) {
 		console.error(
