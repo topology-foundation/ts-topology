@@ -5,12 +5,9 @@ import { Chat } from "./objects/chat";
 const node_config : TopologyNodeConfig = {
 	network_config: {
 		bootstrap_peers : [
-			// "/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
-			"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP"
-
+			"/ip4/192.168.1.126/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ"
 		],
 		bootstrap : false,
-		"addresses": ["/webrtc"],
 	},
 };
 

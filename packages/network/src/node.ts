@@ -24,6 +24,7 @@ import type {
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
+import * as filters from '@libp2p/websockets/filters'
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
 import { type Libp2p, createLibp2p } from "libp2p";
@@ -68,7 +69,6 @@ export class TopologyNetworkNode {
 			: [
 					"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
 				];
-		console.log("HERE ARE THE BOOTSTRAP NODES", bootstrap_nodes_list);
 
 		const _pubsubPeerDiscovery = pubsubPeerDiscovery({
 			interval: 10_000,
@@ -108,7 +108,9 @@ export class TopologyNetworkNode {
 				}),
 				webRTC(),
 				webRTCDirect(),
-				webSockets(),
+				webSockets({
+					filter: filters.all
+				  }),
 				webTransport(),
 			],
 		});
@@ -123,8 +125,6 @@ export class TopologyNetworkNode {
 			}
 		}
 
-		
-
 		this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
 		this.peerId = this._node.peerId.toString();
 
@@ -132,6 +132,9 @@ export class TopologyNetworkNode {
 			"topology::network::start: Successfuly started topology network w/ peer_id",
 			this.peerId,
 		);
+
+		const addr = await this._node.getMultiaddrs();
+		console.log("topology::network::ADDR: Listening on", addr);
 
 		this._node.addEventListener("peer:connect", (e) =>
 			console.log("::start::peer::connect", e.detail),
