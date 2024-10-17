@@ -24,6 +24,7 @@ import type {
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
+import * as filters from "@libp2p/websockets/filters";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
 import { type Libp2p, createLibp2p } from "libp2p";
@@ -63,6 +64,26 @@ export class TopologyNetworkNode {
 			);
 		}
 
+		const bootstrap_nodes_list = this._config?.bootstrap_peers
+			? this._config.bootstrap_peers
+			: [
+					"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+				];
+
+		const _pubsubPeerDiscovery = pubsubPeerDiscovery({
+			interval: 10_000,
+			topics: ["topology::discovery"],
+		});
+
+		const peer_discovery = bootstrap_nodes_list.length
+			? [
+					_pubsubPeerDiscovery,
+					bootstrap({
+						list: bootstrap_nodes_list,
+					}),
+				]
+			: [_pubsubPeerDiscovery];
+
 		this._node = await createLibp2p({
 			privateKey,
 			addresses: {
@@ -75,19 +96,7 @@ export class TopologyNetworkNode {
 				},
 			},
 			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
-			peerDiscovery: [
-				pubsubPeerDiscovery({
-					interval: 10_000,
-					topics: ["topology::discovery"],
-				}),
-				bootstrap({
-					list: this._config?.bootstrap_peers
-						? this._config.bootstrap_peers
-						: [
-								"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-							],
-				}),
-			],
+			peerDiscovery: peer_discovery,
 			services: {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
@@ -102,7 +111,9 @@ export class TopologyNetworkNode {
 				}),
 				webRTC(),
 				webRTCDirect(),
-				webSockets(),
+				webSockets({
+					filter: filters.all,
+				}),
 				webTransport(),
 			],
 		});
@@ -123,6 +134,9 @@ export class TopologyNetworkNode {
 			"topology::network::start: Successfuly started topology network w/ peer_id",
 			this.peerId,
 		);
+
+		const addr = await this._node.getMultiaddrs();
+		console.log("topology::network::ADDR: Listening on", addr);
 
 		this._node.addEventListener("peer:connect", (e) =>
 			console.log("::start::peer::connect", e.detail),

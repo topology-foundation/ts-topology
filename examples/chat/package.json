@@ -10,6 +10,7 @@
     "build": "vite build",
     "clean": "rm -rf dist/ node_modules/",
     "dev": "vite serve",
+    "local": "VITE_TOPOLOGY_MODE=local vite serve",
     "start": "ts-node ./src/index.ts"
   },
   "dependencies": {
