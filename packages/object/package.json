@@ -33,6 +33,6 @@
  },
  "dependencies": {
   "@bufbuild/protobuf": "^2.0.0",
-  "ts-proto": "^2.0.3"
+  "ts-proto": "^2.2.4"
  }
 }
