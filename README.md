@@ -54,20 +54,4 @@ pnpm install
 
 The postinstall script will build all the packages. In case you have errors, please manually build every package inside the folder `packages`.
 
-# Local Developement 
-You can develop and test the protocol and run examples locally. To do so, you can use the following instructions:
 
-- Clone the repository
-- Install the dependencies with `pnpm install`
-- Build the packages and install on your local machine with `pnpm postinstall`
-- Go to `packages/node` and run the following command to start the node:
-```bash
-pnpm cli relay --config configs/local-bootstrap.json
-```
-Keep the terminal open and copy the `peerId` from the output. You will need it to connect to the node.
-- Open a new terminal and go to `examples/chat` and run the following command to start the example:
-```bash
-pnpm local
-```
-- Make sure you update the `peerId` in the `src/index.ts` file with the one you copied from the node.
-- You should now be able to see the chat example running in your browser opening the displayed URL.
