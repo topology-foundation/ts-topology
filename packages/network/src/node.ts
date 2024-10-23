@@ -135,9 +135,6 @@ export class TopologyNetworkNode {
 			this.peerId,
 		);
 
-		const addr = await this._node.getMultiaddrs();
-		console.log("topology::network::ADDR: Listening on", addr);
-
 		this._node.addEventListener("peer:connect", (e) =>
 			console.log("::start::peer::connect", e.detail),
 		);
