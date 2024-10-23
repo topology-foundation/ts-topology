@@ -26,6 +26,19 @@ For more information on what are the commands available, run:
 topology-node --help
 ```
 
+#### Running a bootstrap node
+You can run a bootstrap node using the following command:
+
+```bash
+pnpm relay --config configs/bootstrap.json
+```
+
+If you want to run a local bootstrap node, you can use the following command:
+
+```bash
+pnpm relay --config configs/local-bootstrap.json
+```
+
 ### Integration
 
 To integrate the Topology Node into an existing application, you can install it using:

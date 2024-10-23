@@ -24,6 +24,7 @@ import type {
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
+import * as filters from "@libp2p/websockets/filters";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
 import { type Libp2p, createLibp2p } from "libp2p";
@@ -63,6 +64,26 @@ export class TopologyNetworkNode {
 			);
 		}
 
+		const _bootstrapNodesList = this._config?.bootstrap_peers
+			? this._config.bootstrap_peers
+			: [
+					"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+				];
+
+		const _pubsubPeerDiscovery = pubsubPeerDiscovery({
+			interval: 10_000,
+			topics: ["topology::discovery"],
+		});
+
+		const _peerDiscovery = _bootstrapNodesList.length
+			? [
+					_pubsubPeerDiscovery,
+					bootstrap({
+						list: _bootstrapNodesList,
+					}),
+				]
+			: [_pubsubPeerDiscovery];
+
 		this._node = await createLibp2p({
 			privateKey,
 			addresses: {
@@ -75,19 +96,7 @@ export class TopologyNetworkNode {
 				},
 			},
 			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
-			peerDiscovery: [
-				pubsubPeerDiscovery({
-					interval: 10_000,
-					topics: ["topology::discovery"],
-				}),
-				bootstrap({
-					list: this._config?.bootstrap_peers
-						? this._config.bootstrap_peers
-						: [
-								"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-							],
-				}),
-			],
+			peerDiscovery: _peerDiscovery,
 			services: {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
@@ -102,7 +111,9 @@ export class TopologyNetworkNode {
 				}),
 				webRTC(),
 				webRTCDirect(),
-				webSockets(),
+				webSockets({
+					filter: filters.all,
+				}),
 				webTransport(),
 			],
 		});
