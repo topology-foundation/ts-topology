@@ -1,12 +1,8 @@
-import {
-	TopologyNode,
-	type TopologyNodeConfig,
-} from "@topology-foundation/node";
+import { TopologyNode } from "@topology-foundation/node";
 import type { TopologyObject } from "@topology-foundation/object";
 import { Chat } from "./objects/chat";
 
 const node = new TopologyNode();
-
 // CRO = Conflict-free Replicated Object
 let topologyObject: TopologyObject;
 let chatCRO: Chat;
