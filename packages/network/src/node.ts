@@ -67,8 +67,8 @@ export class TopologyNetworkNode {
 		const _bootstrapNodesList = this._config?.bootstrap_peers
 			? this._config.bootstrap_peers
 			: [
-				"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-			];
+					"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+				];
 
 		const _pubsubPeerDiscovery = pubsubPeerDiscovery({
 			interval: 10_000,
@@ -77,11 +77,11 @@ export class TopologyNetworkNode {
 
 		const _peerDiscovery = _bootstrapNodesList.length
 			? [
-				_pubsubPeerDiscovery,
-				bootstrap({
-					list: _bootstrapNodesList,
-				}),
-			]
+					_pubsubPeerDiscovery,
+					bootstrap({
+						list: _bootstrapNodesList,
+					}),
+				]
 			: [_pubsubPeerDiscovery];
 
 		this._node = await createLibp2p({
