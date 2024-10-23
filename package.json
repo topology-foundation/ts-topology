@@ -31,10 +31,10 @@
 		"@types/node": "^22.5.4",
 		"assemblyscript": "^0.27.29",
 		"release-it": "^17.6.0",
-		"ts-proto": "^2.0.3",
+		"ts-proto": "^2.2.4",
 		"typedoc": "^0.26.6",
 		"typescript": "^5.5.4",
-		"vite": "^5.4.6",
+		"vite": "^5.4.9",
 		"vite-tsconfig-paths": "^5.0.1",
 		"vitest": "^2.1.1"
 	},
