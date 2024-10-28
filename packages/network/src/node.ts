@@ -84,6 +84,21 @@ export class TopologyNetworkNode {
 				]
 			: [_pubsubPeerDiscovery];
 
+		const _node_services = {
+			autonat: autoNAT(),
+			dcutr: dcutr(),
+			identify: identify(),
+			pubsub: gossipsub(),
+		};
+
+		const _bootstrap_services = {
+			autonat: autoNAT(),
+			dcutr: dcutr(),
+			identify: identify(),
+			pubsub: gossipsub(),
+			relay: circuitRelayServer(),
+		};
+
 		this._node = await createLibp2p({
 			privateKey,
 			addresses: {
@@ -97,13 +112,7 @@ export class TopologyNetworkNode {
 			},
 			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
 			peerDiscovery: _peerDiscovery,
-			services: {
-				autonat: autoNAT(),
-				dcutr: dcutr(),
-				identify: identify(),
-				pubsub: gossipsub(),
-				relay: circuitRelayServer()
-			},
+			services: this._config?.bootstrap ? _bootstrap_services : _node_services,
 			streamMuxers: [yamux()],
 			transports: [
 				circuitRelayTransport({
@@ -117,12 +126,7 @@ export class TopologyNetworkNode {
 				}),
 				webTransport(),
 			],
-			start: true
 		});
-
-		if (this._config?.bootstrap){
-			this._node.services.relay = circuitRelayServer();
-		}
 
 		if (!this._config?.bootstrap) {
 			for (const addr of this._config?.bootstrap_peers || []) {
@@ -151,8 +155,6 @@ export class TopologyNetworkNode {
 		this._node.addEventListener("peer:identify", (e) =>
 			console.log("::start::peer::identify", e.detail),
 		);
-
-		this._node.start();
 	}
 
 	subscribe(topic: string) {
