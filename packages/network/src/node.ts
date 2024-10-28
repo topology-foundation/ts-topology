@@ -92,10 +92,7 @@ export class TopologyNetworkNode {
 		};
 
 		const _bootstrap_services = {
-			autonat: autoNAT(),
-			dcutr: dcutr(),
-			identify: identify(),
-			pubsub: gossipsub(),
+			..._node_services,
 			relay: circuitRelayServer(),
 		};
 
