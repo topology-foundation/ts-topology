@@ -31,6 +31,7 @@ import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
+import { kadDHT } from "@libp2p/kad-dht";
 
 export * from "./stream.js";
 
@@ -67,7 +68,8 @@ export class TopologyNetworkNode {
 		const _bootstrapNodesList = this._config?.bootstrap_peers
 			? this._config.bootstrap_peers
 			: [
-					"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+					// "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+					"/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
 				];
 
 		const _pubsubPeerDiscovery = pubsubPeerDiscovery({
@@ -77,18 +79,25 @@ export class TopologyNetworkNode {
 
 		const _peerDiscovery = _bootstrapNodesList.length
 			? [
-					_pubsubPeerDiscovery,
+					// _pubsubPeerDiscovery,
 					bootstrap({
 						list: _bootstrapNodesList,
 					}),
 				]
-			: [_pubsubPeerDiscovery];
+			: [
+				// _pubsubPeerDiscovery
+			];
 
 		const _node_services = {
 			autonat: autoNAT(),
 			dcutr: dcutr(),
 			identify: identify(),
 			pubsub: gossipsub(),
+			kadDHT: kadDHT({
+				protocol : "/topology/dht/1.0.0",
+				kBucketSize : 50,
+				clientMode : false,
+			})
 		};
 
 		const _bootstrap_services = {

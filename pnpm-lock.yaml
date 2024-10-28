@@ -295,6 +295,9 @@ importers:
       '@libp2p/identify':
         specifier: ^3.0.6
         version: 3.0.9
+      '@libp2p/kad-dht':
+        specifier: 14.0.0
+        version: 14.0.0
       '@libp2p/mdns':
         specifier: ^11.0.8
         version: 11.0.9
@@ -1577,6 +1580,9 @@ packages:
   '@libp2p/interface@2.1.3':
     resolution: {integrity: sha512-t1i2LWcnTGJEr7fDMslA8wYwBzJP81QKBlrBHoGhXxqqpRQa9035roCh/Akuw5RUgjKE47/ezjuzo90aWsJB8g==}
 
+  '@libp2p/kad-dht@14.0.0':
+    resolution: {integrity: sha512-uPIC5TEvdjCgn4xvsjlOUyCVEGmJIzLM9MW34ReN71lXYF1LP7uRQPGBuF/Of42V5+YVlyPzIFKjo/VxFR/TkQ==}
+
   '@libp2p/logger@5.1.2':
     resolution: {integrity: sha512-To14ikSC+fnNXO+GkZB/Vj+kOGbdGcdpHdAMxvAWjm69ILDreGUlcDVotnAKVtN2bPAHL3Z0XzqDyKeRI6j73A==}
 
@@ -1603,6 +1609,9 @@ packages:
 
   '@libp2p/pubsub@10.0.9':
     resolution: {integrity: sha512-8f6anvHz2BT3jvMrbkb3P1jlYluk6/0CiBM+9dO9JgItdANmF3uJk7FxZjOTmJAipxxnd7Gglno47AA3xnEEng==}
+
+  '@libp2p/record@4.0.4':
+    resolution: {integrity: sha512-wEEeHXGNIcc8HtGbgGMuSHbboUWMxKG7OxALFwkE+KACgfRJZTESOp6XIdZnyC0r9lfEFsjF01pFKBTzoBmWEQ==}
 
   '@libp2p/simple-metrics@1.2.5':
     resolution: {integrity: sha512-aOf0NqEQAyJQ55JMWpsYvl+olvSqFF6R0NkzSuK2TVvauGQ5PIqz48hBzZvmxp0JQpFgV8Ma7ECq6Vsg/Uvs8Q==}
@@ -3541,6 +3550,9 @@ packages:
   it-length-prefixed@9.1.0:
     resolution: {integrity: sha512-kx2UTJuy7/lsT3QUzf50NjfxU1Z4P4wlvYp6YnR5Nc61P8XKfy+QtiJi1VLojA+Kea7vMbB4002rIij1Ol9hcw==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+
+  it-length@3.0.6:
+    resolution: {integrity: sha512-R7bxHAzpRzYz7vghc2DDH7x4KXvEkeLfN/h316++jzbkEHIRXbEPLbE20p5yrqqBdOeK6/FRUDuHlTJ0H1hysw==}
 
   it-map@3.1.1:
     resolution: {integrity: sha512-9bCSwKD1yN1wCOgJ9UOl+46NQtdatosPWzxxUk2NdTLwRPXLh+L7iwCC9QKsbgM60RQxT/nH8bKMqm3H/o8IHQ==}
@@ -6831,6 +6843,39 @@ snapshots:
       progress-events: 1.0.1
       uint8arraylist: 2.4.8
 
+  '@libp2p/kad-dht@14.0.0':
+    dependencies:
+      '@libp2p/crypto': 5.0.5
+      '@libp2p/interface': 2.1.3
+      '@libp2p/interface-internal': 2.0.9
+      '@libp2p/peer-collections': 6.0.9
+      '@libp2p/peer-id': 5.0.6
+      '@libp2p/record': 4.0.4
+      '@libp2p/utils': 6.1.2
+      '@multiformats/multiaddr': 12.3.1
+      any-signal: 4.1.1
+      hashlru: 2.3.0
+      interface-datastore: 8.3.1
+      it-drain: 3.0.7
+      it-length: 3.0.6
+      it-length-prefixed: 9.1.0
+      it-map: 3.1.1
+      it-merge: 3.0.5
+      it-parallel: 3.0.8
+      it-pipe: 3.0.1
+      it-protobuf-stream: 1.1.5
+      it-take: 3.0.6
+      multiformats: 13.3.0
+      p-defer: 4.0.1
+      p-event: 6.0.1
+      p-queue: 8.0.1
+      progress-events: 1.0.1
+      protons-runtime: 5.5.0
+      race-signal: 1.1.0
+      uint8-varint: 2.0.4
+      uint8arraylist: 2.4.8
+      uint8arrays: 5.1.0
+
   '@libp2p/logger@5.1.2':
     dependencies:
       '@libp2p/interface': 2.1.3
@@ -6929,6 +6974,12 @@ snapshots:
       it-pushable: 3.2.3
       multiformats: 13.3.0
       p-queue: 8.0.1
+      uint8arraylist: 2.4.8
+      uint8arrays: 5.1.0
+
+  '@libp2p/record@4.0.4':
+    dependencies:
+      protons-runtime: 5.5.0
       uint8arraylist: 2.4.8
       uint8arrays: 5.1.0
 
@@ -9171,6 +9222,8 @@ snapshots:
       uint8-varint: 2.0.4
       uint8arraylist: 2.4.8
       uint8arrays: 5.1.0
+
+  it-length@3.0.6: {}
 
   it-map@3.1.1:
     dependencies:
