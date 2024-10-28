@@ -102,7 +102,8 @@ export class TopologyNetworkNode {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
 				identify: identify(),
-				pubsub: gossipsub()
+				pubsub: gossipsub(),
+				relay: circuitRelayServer()
 			},
 			streamMuxers: [yamux()],
 			transports: [
