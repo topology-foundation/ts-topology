@@ -31,7 +31,10 @@ import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
-import { kadDHT } from "@libp2p/kad-dht";
+import { KadDHT, kadDHT } from "@libp2p/kad-dht";
+import { TopologyDHT } from "./utils/topology_dht.js";
+import { peerIdFromString } from '@libp2p/peer-id'
+
 
 export * from "./stream.js";
 
@@ -48,6 +51,7 @@ export class TopologyNetworkNode {
 	private _config?: TopologyNetworkNodeConfig;
 	private _node?: Libp2p;
 	private _pubsub?: PubSub<GossipsubEvents>;
+	private _topologyDHT?: TopologyDHT;
 
 	peerId = "";
 
@@ -93,7 +97,7 @@ export class TopologyNetworkNode {
 			dcutr: dcutr(),
 			identify: identify(),
 			pubsub: gossipsub(),
-			kadDHT: kadDHT({
+			dht: kadDHT({
 				protocol: "/topology/dht/1.0.0",
 				kBucketSize: 50,
 				clientMode: false,
@@ -136,11 +140,24 @@ export class TopologyNetworkNode {
 
 		if (!this._config?.bootstrap) {
 			for (const addr of this._config?.bootstrap_peers || []) {
-				this._node.dial(multiaddr(addr));
+				const stream = await this._node.dial(multiaddr(addr));
 			}
 		}
 
+		if (!this._config?.bootstrap) {
+			// get bootstrap node peerStore
+			setInterval(() => {
+				console.log("CHeck peers");
+				const peers = this._node?.peerStore;
+				console.log("PEERS", peers);
+
+			}, 10000);
+		}
+
+		const bootstrap_peer_id = peerIdFromString("12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ");
+
 		this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
+		
 		this.peerId = this._node.peerId.toString();
 
 		console.log(
@@ -148,9 +165,11 @@ export class TopologyNetworkNode {
 			this.peerId,
 		);
 
-		this._node.addEventListener("peer:connect", (e) =>
+		this._node.addEventListener("peer:connect", (e) => {
 			console.log("::start::peer::connect", e.detail),
-		);
+			this._topologyDHT = new TopologyDHT(this._node?.services.dht as KadDHT, bootstrap_peer_id);
+			console.log("CONNECTED TO DHT");
+		});
 		this._node.addEventListener("peer:discovery", (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
 			for (const ma of e.detail.multiaddrs) {
@@ -158,9 +177,10 @@ export class TopologyNetworkNode {
 			}
 			console.log("::start::peer::discovery", e.detail);
 		});
-		this._node.addEventListener("peer:identify", (e) =>
-			console.log("::start::peer::identify", e.detail),
-		);
+		this._node.addEventListener("peer:identify", (e) => {
+			// TO BE UNCOMMENTED
+			// console.log("::start::peer::identify", e.detail),
+		});
 	}
 
 	subscribe(topic: string) {

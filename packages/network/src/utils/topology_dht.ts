@@ -3,10 +3,10 @@ import { type KadDHT } from "@libp2p/kad-dht";
 import { toString as uint8ArrayToString } from "uint8arrays";
 import { fromString as uint8ArrayFromString } from "uint8arrays";
 
-class TopologyDHT {
+export class TopologyDHT {
 	private _dht: KadDHT;
 
-	constructor(dht: KadDHT) {
+	constructor(dht: KadDHT, peerId: PeerId) {
 		this._dht = dht;
 	}
 
