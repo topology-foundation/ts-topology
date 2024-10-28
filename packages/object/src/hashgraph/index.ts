@@ -255,7 +255,6 @@ export class HashGraph {
 		return false;
 	}
 
-	// Time complexity: O(V), Space complexity: O(V)
 	areCausallyRelatedUsingBFS(hash1: Hash, hash2: Hash): boolean {
 		return (
 			this._areCausallyRelatedUsingBFS(hash1, hash2) ||
@@ -263,7 +262,6 @@ export class HashGraph {
 		);
 	}
 
-	// Time complexity: O(1), Space complexity: O(1)
 	getFrontier(): Hash[] {
 		return Array.from(this.frontier);
 	}
