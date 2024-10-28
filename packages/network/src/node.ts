@@ -67,7 +67,8 @@ export class TopologyNetworkNode {
 		const _bootstrapNodesList = this._config?.bootstrap_peers
 			? this._config.bootstrap_peers
 			: [
-					"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+					"/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					// "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
 				];
 
 		const _pubsubPeerDiscovery = pubsubPeerDiscovery({
@@ -101,7 +102,7 @@ export class TopologyNetworkNode {
 				autonat: autoNAT(),
 				dcutr: dcutr(),
 				identify: identify(),
-				pubsub: gossipsub(),
+				pubsub: gossipsub()
 			},
 			streamMuxers: [yamux()],
 			transports: [
@@ -116,10 +117,12 @@ export class TopologyNetworkNode {
 				}),
 				webTransport(),
 			],
+			start: true
 		});
 
-		if (this._config?.bootstrap)
+		if (this._config?.bootstrap){
 			this._node.services.relay = circuitRelayServer();
+		}
 
 		if (!this._config?.bootstrap) {
 			for (const addr of this._config?.bootstrap_peers || []) {
@@ -148,6 +151,8 @@ export class TopologyNetworkNode {
 		this._node.addEventListener("peer:identify", (e) =>
 			console.log("::start::peer::identify", e.detail),
 		);
+
+		this._node.start();
 	}
 
 	subscribe(topic: string) {
