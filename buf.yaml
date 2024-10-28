@@ -3,9 +3,6 @@ modules:
   # - path: packages/node
   #   excludes:
   #     - packages/node/node_modules
-  - path: packages/network
-    excludes:
-      - packages/network/node_modules
-  - path: packages/object
-    excludes:
-      - packages/object/node_modules
+  - path: packages/object/src/proto
+
+  - path: packages/network/src/proto

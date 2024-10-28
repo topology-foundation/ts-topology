@@ -21,7 +21,7 @@
 		"clean": "pnpm --filter '@topology-foundation/*' clean",
 		"docs": "typedoc",
 		"postinstall": "pnpm --filter '@topology-foundation/*' build",
-		"proto-gen": "buf generate",
+		"proto-gen": "buf generate packages/object/src/proto -o packages/object/src/proto && buf generate packages/network/src/proto -o packages/network/src/proto",
 		"release": "release-it",
 		"test": "vitest"
 	},
