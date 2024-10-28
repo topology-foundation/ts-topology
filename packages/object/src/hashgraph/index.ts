@@ -223,45 +223,44 @@ export class HashGraph {
 		return test1 || test2;
 	}
 
+	private _areCausallyRelatedUsingBFS(start: Hash, target: Hash): boolean {
+		const visited = new Set<Hash>();
+		const queue: Hash[] = [];
+		let head = 0;
+
+		queue.push(start);
+
+		while (head < queue.length) {
+			const current = queue[head];
+			head++;
+
+			if (current === target) return true;
+			if (current === undefined) continue;
+
+			visited.add(current);
+			const vertex = this.vertices.get(current);
+			if (!vertex) continue;
+
+			for (const dep of vertex.dependencies) {
+				if (!visited.has(dep)) {
+					queue.push(dep);
+				}
+			}
+
+			if (head > queue.length / 2) {
+				queue.splice(0, head);
+				head = 0;
+			}
+		}
+		return false;
+	}
+
 	// Time complexity: O(V), Space complexity: O(V)
 	areCausallyRelatedUsingBFS(hash1: Hash, hash2: Hash): boolean {
-		const visited = new Set<Hash>();
-		const stack = [hash1];
-
-		while (stack.length > 0) {
-			const current = stack.pop();
-			if (current === hash2) return true;
-			if (current === undefined) continue;
-			visited.add(current);
-
-			const vertex = this.vertices.get(current);
-			if (!vertex) continue;
-			for (const dep of vertex.dependencies) {
-				if (!visited.has(dep)) {
-					stack.push(dep);
-				}
-			}
-		}
-
-		visited.clear();
-		stack.push(hash2);
-
-		while (stack.length > 0) {
-			const current = stack.pop();
-			if (current === hash1) return true;
-			if (current === undefined) continue;
-			visited.add(current);
-
-			const vertex = this.vertices.get(current);
-			if (!vertex) continue;
-			for (const dep of vertex.dependencies) {
-				if (!visited.has(dep)) {
-					stack.push(dep);
-				}
-			}
-		}
-
-		return false;
+		return (
+			this._areCausallyRelatedUsingBFS(hash1, hash2) ||
+			this._areCausallyRelatedUsingBFS(hash2, hash1)
+		);
 	}
 
 	// Time complexity: O(1), Space complexity: O(1)
