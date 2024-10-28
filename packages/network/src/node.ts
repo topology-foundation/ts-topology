@@ -85,8 +85,8 @@ export class TopologyNetworkNode {
 					}),
 				]
 			: [
-				// _pubsubPeerDiscovery
-			];
+					// _pubsubPeerDiscovery
+				];
 
 		const _node_services = {
 			autonat: autoNAT(),
@@ -94,10 +94,10 @@ export class TopologyNetworkNode {
 			identify: identify(),
 			pubsub: gossipsub(),
 			kadDHT: kadDHT({
-				protocol : "/topology/dht/1.0.0",
-				kBucketSize : 50,
-				clientMode : false,
-			})
+				protocol: "/topology/dht/1.0.0",
+				kBucketSize: 50,
+				clientMode: false,
+			}),
 		};
 
 		const _bootstrap_services = {
