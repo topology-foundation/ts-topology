@@ -3,8 +3,8 @@
     - ABI
 */
 import * as fs from "node:fs";
-import asc from "assemblyscript/asc";
 import { Logger } from "@topology-foundation/logger";
+import asc from "assemblyscript/asc";
 
 export async function compileWasm(path: string) {
 	const log = new Logger("topology::wasm", "info");

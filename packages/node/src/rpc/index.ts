@@ -1,6 +1,7 @@
 import * as grpc from "@grpc/grpc-js";
 
 import type { ServerUnaryCall, sendUnaryData } from "@grpc/grpc-js";
+import { Logger } from "@topology-foundation/logger";
 import type { TopologyNode } from "../index.js";
 import { TopologyRpcService } from "../proto/rpc_grpc_pb.js";
 import type {
@@ -11,7 +12,6 @@ import type {
 	UnsubscribeCroRequest,
 	UnsubscribeCroResponse,
 } from "../proto/rpc_pb.js";
-import { Logger } from "@topology-foundation/logger";
 
 export function init(node: TopologyNode) {
 	const log = new Logger("topology::rpc", "info");
