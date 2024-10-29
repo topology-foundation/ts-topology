@@ -3,6 +3,7 @@ import { linearizeMultiple } from "../linearize/multipleSemantics.js";
 import { linearizePair } from "../linearize/pairSemantics.js";
 import { Vertex_Operation as Operation, Vertex } from "../proto/object_pb.js";
 import { BitSet } from "./bitset.js";
+import { assert } from "node:console";
 
 // Reexporting the Vertex and Operation types from the protobuf file
 export { Vertex, Operation };
@@ -48,7 +49,7 @@ export class HashGraph {
 	)
 	*/
 	static readonly rootHash: Hash =
-		"ee075937c2a6c8ccf8d94fb2a130c596d3dbcc32910b6e744ad55c3e41b41ad6";
+		"02465e287e3d086f12c6edd856953ca5ad0f01d6707bf8e410b4a601314c1ca5";
 	private arePredecessorsFresh = false;
 	private reachablePredecessors: Map<Hash, BitSet> = new Map();
 	private topoSortedIndex: Map<Hash, number> = new Map();
@@ -146,26 +147,37 @@ export class HashGraph {
 		return hash;
 	}
 
-	// Time complexity: O(V + E), Space complexity: O(V)
-	topologicalSort(updateBitsets = false): Hash[] {
+	DFS(visited: Map<Hash, number> = new Map()): Hash[] {
 		const result: Hash[] = [];
-		const visited = new Set<Hash>();
-		this.reachablePredecessors.clear();
-		this.topoSortedIndex.clear();
-
 		const visit = (hash: Hash) => {
-			if (visited.has(hash)) return;
-
-			visited.add(hash);
+			visited.set(hash, 1);
 
 			const children = this.forwardEdges.get(hash) || [];
 			for (const child of children) {
-				visit(child);
+				if (visited.get(child) === 1) {
+					console.error("Cycle detected.");
+					return;
+				}
+				if (visited.get(child) === undefined) {
+					visit(child);
+				}
 			}
+
 			result.push(hash);
+			visited.set(hash, 2);
 		};
-		// Start with the root vertex
+
 		visit(HashGraph.rootHash);
+
+		return result;
+	}
+
+	// Time complexity: O(V + E), Space complexity: O(V)
+	topologicalSort(updateBitsets = false): Hash[] {
+		this.reachablePredecessors.clear();
+		this.topoSortedIndex.clear();
+
+		const result = this.DFS();
 		result.reverse();
 
 		if (!updateBitsets) return result;
@@ -262,6 +274,40 @@ export class HashGraph {
 		}
 
 		return false;
+	}
+
+	selfCheckConstraints(): boolean {
+		const degree = new Map<Hash, number>();
+		for (const vertex of this.getAllVertices()) {
+			const hash = vertex.hash;
+			degree.set(hash, 0);
+		}
+		for (const [hash, children] of this.forwardEdges) {
+			for (const child of children) {
+				degree.set(child, (degree.get(child) || 0) + 1);
+			}
+		}
+		for (const vertex of this.getAllVertices()) {
+			const hash = vertex.hash;
+			if (degree.get(hash) !== vertex.dependencies.length) {
+				return false;
+			}
+			if (vertex.dependencies.length === 0) {
+				if (hash !== HashGraph.rootHash) {
+					return false;
+				}
+			}
+		}
+
+		const visited = new Map<Hash, number>();
+		this.DFS(visited);
+		for (const vertex of this.getAllVertices()) {
+			if (!visited.has(vertex.hash)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	// Time complexity: O(1), Space complexity: O(1)
