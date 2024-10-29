@@ -1,8 +1,7 @@
 version: v2
 modules:
-  # - path: packages/node
-  #   excludes:
-  #     - packages/node/node_modules
   - path: packages/object/src/proto
+    name: buf.build/topology/object
 
   - path: packages/network/src/proto
+    name: buf.build/topology/network
