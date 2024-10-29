@@ -11,6 +11,14 @@ jobs:
       packages: write
     uses: ./.github/workflows/npm-publish.yml
 
+  publish_buf_registry:
+    name: Publish buf files
+    permissions:
+      contents: read
+    needs:
+      - npm_publish
+    uses: ./.github/workflows/buf-registry.yml
+
   build_docker_images:
     name: Build Docker Images
     permissions:
