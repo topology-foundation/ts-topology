@@ -1,4 +1,5 @@
 syntax = "proto3";
+
 package topology.object;
 
 option go_package = "ts-topology/packages/object";
