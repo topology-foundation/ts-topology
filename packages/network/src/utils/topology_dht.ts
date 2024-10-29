@@ -32,11 +32,13 @@ export class TopologyDHT {
 	 * @returns A set of PeerId
 	 * */
 	async getPeersOnTopic(topic: string): Promise<Set<PeerId>> {
+        console.log("Get peers on a topic");
 		const uint8Topic = uint8ArrayFromString(topic);
 		const peersOnTopic = this._dht?.get(uint8Topic);
 		let peersSet = new Set<PeerId>();
 		if (peersOnTopic) {
 			for await (const evt of peersOnTopic) {
+                console.log(evt);
 				if (evt.name === "VALUE") {
 					const uint8Peers = evt.value;
 					const peersArray = JSON.parse(uint8ArrayToString(uint8Peers));
