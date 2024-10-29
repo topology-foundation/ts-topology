@@ -27,13 +27,13 @@ import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
+import type { LoggerOptions } from "@topology-foundation/logger";
 import { type Libp2p, createLibp2p } from "libp2p";
+import loglevel from "loglevel";
+import prefix from "loglevel-plugin-prefix";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
-import type { LoggerOptions } from "@topology-foundation/logger";
-import loglevel from "loglevel";
-import prefix from "loglevel-plugin-prefix";
 
 export * from "./stream.js";
 
