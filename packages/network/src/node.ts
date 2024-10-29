@@ -30,7 +30,7 @@ import { multiaddr } from "@multiformats/multiaddr";
 import { Logger, type LoggerOptions } from "@topology-foundation/logger";
 import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
-import { Message } from "./proto/messages_pb.js";
+import { Message } from "./proto/topology/network/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
 
 export * from "./stream.js";
@@ -89,6 +89,18 @@ export class TopologyNetworkNode {
 				]
 			: [_pubsubPeerDiscovery];
 
+		const _node_services = {
+			autonat: autoNAT(),
+			dcutr: dcutr(),
+			identify: identify(),
+			pubsub: gossipsub(),
+		};
+
+		const _bootstrap_services = {
+			..._node_services,
+			relay: circuitRelayServer(),
+		};
+
 		this._node = await createLibp2p({
 			privateKey,
 			addresses: {
@@ -102,12 +114,7 @@ export class TopologyNetworkNode {
 			},
 			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
 			peerDiscovery: _peerDiscovery,
-			services: {
-				autonat: autoNAT(),
-				dcutr: dcutr(),
-				identify: identify(),
-				pubsub: gossipsub(),
-			},
+			services: this._config?.bootstrap ? _bootstrap_services : _node_services,
 			streamMuxers: [yamux()],
 			transports: [
 				circuitRelayTransport({
@@ -122,9 +129,6 @@ export class TopologyNetworkNode {
 				webTransport(),
 			],
 		});
-
-		if (this._config?.bootstrap)
-			this._node.services.relay = circuitRelayServer();
 
 		if (!this._config?.bootstrap) {
 			for (const addr of this._config?.bootstrap_peers || []) {
