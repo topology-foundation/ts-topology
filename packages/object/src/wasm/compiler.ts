@@ -4,9 +4,12 @@
 */
 import * as fs from "node:fs";
 import asc from "assemblyscript/asc";
+import { Logger } from "@topology-foundation/logger";
 
 export async function compileWasm(path: string) {
-	console.log("Compiling", path);
+	const log = new Logger("topology::wasm", "info");
+
+	log.info("Compiling", path);
 	const { error, stderr } = await asc.main(
 		[path, "--bindings=esm", "--outFile=/tmp/dist.wasm"],
 		{
@@ -29,8 +32,8 @@ export async function compileWasm(path: string) {
 	);
 
 	if (error) {
-		console.log(`Compilation failed: ${error}`);
-		console.log(stderr.toString());
+		log.info(`Compilation failed: ${error}`);
+		log.info(stderr.toString());
 		return new Uint8Array();
 	}
 
@@ -39,6 +42,6 @@ export async function compileWasm(path: string) {
 		fs.readFileSync("/tmp/dist.wasm"),
 	);
 	// fs.unlinkSync('dist/tmp.wasm');
-	console.log("Compilation successful", bytecode);
+	log.info("Compilation successful", bytecode);
 	return bytecode;
 }

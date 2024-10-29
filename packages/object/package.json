@@ -33,6 +33,7 @@
  },
  "dependencies": {
   "@bufbuild/protobuf": "^2.0.0",
+  "@topology-foundation/logger": "^0.2.0",
   "ts-proto": "^2.2.4"
  }
 }
