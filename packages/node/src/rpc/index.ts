@@ -14,7 +14,10 @@ import type {
 } from "../proto/rpc_pb.js";
 
 export function init(node: TopologyNode) {
-	const log = new Logger("topology::rpc", "info");
+	const log = new Logger(
+		"topology::rpc",
+		node.config?.network_config?.log_config,
+	);
 
 	function subscribeCro(
 		call: ServerUnaryCall<SubscribeCroRequest, SubscribeCroResponse>,

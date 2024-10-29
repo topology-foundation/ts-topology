@@ -7,7 +7,7 @@ import { Logger } from "@topology-foundation/logger";
 import asc from "assemblyscript/asc";
 
 export async function compileWasm(path: string) {
-	const log = new Logger("topology::wasm", "info");
+	const log = new Logger("topology::wasm", { level: "info" });
 
 	log.info("Compiling", path);
 	const { error, stderr } = await asc.main(

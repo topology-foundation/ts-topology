@@ -56,7 +56,7 @@ export class TopologyNetworkNode {
 
 	constructor(config?: TopologyNetworkNodeConfig) {
 		this._config = config;
-		log = new Logger("topology::network", config?.log_config?.level);
+		log = new Logger("topology::network", config?.log_config);
 	}
 
 	async start() {

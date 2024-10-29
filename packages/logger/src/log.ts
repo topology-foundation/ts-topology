@@ -10,9 +10,9 @@ export class Logger {
 	// biome-ignore lint/suspicious/noExplicitAny: Do this to allow any method to be called on the logger
 	[key: string]: any;
 
-	constructor(context: string, level: loglevel.LogLevelDesc = "info") {
+	constructor(context: string, config?: LoggerOptions) {
 		this.log = loglevel.getLogger(context);
-		this.log.setLevel(level);
+		this.log.setLevel(config?.level || "info");
 		prefix.reg(loglevel);
 		prefix.apply(this.log, {
 			template: "%n",
