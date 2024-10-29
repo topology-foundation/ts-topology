@@ -27,7 +27,6 @@
     "test": "vitest"
   },
   "dependencies": {
-    "winston": "^3.15.0",
-    "winston-transport": "^4.8.0"
+    "setimmediate": "^1.0.5"
   }
 }
