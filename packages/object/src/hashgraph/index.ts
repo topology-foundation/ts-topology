@@ -1,7 +1,10 @@
 import * as crypto from "node:crypto";
 import { linearizeMultiple } from "../linearize/multipleSemantics.js";
 import { linearizePair } from "../linearize/pairSemantics.js";
-import { Vertex_Operation as Operation, Vertex } from "../proto/object_pb.js";
+import {
+	Vertex_Operation as Operation,
+	Vertex,
+} from "../proto/topology/object/object_pb.js";
 import { BitSet } from "./bitset.js";
 
 // Reexporting the Vertex and Operation types from the protobuf file

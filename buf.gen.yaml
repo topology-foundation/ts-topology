@@ -3,18 +3,18 @@ managed:
   enabled: true
 plugins:
   - local: ./node_modules/ts-proto/protoc-gen-ts_proto
-    out: ./packages
+    out: .
     opt:
       - esModuleInterop=true
       - fileSuffix=_pb
       - ts_proto_opt=outputServices=grpc-js
   - remote: buf.build/grpc/node
-    out: ./packages
+    out: .
     opt:
       - ts_proto_opt=esModuleInterop=true
 inputs:
   - directory: ./packages
     exclude_paths:
-      - packages/node/node_modules
+      - packages/node
       - packages/network/node_modules
       - packages/object/node_modules

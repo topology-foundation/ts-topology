@@ -6,9 +6,9 @@ import {
 	type SemanticsType,
 	type Vertex,
 } from "./hashgraph/index.js";
-import * as ObjectPb from "./proto/object_pb.js";
+import * as ObjectPb from "./proto/topology/object/object_pb.js";
 
-export * as ObjectPb from "./proto/object_pb.js";
+export * as ObjectPb from "./proto/topology/object/object_pb.js";
 export * from "./hashgraph/index.js";
 
 export interface CRO {

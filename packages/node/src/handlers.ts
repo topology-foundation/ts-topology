@@ -115,7 +115,7 @@ function syncHandler(
 		return;
 	}
 
-	const requested: Set<NetworkPb.Vertex> = new Set(object.vertices);
+	const requested: Set<ObjectPb.Vertex> = new Set(object.vertices);
 	const requesting: string[] = [];
 	for (const h of syncMessage.vertexHashes) {
 		const vertex = object.vertices.find((v) => v.hash === h);
@@ -178,7 +178,7 @@ function syncAcceptHandler(
 	}
 
 	// send missing vertices
-	const requested: NetworkPb.Vertex[] = [];
+	const requested: ObjectPb.Vertex[] = [];
 	for (const h of syncAcceptMessage.requesting) {
 		const vertex = object.vertices.find((v) => v.hash === h);
 		if (vertex) {
