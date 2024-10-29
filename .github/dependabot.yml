@@ -8,4 +8,8 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: daily
+    ignore:
+      - dependency-name: "*"
+        # ignore patch and minor
+        update-types: [version-update:semver-patch, version-update:semver-minor]
