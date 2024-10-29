@@ -28,7 +28,7 @@ import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
 import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
-import { Message } from "./proto/messages_pb.js";
+import { Message } from "./proto/topology/network/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
 
 export * from "./stream.js";

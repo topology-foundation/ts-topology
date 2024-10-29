@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { Vertex } from "../object/object_pb";
+import { Vertex } from "../object/object_pb.js";
 
 export const protobufPackage = "topology.network";
 
