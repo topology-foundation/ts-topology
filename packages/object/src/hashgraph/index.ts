@@ -1,9 +1,12 @@
+import { assert } from "node:console";
 import * as crypto from "node:crypto";
 import { linearizeMultiple } from "../linearize/multipleSemantics.js";
 import { linearizePair } from "../linearize/pairSemantics.js";
-import { Vertex_Operation as Operation, Vertex } from "../proto/object_pb.js";
+import {
+	Vertex_Operation as Operation,
+	Vertex,
+} from "../proto/topology/object/object_pb.js";
 import { BitSet } from "./bitset.js";
-import { assert } from "node:console";
 
 // Reexporting the Vertex and Operation types from the protobuf file
 export { Vertex, Operation };
@@ -235,44 +238,35 @@ export class HashGraph {
 		return test1 || test2;
 	}
 
-	// Time complexity: O(V), Space complexity: O(V)
-	areCausallyRelatedUsingBFS(hash1: Hash, hash2: Hash): boolean {
+	private _areCausallyRelatedUsingBFS(start: Hash, target: Hash): boolean {
 		const visited = new Set<Hash>();
-		const stack = [hash1];
+		const queue: Hash[] = [];
+		let head = 0;
 
-		while (stack.length > 0) {
-			const current = stack.pop();
-			if (current === hash2) return true;
+		queue.push(start);
+
+		while (head < queue.length) {
+			const current = queue[head];
+			head++;
+
+			if (current === target) return true;
 			if (current === undefined) continue;
-			visited.add(current);
 
+			visited.add(current);
 			const vertex = this.vertices.get(current);
 			if (!vertex) continue;
+
 			for (const dep of vertex.dependencies) {
 				if (!visited.has(dep)) {
-					stack.push(dep);
+					queue.push(dep);
 				}
 			}
-		}
 
-		visited.clear();
-		stack.push(hash2);
-
-		while (stack.length > 0) {
-			const current = stack.pop();
-			if (current === hash1) return true;
-			if (current === undefined) continue;
-			visited.add(current);
-
-			const vertex = this.vertices.get(current);
-			if (!vertex) continue;
-			for (const dep of vertex.dependencies) {
-				if (!visited.has(dep)) {
-					stack.push(dep);
-				}
+			if (head > queue.length / 2) {
+				queue.splice(0, head);
+				head = 0;
 			}
 		}
-
 		return false;
 	}
 
@@ -311,6 +305,13 @@ export class HashGraph {
 	}
 
 	// Time complexity: O(1), Space complexity: O(1)
+	areCausallyRelatedUsingBFS(hash1: Hash, hash2: Hash): boolean {
+		return (
+			this._areCausallyRelatedUsingBFS(hash1, hash2) ||
+			this._areCausallyRelatedUsingBFS(hash2, hash1)
+		);
+	}
+
 	getFrontier(): Hash[] {
 		return Array.from(this.frontier);
 	}

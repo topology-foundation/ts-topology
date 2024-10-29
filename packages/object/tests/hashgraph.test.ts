@@ -1,9 +1,9 @@
+import exp from "node:constants";
+import { before } from "node:test";
 import { beforeEach, describe, expect, test } from "vitest";
 import { AddWinsSet } from "../../blueprints/src/AddWinsSet/index.js";
 import { PseudoRandomWinsSet } from "../../blueprints/src/PseudoRandomWinsSet/index.js";
 import { type Operation, OperationType, TopologyObject } from "../src/index.js";
-import { before } from "node:test";
-import exp from "node:constants";
 
 describe("HashGraph construction tests", () => {
 	let obj1: TopologyObject;

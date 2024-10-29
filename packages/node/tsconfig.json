@@ -13,6 +13,9 @@
 		},
 		{
 			"path": "../object"
+		},
+		{
+			"path": "../logger"
 		}
 	],
 	"include": ["src/**/*.ts", "src/**/*.js"]

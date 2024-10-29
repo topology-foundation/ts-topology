@@ -27,12 +27,15 @@ import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
+import { Logger, type LoggerOptions } from "@topology-foundation/logger";
 import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
-import { Message } from "./proto/messages_pb.js";
+import { Message } from "./proto/topology/network/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
 
 export * from "./stream.js";
+
+let log: Logger;
 
 // snake_casing to match the JSON config
 export interface TopologyNetworkNodeConfig {
@@ -41,6 +44,7 @@ export interface TopologyNetworkNodeConfig {
 	bootstrap_peers?: string[];
 	browser_metrics?: boolean;
 	private_key_seed?: string;
+	log_config?: LoggerOptions;
 }
 
 export class TopologyNetworkNode {
@@ -52,6 +56,7 @@ export class TopologyNetworkNode {
 
 	constructor(config?: TopologyNetworkNodeConfig) {
 		this._config = config;
+		log = new Logger("topology::network", config?.log_config);
 	}
 
 	async start() {
@@ -84,6 +89,18 @@ export class TopologyNetworkNode {
 				]
 			: [_pubsubPeerDiscovery];
 
+		const _node_services = {
+			autonat: autoNAT(),
+			dcutr: dcutr(),
+			identify: identify(),
+			pubsub: gossipsub(),
+		};
+
+		const _bootstrap_services = {
+			..._node_services,
+			relay: circuitRelayServer(),
+		};
+
 		this._node = await createLibp2p({
 			privateKey,
 			addresses: {
@@ -97,12 +114,7 @@ export class TopologyNetworkNode {
 			},
 			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
 			peerDiscovery: _peerDiscovery,
-			services: {
-				autonat: autoNAT(),
-				dcutr: dcutr(),
-				identify: identify(),
-				pubsub: gossipsub(),
-			},
+			services: this._config?.bootstrap ? _bootstrap_services : _node_services,
 			streamMuxers: [yamux()],
 			transports: [
 				circuitRelayTransport({
@@ -118,9 +130,6 @@ export class TopologyNetworkNode {
 			],
 		});
 
-		if (this._config?.bootstrap)
-			this._node.services.relay = circuitRelayServer();
-
 		if (!this._config?.bootstrap) {
 			for (const addr of this._config?.bootstrap_peers || []) {
 				this._node.dial(multiaddr(addr));
@@ -130,62 +139,52 @@ export class TopologyNetworkNode {
 		this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
 		this.peerId = this._node.peerId.toString();
 
-		console.log(
-			"topology::network::start: Successfuly started topology network w/ peer_id",
+		log.info(
+			"::start: Successfuly started topology network w/ peer_id",
 			this.peerId,
 		);
 
 		this._node.addEventListener("peer:connect", (e) =>
-			console.log("::start::peer::connect", e.detail),
+			log.info("::start::peer::connect", e.detail),
 		);
 		this._node.addEventListener("peer:discovery", (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
 			for (const ma of e.detail.multiaddrs) {
 				this._node?.dial(ma);
 			}
-			console.log("::start::peer::discovery", e.detail);
+			log.info("::start::peer::discovery", e.detail);
 		});
 		this._node.addEventListener("peer:identify", (e) =>
-			console.log("::start::peer::identify", e.detail),
+			log.info("::start::peer::identify", e.detail),
 		);
 	}
 
 	subscribe(topic: string) {
 		if (!this._node) {
-			console.error(
-				"topology::network::subscribe: Node not initialized, please run .start()",
-			);
+			log.error("::subscribe: Node not initialized, please run .start()");
 			return;
 		}
 
 		try {
 			this._pubsub?.subscribe(topic);
 			this._pubsub?.getPeers();
-			console.log(
-				"topology::network::subscribe: Successfuly subscribed the topic",
-				topic,
-			);
+			log.info("::subscribe: Successfuly subscribed the topic", topic);
 		} catch (e) {
-			console.error("topology::network::subscribe:", e);
+			log.error("::subscribe:", e);
 		}
 	}
 
 	unsubscribe(topic: string) {
 		if (!this._node) {
-			console.error(
-				"topology::network::unsubscribe: Node not initialized, please run .start()",
-			);
+			log.error("::unsubscribe: Node not initialized, please run .start()");
 			return;
 		}
 
 		try {
 			this._pubsub?.unsubscribe(topic);
-			console.log(
-				"topology::network::unsubscribe: Successfuly unsubscribed the topic",
-				topic,
-			);
+			log.info("::unsubscribe: Successfuly unsubscribed the topic", topic);
 		} catch (e) {
-			console.error("topology::network::unsubscribe:", e);
+			log.error("::unsubscribe:", e);
 		}
 	}
 
@@ -206,12 +205,12 @@ export class TopologyNetworkNode {
 			const messageBuffer = Message.encode(message).finish();
 			await this._pubsub?.publish(topic, messageBuffer);
 
-			console.log(
-				"topology::network::broadcastMessage: Successfuly broadcasted message to topic",
+			log.info(
+				"::broadcastMessage: Successfuly broadcasted message to topic",
 				topic,
 			);
 		} catch (e) {
-			console.error("topology::network::broadcastMessage:", e);
+			log.error("::broadcastMessage:", e);
 		}
 	}
 
@@ -222,7 +221,7 @@ export class TopologyNetworkNode {
 			const messageBuffer = Message.encode(message).finish();
 			uint8ArrayToStream(stream, messageBuffer);
 		} catch (e) {
-			console.error("topology::network::sendMessage:", e);
+			log.error("::sendMessage:", e);
 		}
 	}
 
@@ -241,7 +240,7 @@ export class TopologyNetworkNode {
 			const messageBuffer = Message.encode(message).finish();
 			uint8ArrayToStream(stream, messageBuffer);
 		} catch (e) {
-			console.error("topology::network::sendMessageRandomTopicPeer:", e);
+			log.error("::sendMessageRandomTopicPeer:", e);
 		}
 	}
 

@@ -1,0 +1,14 @@
+name: Publish buf files
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  buf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-action@v1
+        with:
+          token: ${{ secrets.BUF_TOKEN }}
+          tpr_comment: false
