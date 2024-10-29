@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { program } from "./cli/index.js";
 import { TopologyNode, type TopologyNodeConfig } from "./index.js";
 import { init as rpc_init } from "./rpc/index.js";
+import { env } from "./config.js";
 
 const run = async () => {
 	program.parse(process.argv);
@@ -9,6 +10,8 @@ const run = async () => {
 	let config: TopologyNodeConfig | undefined;
 	if (opts.config) {
 		config = JSON.parse(fs.readFileSync(opts.config, "utf8"));
+	} else {
+		config = env as TopologyNodeConfig;
 	}
 
 	const node = new TopologyNode(config);
