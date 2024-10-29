@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import { program } from "./cli/index.js";
+import { env } from "./config.js";
 import { TopologyNode, type TopologyNodeConfig } from "./index.js";
 import { init as rpc_init } from "./rpc/index.js";
-import { env } from "./config.js";
 
 const run = async () => {
 	program.parse(process.argv);
