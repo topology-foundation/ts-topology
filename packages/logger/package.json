@@ -27,6 +27,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "setimmediate": "^1.0.5"
+    "loglevel": "^1.9.2",
+    "loglevel-plugin-prefix": "^0.8.4"
   }
 }

@@ -27,17 +27,15 @@ import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
-import type { LoggerOptions } from "@topology-foundation/logger";
 import { type Libp2p, createLibp2p } from "libp2p";
-import loglevel from "loglevel";
-import prefix from "loglevel-plugin-prefix";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
+import { Logger, type LoggerOptions } from "@topology-foundation/logger";
 
 export * from "./stream.js";
 
-let log: loglevel.Logger;
+let log: Logger;
 
 // snake_casing to match the JSON config
 export interface TopologyNetworkNodeConfig {
@@ -58,14 +56,7 @@ export class TopologyNetworkNode {
 
 	constructor(config?: TopologyNetworkNodeConfig) {
 		this._config = config;
-		log = loglevel.getLogger("topology::network");
-		log.setLevel(
-			(this._config?.log_config?.level as loglevel.LogLevelDesc) || "info",
-		);
-		prefix.reg(loglevel);
-		prefix.apply(log, {
-			template: "%n",
-		});
+		log = new Logger("topology::network", config?.log_config?.level);
 	}
 
 	async start() {
