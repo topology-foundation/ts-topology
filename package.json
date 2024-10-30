@@ -1,58 +1,58 @@
 {
- "name": "ts-topology",
- "description": "The official TypeScript implementation of Topology Protocol",
- "version": "0.2.1-0",
- "license": "MIT",
- "homepage": "https://topology.gg/",
- "repository": {
-  "type": "git",
-  "url": "git+https://github.com/topology-foundation/ts-topology.git"
- },
- "bugs": {
-  "url": "https://github.com/topology-foundation/ts-topology/issues"
- },
- "workspaces": [
-  "packages/*",
-  "examples/*"
- ],
- "scripts": {
-  "bench": "vitest bench",
-  "biome-check": "biome check",
-  "clean": "pnpm --filter '@topology-foundation/*' clean",
-  "docs": "typedoc",
-  "postinstall": "pnpm --filter '@topology-foundation/*' build",
-  "proto-gen": "pnpm proto-gen:object && pnpm proto-gen:network",
-  "proto-gen:object": "buf generate packages/object/src/proto -o packages/object/src/proto",
-  "proto-gen:network": "buf generate packages/network/src/proto -o packages/network/src/proto",
-  "release": "release-it",
-  "test": "vitest"
- },
- "devDependencies": {
-  "@biomejs/biome": "^1.8.3",
-  "@release-it-plugins/workspaces": "^4.2.0",
-  "@types/node": "^22.5.4",
-  "assemblyscript": "^0.27.29",
-  "release-it": "^17.6.0",
-  "ts-proto": "^2.2.4",
-  "typedoc": "^0.26.6",
-  "typescript": "^5.5.4",
-  "vite": "^5.4.9",
-  "vite-tsconfig-paths": "^5.0.1",
-  "vitest": "^2.1.1"
- },
- "private": true,
- "release-it": {
-  "plugins": {
-   "@release-it-plugins/workspaces": {
-    "publish": false
-   }
+  "name": "ts-topology",
+  "description": "The official TypeScript implementation of Topology Protocol",
+  "version": "0.2.1-1",
+  "license": "MIT",
+  "homepage": "https://topology.gg/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/topology-foundation/ts-topology.git"
   },
-  "npm": false,
-  "git": {
-   "commitMessage": "chore: release v${version}"
+  "bugs": {
+    "url": "https://github.com/topology-foundation/ts-topology/issues"
   },
-  "github": {
-   "release": true
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "bench": "vitest bench",
+    "biome-check": "biome check",
+    "clean": "pnpm --filter '@topology-foundation/*' clean",
+    "docs": "typedoc",
+    "postinstall": "pnpm --filter '@topology-foundation/*' build",
+    "proto-gen": "pnpm proto-gen:object && pnpm proto-gen:network",
+    "proto-gen:object": "buf generate packages/object/src/proto -o packages/object/src/proto",
+    "proto-gen:network": "buf generate packages/network/src/proto -o packages/network/src/proto",
+    "release": "release-it",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@release-it-plugins/workspaces": "^4.2.0",
+    "@types/node": "^22.5.4",
+    "assemblyscript": "^0.27.29",
+    "release-it": "^17.6.0",
+    "ts-proto": "^2.2.4",
+    "typedoc": "^0.26.6",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.9",
+    "vite-tsconfig-paths": "^5.0.1",
+    "vitest": "^2.1.1"
+  },
+  "private": true,
+  "release-it": {
+    "plugins": {
+      "@release-it-plugins/workspaces": {
+        "publish": false
+      }
+    },
+    "npm": false,
+    "git": {
+      "commitMessage": "chore: release v${version}"
+    },
+    "github": {
+      "release": true
+    }
   }
- }
 }
