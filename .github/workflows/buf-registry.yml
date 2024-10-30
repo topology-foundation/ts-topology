@@ -13,6 +13,6 @@ jobs:
       - uses: bufbuild/buf-action@v1
         with:
           token: ${{ secrets.BUF_TOKEN }}
-          tpr_comment: false
+          pr_comment: false
           lint: false
           push: true
