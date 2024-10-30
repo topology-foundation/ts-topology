@@ -1,6 +1,6 @@
 {
  "name": "@topology-foundation/object",
- "version": "0.2.1-1",
+ "version": "0.2.1-2",
  "license": "MIT",
  "repository": {
   "type": "git",
@@ -33,7 +33,7 @@
  },
  "dependencies": {
   "@bufbuild/protobuf": "^2.0.0",
-  "@topology-foundation/logger": "^0.2.1-1",
+  "@topology-foundation/logger": "^0.2.1-2",
   "ts-proto": "^2.2.4"
  }
 }
