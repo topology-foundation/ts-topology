@@ -1,12 +1,12 @@
-import { PeerId } from "@libp2p/interface";
-import { type KadDHT } from "@libp2p/kad-dht";
+import type {  PeerId } from "@libp2p/interface";
+import type { KadDHT } from "@libp2p/kad-dht";
 import { toString as uint8ArrayToString } from "uint8arrays";
 import { fromString as uint8ArrayFromString } from "uint8arrays";
 
 export class TopologyDHT {
 	private _dht: KadDHT;
 
-	constructor(dht: KadDHT, peerId: PeerId) {
+	constructor(dht: KadDHT) {
 		this._dht = dht;
 	}
 
@@ -64,6 +64,18 @@ export class TopologyDHT {
 		await this._putDataOnDHT(uint8Topic, newPeersUint8);
 	}
 
+    async put_string_on_dht(key: string, value: string): Promise<boolean> {
+        return this._putDataOnDHT(uint8ArrayFromString(key), uint8ArrayFromString(value));
+    }
+
+    async get_string_on_dht(key: string): Promise<string | null | undefined> {
+        const value = await this._getDataFromDHT(uint8ArrayFromString(key));
+        if (value) {
+            return uint8ArrayToString(value);
+        }
+        return null;
+    }
+
 	private async _putDataOnDHT(
 		key: Uint8Array,
 		value: Uint8Array,
@@ -80,9 +92,8 @@ export class TopologyDHT {
 			return true;
 		} catch (e) {
 			throw new Error(
-				"topology::network::topic::discovery: Error storing data on DHT : " + e,
+				`topology::network::topic::discovery: Error storing data on DHT : ${ e }`
 			);
-			return false;
 		}
 	}
 
@@ -104,11 +115,7 @@ export class TopologyDHT {
 				}
 			}
 		} catch (e) {
-			throw new Error(
-				"topology::network::topic::discovery: Error fetching data from DHT : " +
-					e,
-			);
-			return null;
+			throw new Error( `topology::network::topic::discovery: Error fetching data from DHT : : ${ e }`);
 		}
 	}
 }

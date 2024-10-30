@@ -31,10 +31,9 @@ import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
-import { KadDHT, kadDHT } from "@libp2p/kad-dht";
+import { type KadDHT, kadDHT } from "@libp2p/kad-dht";
 import { TopologyDHT } from "./utils/topology_dht.js";
-import { peerIdFromString } from '@libp2p/peer-id'
-
+import { peerIdFromString } from "@libp2p/peer-id";
 
 export * from "./stream.js";
 
@@ -104,7 +103,7 @@ export class TopologyNetworkNode {
 			}),
 		};
 
-		const _bootstrap_services = {
+		const _bootstrap_node_services = {
 			..._node_services,
 			relay: circuitRelayServer(),
 		};
@@ -122,7 +121,9 @@ export class TopologyNetworkNode {
 			},
 			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
 			peerDiscovery: _peerDiscovery,
-			services: this._config?.bootstrap ? _bootstrap_services : _node_services,
+			services: this._config?.bootstrap
+				? _bootstrap_node_services
+				: _node_services,
 			streamMuxers: [yamux()],
 			transports: [
 				circuitRelayTransport({
@@ -144,20 +145,9 @@ export class TopologyNetworkNode {
 			}
 		}
 
-		if (!this._config?.bootstrap) {
-			// get bootstrap node peerStore
-			setInterval(() => {
-				console.log("CHeck peers");
-				const peers = this._node?.peerStore;
-				console.log("PEERS", peers);
-
-			}, 10000);
-		}
-
-		const bootstrap_peer_id = peerIdFromString("12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ");
-
 		this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
-		
+		this._topologyDHT = new TopologyDHT(this._node?.services.dht as KadDHT);
+
 		this.peerId = this._node.peerId.toString();
 
 		console.log(
@@ -166,14 +156,9 @@ export class TopologyNetworkNode {
 		);
 
 		this._node.addEventListener("peer:connect", async (e) => {
-			console.log("::start::peer::connect", e.detail),
-			this._topologyDHT = new TopologyDHT(this._node?.services.dht as KadDHT, bootstrap_peer_id);
-			console.log("CONNECTED TO DHT");
-			const peers = await this._topologyDHT.getPeersOnTopic("topology::disco");
-			console.log("PEERS FROM DHT", peers);
-
+			console.log("::start::peer::connect", e.detail);
+			this._topologyDHT = new TopologyDHT(this._node?.services.dht as KadDHT,);
 		});
-		
 
 		this._node.addEventListener("peer:discovery", async (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
@@ -181,20 +166,10 @@ export class TopologyNetworkNode {
 				this._node?.dial(ma);
 			}
 			console.log("::start::peer::discovery", e.detail);
-			if(this._config?.bootstrap){
-				await this._topologyDHT?.announcePeer("topology::disco", e.detail.id);
-				console.log("ANNOUNCED PEER TO DHT");
-				setInterval(async () => {
-					const peers = await this._topologyDHT?.getPeersOnTopic("topology::disco");
-					console.log("PEERS FROM DHT", peers);
-				}, 150000);
-			}
 		});
 
-		
 		this._node.addEventListener("peer:identify", (e) => {
-			// TO BE UNCOMMENTED
-			// console.log("::start::peer::identify", e.detail),
+			console.log("::start::peer::identify", e.detail);
 		});
 	}
 
