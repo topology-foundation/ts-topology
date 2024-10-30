@@ -1,5 +1,5 @@
-import { assert } from "node:console";
 import * as crypto from "node:crypto";
+import type { Logger } from "@topology-foundation/logger";
 import { linearizeMultiple } from "../linearize/multipleSemantics.js";
 import { linearizePair } from "../linearize/pairSemantics.js";
 import {
@@ -7,6 +7,8 @@ import {
 	Vertex,
 } from "../proto/topology/object/object_pb.js";
 import { BitSet } from "./bitset.js";
+
+let log: Logger;
 
 // Reexporting the Vertex and Operation types from the protobuf file
 export { Vertex, Operation };
@@ -119,7 +121,7 @@ export class HashGraph {
 			return hash; // Vertex already exists
 		}
 
-		// Temporary fix: don't add the vertex if the dependencies are not present in the local HG.
+		// Temporary fix: don't add the vertex if the dependencies are not present in the local HG.dw
 		if (
 			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
 		) {
@@ -158,7 +160,7 @@ export class HashGraph {
 			const children = this.forwardEdges.get(hash) || [];
 			for (const child of children) {
 				if (visited.get(child) === 1) {
-					console.error("Cycle detected.");
+					log.error("::hashgraph::DFS: Cycle detected");
 					return;
 				}
 				if (visited.get(child) === undefined) {
@@ -276,7 +278,7 @@ export class HashGraph {
 			const hash = vertex.hash;
 			degree.set(hash, 0);
 		}
-		for (const [hash, children] of this.forwardEdges) {
+		for (const [_, children] of this.forwardEdges) {
 			for (const child of children) {
 				degree.set(child, (degree.get(child) || 0) + 1);
 			}

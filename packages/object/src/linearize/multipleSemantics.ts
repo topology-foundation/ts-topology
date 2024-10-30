@@ -1,6 +1,10 @@
-import { ActionType } from "../hashgraph/index.js";
-
-import type { Hash, HashGraph, Operation, Vertex } from "../hashgraph/index.js";
+import {
+	ActionType,
+	type Hash,
+	type HashGraph,
+	type Operation,
+	type Vertex,
+} from "../hashgraph/index.js";
 
 export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 	let order = hashGraph.topologicalSort(true);
