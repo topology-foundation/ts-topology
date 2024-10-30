@@ -13,6 +13,4 @@ jobs:
           token: ${{ secrets.BUF_TOKEN }}
           pr_comment: false
           lint: false
-      - run: |
-          echo ${{ secrets.BUF_TOKEN }} | buf registry login --token-stdin
-          buf push --error-format github-actions --exclude-unnamed --git-metadata --create
+          push: true

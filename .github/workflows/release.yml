@@ -13,6 +13,7 @@ jobs:
 
   publish_buf_registry:
     name: Publish buf files
+    secrets: inherit
     permissions:
       contents: read
     needs:
