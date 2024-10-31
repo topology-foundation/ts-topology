@@ -2,12 +2,14 @@ import fs from "node:fs";
 import * as dotenv from "dotenv";
 import type { TopologyNodeConfig } from "./index.js";
 
-export let config: TopologyNodeConfig = {};
+export function loadConfig(
+	configPath?: string | undefined,
+): TopologyNodeConfig {
+	let config: TopologyNodeConfig = {};
 
-export function loadConfig(configPath?: string | undefined) {
 	if (configPath) {
 		config = JSON.parse(fs.readFileSync(configPath, "utf8"));
-		return;
+		return config;
 	}
 
 	const result = dotenv.config();
@@ -29,6 +31,8 @@ export function loadConfig(configPath?: string | undefined) {
 				? process.env.PRIVATE_KEY_SEED
 				: undefined,
 		};
-		return;
+		return config;
 	}
+
+	return config;
 }
