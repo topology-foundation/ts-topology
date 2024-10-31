@@ -1,5 +1,5 @@
 import * as crypto from "node:crypto";
-import type { Logger } from "@topology-foundation/logger";
+import { Logger } from "@topology-foundation/logger";
 import { linearizeMultiple } from "../linearize/multipleSemantics.js";
 import { linearizePair } from "../linearize/pairSemantics.js";
 import {
@@ -8,12 +8,18 @@ import {
 } from "../proto/topology/object/object_pb.js";
 import { BitSet } from "./bitset.js";
 
-let log: Logger;
+const log: Logger = new Logger("hashgraph");
 
 // Reexporting the Vertex and Operation types from the protobuf file
 export { Vertex, Operation };
 
 export type Hash = string;
+
+export enum DepthFirstSearchState {
+	Unvisited = 0,
+	Visiting = 1,
+	Visited = 2,
+}
 
 export enum OperationType {
 	NOP = "-1",
@@ -154,22 +160,29 @@ export class HashGraph {
 
 	DFS(visited: Map<Hash, number> = new Map()): Hash[] {
 		const result: Hash[] = [];
+		for (const vertex of this.getAllVertices()) {
+			visited.set(vertex.hash, DepthFirstSearchState.Unvisited);
+		}
 		const visit = (hash: Hash) => {
-			visited.set(hash, 1);
+			visited.set(hash, DepthFirstSearchState.Visiting);
 
 			const children = this.forwardEdges.get(hash) || [];
 			for (const child of children) {
-				if (visited.get(child) === 1) {
+				if (visited.get(child) === DepthFirstSearchState.Visiting) {
 					log.error("::hashgraph::DFS: Cycle detected");
 					return;
 				}
 				if (visited.get(child) === undefined) {
+					log.error("::hashgraph::DFS: Undefined child");
+					return;
+				}
+				if (visited.get(child) === DepthFirstSearchState.Unvisited) {
 					visit(child);
 				}
 			}
 
 			result.push(hash);
-			visited.set(hash, 2);
+			visited.set(hash, DepthFirstSearchState.Visited);
 		};
 
 		visit(HashGraph.rootHash);

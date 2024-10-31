@@ -25,7 +25,7 @@ describe("HashGraph construction tests", () => {
 
 		obj2.merge(obj1.hashGraph.getAllVertices());
 
-		// expect(obj2.hashGraph.selfCheckConstraints()).toBe(true);
+		expect(obj2.hashGraph.selfCheckConstraints()).toBe(true);
 
 		const linearOps = obj2.hashGraph.linearizeOperations();
 		expect(linearOps).toEqual([
@@ -41,6 +41,7 @@ describe("HashGraph construction tests", () => {
 		*/
 		const cro1 = obj1.cro as AddWinsSet<number>;
 		cro1.add(1);
+		// add fake root
 		const hash = obj1.hashGraph.addVertex(
 			{
 				type: "root",
