@@ -127,7 +127,7 @@ export class HashGraph {
 			return hash; // Vertex already exists
 		}
 
-		// Temporary fix: don't add the vertex if the dependencies are not present in the local HG.dw
+		// Temporary fix: don't add the vertex if the dependencies are not present in the local HG.
 		if (
 			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
 		) {
