@@ -1,5 +1,8 @@
 version: v2
 modules:
+  - path: packages/node/src/proto
+    name: buf.build/topology/node
+
   - path: packages/object/src/proto
     name: buf.build/topology/object
 
