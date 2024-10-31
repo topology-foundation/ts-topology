@@ -158,7 +158,7 @@ export class HashGraph {
 		return hash;
 	}
 
-	DFS(visited: Map<Hash, number> = new Map()): Hash[] {
+	depthFirstSearch(visited: Map<Hash, number> = new Map()): Hash[] {
 		const result: Hash[] = [];
 		for (const vertex of this.getAllVertices()) {
 			visited.set(vertex.hash, DepthFirstSearchState.Unvisited);
@@ -195,7 +195,7 @@ export class HashGraph {
 		this.reachablePredecessors.clear();
 		this.topoSortedIndex.clear();
 
-		const result = this.DFS();
+		const result = this.depthFirstSearch();
 		result.reverse();
 
 		if (!updateBitsets) return result;
@@ -309,7 +309,7 @@ export class HashGraph {
 		}
 
 		const visited = new Map<Hash, number>();
-		this.DFS(visited);
+		this.depthFirstSearch(visited);
 		for (const vertex of this.getAllVertices()) {
 			if (!visited.has(vertex.hash)) {
 				return false;
