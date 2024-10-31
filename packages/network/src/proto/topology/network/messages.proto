@@ -4,7 +4,6 @@ package topology.network;
 import "google/protobuf/struct.proto";
 import "topology/object/object.proto";
 
-
 message Message {
   enum MessageType {
     UPDATE = 0;
