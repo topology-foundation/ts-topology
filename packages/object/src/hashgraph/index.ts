@@ -16,9 +16,9 @@ export { Vertex, Operation };
 export type Hash = string;
 
 export enum DepthFirstSearchState {
-	Unvisited = 0,
-	Visiting = 1,
-	Visited = 2,
+	UNVISITED = 0,
+	VISITING = 1,
+	VISITED = 2,
 }
 
 export enum OperationType {
@@ -161,14 +161,14 @@ export class HashGraph {
 	depthFirstSearch(visited: Map<Hash, number> = new Map()): Hash[] {
 		const result: Hash[] = [];
 		for (const vertex of this.getAllVertices()) {
-			visited.set(vertex.hash, DepthFirstSearchState.Unvisited);
+			visited.set(vertex.hash, DepthFirstSearchState.UNVISITED);
 		}
 		const visit = (hash: Hash) => {
-			visited.set(hash, DepthFirstSearchState.Visiting);
+			visited.set(hash, DepthFirstSearchState.VISITING);
 
 			const children = this.forwardEdges.get(hash) || [];
 			for (const child of children) {
-				if (visited.get(child) === DepthFirstSearchState.Visiting) {
+				if (visited.get(child) === DepthFirstSearchState.VISITING) {
 					log.error("::hashgraph::DFS: Cycle detected");
 					return;
 				}
@@ -176,13 +176,13 @@ export class HashGraph {
 					log.error("::hashgraph::DFS: Undefined child");
 					return;
 				}
-				if (visited.get(child) === DepthFirstSearchState.Unvisited) {
+				if (visited.get(child) === DepthFirstSearchState.UNVISITED) {
 					visit(child);
 				}
 			}
 
 			result.push(hash);
-			visited.set(hash, DepthFirstSearchState.Visited);
+			visited.set(hash, DepthFirstSearchState.VISITED);
 		};
 
 		visit(HashGraph.rootHash);
