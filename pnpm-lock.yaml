@@ -20,9 +20,6 @@ importers:
       assemblyscript:
         specifier: ^0.27.29
         version: 0.27.30
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
       release-it:
         specifier: ^17.6.0
         version: 17.10.0(typescript@5.6.3)
@@ -383,6 +380,9 @@ importers:
       commander:
         specifier: ^12.1.0
         version: 12.1.0
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       google-protobuf:
         specifier: ^3.21.2
         version: 3.21.4
