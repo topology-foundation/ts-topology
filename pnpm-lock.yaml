@@ -290,8 +290,8 @@ importers:
         specifier: ^11.0.6
         version: 11.0.10
       '@libp2p/circuit-relay-v2':
-        specifier: ^2.1.2
-        version: 2.1.5
+        specifier: ^3.1.0
+        version: 3.1.0
       '@libp2p/crypto':
         specifier: ^5.0.5
         version: 5.0.6
@@ -1577,8 +1577,8 @@ packages:
   '@libp2p/bootstrap@11.0.10':
     resolution: {integrity: sha512-9LQ4R76lBXMgkdiYIeEIaYxmtxmFvgkuV0LVuFL4RPQ9dZ3+rv4TK+KzDQHOfhuTFtYI1ZX2M9FME2iCApC5Gw==}
 
-  '@libp2p/circuit-relay-v2@2.1.5':
-    resolution: {integrity: sha512-7uJicxChosVPcj7r9xmeI2Z318sgOk2VclagPWjTFCZSMdSHPtou8G4i0CJEoWAI+Afpxuz0h8aPb90MpVbWCA==}
+  '@libp2p/circuit-relay-v2@3.1.0':
+    resolution: {integrity: sha512-g9AdFhT93P8Uc7sOKeAdULDKF+Tf/aGwnECWZMRo3GFIsvpbd06VdmnjqGmF9xSdll0NWPe8EwhI098rMRd7OQ==}
 
   '@libp2p/crypto@5.0.6':
     resolution: {integrity: sha512-5mD/riNxUuSOerk3aPXUUMN96lwZsrU33lp97ySfffloh2WhLZcjVJszibBgIP7DP5nqmSOWY9++rqrBuYHvnQ==}
@@ -6771,7 +6771,7 @@ snapshots:
       '@multiformats/mafmt': 12.1.6
       '@multiformats/multiaddr': 12.3.1
 
-  '@libp2p/circuit-relay-v2@2.1.5':
+  '@libp2p/circuit-relay-v2@3.1.0':
     dependencies:
       '@libp2p/crypto': 5.0.6
       '@libp2p/interface': 2.2.0
@@ -6786,9 +6786,9 @@ snapshots:
       it-protobuf-stream: 1.1.5
       it-stream-types: 2.0.2
       multiformats: 13.3.1
+      nanoid: 5.0.8
       progress-events: 1.0.1
       protons-runtime: 5.5.0
-      race-signal: 1.1.0
       retimeable-signal: 0.0.0
       uint8arraylist: 2.4.8
       uint8arrays: 5.1.0
