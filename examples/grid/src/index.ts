@@ -199,15 +199,8 @@ async function main() {
 	await node.start();
 	render();
 
-	// THIS WORKS ONLY AFTER A PUBSUB MESSAGE IS RECEIVED
-	// node.addCustomGroupMessageHandler("", (e) => {
-	// 	peers = node.networkNode.getAllPeers();
-	// 	render();
-	// });
-
 	setInterval(() => {
 		if (node.networkNode.checkNodeReady()) {
-			console.log("Node is ready");
 			peers = node.networkNode.getAllPeers();
 			render();
 		}

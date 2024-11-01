@@ -93,7 +93,7 @@ export class TopologyNetworkNode {
 			pubsub: gossipsub(),
 			dht: kadDHT({
 				protocol: "/topology/dht/1.0.0",
-				kBucketSize: 20,
+				kBucketSize: this._config?.bootstrap ? 40 : 20,
 				clientMode: false,
 				peerInfoMapper: removePublicAddressesMapper,
 				querySelfInterval: 20000,
@@ -284,12 +284,10 @@ export class TopologyNetworkNode {
 	 * We check if the node has any multiaddrs as for /webrtc it takes a while to get them assigned from the relay server node.
 	 * @returns boolean
 	 */
-	checkNodeReady() : boolean {
-		if(this._node?.getMultiaddrs().length){
+	checkNodeReady(): boolean {
+		if (this._node?.getMultiaddrs().length) {
 			return true;
 		}
 		return false;
 	}
-
-
 }
