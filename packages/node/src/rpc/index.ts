@@ -1,8 +1,9 @@
 import * as grpc from "@grpc/grpc-js";
 
 import type { ServerUnaryCall, sendUnaryData } from "@grpc/grpc-js";
+import { Logger } from "@topology-foundation/logger";
 import type { TopologyNode } from "../index.js";
-import { TopologyRpcService } from "../proto/rpc_grpc_pb.js";
+import { TopologyRpcService } from "../proto/topology/node/rpc_grpc_pb.js";
 import type {
 	GetCroHashGraphRequest,
 	GetCroHashGraphResponse,
@@ -10,9 +11,14 @@ import type {
 	SubscribeCroResponse,
 	UnsubscribeCroRequest,
 	UnsubscribeCroResponse,
-} from "../proto/rpc_pb.js";
+} from "../proto/topology/node/rpc_pb.js";
 
 export function init(node: TopologyNode) {
+	const log = new Logger(
+		"topology::rpc",
+		node.config?.network_config?.log_config,
+	);
+
 	function subscribeCro(
 		call: ServerUnaryCall<SubscribeCroRequest, SubscribeCroResponse>,
 		callback: sendUnaryData<SubscribeCroResponse>,
@@ -80,7 +86,7 @@ export function init(node: TopologyNode) {
 		"0.0.0.0:6969",
 		grpc.ServerCredentials.createInsecure(),
 		(_error, _port) => {
-			console.log("running grpc in port:", _port);
+			log.info("running grpc in port:", _port);
 		},
 	);
 }

@@ -1,13 +1,25 @@
 import * as crypto from "node:crypto";
+import { Logger } from "@topology-foundation/logger";
 import { linearizeMultiple } from "../linearize/multipleSemantics.js";
 import { linearizePair } from "../linearize/pairSemantics.js";
-import { Vertex_Operation as Operation, Vertex } from "../proto/object_pb.js";
+import {
+	Vertex_Operation as Operation,
+	Vertex,
+} from "../proto/topology/object/object_pb.js";
 import { BitSet } from "./bitset.js";
+
+const log: Logger = new Logger("hashgraph");
 
 // Reexporting the Vertex and Operation types from the protobuf file
 export { Vertex, Operation };
 
 export type Hash = string;
+
+export enum DepthFirstSearchState {
+	UNVISITED = 0,
+	VISITING = 1,
+	VISITED = 2,
+}
 
 export enum OperationType {
 	NOP = "-1",
@@ -48,7 +60,7 @@ export class HashGraph {
 	)
 	*/
 	static readonly rootHash: Hash =
-		"ee075937c2a6c8ccf8d94fb2a130c596d3dbcc32910b6e744ad55c3e41b41ad6";
+		"02465e287e3d086f12c6edd856953ca5ad0f01d6707bf8e410b4a601314c1ca5";
 	private arePredecessorsFresh = false;
 	private reachablePredecessors: Map<Hash, BitSet> = new Map();
 	private topoSortedIndex: Map<Hash, number> = new Map();
@@ -64,7 +76,6 @@ export class HashGraph {
 		this.resolveConflicts = resolveConflicts;
 		this.semanticsType = semanticsType;
 
-		// Create and add the NOP root vertex
 		const rootVertex: Vertex = {
 			hash: HashGraph.rootHash,
 			nodeId: "",
@@ -107,8 +118,6 @@ export class HashGraph {
 		return vertex;
 	}
 
-	// Time complexity: O(d), where d is the number of dependencies
-	// Space complexity: O(d)
 	addVertex(operation: Operation, deps: Hash[], nodeId: string): Hash {
 		const hash = computeHash(nodeId, operation, deps);
 		if (this.vertices.has(hash)) {
@@ -146,26 +155,43 @@ export class HashGraph {
 		return hash;
 	}
 
-	// Time complexity: O(V + E), Space complexity: O(V)
-	topologicalSort(updateBitsets = false): Hash[] {
+	depthFirstSearch(visited: Map<Hash, number> = new Map()): Hash[] {
 		const result: Hash[] = [];
-		const visited = new Set<Hash>();
-		this.reachablePredecessors.clear();
-		this.topoSortedIndex.clear();
-
+		for (const vertex of this.getAllVertices()) {
+			visited.set(vertex.hash, DepthFirstSearchState.UNVISITED);
+		}
 		const visit = (hash: Hash) => {
-			if (visited.has(hash)) return;
-
-			visited.add(hash);
+			visited.set(hash, DepthFirstSearchState.VISITING);
 
 			const children = this.forwardEdges.get(hash) || [];
 			for (const child of children) {
-				visit(child);
+				if (visited.get(child) === DepthFirstSearchState.VISITING) {
+					log.error("::hashgraph::DFS: Cycle detected");
+					return;
+				}
+				if (visited.get(child) === undefined) {
+					log.error("::hashgraph::DFS: Undefined child");
+					return;
+				}
+				if (visited.get(child) === DepthFirstSearchState.UNVISITED) {
+					visit(child);
+				}
 			}
+
 			result.push(hash);
+			visited.set(hash, DepthFirstSearchState.VISITED);
 		};
-		// Start with the root vertex
+
 		visit(HashGraph.rootHash);
+
+		return result;
+	}
+
+	topologicalSort(updateBitsets = false): Hash[] {
+		this.reachablePredecessors.clear();
+		this.topoSortedIndex.clear();
+
+		const result = this.depthFirstSearch();
 		result.reverse();
 
 		if (!updateBitsets) return result;
@@ -207,7 +233,6 @@ export class HashGraph {
 		}
 	}
 
-	// Amortised time complexity: O(1), Amortised space complexity: O(1)
 	areCausallyRelatedUsingBitsets(hash1: Hash, hash2: Hash): boolean {
 		if (!this.arePredecessorsFresh) {
 			this.topologicalSort(true);
@@ -255,6 +280,40 @@ export class HashGraph {
 		return false;
 	}
 
+	selfCheckConstraints(): boolean {
+		const degree = new Map<Hash, number>();
+		for (const vertex of this.getAllVertices()) {
+			const hash = vertex.hash;
+			degree.set(hash, 0);
+		}
+		for (const [_, children] of this.forwardEdges) {
+			for (const child of children) {
+				degree.set(child, (degree.get(child) || 0) + 1);
+			}
+		}
+		for (const vertex of this.getAllVertices()) {
+			const hash = vertex.hash;
+			if (degree.get(hash) !== vertex.dependencies.length) {
+				return false;
+			}
+			if (vertex.dependencies.length === 0) {
+				if (hash !== HashGraph.rootHash) {
+					return false;
+				}
+			}
+		}
+
+		const visited = new Map<Hash, number>();
+		this.depthFirstSearch(visited);
+		for (const vertex of this.getAllVertices()) {
+			if (!visited.has(vertex.hash)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	areCausallyRelatedUsingBFS(hash1: Hash, hash2: Hash): boolean {
 		return (
 			this._areCausallyRelatedUsingBFS(hash1, hash2) ||
@@ -266,23 +325,19 @@ export class HashGraph {
 		return Array.from(this.frontier);
 	}
 
-	// Time complexity: O(1), Space complexity: O(1)
 	getDependencies(vertexHash: Hash): Hash[] {
 		return Array.from(this.vertices.get(vertexHash)?.dependencies || []);
 	}
 
-	// Time complexity: O(1), Space complexity: O(1)
 	getVertex(hash: Hash): Vertex | undefined {
 		return this.vertices.get(hash);
 	}
 
-	// Time complexity: O(V), Space complexity: O(V)
 	getAllVertices(): Vertex[] {
 		return Array.from(this.vertices.values());
 	}
 }
 
-// Time complexity: O(1), Space complexity: O(1)
 function computeHash<T>(
 	nodeId: string,
 	operation: Operation,
