@@ -76,7 +76,6 @@ export class HashGraph {
 		this.resolveConflicts = resolveConflicts;
 		this.semanticsType = semanticsType;
 
-		// Create and add the NOP root vertex
 		const rootVertex: Vertex = {
 			hash: HashGraph.rootHash,
 			nodeId: "",
@@ -119,8 +118,6 @@ export class HashGraph {
 		return vertex;
 	}
 
-	// Time complexity: O(d), where d is the number of dependencies
-	// Space complexity: O(d)
 	addVertex(operation: Operation, deps: Hash[], nodeId: string): Hash {
 		const hash = computeHash(nodeId, operation, deps);
 		if (this.vertices.has(hash)) {
@@ -190,7 +187,6 @@ export class HashGraph {
 		return result;
 	}
 
-	// Time complexity: O(V + E), Space complexity: O(V)
 	topologicalSort(updateBitsets = false): Hash[] {
 		this.reachablePredecessors.clear();
 		this.topoSortedIndex.clear();
@@ -237,7 +233,6 @@ export class HashGraph {
 		}
 	}
 
-	// Amortised time complexity: O(1), Amortised space complexity: O(1)
 	areCausallyRelatedUsingBitsets(hash1: Hash, hash2: Hash): boolean {
 		if (!this.arePredecessorsFresh) {
 			this.topologicalSort(true);
@@ -319,7 +314,6 @@ export class HashGraph {
 		return true;
 	}
 
-	// Time complexity: O(1), Space complexity: O(1)
 	areCausallyRelatedUsingBFS(hash1: Hash, hash2: Hash): boolean {
 		return (
 			this._areCausallyRelatedUsingBFS(hash1, hash2) ||
@@ -331,23 +325,19 @@ export class HashGraph {
 		return Array.from(this.frontier);
 	}
 
-	// Time complexity: O(1), Space complexity: O(1)
 	getDependencies(vertexHash: Hash): Hash[] {
 		return Array.from(this.vertices.get(vertexHash)?.dependencies || []);
 	}
 
-	// Time complexity: O(1), Space complexity: O(1)
 	getVertex(hash: Hash): Vertex | undefined {
 		return this.vertices.get(hash);
 	}
 
-	// Time complexity: O(V), Space complexity: O(V)
 	getAllVertices(): Vertex[] {
 		return Array.from(this.vertices.values());
 	}
 }
 
-// Time complexity: O(1), Space complexity: O(1)
 function computeHash<T>(
 	nodeId: string,
 	operation: Operation,
