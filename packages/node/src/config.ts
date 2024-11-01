@@ -14,6 +14,7 @@ export function loadConfig(
 
 	const result = dotenv.config();
 	if (!result.error) {
+		config = {};
 		config.network_config = {
 			addresses: process.env.ADDRESSES
 				? process.env.ADDRESSES.split(",")
