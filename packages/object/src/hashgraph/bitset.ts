@@ -81,4 +81,22 @@ export class BitSet {
 			.map((int) => int.toString(2).padStart(32, "0"))
 			.join("");
 	}
+
+	findNext(index: number, bit: number): number {
+		let byteIndex = (index / 32) | 0;
+		let bitIndex = index % 32;
+		let mask = 1 << bitIndex;
+		while (byteIndex < this.data.length) {
+			while (bitIndex < 32) {
+				if ((this.data[byteIndex] & mask) === bit)
+					return byteIndex * 32 + bitIndex;
+				mask <<= 1;
+				bitIndex++;
+			}
+			byteIndex++;
+			bitIndex = 0;
+			mask = 1;
+		}
+		return -1;
+	}
 }
