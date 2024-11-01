@@ -21,6 +21,12 @@ import type {
 	Stream,
 	StreamHandler,
 } from "@libp2p/interface";
+import {
+	type KadDHT,
+	kadDHT,
+	removePrivateAddressesMapper,
+	removePublicAddressesMapper,
+} from "@libp2p/kad-dht";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
@@ -72,31 +78,36 @@ export class TopologyNetworkNode {
 		const _bootstrapNodesList = this._config?.bootstrap_peers
 			? this._config.bootstrap_peers
 			: [
-					"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+					// "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+					"/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					// "/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
 				];
-
-		const _pubsubPeerDiscovery = pubsubPeerDiscovery({
-			interval: 10_000,
-			topics: ["topology::discovery"],
-		});
 
 		const _peerDiscovery = _bootstrapNodesList.length
 			? [
-					_pubsubPeerDiscovery,
 					bootstrap({
 						list: _bootstrapNodesList,
 					}),
 				]
-			: [_pubsubPeerDiscovery];
+			: [];
 
 		const _node_services = {
 			autonat: autoNAT(),
 			dcutr: dcutr(),
 			identify: identify(),
 			pubsub: gossipsub(),
+			dht: kadDHT({
+				protocol: "/topology/dht/1.0.0",
+				kBucketSize: this._config?.bootstrap ? 40 : 20,
+				clientMode: false,
+				peerInfoMapper: removePublicAddressesMapper,
+				querySelfInterval: 20000,
+				initialQuerySelfInterval: 10000,
+				allowQueryWithZeroPeers: false,
+			}),
 		};
 
-		const _bootstrap_services = {
+		const _bootstrap_node_services = {
 			..._node_services,
 			relay: circuitRelayServer(),
 		};
@@ -114,7 +125,9 @@ export class TopologyNetworkNode {
 			},
 			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
 			peerDiscovery: _peerDiscovery,
-			services: this._config?.bootstrap ? _bootstrap_services : _node_services,
+			services: this._config?.bootstrap
+				? _bootstrap_node_services
+				: _node_services,
 			streamMuxers: [yamux()],
 			transports: [
 				circuitRelayTransport({
@@ -132,11 +145,12 @@ export class TopologyNetworkNode {
 
 		if (!this._config?.bootstrap) {
 			for (const addr of this._config?.bootstrap_peers || []) {
-				this._node.dial(multiaddr(addr));
+				const stream = await this._node.dial(multiaddr(addr));
 			}
 		}
 
 		this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
+
 		this.peerId = this._node.peerId.toString();
 
 		log.info(
@@ -144,19 +158,21 @@ export class TopologyNetworkNode {
 			this.peerId,
 		);
 
-		this._node.addEventListener("peer:connect", (e) =>
-			log.info("::start::peer::connect", e.detail),
-		);
-		this._node.addEventListener("peer:discovery", (e) => {
+		this._node.addEventListener("peer:connect", async (e) => {
+			console.log("::start::peer::connect", e.detail);
+		});
+
+		this._node.addEventListener("peer:discovery", async (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
 			for (const ma of e.detail.multiaddrs) {
 				this._node?.dial(ma);
 			}
-			log.info("::start::peer::discovery", e.detail);
+			console.log("::start::peer::discovery", e.detail.id);
 		});
-		this._node.addEventListener("peer:identify", (e) =>
-			log.info("::start::peer::identify", e.detail),
-		);
+
+		this._node.addEventListener("peer:identify", (e) => {
+			console.log("::start::peer::identify", e.detail.peerId);
+		});
 	}
 
 	subscribe(topic: string) {
@@ -256,5 +272,17 @@ export class TopologyNetworkNode {
 
 	addMessageHandler(protocol: string | string[], handler: StreamHandler) {
 		this._node?.handle(protocol, handler);
+	}
+
+	/**
+	 * This function allows to check if the node is ready to be used on the network
+	 * We check if the node has any multiaddrs as for /webrtc it takes a while to get them assigned from the relay server node.
+	 * @returns boolean
+	 */
+	checkNodeReady(): boolean {
+		if (this._node?.getMultiaddrs().length) {
+			return true;
+		}
+		return false;
 	}
 }

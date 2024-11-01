@@ -1,4 +1,5 @@
 import path from "node:path";
+import { fs } from "memfs";
 import { defineConfig } from "vite";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 
