@@ -74,8 +74,8 @@ export class TopologyNetworkNode {
 			? this._config.bootstrap_peers
 			: [
 					// "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-					// "/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
-					"/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					"/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					// "/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
 				];
 
 		const _peerDiscovery = _bootstrapNodesList.length
@@ -96,8 +96,8 @@ export class TopologyNetworkNode {
 				kBucketSize: 20,
 				clientMode: false,
 				peerInfoMapper: removePublicAddressesMapper,
-				querySelfInterval: 10_000,
-				initialQuerySelfInterval: 20_000,
+				querySelfInterval: 20000,
+				initialQuerySelfInterval: 10000,
 				allowQueryWithZeroPeers: false,
 			}),
 		};
@@ -278,4 +278,18 @@ export class TopologyNetworkNode {
 	addMessageHandler(protocol: string | string[], handler: StreamHandler) {
 		this._node?.handle(protocol, handler);
 	}
+
+	/**
+	 * This function allows to check if the node is ready to be used on the network
+	 * We check if the node has any multiaddrs as for /webrtc it takes a while to get them assigned from the relay server node.
+	 * @returns boolean
+	 */
+	checkNodeReady() : boolean {
+		if(this._node?.getMultiaddrs().length){
+			return true;
+		}
+		return false;
+	}
+
+
 }

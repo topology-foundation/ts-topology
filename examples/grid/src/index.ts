@@ -7,7 +7,6 @@ const node = new TopologyNode();
 let topologyObject: TopologyObject;
 let gridCRO: Grid;
 let peers: string[] = [];
-let discoveryPeers: string[] = [];
 let objectPeers: string[] = [];
 
 const formatNodeId = (id: string): string => {
@@ -64,11 +63,6 @@ const render = () => {
 
 	const element_peers = <HTMLDivElement>document.getElementById("peers");
 	element_peers.innerHTML = `[${peers.map((peer) => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
-
-	const element_discoveryPeers = <HTMLDivElement>(
-		document.getElementById("discoveryPeers")
-	);
-	element_discoveryPeers.innerHTML = `[${discoveryPeers.map((peer) => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
 
 	const element_objectPeers = <HTMLDivElement>(
 		document.getElementById("objectPeers")
@@ -205,11 +199,19 @@ async function main() {
 	await node.start();
 	render();
 
-	node.addCustomGroupMessageHandler("", (e) => {
-		peers = node.networkNode.getAllPeers();
-		discoveryPeers = node.networkNode.getGroupPeers("topology::discovery");
-		render();
-	});
+	// THIS WORKS ONLY AFTER A PUBSUB MESSAGE IS RECEIVED
+	// node.addCustomGroupMessageHandler("", (e) => {
+	// 	peers = node.networkNode.getAllPeers();
+	// 	render();
+	// });
+
+	setInterval(() => {
+		if (node.networkNode.checkNodeReady()) {
+			console.log("Node is ready");
+			peers = node.networkNode.getAllPeers();
+			render();
+		}
+	}, 1000);
 
 	const button_create = <HTMLButtonElement>(
 		document.getElementById("createGrid")
