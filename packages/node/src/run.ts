@@ -7,7 +7,7 @@ import { init as rpc_init } from "./rpc/index.js";
 const run = async () => {
 	program.parse(process.argv);
 	const opts = program.opts();
-	const config: TopologyNodeConfig = loadConfig(opts.config);
+	const config: TopologyNodeConfig | undefined = loadConfig(opts.config);
 
 	const node = new TopologyNode(config);
 	await node.start();
