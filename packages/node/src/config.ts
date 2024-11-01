@@ -4,8 +4,8 @@ import type { TopologyNodeConfig } from "./index.js";
 
 export function loadConfig(
 	configPath?: string | undefined,
-): TopologyNodeConfig {
-	let config: TopologyNodeConfig = {};
+): TopologyNodeConfig | undefined {
+	let config: TopologyNodeConfig | undefined;
 
 	if (configPath) {
 		config = JSON.parse(fs.readFileSync(configPath, "utf8"));
