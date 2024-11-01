@@ -21,6 +21,12 @@ import type {
 	Stream,
 	StreamHandler,
 } from "@libp2p/interface";
+import {
+	type KadDHT,
+	kadDHT,
+	removePrivateAddressesMapper,
+	removePublicAddressesMapper,
+} from "@libp2p/kad-dht";
 import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
@@ -31,9 +37,6 @@ import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
 import { Message } from "./proto/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
-import { type KadDHT, kadDHT, removePrivateAddressesMapper, removePublicAddressesMapper } from "@libp2p/kad-dht";
-import { TopologyDHT } from "./utils/topology_dht.js";
-import { peerIdFromString } from "@libp2p/peer-id";
 
 export * from "./stream.js";
 
@@ -50,7 +53,6 @@ export class TopologyNetworkNode {
 	private _config?: TopologyNetworkNodeConfig;
 	private _node?: Libp2p;
 	private _pubsub?: PubSub<GossipsubEvents>;
-	private _topologyDHT?: TopologyDHT;
 
 	peerId = "";
 
@@ -73,24 +75,16 @@ export class TopologyNetworkNode {
 			: [
 					// "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
 					// "/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
-					"/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ"
+					"/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
 				];
-
-		// const _pubsubPeerDiscovery = pubsubPeerDiscovery({
-		// 	interval: 10_000,
-		// 	topics: ["topology::discovery"],
-		// });
 
 		const _peerDiscovery = _bootstrapNodesList.length
 			? [
-					// _pubsubPeerDiscovery,
 					bootstrap({
 						list: _bootstrapNodesList,
 					}),
 				]
-			: [
-					// _pubsubPeerDiscovery
-				];
+			: [];
 
 		const _node_services = {
 			autonat: autoNAT(),
@@ -104,7 +98,7 @@ export class TopologyNetworkNode {
 				peerInfoMapper: removePublicAddressesMapper,
 				querySelfInterval: 10_000,
 				initialQuerySelfInterval: 20_000,
-				allowQueryWithZeroPeers: false
+				allowQueryWithZeroPeers: false,
 			}),
 		};
 
@@ -112,32 +106,6 @@ export class TopologyNetworkNode {
 			..._node_services,
 			relay: circuitRelayServer(),
 		};
-
-
-		// CONTENT ROUTING 
-		// const components = {
-		// 	peerId: id,
-		// 	connectionManager: stubInterface<ConnectionManager>(),
-		// 	peerStore: stubInterface<PeerStore>(),
-		// 	logger: defaultLogger()
-		//   }
-		//   const table = new RoutingTable(components, {
-		// 	kBucketSize: 20,
-		// 	logPrefix: '',
-		// 	metricsPrefix: '',
-		// 	protocol: '/ipfs/kad/1.0.0',
-		// 	network: stubInterface<Network>()
-		//   })
-		//   refresh = new RoutingTableRefresh({
-		// 	logger: defaultLogger()
-		//   }, {
-		// 	routingTable: table,
-		// 	// @ts-expect-error not a full implementation
-		// 	peerRouting: {},
-		// 	logPrefix: ''
-		//   })
-
-		// END CONTENT ROUTING 
 
 		this._node = await createLibp2p({
 			privateKey,
@@ -150,8 +118,6 @@ export class TopologyNetworkNode {
 					return false;
 				},
 			},
-			// contentRouters: [kadDHT()],
-			// peerRouters: [kadDHT()],
 			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
 			peerDiscovery: _peerDiscovery,
 			services: this._config?.bootstrap
@@ -179,7 +145,6 @@ export class TopologyNetworkNode {
 		}
 
 		this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
-		this._topologyDHT = new TopologyDHT(this._node?.services.dht as KadDHT);
 
 		this.peerId = this._node.peerId.toString();
 
@@ -188,24 +153,8 @@ export class TopologyNetworkNode {
 			this.peerId,
 		);
 
-		// setInterval(() => {
-		setTimeout(() => {
-			const ma = this._node?.getMultiaddrs();
-			console.log("multiaddrs", ma);
-		}, 9000);
-
-		setInterval(() => {
-			console.log("MY PEERS ARE ", this._node?.getPeers());
-		}, 30000);
-
-		// 	// // get all my peers
-		// 	// const peers = this._node?.peerStore;
-		// 	// console.log("peers", peers);
-		// }, 10000);
-
 		this._node.addEventListener("peer:connect", async (e) => {
 			console.log("::start::peer::connect", e.detail);
-			// this._topologyDHT = new TopologyDHT(this._node?.services.dht as KadDHT);
 		});
 
 		this._node.addEventListener("peer:discovery", async (e) => {
@@ -213,32 +162,13 @@ export class TopologyNetworkNode {
 			for (const ma of e.detail.multiaddrs) {
 				this._node?.dial(ma);
 			}
-			console.log("::start::peer::discovery", e.detail);
+			console.log("::start::peer::discovery", e.detail.id);
 		});
-
-		// console log peer store
-		// this._pubsub?.subscribe("we_are_here");
-
-		// this._pubsub?.addEventListener("message", (message) => {
-		// 	// if (message. === groupName) {
-		// 	console.log("Received message in message:", message.detail);
-		// });
-
-		// setInterval(() => {
-		// 	// console.log("peer store", this._node?.getPeers());
-		// 	// send a message to the group
-		// 	this._pubsub?.publish("we_are_here", uint8ArrayFromString("hello"));
-		// }, 10000);
 
 		this._node.addEventListener("peer:identify", (e) => {
-			console.log("::start::peer::identify", e.detail);
+			console.log("::start::peer::identify", e.detail.peerId);
 		});
 	}
-
-	// receive topic from stream after dialing
-	// receiveTopic(stream: Stream) {
-	// 	stream.
-	// }
 
 	subscribe(topic: string) {
 		if (!this._node) {
