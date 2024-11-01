@@ -82,9 +82,9 @@ export class BitSet {
 			.join("");
 	}
 
-	findNext(index: number, bit: number): number {
-		let byteIndex = (index / 32) | 0;
-		let bitIndex = index % 32;
+	findNext(index: number, bit: number): number | undefined {
+		let byteIndex = ((index + 1) / 32) | 0;
+		let bitIndex = (index + 1) % 32;
 		let mask = 1 << bitIndex;
 		while (byteIndex < this.data.length) {
 			while (bitIndex < 32) {
@@ -97,6 +97,6 @@ export class BitSet {
 			bitIndex = 0;
 			mask = 1;
 		}
-		return -1;
+		return undefined;
 	}
 }

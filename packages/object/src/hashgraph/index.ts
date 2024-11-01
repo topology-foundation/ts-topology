@@ -316,6 +316,19 @@ export class HashGraph {
 		return true;
 	}
 
+	findNextUnusuallyRelated(hash: Hash, start: number): number | undefined {
+		if (!this.arePredecessorsFresh) {
+			this.topologicalSort(true);
+		}
+		const currentIndex = this.topoSortedIndex.get(hash);
+		if (currentIndex === undefined) return undefined;
+
+		const nextIndex = this.reachablePredecessors.get(hash)?.findNext(start, 0);
+		if (nextIndex === undefined) return undefined;
+
+		return nextIndex;
+	}
+
 	areCausallyRelatedUsingBFS(hash1: Hash, hash2: Hash): boolean {
 		return (
 			this._areCausallyRelatedUsingBFS(hash1, hash2) ||

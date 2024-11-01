@@ -16,12 +16,14 @@ export function linearizePair(hashGraph: HashGraph): Operation[] {
 			continue;
 		}
 		const anchor = order[i];
-		let j = i + 1;
+		let j: number = i + 1;
 
 		while (j < order.length) {
 			if (dropped[i]) break;
 			if (dropped[j]) {
-				j++;
+				const nextIndex = hashGraph.findNextUnusuallyRelated(order[i], j);
+				if (nextIndex === undefined) break;
+				j = nextIndex;
 				continue;
 			}
 			const moving = order[j];
@@ -45,15 +47,16 @@ export function linearizePair(hashGraph: HashGraph): Operation[] {
 						break;
 					case ActionType.Swap:
 						[order[i], order[j]] = [order[j], order[i]];
-						j = i + 1;
+						j = i;
 						break;
 					case ActionType.Nop:
-						j++;
 						break;
 				}
-			} else {
-				j++;
 			}
+
+			const nextIndex = hashGraph.findNextUnusuallyRelated(order[i], j);
+			if (nextIndex === undefined) break;
+			j = nextIndex;
 		}
 		if (dropped[i]) {
 			i++;
