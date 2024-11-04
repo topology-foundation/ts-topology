@@ -21,13 +21,7 @@ import type {
 	Stream,
 	StreamHandler,
 } from "@libp2p/interface";
-import {
-	type KadDHT,
-	kadDHT,
-	removePrivateAddressesMapper,
-	removePublicAddressesMapper,
-} from "@libp2p/kad-dht";
-import { pubsubPeerDiscovery } from "@libp2p/pubsub-peer-discovery";
+import { kadDHT, removePublicAddressesMapper } from "@libp2p/kad-dht";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
@@ -78,9 +72,7 @@ export class TopologyNetworkNode {
 		const _bootstrapNodesList = this._config?.bootstrap_peers
 			? this._config.bootstrap_peers
 			: [
-					// "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-					"/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
-					// "/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					"/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
 				];
 
 		const _peerDiscovery = _bootstrapNodesList.length
@@ -145,7 +137,7 @@ export class TopologyNetworkNode {
 
 		if (!this._config?.bootstrap) {
 			for (const addr of this._config?.bootstrap_peers || []) {
-				const stream = await this._node.dial(multiaddr(addr));
+				this._node.dial(multiaddr(addr));
 			}
 		}
 
@@ -159,7 +151,7 @@ export class TopologyNetworkNode {
 		);
 
 		this._node.addEventListener("peer:connect", async (e) => {
-			console.log("::start::peer::connect", e.detail);
+			
 		});
 
 		this._node.addEventListener("peer:discovery", async (e) => {
@@ -167,11 +159,11 @@ export class TopologyNetworkNode {
 			for (const ma of e.detail.multiaddrs) {
 				this._node?.dial(ma);
 			}
-			console.log("::start::peer::discovery", e.detail.id);
+			
 		});
 
 		this._node.addEventListener("peer:identify", (e) => {
-			console.log("::start::peer::identify", e.detail.peerId);
+			log.info("::start::peer::identify", e.detail.peerId);
 		});
 	}
 
