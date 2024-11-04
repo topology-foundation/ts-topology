@@ -11,7 +11,6 @@
  "files": [
   "src",
   "dist",
-  "benchmark",
   "!dist/test",
   "!**/*.tsbuildinfo"
  ],
@@ -33,7 +32,6 @@
  "devDependencies": {
   "assemblyscript": "^0.27.29",
   "benchmark": "^2.1.4",
-  "ts-node": "^10.9.2",
   "tsx": "4.19.1"
  },
  "dependencies": {
