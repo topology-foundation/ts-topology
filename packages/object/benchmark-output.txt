@@ -1,3 +1,0 @@
-Create HashGraph with 1000 vertices x 327 ops/sec ±2.17% (88 runs sampled)
-Create 2 CROs (1000 vertices each) and Merge x 0.95 ops/sec ±20.86% (7 runs sampled)
-Fastest is Create HashGraph with 1000 vertices
