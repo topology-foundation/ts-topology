@@ -17,15 +17,15 @@ function benchmarkForAddWinSet(
 			);
 			const cro = obj.cro as AddWinsSet<number>;
 			for (let j = 0; j < verticesPerCRO; j++) {
-        if (i % 3 === 2) {
-          cro.add(j);
-          cro.remove(j);
-        } else if (i % 3 === 1) {
-          cro.remove(j);
-          cro.add(j);
-        } else {
-          cro.add(j);
-        }
+				if (i % 3 === 2) {
+					cro.add(j);
+					cro.remove(j);
+				} else if (i % 3 === 1) {
+					cro.remove(j);
+					cro.add(j);
+				} else {
+					cro.add(j);
+				}
 			}
 			objects.push(obj);
 		}
