@@ -53,13 +53,6 @@ benchmarkForAddWinSet(
 	true,
 );
 
-benchmarkForAddWinSet(
-	"Create 5 CROs (1000 vertices each) and Merge",
-	5,
-	1000,
-	true,
-);
-
 suite
 	.on("cycle", (event) => {
 		console.log(String(event.target));
