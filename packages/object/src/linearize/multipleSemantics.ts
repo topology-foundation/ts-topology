@@ -24,7 +24,7 @@ export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 		while (j < reachableState.getLength()) {
 			if (dropped[i]) break;
 			if (dropped[j]) {
-				const nextIndex = reachableState.findNextUnusuallyRelated(anchor, j);
+				const nextIndex = reachableState.findNextCausallyUnrelated(anchor, j);
 				if (nextIndex === undefined) break;
 				j = nextIndex;
 				continue;
@@ -69,7 +69,7 @@ export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 				}
 			}
 
-			const nextIndex = reachableState.findNextUnusuallyRelated(anchor, j);
+			const nextIndex = reachableState.findNextCausallyUnrelated(anchor, j);
 			if (nextIndex === undefined) break;
 			j = nextIndex;
 		}

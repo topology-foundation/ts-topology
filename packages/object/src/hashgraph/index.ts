@@ -93,14 +93,10 @@ export class ReachableState {
 		return test1 || test2;
 	}
 
-	findNextUnusuallyRelated(hash: Hash, start: number): number | undefined {
-		const currentIndex = this.topoSortedIndex.get(hash);
-		if (currentIndex === undefined) return undefined;
-
-		const nextIndex = this.reachablePredecessors.get(hash)?.findNext(start, 0);
-		if (nextIndex === undefined) return undefined;
-
-		return nextIndex;
+	findNextCausallyUnrelated(hash: Hash, start: number): number | undefined {
+		return this.topoSortedIndex.get(hash) === undefined
+			? undefined
+			: this.reachablePredecessors.get(hash)?.findNext(start, 0);
 	}
 
 	getLength(): number {
