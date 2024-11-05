@@ -1,7 +1,6 @@
 .env
 
 dist/
-docs/
 node_modules/
 
 **/tsconfig.tsbuildinfo
