@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1730800395887,
+  "lastUpdate": 1730800501099,
   "repoUrl": "https://github.com/trungnotchung/ts-topology",
   "entries": {
     "Benchmark.js Benchmark": [
@@ -134,6 +134,40 @@ window.BENCHMARK_DATA = {
             "name": "Create 2 CROs (1000 vertices each) and Merge",
             "value": 1.05,
             "range": "±1.90%",
+            "unit": "ops/sec",
+            "extra": "7 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "trungnotchung",
+            "username": "trungnotchung"
+          },
+          "committer": {
+            "name": "trungnotchung",
+            "username": "trungnotchung"
+          },
+          "id": "cb706a4e23e8a6349aba162d3cd7d6264dc2f2c8",
+          "message": "update benchmark workflow",
+          "timestamp": "2024-11-05T09:53:19Z",
+          "url": "https://github.com/trungnotchung/ts-topology/pull/5/commits/cb706a4e23e8a6349aba162d3cd7d6264dc2f2c8"
+        },
+        "date": 1730800500293,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "Create HashGraph with 1000 vertices",
+            "value": 243,
+            "range": "±0.40%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "Create 2 CROs (1000 vertices each) and Merge",
+            "value": 1.04,
+            "range": "±1.68%",
             "unit": "ops/sec",
             "extra": "7 samples"
           }
