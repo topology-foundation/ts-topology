@@ -7,37 +7,49 @@ import {
 } from "../hashgraph/index.js";
 
 export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
-	let order = hashGraph.topologicalSort(true);
+	const reachableState = hashGraph.topologicalSort();
+	const dropped = new Array(reachableState.getLength()).fill(false);
 	const indices: Map<Hash, number> = new Map();
 	const result: Operation[] = [];
 	let i = 0;
 
-	while (i < order.length) {
-		const anchor = order[i];
+	while (i < reachableState.getLength()) {
+		if (dropped[i]) {
+			i++;
+			continue;
+		}
+		const anchor = reachableState.getHash(i);
 		let j = i + 1;
-		let shouldIncrementI = true;
 
-		while (j < order.length) {
-			const moving = order[j];
+		while (j < reachableState.getLength()) {
+			if (dropped[i]) break;
+			if (dropped[j]) {
+				const nextIndex = reachableState.findNextUnusuallyRelated(anchor, j);
+				if (nextIndex === undefined) break;
+				j = nextIndex;
+				continue;
+			}
+			const moving = reachableState.getHash(j);
 
-			if (!hashGraph.areCausallyRelatedUsingBitsets(anchor, moving)) {
+			if (!reachableState.areCausallyRelatedUsingBitsets(anchor, moving)) {
 				const concurrentOps: Hash[] = [];
 				concurrentOps.push(anchor);
 				indices.set(anchor, i);
 				concurrentOps.push(moving);
 				indices.set(moving, j);
 				let k = j + 1;
-				for (; k < order.length; k++) {
+				for (; k < reachableState.getLength(); k++) {
 					let add = true;
+					const hashK = reachableState.getHash(k);
 					for (const hash of concurrentOps) {
-						if (hashGraph.areCausallyRelatedUsingBitsets(hash, order[k])) {
+						if (reachableState.areCausallyRelatedUsingBitsets(hash, hashK)) {
 							add = false;
 							break;
 						}
 					}
 					if (add) {
-						concurrentOps.push(order[k]);
-						indices.set(order[k], k);
+						concurrentOps.push(hashK);
+						indices.set(hashK, k);
 					}
 				}
 				const resolved = hashGraph.resolveConflicts(
@@ -46,29 +58,24 @@ export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 
 				switch (resolved.action) {
 					case ActionType.Drop: {
-						const newOrder = [];
 						for (const hash of resolved.vertices || []) {
-							if (indices.get(hash) === i) shouldIncrementI = false;
-							order[indices.get(hash) || -1] = "";
+							dropped[indices.get(hash) || -1] = true;
 						}
-						for (const val of order) {
-							if (val !== "") newOrder.push(val);
-						}
-						order = newOrder;
-						if (!shouldIncrementI) j = order.length; // Break out of inner loop
 						break;
 					}
 					case ActionType.Nop:
 						j++;
 						break;
 				}
-			} else {
-				j++;
 			}
+
+			const nextIndex = reachableState.findNextUnusuallyRelated(anchor, j);
+			if (nextIndex === undefined) break;
+			j = nextIndex;
 		}
 
-		if (shouldIncrementI) {
-			const op = hashGraph.vertices.get(order[i])?.operation;
+		if (!dropped[i]) {
+			const op = hashGraph.vertices.get(anchor)?.operation;
 			if (op && op.value !== null) result.push(op);
 			i++;
 		}

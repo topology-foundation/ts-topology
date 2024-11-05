@@ -94,9 +94,6 @@ export class ReachableState {
 	}
 
 	findNextUnusuallyRelated(hash: Hash, start: number): number | undefined {
-		if (!this.arePredecessorsFresh) {
-			this.topologicalSort(true);
-		}
 		const currentIndex = this.topoSortedIndex.get(hash);
 		if (currentIndex === undefined) return undefined;
 
@@ -104,6 +101,23 @@ export class ReachableState {
 		if (nextIndex === undefined) return undefined;
 
 		return nextIndex;
+	}
+
+	getLength(): number {
+		return this.hash.length;
+	}
+
+	getHash(index: number): Hash {
+		return this.hash[index];
+	}
+
+	swap(i: number, j: number): void {
+		[this.hash[i], this.hash[j]] = [this.hash[j], this.hash[i]];
+		this.topoSortedIndex.set(this.hash[i], i);
+		this.topoSortedIndex.set(this.hash[j], j);
+		for (const [_, bitset] of this.reachablePredecessors) {
+			bitset.swap(i, j);
+		}
 	}
 }
 

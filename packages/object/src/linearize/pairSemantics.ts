@@ -5,30 +5,30 @@ import {
 } from "../hashgraph/index.js";
 
 export function linearizePair(hashGraph: HashGraph): Operation[] {
-	const order = hashGraph.topologicalSort(true);
-	const dropped = new Array(order.length).fill(false);
+	const reachableState = hashGraph.topologicalSort();
+	const dropped = new Array(reachableState.getLength()).fill(false);
 	const result: Operation[] = [];
 	let i = 0;
 
-	while (i < order.length) {
+	while (i < reachableState.getLength()) {
 		if (dropped[i]) {
 			i++;
 			continue;
 		}
-		const anchor = order[i];
+		const anchor = reachableState.getHash(i);
 		let j: number = i + 1;
 
-		while (j < order.length) {
+		while (j < reachableState.getLength()) {
 			if (dropped[i]) break;
 			if (dropped[j]) {
-				const nextIndex = hashGraph.findNextUnusuallyRelated(order[i], j);
+				const nextIndex = reachableState.findNextUnusuallyRelated(anchor, j);
 				if (nextIndex === undefined) break;
 				j = nextIndex;
 				continue;
 			}
-			const moving = order[j];
+			const moving = reachableState.getHash(j);
 
-			if (!hashGraph.areCausallyRelatedUsingBitsets(anchor, moving)) {
+			if (!reachableState.areCausallyRelatedUsingBitsets(anchor, moving)) {
 				const v1 = hashGraph.vertices.get(anchor);
 				const v2 = hashGraph.vertices.get(moving);
 				let action: ActionType;
@@ -46,7 +46,7 @@ export function linearizePair(hashGraph: HashGraph): Operation[] {
 						dropped[j] = true;
 						break;
 					case ActionType.Swap:
-						[order[i], order[j]] = [order[j], order[i]];
+						reachableState.swap(i, j);
 						j = i;
 						break;
 					case ActionType.Nop:
@@ -54,7 +54,7 @@ export function linearizePair(hashGraph: HashGraph): Operation[] {
 				}
 			}
 
-			const nextIndex = hashGraph.findNextUnusuallyRelated(order[i], j);
+			const nextIndex = reachableState.findNextUnusuallyRelated(anchor, j);
 			if (nextIndex === undefined) break;
 			j = nextIndex;
 		}
@@ -63,7 +63,7 @@ export function linearizePair(hashGraph: HashGraph): Operation[] {
 			continue;
 		}
 
-		const op = hashGraph.vertices.get(order[i])?.operation;
+		const op = hashGraph.vertices.get(anchor)?.operation;
 		if (op && op.value !== null) result.push(op);
 		i++;
 	}

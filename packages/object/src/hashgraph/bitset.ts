@@ -99,4 +99,10 @@ export class BitSet {
 		}
 		return undefined;
 	}
+
+	swap(i: number, j: number): void {
+		const temp = this.get(i);
+		this.set(i, this.get(j));
+		this.set(j, temp);
+	}
 }
