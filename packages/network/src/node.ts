@@ -90,44 +90,15 @@ export class TopologyNetworkNode {
 			dcutr: dcutr(),
 			identify: identify(),
 			pubsub: gossipsub(),
-			// dht: kadDHT({
-			// 	protocol: "/topology/dht/1.0.0",
-			// 	kBucketSize: this._config?.bootstrap ? 40 : 20,
-			// 	clientMode: false,
-			// 	// peerInfoMapper: removePrivateAddressesMapper,
-			// 	// peerInfoMapper: removePublicAddressesMapper,
-			// 	querySelfInterval: 20000,
-			// 	initialQuerySelfInterval: 30000,
-			// 	allowQueryWithZeroPeers: false,
-				
-			// }),
-			// dht: kadDHT({
-			// 	protocol: "/topology/dht/1.0.0",
-			// 	kBucketSize: this._config?.bootstrap ? 40 : 20,
-			// 	clientMode: false,
-			// 	// peerInfoMapper: removePrivateAddressesMapper,
-			// 	// peerInfoMapper: removePublicAddressesMapper,
-			// 	querySelfInterval: 1000,
-			// 	initialQuerySelfInterval: 20000,
-			// 	allowQueryWithZeroPeers: true, 
-				
-			// }),
 			dht: kadDHT({
+				protocol: "/topology/dht/1.0.0",
+				kBucketSize: this._config?.bootstrap ? 40 : 20,
 				clientMode: false,
-				peerInfoMapper: removePublicAddressesMapper, //this._config?.bootstrap ? removePrivateAddressesMapper : removePublicAddressesMapper,
-				querySelfInterval: 1000,
-				initialQuerySelfInterval: 20000,
+				peerInfoMapper: removePublicAddressesMapper,
+				querySelfInterval: 20000,
+				initialQuerySelfInterval: 10000,
 				allowQueryWithZeroPeers: false,
 			}),
-			// lanDHT: kadDHT({
-			// 	protocol: "/topology/lan/dht/1.0.0",
-			// 	kBucketSize: 20,
-			// 	clientMode: false,
-			// 	peerInfoMapper: removePublicAddressesMapper,
-			// 	initialQuerySelfInterval: 10000,
-			// 	querySelfInterval: 15000,
-			// 	allowQueryWithZeroPeers: false,
-			// }),
 		};
 
 		const _bootstrap_node_services = {
