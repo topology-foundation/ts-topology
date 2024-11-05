@@ -73,8 +73,8 @@ export class TopologyNetworkNode {
 			? this._config.bootstrap_peers
 			: [
 					// "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-					"/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
-					// "/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					// "/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					"/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
 				];
 
 		const _peerDiscovery = _bootstrapNodesList.length
@@ -114,7 +114,7 @@ export class TopologyNetworkNode {
 			// }),
 			dht: kadDHT({
 				clientMode: false,
-				peerInfoMapper: removePrivateAddressesMapper, //this._config?.bootstrap ? removePrivateAddressesMapper : removePublicAddressesMapper,
+				peerInfoMapper: removePublicAddressesMapper, //this._config?.bootstrap ? removePrivateAddressesMapper : removePublicAddressesMapper,
 				querySelfInterval: 1000,
 				initialQuerySelfInterval: 20000,
 				allowQueryWithZeroPeers: false,
