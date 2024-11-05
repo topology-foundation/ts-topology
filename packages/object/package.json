@@ -26,13 +26,10 @@
   "build": "tsc -b",
   "clean": "rm -rf dist/ node_modules/",
   "prepack": "tsc -b",
-  "test": "vitest",
-  "benchmark": "npx tsx tests/hashgraph.bench.ts | tee benchmark-output.txt"
+  "test": "vitest"
  },
  "devDependencies": {
-  "assemblyscript": "^0.27.29",
-  "benchmark": "^2.1.4",
-  "tsx": "4.19.1"
+  "assemblyscript": "^0.27.29"
  },
  "dependencies": {
   "@bufbuild/protobuf": "^2.0.0",
