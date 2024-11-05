@@ -21,7 +21,7 @@ import type {
 	Stream,
 	StreamHandler,
 } from "@libp2p/interface";
-import { kadDHT, removePublicAddressesMapper } from "@libp2p/kad-dht";
+import { kadDHT, removePrivateAddressesMapper, removePublicAddressesMapper } from "@libp2p/kad-dht";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
@@ -72,7 +72,8 @@ export class TopologyNetworkNode {
 		const _bootstrapNodesList = this._config?.bootstrap_peers
 			? this._config.bootstrap_peers
 			: [
-					"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+					// "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+					"/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ"
 				];
 
 		const _peerDiscovery = _bootstrapNodesList.length
@@ -92,9 +93,19 @@ export class TopologyNetworkNode {
 				protocol: "/topology/dht/1.0.0",
 				kBucketSize: this._config?.bootstrap ? 40 : 20,
 				clientMode: false,
-				peerInfoMapper: removePublicAddressesMapper,
-				querySelfInterval: 20000,
+				peerInfoMapper: removePrivateAddressesMapper,
 				initialQuerySelfInterval: 10000,
+				querySelfInterval: 15000,
+				allowQueryWithZeroPeers: false,
+				
+			}),
+			lanDHT: kadDHT({
+				protocol: "/topology/lan/dht/1.0.0",
+				kBucketSize: 20,
+				clientMode: false,
+				peerInfoMapper: removePublicAddressesMapper,
+				initialQuerySelfInterval: 10000,
+				querySelfInterval: 15000,
 				allowQueryWithZeroPeers: false,
 			}),
 		};
