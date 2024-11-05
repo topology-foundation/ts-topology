@@ -1,6 +1,6 @@
 name: Benchmark.js Example
 on:
-  push:
+  pull_request:
     branches: [main]
 
 permissions:
