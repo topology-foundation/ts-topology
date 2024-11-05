@@ -94,8 +94,9 @@ export class TopologyNetworkNode {
 				protocol: "/topology/dht/1.0.0",
 				kBucketSize: this._config?.bootstrap ? 40 : 20,
 				clientMode: false,
-				peerInfoMapper: removePrivateAddressesMapper,
-				initialQuerySelfInterval: 10000,
+				// peerInfoMapper: removePrivateAddressesMapper,
+				// peerInfoMapper: removePublicAddressesMapper,
+				initialQuerySelfInterval: 2000,
 				querySelfInterval: 15000,
 				allowQueryWithZeroPeers: false,
 				
@@ -161,6 +162,11 @@ export class TopologyNetworkNode {
 			"::start: Successfuly started topology network w/ peer_id",
 			this.peerId,
 		);
+
+		setInterval(() => {
+			const ma = this._node?.getMultiaddrs();
+			log.info("::start::multiaddrs", ma);
+		}, 5000);
 
 		this._node.addEventListener("peer:connect", async (e) => {});
 
