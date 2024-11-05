@@ -1,0 +1,36 @@
+name: Benchmark.js Example
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  deployments: write
+
+jobs:
+  benchmark:
+    name: Run benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - shell: bash
+        run: |
+          pnpm install --no-frozen-lockfile
+          cd packages/object
+          pnpm run benchmark
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: Benchmark.js Benchmark
+          tool: 'benchmarkjs'
+          output-file-path: packages/object/benchmark-output.txt
+          # github-token: ${{ secrets.GITHUB_TOKEN }}
+          # auto-push: true
+          # Show alert with commit comment on detecting possible performance regression
+          alert-threshold: '200%'
+          # comment-on-alert: true
+          fail-on-alert: true
