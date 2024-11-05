@@ -73,8 +73,8 @@ export class TopologyNetworkNode {
 			? this._config.bootstrap_peers
 			: [
 					// "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-					// "/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
-					"/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					"/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					// "/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
 				];
 
 		const _peerDiscovery = _bootstrapNodesList.length
@@ -90,16 +90,25 @@ export class TopologyNetworkNode {
 			dcutr: dcutr(),
 			identify: identify(),
 			pubsub: gossipsub(),
+			// dht: kadDHT({
+			// 	protocol: "/topology/dht/1.0.0",
+			// 	kBucketSize: this._config?.bootstrap ? 40 : 20,
+			// 	clientMode: false,
+			// 	// peerInfoMapper: removePrivateAddressesMapper,
+			// 	// peerInfoMapper: removePublicAddressesMapper,
+			// 	querySelfInterval: 20000,
+			// 	initialQuerySelfInterval: 30000,
+			// 	allowQueryWithZeroPeers: false,
+				
+			// }),
 			dht: kadDHT({
 				protocol: "/topology/dht/1.0.0",
 				kBucketSize: this._config?.bootstrap ? 40 : 20,
 				clientMode: false,
-				// peerInfoMapper: removePrivateAddressesMapper,
-				// peerInfoMapper: removePublicAddressesMapper,
-				initialQuerySelfInterval: 2000,
-				querySelfInterval: 15000,
+				peerInfoMapper: removePrivateAddressesMapper,
+				querySelfInterval: 20000,
+				initialQuerySelfInterval: 10000,
 				allowQueryWithZeroPeers: false,
-				
 			}),
 			// lanDHT: kadDHT({
 			// 	protocol: "/topology/lan/dht/1.0.0",
