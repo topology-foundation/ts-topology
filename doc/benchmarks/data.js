@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1730805261587,
+  "lastUpdate": 1730806480357,
   "repoUrl": "https://github.com/trungnotchung/ts-topology",
   "entries": {
     "Benchmark.js Benchmark": [
@@ -374,6 +374,33 @@ window.BENCHMARK_DATA = {
             "range": "±0.62%",
             "unit": "ops/sec",
             "extra": "7 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "trungnotchung",
+            "username": "trungnotchung"
+          },
+          "committer": {
+            "name": "trungnotchung",
+            "username": "trungnotchung"
+          },
+          "id": "f78d76738800a0fd82cdb36bc22ef9d62e108cef",
+          "message": "make logic more complex",
+          "timestamp": "2024-11-05T11:14:25Z",
+          "url": "https://github.com/trungnotchung/ts-topology/pull/9/commits/f78d76738800a0fd82cdb36bc22ef9d62e108cef"
+        },
+        "date": 1730806479034,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "Create HashGraph with 1000 vertices",
+            "value": 18.58,
+            "range": "±2.63%",
+            "unit": "ops/sec",
+            "extra": "37 samples"
           }
         ]
       }
