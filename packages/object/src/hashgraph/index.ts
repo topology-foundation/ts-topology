@@ -44,6 +44,69 @@ export type ResolveConflictsType = {
 	vertices?: Hash[];
 };
 
+export class ReachableState {
+	private reachablePredecessors: Map<Hash, BitSet> = new Map();
+	private topoSortedIndex: Map<Hash, number> = new Map();
+	private hash: Hash[] = [];
+
+	constructor(hash: Hash[], vertices: Map<Hash, Vertex>) {
+		this.hash = hash;
+
+		let currentBitsetSize = 1;
+		while (currentBitsetSize < hash.length) currentBitsetSize *= 2;
+
+		for (let i = 0; i < hash.length; i++) {
+			this.topoSortedIndex.set(hash[i], i);
+			this.reachablePredecessors.set(hash[i], new BitSet(currentBitsetSize));
+
+			for (const dep of vertices.get(hash[i])?.dependencies || []) {
+				const depReachable = this.reachablePredecessors.get(dep);
+				depReachable?.set(this.topoSortedIndex.get(dep) || 0, true);
+				if (depReachable) {
+					const reachable = this.reachablePredecessors.get(hash[i]);
+					this.reachablePredecessors.set(
+						hash[i],
+						reachable?.or(depReachable) || depReachable,
+					);
+				}
+			}
+		}
+	}
+
+	areCausallyRelatedUsingBitsets(hash1: Hash, hash2: Hash): boolean {
+		if (this.topoSortedIndex.get(hash1) === undefined) {
+			log.error("hash1 is not in this graph");
+			return false;
+		}
+		if (this.topoSortedIndex.get(hash2) === undefined) {
+			log.error("hash2 is not in this graph");
+			return false;
+		}
+		const test1 =
+			this.reachablePredecessors
+				.get(hash1)
+				?.get(this.topoSortedIndex.get(hash2) || 0) || false;
+		const test2 =
+			this.reachablePredecessors
+				.get(hash2)
+				?.get(this.topoSortedIndex.get(hash1) || 0) || false;
+		return test1 || test2;
+	}
+
+	findNextUnusuallyRelated(hash: Hash, start: number): number | undefined {
+		if (!this.arePredecessorsFresh) {
+			this.topologicalSort(true);
+		}
+		const currentIndex = this.topoSortedIndex.get(hash);
+		if (currentIndex === undefined) return undefined;
+
+		const nextIndex = this.reachablePredecessors.get(hash)?.findNext(start, 0);
+		if (nextIndex === undefined) return undefined;
+
+		return nextIndex;
+	}
+}
+
 export class HashGraph {
 	nodeId: string;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
@@ -61,11 +124,6 @@ export class HashGraph {
 	*/
 	static readonly rootHash: Hash =
 		"02465e287e3d086f12c6edd856953ca5ad0f01d6707bf8e410b4a601314c1ca5";
-	private arePredecessorsFresh = false;
-	private reachablePredecessors: Map<Hash, BitSet> = new Map();
-	private topoSortedIndex: Map<Hash, number> = new Map();
-	// We start with a bitset of size 1, and double it every time we reach the limit
-	private currentBitsetSize = 1;
 
 	constructor(
 		nodeId: string,
@@ -114,7 +172,6 @@ export class HashGraph {
 
 		const depsSet = new Set(deps);
 		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
-		this.arePredecessorsFresh = false;
 		return vertex;
 	}
 
@@ -153,7 +210,6 @@ export class HashGraph {
 
 		const depsSet = new Set(deps);
 		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
-		this.arePredecessorsFresh = false;
 		return hash;
 	}
 
@@ -189,39 +245,11 @@ export class HashGraph {
 		return result;
 	}
 
-	topologicalSort(updateBitsets = false): Hash[] {
-		this.reachablePredecessors.clear();
-		this.topoSortedIndex.clear();
-
+	topologicalSort(): ReachableState {
 		const result = this.depthFirstSearch();
 		result.reverse();
 
-		if (!updateBitsets) return result;
-
-		// Double the size until it's enough to hold all the vertices
-		while (this.currentBitsetSize < result.length) this.currentBitsetSize *= 2;
-
-		for (let i = 0; i < result.length; i++) {
-			this.topoSortedIndex.set(result[i], i);
-			this.reachablePredecessors.set(
-				result[i],
-				new BitSet(this.currentBitsetSize),
-			);
-			for (const dep of this.vertices.get(result[i])?.dependencies || []) {
-				const depReachable = this.reachablePredecessors.get(dep);
-				depReachable?.set(this.topoSortedIndex.get(dep) || 0, true);
-				if (depReachable) {
-					const reachable = this.reachablePredecessors.get(result[i]);
-					this.reachablePredecessors.set(
-						result[i],
-						reachable?.or(depReachable) || depReachable,
-					);
-				}
-			}
-		}
-
-		this.arePredecessorsFresh = true;
-		return result;
+		return new ReachableState(result, this.vertices);
 	}
 
 	linearizeOperations(): Operation[] {
@@ -233,21 +261,6 @@ export class HashGraph {
 			default:
 				return [];
 		}
-	}
-
-	areCausallyRelatedUsingBitsets(hash1: Hash, hash2: Hash): boolean {
-		if (!this.arePredecessorsFresh) {
-			this.topologicalSort(true);
-		}
-		const test1 =
-			this.reachablePredecessors
-				.get(hash1)
-				?.get(this.topoSortedIndex.get(hash2) || 0) || false;
-		const test2 =
-			this.reachablePredecessors
-				.get(hash2)
-				?.get(this.topoSortedIndex.get(hash1) || 0) || false;
-		return test1 || test2;
 	}
 
 	private _areCausallyRelatedUsingBFS(start: Hash, target: Hash): boolean {
