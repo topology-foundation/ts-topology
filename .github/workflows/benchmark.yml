@@ -1,0 +1,40 @@
+name: Benchmark.js Example
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+  deployments: write
+
+jobs:
+  benchmark:
+    name: Run benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - shell: bash
+        run: |
+          pnpm install --no-frozen-lockfile
+          cd packages/object
+          pnpm run benchmark
+          # ignore possible changes on the version.ts and lock file
+          git stash
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: Benchmark.js Benchmark
+          tool: "benchmarkjs"
+          output-file-path: packages/object/benchmark-output.txt
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          summary-always: true
+          alert-threshold: "20%"
+          fail-on-alert: true
+          gh-pages-branch: main
+          benchmark-data-dir-path: docs/benchmarks
