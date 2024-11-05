@@ -21,6 +21,7 @@ jobs:
           pnpm install --no-frozen-lockfile
           cd packages/object
           pnpm run benchmark
+          git stash
 
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
@@ -34,3 +35,5 @@ jobs:
           alert-threshold: '200%'
           # comment-on-alert: true
           fail-on-alert: true
+          gh-pages-branch: main
+          benchmark-data-dir-path: doc/benchmarks
