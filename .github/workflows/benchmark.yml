@@ -23,16 +23,16 @@ jobs:
           pnpm install --no-frozen-lockfile
           cd packages/object
           pnpm run benchmark
+          # ignore possible changes on the version.ts and lock file
+          git stash
 
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
           name: Benchmark.js Benchmark
-          tool: 'benchmarkjs'
+          tool: "benchmarkjs"
           output-file-path: packages/object/benchmark-output.txt
-          # github-token: ${{ secrets.GITHUB_TOKEN }}
-          # auto-push: true
-          # Show alert with commit comment on detecting possible performance regression
-          alert-threshold: '200%'
-          # comment-on-alert: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          summary-always: true
+          alert-threshold: "20%"
           fail-on-alert: true
