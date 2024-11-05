@@ -2,6 +2,8 @@ name: Benchmark.js Example
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: write
@@ -31,7 +33,6 @@ jobs:
           output-file-path: packages/object/benchmark-output.txt
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
-          # Show alert with commit comment on detecting possible performance regression
           alert-threshold: '200%'
           comment-on-alert: true
           fail-on-alert: true
