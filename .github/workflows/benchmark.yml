@@ -2,15 +2,19 @@ name: Benchmark
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 permissions:
   pages: write
   id-token: write
-  contents: write
+  pull-requests: write
 
 jobs:
   benchmark:
     name: Run benchmark
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +46,7 @@ jobs:
           fail-on-alert: true
           comment-always: true
           gh-pages-branch: main
-          skip-fetch-gh-pages: true
+          skip-fetch-gh-pages: ${{ github.event_name == 'push' }}
           benchmark-data-dir-path: ./cache/benchmarks
 
   docs:
