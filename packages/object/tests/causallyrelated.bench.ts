@@ -1,5 +1,5 @@
 import { bench, describe } from "vitest";
-import { AddWinsSet } from "../../crdt/src/cros/AddWinsSet/index.js";
+import { AddWinsSet } from "../../blueprints/src/AddWinsSet/index.js";
 import { type Hash, TopologyObject } from "../src/index.js";
 
 describe("AreCausallyDependent benchmark", async () => {

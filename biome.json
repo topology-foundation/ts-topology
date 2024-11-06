@@ -4,6 +4,7 @@
 		"ignore": [
 			"**/dist/*",
 			"**/docs/*",
+			"**/doc/*",
 			"**/*_pb.js",
 			"**/*_pb.ts",
 			"**/bundle/*",
