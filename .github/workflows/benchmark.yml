@@ -22,6 +22,7 @@ jobs:
           pnpm install --no-frozen-lockfile
           cd packages/object
           pnpm run benchmark
+          # possible lockfile and version.ts changes
           git stash
 
       - name: Set cache dir
@@ -38,8 +39,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           output-file-path: packages/object/benchmark-output.txt
           alert-threshold: "10%"
-          comment-on-alert: true
           fail-on-alert: true
+          comment-always: true
+          skip-fetch-gh-pages: true
           benchmark-data-dir-path: ./cache/benchmarks
 
   docs:
