@@ -44,7 +44,7 @@ jobs:
           fail-on-alert: true
           comment-always: true
           gh-pages-branch: main
-          skip-fetch-gh-pages: true
+          skip-fetch-gh-pages: ${{ github.event_name == 'push' }}
           benchmark-data-dir-path: ./cache/benchmarks
 
   docs:
