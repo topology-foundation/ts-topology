@@ -8,13 +8,12 @@ on:
 permissions:
   pages: write
   id-token: write
+  contents: write
   pull-requests: write
 
 jobs:
   benchmark:
     name: Run benchmark
-    permissions:
-      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
