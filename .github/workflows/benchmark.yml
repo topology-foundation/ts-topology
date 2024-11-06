@@ -1,0 +1,56 @@
+name: Benchmark
+on:
+  push:
+    branches: [main]
+
+permissions:
+  pages: write
+  id-token: write
+  contents: write
+
+jobs:
+  benchmark:
+    name: Run benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - shell: bash
+        run: |
+          pnpm install --no-frozen-lockfile
+          cd packages/object
+          pnpm run benchmark
+          # possible lockfile and version.ts changes
+          git stash
+
+      - name: Set cache dir
+        uses: actions/cache@v4
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: Benchmark.js Benchmark
+          tool: "benchmarkjs"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          output-file-path: packages/object/benchmark-output.txt
+          alert-threshold: "10%"
+          fail-on-alert: true
+          comment-always: true
+          gh-pages-branch: main
+          skip-fetch-gh-pages: true
+          benchmark-data-dir-path: ./cache/benchmarks
+
+  docs:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    name: Release docs
+    permissions:
+      pages: write
+      id-token: write
+    needs:
+      - benchmark
+    uses: ./.github/workflows/docs.yml
