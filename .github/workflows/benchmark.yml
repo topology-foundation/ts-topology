@@ -45,7 +45,8 @@ jobs:
           output-file-path: packages/object/benchmark-output.txt
           alert-threshold: "200%"
           fail-on-alert: true
-          comment-always: true
+          comment-on-alert: true
+          summary-always: true
           gh-pages-branch: main
           skip-fetch-gh-pages: ${{ github.event_name == 'push' }}
           benchmark-data-dir-path: ./cache/benchmarks
