@@ -46,6 +46,12 @@ jobs:
           skip-fetch-gh-pages: ${{ github.event_name == 'push' }}
           benchmark-data-dir-path: ./cache/benchmarks
 
+      - name: Save cache
+        uses: actions/cache/save@v4
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark
+
   docs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     name: Release docs
