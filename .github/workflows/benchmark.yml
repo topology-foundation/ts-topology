@@ -3,7 +3,6 @@ on:
   push:
     branches: [main]
   pull_request_target:
-    types: [opened, edited, synchronize]
     branches: [main]
 
 permissions:
