@@ -1,11 +1,12 @@
-name: Benchmark.js Example
+name: Benchmark
 on:
-  pull_request:
+  push:
     branches: [main]
 
 permissions:
+  pages: write
+  id-token: write
   contents: write
-  deployments: write
 
 jobs:
   benchmark:
@@ -23,16 +24,31 @@ jobs:
           pnpm run benchmark
           git stash
 
+      - name: Set cache dir
+        uses: actions/cache@v4
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark
+
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
           name: Benchmark.js Benchmark
-          tool: 'benchmarkjs'
-          output-file-path: packages/object/benchmark-output.txt
+          tool: "benchmarkjs"
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: true
-          alert-threshold: '200%'
+          output-file-path: packages/object/benchmark-output.txt
+          alert-threshold: "10%"
           comment-on-alert: true
           fail-on-alert: true
           gh-pages-branch: main
-          benchmark-data-dir-path: doc/benchmarks
+          benchmark-data-dir-path: ./cache/benchmarks
+
+  docs:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    name: Release docs
+    permissions:
+      pages: write
+      id-token: write
+    needs:
+      - benchmark
+    uses: ./.github/workflows/docs.yml
