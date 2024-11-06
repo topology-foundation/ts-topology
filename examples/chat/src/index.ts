@@ -7,7 +7,6 @@ const node = new TopologyNode();
 let topologyObject: TopologyObject;
 let chatCRO: Chat;
 let peers: string[] = [];
-let discoveryPeers: string[] = [];
 let objectPeers: string[] = [];
 
 const render = () => {
@@ -19,11 +18,6 @@ const render = () => {
 
 	const element_peers = <HTMLDivElement>document.getElementById("peers");
 	element_peers.innerHTML = `[${peers.join(", ")}]`;
-
-	const element_discoveryPeers = <HTMLDivElement>(
-		document.getElementById("discoveryPeers")
-	);
-	element_discoveryPeers.innerHTML = `[${discoveryPeers.join(", ")}]`;
 
 	const element_objectPeers = <HTMLDivElement>(
 		document.getElementById("objectPeers")
@@ -75,14 +69,17 @@ async function createConnectHandlers() {
 	});
 }
 
-async function main() {
+async function main() { 
 	await node.start();
 	render();
 
-	// generic message handler
-	node.addCustomGroupMessageHandler("", (e) => {
+	node.networkNode.getNode().addEventListener("peer:connect", (peerId) => {
 		peers = node.networkNode.getAllPeers();
-		discoveryPeers = node.networkNode.getGroupPeers("topology::discovery");
+		render();
+	});
+
+	node.networkNode.getNode().addEventListener("peer:disconnect", (peerId) => {
+		peers = node.networkNode.getAllPeers();
 		render();
 	});
 

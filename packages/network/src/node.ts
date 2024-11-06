@@ -181,13 +181,9 @@ export class TopologyNetworkNode {
 			log.info("::start::multiaddrs", ma);
 		}, 5000);
 
-		this._node.addEventListener("peer:connect", async (e) => {
-			if(this._config?.onPeerConnect) this._config?.onPeerConnect(e);
-		});
+		this._node.addEventListener("peer:connect", async (e) => { });
 
-		this._node.addEventListener("peer:disconnect", async (e) => {
-			if(this._config?.onPeerDisconnect) this._config?.onPeerDisconnect(e);
-		});
+		this._node.addEventListener("peer:disconnect", async (e) => { });
 
 		this._node.addEventListener("peer:discovery", async (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
@@ -310,15 +306,6 @@ export class TopologyNetworkNode {
 			return true;
 		}
 		return false;
-	}
-
-	// Set connection callback
-	setOnPeerConnect(callback: PeerConnectionCallback) {
-		if(this._config) this._config.onPeerConnect = callback;
-	}
-
-	setOnPeerDisconnect(callback: PeerConnectionCallback) {
-		if(this._config) this._config.onPeerDisconnect = callback;
 	}
 
 	getNode(): Libp2p | undefined {
