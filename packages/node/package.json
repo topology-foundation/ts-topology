@@ -1,6 +1,6 @@
 {
  "name": "@topology-foundation/node",
- "version": "0.2.1",
+ "version": "0.3.0",
  "license": "MIT",
  "repository": {
   "type": "git",
@@ -40,10 +40,10 @@
   "@grpc/grpc-js": "^1.12.2",
   "@libp2p/interface": "^2.1.3",
   "dotenv": "^16.4.5",
-  "@topology-foundation/blueprints": "0.2.1",
-  "@topology-foundation/network": "0.2.1",
-  "@topology-foundation/object": "0.2.1",
-  "@topology-foundation/logger": "0.2.1",
+  "@topology-foundation/blueprints": "0.3.0",
+  "@topology-foundation/network": "0.3.0",
+  "@topology-foundation/object": "0.3.0",
+  "@topology-foundation/logger": "0.3.0",
   "commander": "^12.1.0",
   "google-protobuf": "^3.21.2"
  }

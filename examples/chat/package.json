@@ -1,6 +1,6 @@
 {
   "name": "topology-example-chat",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Topology Protocol Chat Example",
   "main": "src/index.ts",
   "repository": "https://github.com/topology-foundation/ts-topology.git",
@@ -13,10 +13,10 @@
     "start": "ts-node ./src/index.ts"
   },
   "dependencies": {
-    "@topology-foundation/blueprints": "0.2.1",
-    "@topology-foundation/network": "0.2.1",
-    "@topology-foundation/node": "0.2.1",
-    "@topology-foundation/object": "0.2.1",
+    "@topology-foundation/blueprints": "0.3.0",
+    "@topology-foundation/network": "0.3.0",
+    "@topology-foundation/node": "0.3.0",
+    "@topology-foundation/object": "0.3.0",
     "assemblyscript": "^0.27.29",
     "crypto-browserify": "^3.12.0",
     "process": "^0.11.10",
