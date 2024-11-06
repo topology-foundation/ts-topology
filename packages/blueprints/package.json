@@ -1,6 +1,6 @@
 {
  "name": "@topology-foundation/blueprints",
- "version": "0.2.1",
+ "version": "0.3.0",
  "license": "MIT",
  "repository": {
   "type": "git",
@@ -34,7 +34,7 @@
   "test": "vitest"
  },
  "devDependencies": {
-  "@topology-foundation/object": "0.2.1",
+  "@topology-foundation/object": "0.3.0",
   "assemblyscript": "^0.27.29"
  },
  "dependencies": {
