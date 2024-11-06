@@ -40,7 +40,6 @@ jobs:
           alert-threshold: "10%"
           comment-on-alert: true
           fail-on-alert: true
-          gh-pages-branch: main
           benchmark-data-dir-path: ./cache/benchmarks
 
   docs:
