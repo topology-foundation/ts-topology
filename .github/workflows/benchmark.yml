@@ -5,11 +5,7 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  pages: write
-  id-token: write
-  contents: write
-  pull-requests: write
+permissions: write-all
 
 jobs:
   benchmark:
