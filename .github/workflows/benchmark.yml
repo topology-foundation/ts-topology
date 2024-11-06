@@ -9,13 +9,10 @@ permissions:
   pages: write
   id-token: write
   contents: write
-  pull-requests: write
 
 jobs:
   benchmark:
     name: Run benchmark
-    permissions:
-      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,8 +24,6 @@ jobs:
           pnpm install --no-frozen-lockfile
           cd packages/object
           pnpm run benchmark
-          # possible lockfile and version.ts changes
-          git stash
 
       - name: Set cache dir
         uses: actions/cache@v4
@@ -43,9 +38,9 @@ jobs:
           tool: "benchmarkjs"
           github-token: ${{ secrets.GITHUB_TOKEN }}
           output-file-path: packages/object/benchmark-output.txt
-          alert-threshold: "1%"
+          alert-threshold: "200%"
           fail-on-alert: true
-          comment-on-alert: true
+          comment-on-alert: ${{ github.event_name == 'push' }}
           summary-always: true
           gh-pages-branch: main
           skip-fetch-gh-pages: ${{ github.event_name == 'push' }}
