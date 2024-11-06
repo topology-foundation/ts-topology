@@ -4,6 +4,7 @@ import { Grid } from "./objects/grid";
 import { hslToRgb, rgbToHex, rgbToHsl } from "./util/color";
 
 const node = new TopologyNode();
+
 let topologyObject: TopologyObject;
 let gridCRO: Grid;
 let peers: string[] = [];
@@ -196,15 +197,26 @@ async function createConnectHandlers() {
 }
 
 async function main() {
+	// node.networkNode.setOnPeerConnect((peerId : any) => {
+	// 	console.log("NEW PEER CONNECTED", peerId);	
+	// 	peers = node.networkNode.getAllPeers();
+	// 	render();
+	// });
+
 	await node.start();
 	render();
 
-	setInterval(() => {
-		if (node.networkNode.checkNodeReady()) {
-			peers = node.networkNode.getAllPeers();
-			render();
-		}
-	}, 1000);
+	node.networkNode.getNode().addEventListener("peer:connect", (peerId) => {
+		peers = node.networkNode.getAllPeers();
+		render();
+	});
+
+	node.networkNode.getNode().addEventListener("peer:disconnect", (peerId) => {
+		peers = node.networkNode.getAllPeers();
+		render();
+	});
+
+	
 
 	const button_create = <HTMLButtonElement>(
 		document.getElementById("createGrid")

@@ -17,6 +17,7 @@ import { devToolsMetrics } from "@libp2p/devtools-metrics";
 import { identify } from "@libp2p/identify";
 import type {
 	EventCallback,
+	PeerId,
 	PubSub,
 	Stream,
 	StreamHandler,
@@ -36,6 +37,7 @@ import { uint8ArrayToStream } from "./stream.js";
 export * from "./stream.js";
 
 let log: Logger;
+type PeerConnectionCallback = (peerId: CustomEvent<PeerId>) => void;
 
 // snake_casing to match the JSON config
 export interface TopologyNetworkNodeConfig {
@@ -45,6 +47,8 @@ export interface TopologyNetworkNodeConfig {
 	browser_metrics?: boolean;
 	private_key_seed?: string;
 	log_config?: LoggerOptions;
+	onPeerConnect?: PeerConnectionCallback;
+    onPeerDisconnect?: PeerConnectionCallback;
 }
 
 export class TopologyNetworkNode {
@@ -73,8 +77,8 @@ export class TopologyNetworkNode {
 			? this._config.bootstrap_peers
 			: [
 					// "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-					// "/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
-					"/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					"/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					// "/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
 				];
 
 		const _peerDiscovery = _bootstrapNodesList.length
@@ -90,17 +94,8 @@ export class TopologyNetworkNode {
 			dcutr: dcutr(),
 			identify: identify(),
 			pubsub: gossipsub(),
-			dht: kadDHT({
-				protocol: "/topology/dht/1.0.0",
-				kBucketSize: this._config?.bootstrap ? 40 : 20,
-				clientMode: false,
-				peerInfoMapper: removePublicAddressesMapper,
-				querySelfInterval: 20000,
-				initialQuerySelfInterval: 10000,
-				allowQueryWithZeroPeers: false,
-			}),
-			// lanDHT: kadDHT({
-			// 	protocol: "/topology/lan/dht/1.0.0",
+			// dht: kadDHT({
+			// 	protocol: "/topology/dht/1.0.0",
 			// 	kBucketSize: this._config?.bootstrap ? 40 : 20,
 			// 	clientMode: false,
 			// 	peerInfoMapper: removePublicAddressesMapper,
@@ -108,6 +103,15 @@ export class TopologyNetworkNode {
 			// 	initialQuerySelfInterval: 10000,
 			// 	allowQueryWithZeroPeers: false,
 			// }),
+			lanDHT: kadDHT({
+				protocol: "/topology/lan/dht/1.0.0",
+				kBucketSize: this._config?.bootstrap ? 40 : 20,
+				clientMode: false,
+				peerInfoMapper: removePublicAddressesMapper,
+				querySelfInterval: 20000,
+				initialQuerySelfInterval: 10000,
+				allowQueryWithZeroPeers: false,
+			}),
 		};
 
 		const _bootstrap_node_services = {
@@ -177,7 +181,13 @@ export class TopologyNetworkNode {
 			log.info("::start::multiaddrs", ma);
 		}, 5000);
 
-		this._node.addEventListener("peer:connect", async (e) => {});
+		this._node.addEventListener("peer:connect", async (e) => {
+			if(this._config?.onPeerConnect) this._config?.onPeerConnect(e);
+		});
+
+		this._node.addEventListener("peer:disconnect", async (e) => {
+			if(this._config?.onPeerDisconnect) this._config?.onPeerDisconnect(e);
+		});
 
 		this._node.addEventListener("peer:discovery", async (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
@@ -300,5 +310,18 @@ export class TopologyNetworkNode {
 			return true;
 		}
 		return false;
+	}
+
+	// Set connection callback
+	setOnPeerConnect(callback: PeerConnectionCallback) {
+		if(this._config) this._config.onPeerConnect = callback;
+	}
+
+	setOnPeerDisconnect(callback: PeerConnectionCallback) {
+		if(this._config) this._config.onPeerDisconnect = callback;
+	}
+
+	getNode(): Libp2p | undefined {
+		return this._node;
 	}
 }
