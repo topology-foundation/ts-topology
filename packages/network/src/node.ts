@@ -94,7 +94,7 @@ export class TopologyNetworkNode {
 				protocol: "/topology/dht/1.0.0",
 				kBucketSize: this._config?.bootstrap ? 40 : 20,
 				clientMode: false,
-				peerInfoMapper: removePrivateAddressesMapper,
+				peerInfoMapper: removePublicAddressesMapper,
 				querySelfInterval: 20000,
 				initialQuerySelfInterval: 10000,
 				allowQueryWithZeroPeers: false,
