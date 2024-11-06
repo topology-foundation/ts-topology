@@ -8,5 +8,5 @@ program.addOption(new Option("-c, --config <file>", "config file"));
 program.addOption(
 	new Option("-m, --mode <mode>", "mode to run in")
 		.default("node")
-		.choices(["node", "relay"]),
+		.choices(["node", "bootstrap"]),
 );
