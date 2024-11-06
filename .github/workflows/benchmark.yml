@@ -26,7 +26,7 @@ jobs:
           pnpm run benchmark
 
       - name: Set cache dir
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ./cache
           key: ${{ runner.os }}-benchmark
