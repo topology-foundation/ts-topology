@@ -8,8 +8,7 @@ export class RandomMapping {
 	}
 
 	nextIndex(): number {
-		const multiplier = 0xda942042e4dd58b5n;
-		this.prng = (this.prng * multiplier) & 0xffffffffffffffffn;
+		// xorshift128++
 
 		this.lastIdx += Math.ceil(
 			(this.lastIdx + 1.5) * (2 ** 32 / Math.sqrt(Number(this.prng) + 1) - 1),

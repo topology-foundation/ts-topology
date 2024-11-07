@@ -1,3 +1,7 @@
+import { Symbol, HashedSymbol } from "./symbol.js"
+import { RandomMapping } from "./mapping.js";
+
+
 class SymbolMapping {
 	sourceIdx: number;
 	codedIdx: number;
@@ -15,7 +19,7 @@ class MappingHeap {
 	private fixHead(): void {
 		let curr = 0;
 		while (true) {
-			let child = curr * 2 + 1;
+			let child = (curr << 1) + 1;
 			if (child >= this.heap.length) {
 				break;
 			}

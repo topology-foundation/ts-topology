@@ -3,7 +3,7 @@ import { HashedSymbol, CodedSymbol } from "./symbol.js";
 import { RandomMapping } from "./mapping.js";
 import { Decoder } from "./decoder.js";
 
-class Sketch<T extends Symbol<T>> {
+export class Sketch<T extends Symbol<T>> {
 	s: CodedSymbol<T>[] = [];
 
 	addHashedSymbol(t: HashedSymbol<T>) {

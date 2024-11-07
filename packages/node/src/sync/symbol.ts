@@ -1,33 +1,52 @@
-export interface Symbol<T> {
-	XOR(t2: T): T;
-	Hash(): number;
-}
+import * as crypto from "node:crypto";
 
-export class HashedSymbol<T extends Symbol<T>> {
-	Symbol: T;
-	Hash: number;
 
-	constructor(symbol: T, hash: number) {
-		this.Symbol = symbol;
-		this.Hash = hash;
+class HashedSymbol {
+	sum: Uint8Array;
+	checksum: Uint8Array;
+
+	constructor(sum: Uint8Array, checksum?: Uint8Array) {
+		this.sum = new Uint8Array(sum);
+		if (checksum !== undefined) {
+			this.checksum = new Uint8Array(checksum);
+		} else {
+			this.checksum = crypto.createHmac("sha1", "").update(sum).digest();
+		}
+	}
+
+	XOR(s: HashedSymbol) {
+		for (let i = 0; i < this.sum.length; i++) {
+			this.sum[i] ^= s.sum[i];
+		}
+		for (let i = 0; i < this.checksum.length; i++) {
+			this.sum[i] ^= s.sum[i];
+		}
+	}
+
+	isPure(): boolean {
+		const checksum = crypto.createHmac("sha1", "").update(this.sum).digest();
+		if (checksum.length !== this.checksum.length) {
+			return false;
+		}
+		for (let i = 0; i < checksum.length; i++) {
+			if (checksum[i] !== this.checksum[i]) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
 
-export class CodedSymbol<T extends Symbol<T>> extends HashedSymbol<T> {
-	Count: number;
+export class CodedSymbol extends HashedSymbol {
+	count: number;
 
-	constructor(symbol: T, hash: number, count = 0) {
-		super(symbol, hash);
-		this.Count = count;
+	constructor(sum: Uint8Array, checksum?: Uint8Array, count = 1) {
+		super(sum, checksum);
+		this.count = count;
 	}
 
-	static readonly ADD = 1;
-	static readonly REMOVE = -1;
-
-	apply(s: HashedSymbol<T>, direction: number): CodedSymbol<T> {
-		this.Symbol = this.Symbol.XOR(s.Symbol);
-		this.Hash ^= s.Hash;
-		this.Count += direction;
-		return this;
+	apply(s: HashedSymbol, direction: number) {
+		this.XOR(s);
+		this.count += direction;
 	}
 }
