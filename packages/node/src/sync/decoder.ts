@@ -1,6 +1,5 @@
-import type {Symbol} from "./symbol.js"
+import type { Symbol } from "./symbol.js";
 import type { CodedSymbol, HashedSymbol } from "./symbol.js";
-
 
 export class Decoder<T extends Symbol<T>> {
 	// Coded symbols received so far
@@ -69,7 +68,7 @@ export class Decoder<T extends Symbol<T>> {
 
 	// Apply a new symbol and modify the corresponding coded symbols
 	private applyNewSymbol(t: HashedSymbol<T>, direction: number): RandomMapping {
-		let m = new RandomMapping(t.hash, 0);
+		const m = new RandomMapping(t.hash, 0);
 		while (m.lastIdx < this.cs.length) {
 			const cidx = m.lastIdx;
 			this.cs[cidx] = this.cs[cidx].apply(t, direction);

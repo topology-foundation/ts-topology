@@ -9,29 +9,25 @@ class SymbolMapping {
 }
 
 class MappingHeap {
-	private heap: SymbolMapping[];
-
-	constructor() {
-		this.heap = [];
-	}
+	// Binary heap implementation
+	private heap: SymbolMapping[] = [];
 
 	private fixHead(): void {
 		let curr = 0;
 		while (true) {
 			let child = curr * 2 + 1;
 			if (child >= this.heap.length) {
-				break; // No left child
+				break;
 			}
 			if (
 				child + 1 < this.heap.length &&
 				this.heap[child + 1].codedIdx < this.heap[child].codedIdx
 			) {
-				child = child + 1; // Right child has higher priority
+				child = child + 1;
 			}
 			if (this.heap[curr].codedIdx <= this.heap[child].codedIdx) {
-				break; // Invariant is satisfied
+				break;
 			}
-			// Swap current and child
 			[this.heap[curr], this.heap[child]] = [this.heap[child], this.heap[curr]];
 			curr = child;
 		}
@@ -40,11 +36,10 @@ class MappingHeap {
 	private fixTail(): void {
 		let curr = this.heap.length - 1;
 		while (curr > 0) {
-			const parent = Math.floor((curr - 1) / 2);
+			const parent = (curr - 1) >> 1;
 			if (this.heap[parent].codedIdx <= this.heap[curr].codedIdx) {
 				break;
 			}
-			// Swap parent and current
 			[this.heap[parent], this.heap[curr]] = [
 				this.heap[curr],
 				this.heap[parent],
@@ -65,14 +60,6 @@ class MappingHeap {
 		this.heap.pop();
 		this.fixHead();
 		return root;
-	}
-
-	get size(): number {
-		return this.heap.length;
-	}
-
-	get top(): SymbolMapping | undefined {
-		return this.heap[0];
 	}
 }
 
