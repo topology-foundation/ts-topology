@@ -56,7 +56,7 @@ export class TopologyObject implements ITopologyObject {
 		this.cro = new Proxy(cro, this.proxyCROHandler());
 		this.hashGraph = new HashGraph(
 			nodeId,
-			cro.resolveConflicts,
+			cro.resolveConflicts.bind(cro),
 			cro.semanticsType,
 		);
 		this.subscriptions = [];
