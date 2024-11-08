@@ -264,7 +264,6 @@ async function main() {
 		navigator.clipboard
 			.writeText(gridIdText)
 			.then(() => {
-				// alert("Grid CRO ID copied to clipboard!");
 				console.log("Grid CRO ID copied to clipboard");
 			})
 			.catch((err) => {

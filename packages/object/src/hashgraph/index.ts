@@ -124,6 +124,9 @@ export class HashGraph {
 			return hash; // Vertex already exists
 		}
 
+		console.log("My deps: ", deps);
+		console.log("Forward edges: ", this.forwardEdges);
+		console.log("Vertices: ", this.vertices);
 		// Temporary fix: don't add the vertex if the dependencies are not present in the local HG.
 		if (
 			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))

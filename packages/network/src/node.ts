@@ -103,7 +103,7 @@ export class TopologyNetworkNode {
 			// 	initialQuerySelfInterval: 10000,
 			// 	allowQueryWithZeroPeers: false,
 			// }),
-			lanDHT: kadDHT({
+			dht: kadDHT({
 				protocol: "/topology/lan/dht/1.0.0",
 				kBucketSize: this._config?.bootstrap ? 40 : 20,
 				clientMode: false,
