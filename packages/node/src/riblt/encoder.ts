@@ -1,4 +1,4 @@
-import { Symbol, HashedSymbol } from "./symbol.js"
+import { type SourceSymbol, type SourceSymbolFactory, CodedSymbol, HashedSymbol } from "./symbol.js"
 import { RandomMapping } from "./mapping.js";
 
 
@@ -57,36 +57,45 @@ class MappingHeap {
 		this.fixTail();
 	}
 
-	pop(): SymbolMapping | undefined {
-		if (this.heap.length === 0) return undefined;
+	pop(): SymbolMapping {
+		if (this.heap.length === 0) throw Error("Heap is empty");
 		const root = this.heap[0];
 		this.heap[0] = this.heap[this.heap.length - 1];
 		this.heap.pop();
 		this.fixHead();
 		return root;
 	}
+
+	get top(): SymbolMapping {
+		if (this.heap.length === 0) throw Error("Heap is empty");
+		return this.heap[0];
+	}
+
+	get size(): number {
+		return this.heap.length;
+	}
 }
 
-class CodingWindow<T extends Symbol<T>> {
-	private symbols: HashedSymbol<T>[];
-	private mappings: RandomMapping[];
+class CodingPrefix<T extends SourceSymbol> {
+	private sourceSymbols: HashedSymbol<T>[];
+	public codedSymbols: CodedSymbol<T>[];
+	private mapGenerators: RandomMapping[];
 	private queue: MappingHeap;
-	private nextIdx: number;
 
-	constructor() {
-		this.symbols = [];
-		this.mappings = [];
+	constructor(private readonly sourceSymbolFactory: SourceSymbolFactory<T>) {
+		this.sourceSymbols = [];
+		this.codedSymbols = [new CodedSymbol<T>(sourceSymbolFactory.empty(), sourceSymbolFactory.emptyHash())];
+		this.mapGenerators = [];
 		this.queue = new MappingHeap();
-		this.nextIdx = 0;
 	}
 
 	addSymbol(symbol: T): void {
-		const hashedSymbol = new HashedSymbol(symbol, symbol.hash());
+		const hashedSymbol = new HashedSymbol<T>(this.sourceSymbolFactory.clone(symbol), symbol.hash());
 		this.addHashedSymbol(hashedSymbol);
 	}
 
 	addHashedSymbol(hashedSymbol: HashedSymbol<T>): void {
-		const mapping = new RandomMapping(hashedSymbol.hash, 0);
+		const mapping = new RandomMapping(hashedSymbol.checksum, 0);
 		this.addHashedSymbolWithMapping(hashedSymbol, mapping);
 	}
 
@@ -94,41 +103,25 @@ class CodingWindow<T extends Symbol<T>> {
 		hashedSymbol: HashedSymbol<T>,
 		mapping: RandomMapping,
 	): void {
-		this.symbols.push(hashedSymbol);
-		this.mappings.push(mapping);
-		this.queue.push(
-			new SymbolMapping(this.symbols.length - 1, mapping.lastIdx),
-		);
+		this.sourceSymbols.push(hashedSymbol);
+		this.mapGenerators.push(mapping);
 	}
 
-	applyWindow(cw: CodedSymbol<T>, direction: number): CodedSymbol<T> {
-		if (this.queue.size === 0) {
-			this.nextIdx += 1;
-			return cw;
-		}
-
-		while (this.queue.top?.codedIdx === this.nextIdx) {
+	extendPrefix(size: number): void {
+		while (this.queue.size > 0 && this.queue.top.codedIdx < size) {
 			const mapping = this.queue.pop();
-			if (mapping) {
-				cw = cw.apply(this.symbols[mapping.sourceIdx], direction);
-				const nextMap = this.mappings[mapping.sourceIdx].nextIndex();
-				mapping.codedIdx = nextMap;
-				this.queue.push(mapping);
+			while (mapping !== undefined && mapping.codedIdx < size) {
+				const sourceIdx = mapping.sourceIdx;
+				const codedIdx = mapping.codedIdx;
+				this.codedSymbols[codedIdx].apply(this.sourceSymbols[sourceIdx], 1);
+				mapping.codedIdx = this.mapGenerators[sourceIdx].nextIndex();
 			}
+			this.queue.push(mapping);
 		}
-		this.nextIdx += 1;
-		return cw;
-	}
-
-	reset(): void {
-		this.symbols = [];
-		this.mappings = [];
-		this.queue = new MappingHeap();
-		this.nextIdx = 0;
 	}
 }
 
-class Encoder<T extends Symbol<T>> extends CodingWindow<T> {
+class Encoder<T extends SourceSymbol> extends CodingPrefix<T> {
 	addSymbol(s: T): void {
 		super.addSymbol(s);
 	}
@@ -137,11 +130,8 @@ class Encoder<T extends Symbol<T>> extends CodingWindow<T> {
 		super.addHashedSymbol(s);
 	}
 
-	produceNextCodedSymbol(): CodedSymbol<T> {
-		return super.applyWindow(new CodedSymbol<T>(), 1);
-	}
-
-	reset(): void {
-		super.reset();
+	producePrefix(size: number): CodedSymbol<T>[] {
+		super.extendPrefix(size);
+		return this.codedSymbols.slice(0, size);
 	}
 }

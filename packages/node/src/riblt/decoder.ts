@@ -1,5 +1,5 @@
-import type { Symbol } from "./symbol.js";
-import type { CodedSymbol, HashedSymbol } from "./symbol.js";
+import type { CodedSymbol } from "./symbol.js";
+
 
 export class Decoder<T extends Symbol<T>> {
 	private cs: CodedSymbol<T>[] = [];
