@@ -76,7 +76,7 @@ class MappingHeap {
 	}
 }
 
-class CodingPrefix<T extends SourceSymbol> {
+export class CodingPrefix<T extends SourceSymbol> {
 	private sourceSymbols: HashedSymbol<T>[];
 	public codedSymbols: CodedSymbol<T>[];
 	private mapGenerators: RandomMapping[];
@@ -105,12 +105,13 @@ class CodingPrefix<T extends SourceSymbol> {
 	): void {
 		this.sourceSymbols.push(hashedSymbol);
 		this.mapGenerators.push(mapping);
+		this.queue.push(new SymbolMapping(this.sourceSymbols.length - 1, mapping.lastIdx));
 	}
 
 	extendPrefix(size: number): void {
 		while (this.queue.size > 0 && this.queue.top.codedIdx < size) {
 			const mapping = this.queue.pop();
-			while (mapping !== undefined && mapping.codedIdx < size) {
+			while (mapping.codedIdx < size) {
 				const sourceIdx = mapping.sourceIdx;
 				const codedIdx = mapping.codedIdx;
 				this.codedSymbols[codedIdx].apply(this.sourceSymbols[sourceIdx], 1);
@@ -121,7 +122,7 @@ class CodingPrefix<T extends SourceSymbol> {
 	}
 }
 
-class Encoder<T extends SourceSymbol> extends CodingPrefix<T> {
+export class Encoder<T extends SourceSymbol> extends CodingPrefix<T> {
 	addSymbol(s: T): void {
 		super.addSymbol(s);
 	}
