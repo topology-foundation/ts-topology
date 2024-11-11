@@ -72,7 +72,8 @@ export class TopologyNetworkNode {
 		const _bootstrapNodesList = this._config?.bootstrap_peers
 			? this._config.bootstrap_peers
 			: [
-					"/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
+					"/dns4/bootstrap1.topology.gg/tcp/443/wss/p2p/12D3KooWBu1pZ3v2u6tXSmkN35kiMLENpv3bEXcyT1GJTVhipAkG",
+					"/dns4/bootstrap2.topology.gg/tcp/443/wss/p2p/12D3KooWLGuTtCHLpd1SBHeyvzT3kHVe2dw8P7UdoXsfQHu8qvkf",
 				];
 
 		const _pubsubPeerDiscovery = pubsubPeerDiscovery({
@@ -149,9 +150,25 @@ export class TopologyNetworkNode {
 		);
 		this._node.addEventListener("peer:discovery", (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
-			for (const ma of e.detail.multiaddrs) {
+			const sortedAddrs = e.detail.multiaddrs.sort((a, b) => {
+				const localRegex =
+					/(^127\.)|(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^192\.168\.)/;
+				const aLocal = localRegex.test(a.toString());
+				const bLocal = localRegex.test(b.toString());
+				const aWebrtc = a.toString().includes("/webrtc/");
+				const bWebrtc = b.toString().includes("/webrtc/");
+				if (aLocal && !bLocal) return 1;
+				if (!aLocal && bLocal) return -1;
+				if (aWebrtc && !bWebrtc) return -1;
+				if (!aWebrtc && bWebrtc) return 1;
+				return 0;
+			});
+
+			// Dial WebRTC addresses first, then non-local addresses
+			for (const ma of sortedAddrs) {
 				this._node?.dial(ma);
 			}
+
 			log.info("::start::peer::discovery", e.detail);
 		});
 		this._node.addEventListener("peer:identify", (e) =>
