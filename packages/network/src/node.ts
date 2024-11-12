@@ -164,9 +164,9 @@ export class TopologyNetworkNode {
 				return 0;
 			});
 
-			// Dial WebRTC addresses first, then non-local addresses
-			for (const ma of sortedAddrs) {
-				this._node?.dial(ma);
+			// Dial non-local multiaddrs, then WebRTC multiaddrs
+			for (const address of sortedAddrs) {
+				this._node?.dial(address);
 			}
 
 			log.info("::start::peer::discovery", e.detail);
