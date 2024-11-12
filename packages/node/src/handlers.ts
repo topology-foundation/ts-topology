@@ -97,11 +97,15 @@ function updateHandler(node: TopologyNode, data: Uint8Array) {
 	try {
 		_merge();
 	} catch (err) {
-		if (updateMessage.vertices.length === 0) return false;
-
-		const peerId = updateMessage.vertices[0].nodeId;
-		node.syncObject(object.id, peerId);
-		_merge();
+		if ((err as Error).name === "InvalidDependencyError") {
+			if (updateMessage.vertices.length === 0) return false;
+			const peerId = updateMessage.vertices[0].nodeId;
+			node.syncObject(object.id, peerId);
+			_merge();
+		} else {
+			console.error("topology::node::updateHandler", "Error merging vertices", err);
+			return false;
+		}
 	}
 
 	node.objectStore.put(object.id, object);
@@ -188,10 +192,10 @@ function syncAcceptHandler(
 		try {
 			object.merge(vertices);
 		} catch (err) {
-			node.syncObject(object.id, sender);
-			try {
+			if ((err as Error).name === "InvalidDependencyError") {
+				node.syncObject(object.id, sender);
 				object.merge(vertices);
-			} catch (err) {
+			} else {
 				console.error(
 					"topology::node::syncAcceptHandler",
 					"Error merging vertices",
