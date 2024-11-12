@@ -78,20 +78,34 @@ function updateHandler(node: TopologyNode, data: Uint8Array) {
 		console.error("topology::node::updateHandler", "Object not found");
 		return false;
 	}
+	const _merge = () => {
+		object.merge(
+			updateMessage.vertices.map((v) => {
+				return {
+					hash: v.hash,
+					nodeId: v.nodeId,
+					operation: {
+						type: v.operation?.type ?? "",
+						value: v.operation?.value,
+					},
+					dependencies: v.dependencies,
+				};
+			}),
+		);
+	};
 
-	object.merge(
-		updateMessage.vertices.map((v) => {
-			return {
-				hash: v.hash,
-				nodeId: v.nodeId,
-				operation: {
-					type: v.operation?.type ?? "",
-					value: v.operation?.value,
-				},
-				dependencies: v.dependencies,
-			};
-		}),
-	);
+	try{
+		_merge();
+	}catch(err){
+		if (updateMessage.vertices.length === 0) {
+			return false;
+		} else {
+			const peerId = updateMessage.vertices[0].nodeId;
+			node.syncObject(object.id, peerId);
+			_merge();
+		}
+	}
+	
 	node.objectStore.put(object.id, object);
 
 	return true;
@@ -173,7 +187,14 @@ function syncAcceptHandler(
 	});
 
 	if (vertices.length !== 0) {
-		object.merge(vertices);
+		try{
+			object.merge(vertices);
+		}catch(err){
+			node.syncObject(object.id, sender);
+			console.log("ERROR MERGING VERTICES");
+			object.merge(vertices);
+			
+		}
 		node.objectStore.put(object.id, object);
 	}
 
