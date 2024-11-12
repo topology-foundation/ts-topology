@@ -34,7 +34,7 @@ export class HashedSymbol<T extends SourceSymbol> {
 	isPure(): boolean {
 		const checksum = this.sum.hash();
 		if (checksum.length !== this.checksum.length) {
-			return false;
+			throw Error("Checksum length mismatch");
 		}
 		for (let i = 0; i < checksum.length; i++) {
 			if (checksum[i] !== this.checksum[i]) {

@@ -96,7 +96,7 @@ export class CodingPrefix<T extends SourceSymbol> {
 		this.addHashedSymbol(hashedSymbol);
 	}
 
-	addHashedSymbol(hashedSymbol: HashedSymbol<T>, direction = 1): void {
+	protected addHashedSymbol(hashedSymbol: HashedSymbol<T>, direction = 1): void {
 		const mapping = new RandomMapping(hashedSymbol.checksum, 0);
 		this.addHashedSymbolWithMapping(hashedSymbol, mapping, direction);
 	}

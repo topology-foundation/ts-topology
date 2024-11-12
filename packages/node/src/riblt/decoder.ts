@@ -4,14 +4,16 @@ import { CodingPrefix } from "./encoder.js";
 
 
 export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
-	decodedSymbols: T[];
+	decodedLocalSymbols: T[];
+	decodedRemoteSymbols: T[];
 	isDecoded: boolean[];
 	remaining: number;
 	pureSymbols: CodedSymbol<T>[];
 
 	constructor(sourceSymbolFactory: SourceSymbolFactory<T>) {
 		super(sourceSymbolFactory);
-		this.decodedSymbols = [];
+		this.decodedLocalSymbols = [];
+		this.decodedRemoteSymbols = [];
 		this.isDecoded = [];
 		this.remaining = 0;
 		this.pureSymbols = [];
@@ -42,12 +44,18 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 	tryDecode(): boolean {
 		while (this.pureSymbols.length > 0) {
 			const symbol = this.pureSymbols.pop() as CodedSymbol<T>;
-			// console.log(`pure symbol: ${symbol.sum.data} ${symbol.count}`);
+			console.log(`pure symbol: ${symbol.sum.data} ${symbol.count}`);
 			if (symbol.isZero()) {
 				continue;
 			}
 			const decodedSymbol = this.sourceSymbolFactory.clone(symbol.sum)
-			this.decodedSymbols.push(decodedSymbol);
+			if (symbol.count === 1) {
+				this.decodedLocalSymbols.push(decodedSymbol);
+			} else if (symbol.count === -1) {
+				this.decodedRemoteSymbols.push(decodedSymbol);
+			} else {
+				throw Error(`Invalid pure symbol ${symbol.sum.data} ${symbol.count}`);
+			}
 
 			const mapping = new RandomMapping(symbol.checksum, 0);
 			while (mapping.lastIdx < this.codedSymbols.length) {
@@ -64,8 +72,10 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 				mapping.nextIndex();
 			}
 			this.addHashedSymbolWithMapping(new HashedSymbol<T>(decodedSymbol), mapping, -symbol.count);
+			console.log('abc')
 		}
 
+		console.log(this.remaining);
 		return this.remaining === 0;
 	}
 }

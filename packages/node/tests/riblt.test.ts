@@ -45,42 +45,58 @@ class VertexSymbolFactory implements SourceSymbolFactory<VertexSymbol> {
     clone(s: VertexSymbol): VertexSymbol {
         return new VertexSymbol(new Uint8Array(s.data));
     }
+
+    newTestSymbol(i): VertexSymbol {
+        const data = new Uint32Array(8);
+        data[0] = i;
+        return new VertexSymbol(new Uint8Array(data.buffer));
+    }
 }
 
 
 describe("RIBLT test", async () => {
     const factory = new VertexSymbolFactory();
-	const v0 = factory.empty();
-    const v1 = factory.empty();
-    const v2 = factory.empty();
 
-    v0.data[0] = 1;
-    v1.data[0] = 2;
-    v2.data[0] = 4;
 
-    const aliceEncoder = new Encoder(factory);
-    const bobEncoder = new Encoder(factory);
+    test.each([4])("d=%i", async (d) => {
+        const nlocal = d >> 1;
+        const nremote = d >> 1;
+        const ncommon = d;
 
-    aliceEncoder.addSymbol(v0);
-    aliceEncoder.addSymbol(v2);
+        let symbolIndex = 0;
 
-    bobEncoder.addSymbol(v1);
-    bobEncoder.addSymbol(v2);
+        const localEncoder = new Encoder(factory);
+        const remoteEncoder = new Encoder(factory);
+        const localDecoder = new Decoder(factory);
 
-    aliceEncoder.extendPrefix(10);
-    bobEncoder.extendPrefix(10);
+        const localSymbols: VertexSymbol[] = [];
+        const remoteSymbols: VertexSymbol[] = [];
 
-    const bobDecoder = new Decoder(factory);
+        for (let i = 0; i < nlocal; i++) {
+            const localSymbol = factory.newTestSymbol(symbolIndex++);
+            localSymbols.push(localSymbol);
+            localEncoder.addSymbol(localSymbol);
+        }
+        for (let i = 0; i < nremote; i++) {
+            const remoteSymbol = factory.newTestSymbol(symbolIndex++);
+            remoteSymbols.push(remoteSymbol);
+            remoteEncoder.addSymbol(remoteSymbol);
+        }
+        for (let i = 0; i < ncommon; i++) {
+            const localSymbol = factory.newTestSymbol(symbolIndex++);
+            const remoteSymbol = factory.clone(localSymbol);
+            localEncoder.addSymbol(localSymbol);
+            remoteEncoder.addSymbol(remoteSymbol);
+        }
 
-    for (let i = 0; i < 10; i++) {
-        // console.log(`${i}: ${aliceEncoder.codedSymbols[i].sum.data} ${aliceEncoder.codedSymbols[i].count} ${bobEncoder.codedSymbols[i].sum.data} ${bobEncoder.codedSymbols[i].count}`);
-        bobDecoder.applyCodedSymbol(i, aliceEncoder.codedSymbols[i], bobEncoder.codedSymbols[i]);
-    }
+        let sequenceSize = 0;
+        do {
+            sequenceSize++;
+            localEncoder.extendPrefix(sequenceSize);
+            remoteEncoder.extendPrefix(sequenceSize);
+            localDecoder.applyCodedSymbol(sequenceSize - 1, localEncoder.codedSymbols[sequenceSize - 1], remoteEncoder.codedSymbols[sequenceSize - 1]);
+        } while (!localDecoder.tryDecode());
 
-    // for (let i = 0; i < 10; i++) {
-    //     console.log(`Decoded: ${bobDecoder.codedSymbols[i].sum.data} ${bobDecoder.codedSymbols[i].count}`);
-    // }
-
-    expect(bobDecoder.tryDecode()).toBe(true);
-    console.log(bobDecoder.decodedSymbols);
+        console.log(sequenceSize);
+    });
 });
