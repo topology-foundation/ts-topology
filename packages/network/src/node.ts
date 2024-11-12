@@ -152,7 +152,7 @@ export class TopologyNetworkNode {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
 			const sortedAddrs = e.detail.multiaddrs.sort((a, b) => {
 				const localRegex =
-					/(^127\.)|(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^192\.168\.)/;
+					/(^\/ip4\/127\.)|(^\/ip4\/10\.)|(^\/ip4\/172\.1[6-9]\.)|(^\/ip4\/172\.2[0-9]\.)|(^\/ip4\/172\.3[0-1]\.)|(^\/ip4\/192\.168\.)/;
 				const aLocal = localRegex.test(a.toString());
 				const bLocal = localRegex.test(b.toString());
 				const aWebrtc = a.toString().includes("/webrtc/");
