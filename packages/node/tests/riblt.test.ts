@@ -58,7 +58,7 @@ describe("RIBLT test", async () => {
     const factory = new VertexSymbolFactory();
 
 
-    test.each([4])("d=%i", async (d) => {
+    test.each([10, 20, 40, 100])("d=%i", async (d) => {
         const nlocal = d >> 1;
         const nremote = d >> 1;
         const ncommon = d;
@@ -94,8 +94,12 @@ describe("RIBLT test", async () => {
             sequenceSize++;
             localEncoder.extendPrefix(sequenceSize);
             remoteEncoder.extendPrefix(sequenceSize);
-            localDecoder.applyCodedSymbol(sequenceSize - 1, localEncoder.codedSymbols[sequenceSize - 1], remoteEncoder.codedSymbols[sequenceSize - 1]);
+            localDecoder.addCodedSymbol(sequenceSize - 1, localEncoder.codedSymbols[sequenceSize - 1], remoteEncoder.codedSymbols[sequenceSize - 1]);
         } while (!localDecoder.tryDecode());
+
+        // console.log(localDecoder.decodedLocalSymbols);
+        // console.log(localDecoder.decodedRemoteSymbols);
+        // console.log(localDecoder.remaining);
 
         console.log(sequenceSize);
     });

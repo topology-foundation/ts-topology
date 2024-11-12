@@ -27,7 +27,7 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 	}
 
 	// called at most once for each index
-	applyCodedSymbol(index: number, localSymbol: CodedSymbol<T>, remoteSymbol: CodedSymbol<T>): void {
+	addCodedSymbol(index: number, localSymbol: CodedSymbol<T>, remoteSymbol: CodedSymbol<T>): void {
 		this.extendPrefix(index + 1);
 		this.codedSymbols[index].apply(localSymbol, localSymbol.count);
 		this.codedSymbols[index].apply(remoteSymbol, -remoteSymbol.count);
@@ -41,10 +41,22 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 		}
 	}
 
+	maps(index: number, hashedSymbol: HashedSymbol<T>, direction: number): void {
+		if (!this.isDecoded[index]) {
+			this.codedSymbols[index].apply(hashedSymbol, direction);
+			if (this.codedSymbols[index].isZero()) {
+				this.isDecoded[index] = true;
+				this.remaining--;
+			} else if (this.codedSymbols[index].isPure()) {
+				this.pureSymbols.push(this.codedSymbols[index]);
+			}
+		}
+	}
+
 	tryDecode(): boolean {
 		while (this.pureSymbols.length > 0) {
 			const symbol = this.pureSymbols.pop() as CodedSymbol<T>;
-			console.log(`pure symbol: ${symbol.sum.data} ${symbol.count}`);
+			// console.log(`pure symbol: ${symbol.sum.data} ${symbol.count}`);
 			if (symbol.isZero()) {
 				continue;
 			}
@@ -58,24 +70,10 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 			}
 
 			const mapping = new RandomMapping(symbol.checksum, 0);
-			while (mapping.lastIdx < this.codedSymbols.length) {
-				const idx = mapping.lastIdx;
-				if (!this.isDecoded[idx]) {
-					this.codedSymbols[idx].xor(symbol);
-					if (this.codedSymbols[idx].isZero()) {
-						this.isDecoded[idx] = true;
-						this.remaining--;
-					} else if (this.codedSymbols[idx].isPure()) {
-						this.pureSymbols.push(this.codedSymbols[idx]);
-					}
-				}
-				mapping.nextIndex();
-			}
-			this.addHashedSymbolWithMapping(new HashedSymbol<T>(decodedSymbol), mapping, -symbol.count);
-			console.log('abc')
+			this.addSymbol(decodedSymbol, -symbol.count);
+			this.extendPrefix(this.codedSymbols.length);	// trigger updates
+			// console.log('abc')
 		}
-
-		console.log(this.remaining);
 		return this.remaining === 0;
 	}
 }
