@@ -10,12 +10,12 @@ import * as ObjectPb from "./proto/topology/object/object_pb.js";
 
 export * as ObjectPb from "./proto/topology/object/object_pb.js";
 export * from "./hashgraph/index.js";
-
 export interface CRO {
 	operations: string[];
 	semanticsType: SemanticsType;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
 	mergeCallback: (operations: Operation[]) => void;
+	hasRole: (nodeId: string, role: number) => boolean;
 }
 
 export type TopologyObjectCallback = (
