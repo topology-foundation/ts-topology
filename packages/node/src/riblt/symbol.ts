@@ -15,9 +15,13 @@ export class HashedSymbol<T extends SourceSymbol> {
 	sum: T;
 	checksum: Uint8Array;
 
-	constructor(sum: T, checksum: Uint8Array) {
+	constructor(sum: T, checksum?: Uint8Array) {
 		this.sum = sum;
-		this.checksum = checksum;
+		if (checksum === undefined) {
+			this.checksum = sum.hash();
+		} else {
+			this.checksum = checksum;
+		}
 	}
 
 	xor(s: HashedSymbol<T>): void {
@@ -44,7 +48,7 @@ export class HashedSymbol<T extends SourceSymbol> {
 export class CodedSymbol<T extends SourceSymbol> extends HashedSymbol<T> {
 	count: number;
 
-	constructor(sum: T, checksum: Uint8Array, count = 1) {
+	constructor(sum: T, checksum: Uint8Array, count: number) {
 		super(sum, checksum);
 		this.count = count;
 	}

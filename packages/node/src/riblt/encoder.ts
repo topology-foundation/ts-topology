@@ -78,13 +78,15 @@ class MappingHeap {
 
 export class CodingPrefix<T extends SourceSymbol> {
 	private sourceSymbols: HashedSymbol<T>[];
+	private sourceSymbolDirections: number[];
 	public codedSymbols: CodedSymbol<T>[];
 	private mapGenerators: RandomMapping[];
 	private queue: MappingHeap;
 
-	constructor(private readonly sourceSymbolFactory: SourceSymbolFactory<T>) {
+	constructor(protected readonly sourceSymbolFactory: SourceSymbolFactory<T>) {
 		this.sourceSymbols = [];
-		this.codedSymbols = [new CodedSymbol<T>(sourceSymbolFactory.empty(), sourceSymbolFactory.emptyHash())];
+		this.sourceSymbolDirections = [];
+		this.codedSymbols = [new CodedSymbol<T>(sourceSymbolFactory.empty(), sourceSymbolFactory.emptyHash(), 0)];
 		this.mapGenerators = [];
 		this.queue = new MappingHeap();
 	}
@@ -94,27 +96,32 @@ export class CodingPrefix<T extends SourceSymbol> {
 		this.addHashedSymbol(hashedSymbol);
 	}
 
-	addHashedSymbol(hashedSymbol: HashedSymbol<T>): void {
+	addHashedSymbol(hashedSymbol: HashedSymbol<T>, direction = 1): void {
 		const mapping = new RandomMapping(hashedSymbol.checksum, 0);
-		this.addHashedSymbolWithMapping(hashedSymbol, mapping);
+		this.addHashedSymbolWithMapping(hashedSymbol, mapping, direction);
 	}
 
-	addHashedSymbolWithMapping(
+	protected addHashedSymbolWithMapping(
 		hashedSymbol: HashedSymbol<T>,
 		mapping: RandomMapping,
+		direction = 1,
 	): void {
 		this.sourceSymbols.push(hashedSymbol);
+		this.sourceSymbolDirections.push(direction);
 		this.mapGenerators.push(mapping);
 		this.queue.push(new SymbolMapping(this.sourceSymbols.length - 1, mapping.lastIdx));
 	}
 
 	extendPrefix(size: number): void {
+		while (this.codedSymbols.length < size) {
+			this.codedSymbols.push(new CodedSymbol<T>(this.sourceSymbolFactory.empty(), this.sourceSymbolFactory.emptyHash(), 0));
+		}
 		while (this.queue.size > 0 && this.queue.top.codedIdx < size) {
 			const mapping = this.queue.pop();
 			while (mapping.codedIdx < size) {
 				const sourceIdx = mapping.sourceIdx;
 				const codedIdx = mapping.codedIdx;
-				this.codedSymbols[codedIdx].apply(this.sourceSymbols[sourceIdx], 1);
+				this.codedSymbols[codedIdx].apply(this.sourceSymbols[sourceIdx], this.sourceSymbolDirections[sourceIdx]);
 				mapping.codedIdx = this.mapGenerators[sourceIdx].nextIndex();
 			}
 			this.queue.push(mapping);
@@ -123,14 +130,6 @@ export class CodingPrefix<T extends SourceSymbol> {
 }
 
 export class Encoder<T extends SourceSymbol> extends CodingPrefix<T> {
-	addSymbol(s: T): void {
-		super.addSymbol(s);
-	}
-
-	addHashedSymbol(s: HashedSymbol<T>): void {
-		super.addHashedSymbol(s);
-	}
-
 	producePrefix(size: number): CodedSymbol<T>[] {
 		super.extendPrefix(size);
 		return this.codedSymbols.slice(0, size);
