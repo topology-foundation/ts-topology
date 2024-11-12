@@ -94,18 +94,16 @@ function updateHandler(node: TopologyNode, data: Uint8Array) {
 		);
 	};
 
-	try{
+	try {
 		_merge();
-	}catch(err){
-		if (updateMessage.vertices.length === 0) {
-			return false;
-		} else {
-			const peerId = updateMessage.vertices[0].nodeId;
-			node.syncObject(object.id, peerId);
-			_merge();
-		}
+	} catch (err) {
+		if (updateMessage.vertices.length === 0) return false;
+
+		const peerId = updateMessage.vertices[0].nodeId;
+		node.syncObject(object.id, peerId);
+		_merge();
 	}
-	
+
 	node.objectStore.put(object.id, object);
 
 	return true;
@@ -187,14 +185,18 @@ function syncAcceptHandler(
 	});
 
 	if (vertices.length !== 0) {
-		try{
+		try {
 			object.merge(vertices);
-		}catch(err){
+		} catch (err) {
 			node.syncObject(object.id, sender);
-			try{
+			try {
 				object.merge(vertices);
-			}catch(err){
-				console.error("topology::node::syncAcceptHandler", "Error merging vertices", err);
+			} catch (err) {
+				console.error(
+					"topology::node::syncAcceptHandler",
+					"Error merging vertices",
+					err,
+				);
 				return;
 			}
 		}
