@@ -103,7 +103,11 @@ function updateHandler(node: TopologyNode, data: Uint8Array) {
 			node.syncObject(object.id, peerId);
 			_merge();
 		} else {
-			console.error("topology::node::updateHandler", "Error merging vertices", err);
+			console.error(
+				"topology::node::updateHandler",
+				"Error merging vertices",
+				err,
+			);
 			return false;
 		}
 	}
