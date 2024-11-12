@@ -94,9 +94,9 @@ function updateHandler(node: TopologyNode, data: Uint8Array) {
 		);
 	};
 
-	try{
+	try {
 		_merge();
-	}catch(err){
+	} catch (err) {
 		if (updateMessage.vertices.length === 0) {
 			return false;
 		} else {
@@ -105,7 +105,7 @@ function updateHandler(node: TopologyNode, data: Uint8Array) {
 			_merge();
 		}
 	}
-	
+
 	node.objectStore.put(object.id, object);
 
 	return true;
@@ -187,13 +187,12 @@ function syncAcceptHandler(
 	});
 
 	if (vertices.length !== 0) {
-		try{
+		try {
 			object.merge(vertices);
-		}catch(err){
+		} catch (err) {
 			node.syncObject(object.id, sender);
 			console.log("ERROR MERGING VERTICES");
 			object.merge(vertices);
-			
 		}
 		node.objectStore.put(object.id, object);
 	}

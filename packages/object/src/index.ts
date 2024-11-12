@@ -103,16 +103,12 @@ export class TopologyObject implements ITopologyObject {
 			if (!vertex.operation) {
 				continue;
 			}
-			try{
-				this.hashGraph.addVertex(
-					vertex.operation,
-					vertex.dependencies,
-					vertex.nodeId,
-				);
-			}catch(err){
-				throw new Error("Error merging vertex");
-			}
-			
+
+			this.hashGraph.addVertex(
+				vertex.operation,
+				vertex.dependencies,
+				vertex.nodeId,
+			);
 		}
 
 		const operations = this.hashGraph.linearizeOperations();
