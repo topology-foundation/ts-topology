@@ -18,7 +18,7 @@ export class AddWinsSet<T> implements CRO {
 		this.state = new Map<T, boolean>();
 		this.roles = new Map<string, number>();
 		for (const nodeId of nodeIds || []) {
-			this.roles.set(nodeId, Role.NONE);
+			this.roles.set(nodeId, Role.ADMIN);
 		}
 	}
 
