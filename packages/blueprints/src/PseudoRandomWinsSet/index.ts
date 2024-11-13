@@ -36,9 +36,9 @@ export class PseudoRandomWinsSet<T> implements CRO {
 	constructor(nodeIds: string[] | undefined) {
 		this.state = new Map<T, boolean>();
 		this.roles = new Map<string, number>();
-    for (const nodeId of nodeIds || []) {
-      this.roles.set(nodeId, Role.ADMIN);
-    }
+		for (const nodeId of nodeIds || []) {
+			this.roles.set(nodeId, Role.ADMIN);
+		}
 	}
 
 	private _add(value: T): void {
@@ -95,21 +95,21 @@ export class PseudoRandomWinsSet<T> implements CRO {
 	}
 
 	hasRole(nodeId: string, role: number): boolean {
-    if (!this.roles.has(nodeId)) {
-      return false;
-    }
-    return this.roles.get(nodeId) === role;
-  }
+		if (!this.roles.has(nodeId)) {
+			return false;
+		}
+		return this.roles.get(nodeId) === role;
+	}
 
-  grantRole(nodeId: string): void {
-    if (!this.roles.has(nodeId) || this.roles.get(nodeId) === Role.NONE) {
-      this.roles.set(nodeId, Role.GUEST);
-    }
-  }
+	grantRole(nodeId: string): void {
+		if (!this.roles.has(nodeId) || this.roles.get(nodeId) === Role.NONE) {
+			this.roles.set(nodeId, Role.GUEST);
+		}
+	}
 
-  revokeRole(nodeId: string): void {
-    if (this.roles.has(nodeId)) {
-      this.roles.set(nodeId, Role.NONE);
-    }
-  }
+	revokeRole(nodeId: string): void {
+		if (this.roles.has(nodeId)) {
+			this.roles.set(nodeId, Role.NONE);
+		}
+	}
 }
