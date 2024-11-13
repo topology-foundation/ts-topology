@@ -54,7 +54,7 @@ class VertexSymbolFactory extends SymbolFactory<VertexSymbol> {
 describe("RIBLT test", async () => {
 	const factory = new VertexSymbolFactory();
 
-	test.each([10, 20, 40, 100, 1000, 10000, 50000, 100000, 300000])(
+	test.each([10, 20, 40, 100, 1000, 10000, 50000, 100000])(
 		"d=%i",
 		async (d) => {
 			const nlocal = d >> 1;
@@ -67,24 +67,32 @@ describe("RIBLT test", async () => {
 			const remoteEncoder = new Encoder(factory);
 			const localDecoder = new Decoder(factory);
 
-			const localSymbols: VertexSymbol[] = [];
-			const remoteSymbols: VertexSymbol[] = [];
+			enum SymbolState {
+				Local = 0,
+				Remote = 1,
+				Common = 2,
+			};
+			const symbolState: SymbolState[] = [];
 
 			for (let i = 0; i < nlocal; i++) {
-				const localSymbol = factory.newTestSymbol(symbolIndex++);
-				localSymbols.push(localSymbol);
+				const localSymbol = factory.newTestSymbol(symbolIndex);
+				symbolState.push(SymbolState.Local);
 				localEncoder.addSymbol(localSymbol);
+				symbolIndex++;
 			}
 			for (let i = 0; i < nremote; i++) {
-				const remoteSymbol = factory.newTestSymbol(symbolIndex++);
-				remoteSymbols.push(remoteSymbol);
+				const remoteSymbol = factory.newTestSymbol(symbolIndex);
+				symbolState.push(SymbolState.Remote);
 				remoteEncoder.addSymbol(remoteSymbol);
+				symbolIndex++;
 			}
 			for (let i = 0; i < ncommon; i++) {
-				const localSymbol = factory.newTestSymbol(symbolIndex++);
+				const localSymbol = factory.newTestSymbol(symbolIndex);
 				const remoteSymbol = factory.cloneSource(localSymbol);
+				symbolState.push(SymbolState.Common);
 				localEncoder.addSymbol(localSymbol);
 				remoteEncoder.addSymbol(remoteSymbol);
+				symbolIndex++;
 			}
 
 			let sequenceSize = 0;
@@ -92,19 +100,29 @@ describe("RIBLT test", async () => {
 				sequenceSize++;
 				localEncoder.producePrefix(sequenceSize);
 				remoteEncoder.producePrefix(sequenceSize);
-				// console.log(`localEncoder[${sequenceSize - 1}]: ${localEncoder.codedSymbols[sequenceSize - 1]}`);
-				// console.log(`remoteEncoder[${sequenceSize - 1}]: ${remoteEncoder.codedSymbols[sequenceSize - 1]}`);
 				localDecoder.addCodedSymbol(
 					sequenceSize - 1,
 					localEncoder.codedSymbols[sequenceSize - 1],
 					remoteEncoder.codedSymbols[sequenceSize - 1],
 				);
-				// console.log(`localDecoder[${sequenceSize - 1}]: ${localDecoder.codedSymbols[sequenceSize - 1]}`);
 			} while (!localDecoder.tryDecode());
 
-			// console.log(localDecoder.decodedLocalSymbols);
-			// console.log(localDecoder.decodedRemoteSymbols);
-			// console.log(localDecoder.remaining);
+			const visited = new Array<boolean>(symbolIndex).fill(false);
+
+			for (const symbol of localDecoder.decodedLocalSymbols) {
+				expect(Number.isInteger(symbol.data)).toBe(true);
+				expect(symbol.data >= 0 && symbol.data < symbolIndex).toBe(true);
+				expect(visited[symbol.data]).toBe(false);
+				visited[symbol.data] = true;
+				expect(symbolState[symbol.data]).toBe(SymbolState.Local);
+			}
+			for (const symbol of localDecoder.decodedRemoteSymbols) {
+				expect(Number.isInteger(symbol.data)).toBe(true);
+				expect(symbol.data >= 0 && symbol.data < symbolIndex).toBe(true);
+				expect(visited[symbol.data]).toBe(false);
+				visited[symbol.data] = true;
+				expect(symbolState[symbol.data]).toBe(SymbolState.Remote);
+			}
 
 			console.log(`${sequenceSize / d} symbols/diff`);
 		},

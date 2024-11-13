@@ -44,13 +44,14 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 		this.extendPrefix(index + 1);
 		this.codedSymbols[index].apply(localSymbol, localSymbol.count);
 		this.codedSymbols[index].apply(remoteSymbol, -remoteSymbol.count);
-		this.computePrefix(index + 1);
-		this.modifiedCodedSymbols.push(index);
+		if (!this.visited[index]) {
+			this.visited[index] = true;
+			this.modifiedCodedSymbols.push(index);
+		}
 	}
 
 	maps(index: number, hashedSymbol: HashedSymbol<T>, direction: number): void {
 		if (!this.isDecoded[index]) {
-			// console.log(`+ map ${hashedSymbol}, dir=${direction} to index ${index}`)
 			this.codedSymbols[index].apply(hashedSymbol, direction);
 			if (!this.visited[index]) {
 				this.visited[index] = true;
@@ -60,6 +61,7 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 	}
 
 	tryDecode(): boolean {
+		this.computePrefix(this.codedSymbols.length);
 		while (this.modifiedCodedSymbols.length > 0) {
 			const candidates: number[] = [];
 			for (const index of this.modifiedCodedSymbols) {
