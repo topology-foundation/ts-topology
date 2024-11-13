@@ -118,17 +118,9 @@ export class HashGraph {
 		return vertex;
 	}
 
-	checkVertexDependency(
-		operation: Operation,
+	checkDependencyInHashgraph(
 		deps: Hash[],
-		nodeId: string,
 	): boolean {
-		const hash = computeHash(nodeId, operation, deps);
-		if (this.vertices.has(hash)) {
-			return true;
-		}
-
-		// Temporary fix: don't add the vertex if the dependencies are not present in the local HG.
 		if (
 			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
 		) {

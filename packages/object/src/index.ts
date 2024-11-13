@@ -114,10 +114,8 @@ export class TopologyObject implements ITopologyObject {
 				continue;
 			}
 			if (
-				!this.hashGraph.checkVertexDependency(
-					vertex.operation,
+				!this.hashGraph.checkDependencyInHashgraph(
 					vertex.dependencies,
-					vertex.nodeId,
 				)
 			) {
 				if (synchronizeVertices)
