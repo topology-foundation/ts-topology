@@ -204,11 +204,8 @@ export class TopologyNetworkNode {
 			for (const address of sortedAddrs) {
 				this._node?.dial(address);
 			}
-<<<<<<< HEAD
-=======
 
 			log.info("::start::peer::discovery", e.detail);
->>>>>>> 02a2e65 (feat: add new bootstrap nodes; sort order for dialing discovered ma's (#246))
 		});
 
 		this._node.addEventListener("peer:identify", (e) => {
