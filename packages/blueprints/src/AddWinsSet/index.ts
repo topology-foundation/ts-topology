@@ -6,7 +6,7 @@ import {
   SemanticsType,
   type Vertex,
 } from "@topology-foundation/object";
-import { Role } from "@topology-foundation/node";
+import { Role } from "../constants.js";
 
 export class AddWinsSet<T> implements CRO {
   operations: string[] = ["add", "remove"];

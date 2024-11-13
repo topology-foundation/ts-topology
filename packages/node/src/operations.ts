@@ -1,5 +1,7 @@
 import { NetworkPb } from "@topology-foundation/network";
-import { CRO, ObjectPb, type TopologyObject } from "@topology-foundation/object";
+import { ObjectPb } from "@topology-foundation/object";
+import type { CRO, TopologyObject } from "@topology-foundation/object";
+import { Role } from "@topology-foundation/blueprints/src/constants.js";
 import {
   topologyMessagesHandler,
   topologyObjectChangesHandler,
@@ -94,7 +96,23 @@ export async function grantPermission(
 ) {
   const object: TopologyObject | undefined = node.objectStore.get(objectId);
   if (!object) {
-    console.error("topology::node::syncObject", "Object not found");
+    console.error("topology::node::grantPermission", "Object not found");
     return;
   }
+
+  const cro: CRO | undefined = object.cro as CRO;
+  if (!cro) {
+    console.error("topology::node::grantPermission", "CRO not found");
+    return;
+  } 
+  if (!cro.hasRole(node.networkNode.peerId, Role.ADMIN)) {
+    console.error("topology::node::grantPermission", "Not an admin"); 
+    return;
+  }
+  if (cro.hasRole(peerId, Role.ADMIN)) {
+    console.error("topology::node::grantPermission", "Already an admin");
+    return;
+  }
+
+  cro.grantRole(peerId);
 }

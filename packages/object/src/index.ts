@@ -16,6 +16,7 @@ export interface CRO {
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
 	mergeCallback: (operations: Operation[]) => void;
 	hasRole: (nodeId: string, role: number) => boolean;
+	grantRole: (nodeId: string) => void;
 }
 
 export type TopologyObjectCallback = (
