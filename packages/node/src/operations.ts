@@ -110,9 +110,40 @@ export async function grantPermission(
 		return;
 	}
 	if (cro.hasRole(peerId, Role.ADMIN)) {
-		console.error("topology::node::grantPermission", "Already an admin");
+		console.error("topology::node::grantPermission", "Can't grant admin role");
 		return;
 	}
 
 	cro.grantRole(peerId);
+}
+
+export async function revokePermission(
+	node: TopologyNode,
+	objectId: string,
+	peerId: string,
+) {
+	const object: TopologyObject | undefined = node.objectStore.get(objectId);
+	if (!object) {
+		console.error("topology::node::revokePermission", "Object not found");
+		return;
+	}
+
+	const cro: CRO | undefined = object.cro as CRO;
+	if (!cro) {
+		console.error("topology::node::revokePermission", "CRO not found");
+		return;
+	}
+	if (!cro.hasRole(node.networkNode.peerId, Role.ADMIN)) {
+		console.error("topology::node::revokePermission", "Not an admin");
+		return;
+	}
+	if (cro.hasRole(peerId, Role.ADMIN)) {
+		console.error(
+			"topology::node::revokePermission",
+			"Can't revoke admin role",
+		);
+		return;
+	}
+
+	cro.revokeRole(peerId);
 }

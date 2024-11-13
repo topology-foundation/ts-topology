@@ -17,6 +17,7 @@ export interface CRO {
 	mergeCallback: (operations: Operation[]) => void;
 	hasRole: (nodeId: string, role: number) => boolean;
 	grantRole: (nodeId: string) => void;
+	revokeRole: (nodeId: string) => void;
 }
 
 export type TopologyObjectCallback = (
