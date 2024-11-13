@@ -78,7 +78,6 @@ export class TopologyNode {
 		operations.createObject(this, object);
 		operations.subscribeObject(this, object.id);
 		if (sync) {
-			console.log("SYNC OBJECT WHEN STARTING");
 			operations.syncObject(this, object.id, peerId);
 		}
 		return object;

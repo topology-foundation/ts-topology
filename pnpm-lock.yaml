@@ -313,9 +313,6 @@ importers:
       '@libp2p/peer-id':
         specifier: ^5.0.4
         version: 5.0.7
-      '@libp2p/peer-store':
-        specifier: 11.0.7
-        version: 11.0.7
       '@libp2p/pubsub-peer-discovery':
         specifier: ^11.0.0
         version: 11.0.0
@@ -1633,9 +1630,6 @@ packages:
 
   '@libp2p/peer-store@11.0.10':
     resolution: {integrity: sha512-yUkIAKrk2XAJt01SVOvxpsaT/FZ9ju7j67TJhvh0NUon/dMYSQKVHwykK8SI/dxZi/7cDslSKIbIKv7eU5ZUTQ==}
-
-  '@libp2p/peer-store@11.0.7':
-    resolution: {integrity: sha512-h8W/XVYfKTmJhhnh2Mdub23CzPv24l5g1RRwFsEKCkWAe95M/fvDMPTM2ahRUB64qfnFT5X4XNFFyJFMsVtjLA==}
 
   '@libp2p/pubsub-peer-discovery@11.0.0':
     resolution: {integrity: sha512-QlknUb2SCbmWScWzv2TS1tJIErYzr2HJoA93ZKYAlz5Dsfr9P1I17HvvlOIt/Q2PFp1aMOJOOF5mNsFV5kU73w==}
@@ -6991,22 +6985,6 @@ snapshots:
     dependencies:
       '@libp2p/crypto': 5.0.6
       '@libp2p/interface': 2.2.0
-      '@libp2p/peer-id': 5.0.7
-      '@libp2p/peer-record': 8.0.10
-      '@multiformats/multiaddr': 12.3.1
-      interface-datastore: 8.3.1
-      it-all: 3.0.6
-      mortice: 3.0.6
-      multiformats: 13.3.1
-      protons-runtime: 5.5.0
-      uint8arraylist: 2.4.8
-      uint8arrays: 5.1.0
-
-  '@libp2p/peer-store@11.0.7':
-    dependencies:
-      '@libp2p/crypto': 5.0.6
-      '@libp2p/interface': 2.2.0
-      '@libp2p/peer-collections': 6.0.10
       '@libp2p/peer-id': 5.0.7
       '@libp2p/peer-record': 8.0.10
       '@multiformats/multiaddr': 12.3.1
