@@ -118,9 +118,7 @@ export class HashGraph {
 		return vertex;
 	}
 
-	checkDependencyInHashgraph(
-		deps: Hash[],
-	): boolean {
+	checkDependencyInHashgraph(deps: Hash[]): boolean {
 		if (
 			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
 		) {
