@@ -118,7 +118,25 @@ export class HashGraph {
 		return vertex;
 	}
 
-	addVertex(operation: Operation, deps: Hash[], nodeId: string): Hash {
+	checkVertexDependency(operation: Operation, deps: Hash[], nodeId: string): boolean {
+		const hash = computeHash(nodeId, operation, deps);
+		if (this.vertices.has(hash)) {
+			return true;
+		}
+
+		// Temporary fix: don't add the vertex if the dependencies are not present in the local HG.
+		if (
+			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
+		) {
+			console.log("THE DEPENDENCIES ARE NOT OKAY");
+			return false;
+		}
+
+		return true;
+		
+	}
+
+	addVertex(operation: Operation, deps: Hash[], nodeId: string): Hash | boolean {
 		const hash = computeHash(nodeId, operation, deps);
 		if (this.vertices.has(hash)) {
 			return hash; // Vertex already exists

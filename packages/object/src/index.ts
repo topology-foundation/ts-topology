@@ -97,11 +97,23 @@ export class TopologyObject implements ITopologyObject {
 		this._notify("callFn", [serializedVertex]);
 	}
 
-	merge(vertices: Vertex[]) {
+	async merge(
+		vertices: Vertex[],
+		synchronizeVertices: (croId: string, nodeId: string) => void,
+	) {
 		for (const vertex of vertices) {
 			// Check to avoid manually crafted `undefined` operations
 			if (!vertex.operation) {
 				continue;
+			}
+			if (
+				this.hashGraph.checkVertexDependency(
+					vertex.operation,
+					vertex.dependencies,
+					vertex.nodeId,
+				)
+			) {
+				await synchronizeVertices(this.id, vertex.nodeId);
 			}
 
 			this.hashGraph.addVertex(
