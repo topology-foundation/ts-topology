@@ -76,9 +76,8 @@ export class TopologyNetworkNode {
 		const _bootstrapNodesList = this._config?.bootstrap_peers
 			? this._config.bootstrap_peers
 			: [
-					// "/dns4/relay.droak.sh/tcp/443/wss/p2p/Qma3GsJmB47xYuyahPZPSadh1avvxfyYQwk8R3UnFrQ6aP",
-					"/ip4/127.0.0.1/tcp/50000/ws/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
-					// "/dns4/topology-1.nfinic.com/tcp/4430/wss/p2p/12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ",
+					"/dns4/bootstrap1.topology.gg/tcp/443/wss/p2p/12D3KooWBu1pZ3v2u6tXSmkN35kiMLENpv3bEXcyT1GJTVhipAkG",
+					"/dns4/bootstrap2.topology.gg/tcp/443/wss/p2p/12D3KooWLGuTtCHLpd1SBHeyvzT3kHVe2dw8P7UdoXsfQHu8qvkf",
 				];
 
 		const _peerDiscovery = _bootstrapNodesList.length
@@ -187,9 +186,29 @@ export class TopologyNetworkNode {
 
 		this._node.addEventListener("peer:discovery", async (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
-			for (const ma of e.detail.multiaddrs) {
-				this._node?.dial(ma);
+			const sortedAddrs = e.detail.multiaddrs.sort((a, b) => {
+				const localRegex =
+					/(^\/ip4\/127\.)|(^\/ip4\/10\.)|(^\/ip4\/172\.1[6-9]\.)|(^\/ip4\/172\.2[0-9]\.)|(^\/ip4\/172\.3[0-1]\.)|(^\/ip4\/192\.168\.)/;
+				const aLocal = localRegex.test(a.toString());
+				const bLocal = localRegex.test(b.toString());
+				const aWebrtc = a.toString().includes("/webrtc/");
+				const bWebrtc = b.toString().includes("/webrtc/");
+				if (aLocal && !bLocal) return 1;
+				if (!aLocal && bLocal) return -1;
+				if (aWebrtc && !bWebrtc) return -1;
+				if (!aWebrtc && bWebrtc) return 1;
+				return 0;
+			});
+
+			// Dial non-local multiaddrs, then WebRTC multiaddrs
+			for (const address of sortedAddrs) {
+				this._node?.dial(address);
 			}
+<<<<<<< HEAD
+=======
+
+			log.info("::start::peer::discovery", e.detail);
+>>>>>>> 02a2e65 (feat: add new bootstrap nodes; sort order for dialing discovered ma's (#246))
 		});
 
 		this._node.addEventListener("peer:identify", (e) => {
