@@ -97,17 +97,8 @@ export class TopologyNetworkNode {
 			dcutr: dcutr(),
 			identify: identify(),
 			pubsub: gossipsub(),
-			// dht: kadDHT({
-			// 	protocol: "/topology/dht/1.0.0",
-			// 	kBucketSize: this._config?.bootstrap ? 40 : 20,
-			// 	clientMode: false,
-			// 	peerInfoMapper: removePublicAddressesMapper,
-			// 	querySelfInterval: 20000,
-			// 	initialQuerySelfInterval: 10000,
-			// 	allowQueryWithZeroPeers: false,
-			// }),
 			dht: kadDHT({
-				protocol: "/topology/lan/dht/1.0.0",
+				protocol: "/topology/dht/1.0.0",
 				kBucketSize: this._config?.bootstrap ? 40 : 20,
 				clientMode: false,
 				peerInfoMapper: removePublicAddressesMapper,
@@ -138,13 +129,7 @@ export class TopologyNetworkNode {
 			services: this._config?.bootstrap
 				? _bootstrap_node_services
 				: _node_services,
-			streamMuxers: [
-				yamux({
-					enableKeepAlive: true,
-					keepAliveInterval: 10000,
-					maxMessageSize: 4194304,
-				}),
-			],
+			streamMuxers: [yamux()],
 			transports: [
 				circuitRelayTransport({
 					discoverRelays: 2,
@@ -161,18 +146,11 @@ export class TopologyNetworkNode {
 
 		if (!this._config?.bootstrap) {
 			for (const addr of this._config?.bootstrap_peers || []) {
-				// check if not dialing self
-				// try {
 				this._node.dial(multiaddr(addr));
-				// }catch(err){
-				// 	console.error("Error dialing bootstrap peer", err);
-				// 	process.exit(1);
-				// }
 			}
 		}
 
 		this._pubsub = this._node.services.pubsub as PubSub<GossipsubEvents>;
-
 		this.peerId = this._node.peerId.toString();
 
 		log.info(
@@ -180,16 +158,16 @@ export class TopologyNetworkNode {
 			this.peerId,
 		);
 
-		setInterval(() => {
-			const ma = this._node?.getMultiaddrs();
-			log.info("::start::multiaddrs", ma);
-		}, 5000);
+		this._node.addEventListener("peer:connect", async (e) => {
+			log.info("::peer:connect", e.detail);
+		});
 
-		this._node.addEventListener("peer:connect", async (e) => {});
-
-		this._node.addEventListener("peer:disconnect", async (e) => {});
+		this._node.addEventListener("peer:disconnect", async (e) => {
+			log.info("::peer:disconnect", e.detail);
+		});
 
 		this._node.addEventListener("peer:discovery", async (e) => {
+			log.info("::start::peer::discovery", e.detail);
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
 			const sortedAddrs = e.detail.multiaddrs.sort((a, b) => {
 				const localRegex =
@@ -209,12 +187,10 @@ export class TopologyNetworkNode {
 			for (const address of sortedAddrs) {
 				this._node?.dial(address);
 			}
-
-			log.info("::start::peer::discovery", e.detail);
 		});
 
 		this._node.addEventListener("peer:identify", (e) => {
-			log.info("::start::peer::identify", e.detail.peerId);
+			log.info("::start::peer::identify", e.detail);
 		});
 	}
 
@@ -315,21 +291,5 @@ export class TopologyNetworkNode {
 
 	addMessageHandler(protocol: string | string[], handler: StreamHandler) {
 		this._node?.handle(protocol, handler);
-	}
-
-	/**
-	 * This function allows to check if the node is ready to be used on the network
-	 * We check if the node has any multiaddrs as for /webrtc it takes a while to get them assigned from the relay server node.
-	 * @returns boolean
-	 */
-	checkNodeReady(): boolean {
-		if (this._node?.getMultiaddrs().length) {
-			return true;
-		}
-		return false;
-	}
-
-	getNode(): Libp2p | undefined {
-		return this._node;
 	}
 }
