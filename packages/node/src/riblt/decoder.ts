@@ -6,7 +6,6 @@ import type {
 	SymbolFactory,
 } from "./symbol.js";
 
-
 export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 	decodedLocalSymbols: T[];
 	decodedRemoteSymbols: T[];

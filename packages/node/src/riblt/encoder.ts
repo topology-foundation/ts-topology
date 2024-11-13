@@ -3,9 +3,8 @@ import {
 	type SourceSymbol,
 	HashedSymbol,
 	type SymbolFactory,
-	type CodedSymbol
+	type CodedSymbol,
 } from "./symbol.js";
-
 
 class SymbolMapping {
 	sourceIdx: number;
@@ -101,7 +100,7 @@ export class CodingPrefix<T extends SourceSymbol> {
 			this.symbolFactory.cloneSource(symbol),
 		);
 		const mapping = new RandomMapping(hashedSymbol.checksum, 0);
-		
+
 		this.sourceSymbols.push(hashedSymbol);
 		this.sourceSymbolDirections.push(direction);
 		this.mapGenerators.push(mapping);

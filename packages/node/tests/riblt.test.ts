@@ -4,7 +4,6 @@ import { Decoder } from "../src/riblt/decoder.js";
 import { Encoder } from "../src/riblt/encoder.js";
 import { type SourceSymbol, SymbolFactory } from "../src/riblt/symbol.js";
 
-
 class VertexSymbol implements SourceSymbol {
 	data: number;
 
@@ -98,7 +97,7 @@ describe("RIBLT test", async () => {
 				localDecoder.addCodedSymbol(
 					sequenceSize - 1,
 					localEncoder.codedSymbols[sequenceSize - 1],
-					remoteEncoder.codedSymbols[sequenceSize - 1]
+					remoteEncoder.codedSymbols[sequenceSize - 1],
 				);
 				// console.log(`localDecoder[${sequenceSize - 1}]: ${localDecoder.codedSymbols[sequenceSize - 1]}`);
 			} while (!localDecoder.tryDecode());
@@ -107,7 +106,7 @@ describe("RIBLT test", async () => {
 			// console.log(localDecoder.decodedRemoteSymbols);
 			// console.log(localDecoder.remaining);
 
-			console.log(`${sequenceSize/d} symbols/diff`);
-		}
+			console.log(`${sequenceSize / d} symbols/diff`);
+		},
 	);
 });

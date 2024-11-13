@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
 
 function rotl(x: bigint, k: bigint) {
-	return BigInt.asUintN(64, ((x << k) | (x >> (64n - k))));
+	return BigInt.asUintN(64, (x << k) | (x >> (64n - k)));
 }
 
 export class RandomMapping {
@@ -9,13 +9,18 @@ export class RandomMapping {
 	lastIdx: number;
 
 	constructor(seed: Uint8Array, lastIdx = 0) {
-		this.s = new BigUint64Array(crypto.createHash("sha256").update(seed).digest().buffer);
+		this.s = new BigUint64Array(
+			crypto.createHash("sha256").update(seed).digest().buffer,
+		);
 		this.lastIdx = lastIdx;
 	}
 
 	nextIndex(): number {
 		// https://prng.di.unimi.it/xoshiro256starstar.c
-		const result = BigInt.asUintN(64, rotl(BigInt.asUintN(64, this.s[1] * 5n), 7n) * 9n);
+		const result = BigInt.asUintN(
+			64,
+			rotl(BigInt.asUintN(64, this.s[1] * 5n), 7n) * 9n,
+		);
 
 		const t = BigInt.asUintN(64, this.s[1] << 17n);
 
