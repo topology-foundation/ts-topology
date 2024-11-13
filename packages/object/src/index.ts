@@ -97,6 +97,13 @@ export class TopologyObject implements ITopologyObject {
 		this._notify("callFn", [serializedVertex]);
 	}
 
+	/*
+	 * Merges the given vertices into the object's hashgraph.
+	 * If `synchronizeVertices` is provided, it will be called for each vertex that cannot be merged due to a dependency issue.
+	 * @param vertices - The vertices to merge
+	 * @param synchronizeVertices - A callback to synchronize vertices if there is a dependency issue with the hashgraph
+	 * @returns void
+	 */
 	async merge(
 		vertices: Vertex[],
 		synchronizeVertices?: (croId: string, nodeId: string) => void,
