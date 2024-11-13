@@ -33,10 +33,10 @@ export class PseudoRandomWinsSet<T> implements CRO {
 	roles: Map<string, number>;
 	semanticsType = SemanticsType.multiple;
 
-	constructor(nodeIds: string[]) {
+	constructor(nodeIds: string[] | undefined) {
 		this.state = new Map<T, boolean>();
 		this.roles = new Map<string, number>();
-    for (const nodeId of nodeIds) {
+    for (const nodeId of nodeIds || []) {
       this.roles.set(nodeId, Role.ADMIN);
     }
 	}

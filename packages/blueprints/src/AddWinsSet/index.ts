@@ -14,11 +14,11 @@ export class AddWinsSet<T> implements CRO {
   roles: Map<string, number>;
   semanticsType = SemanticsType.pair;
 
-  constructor(nodeIds: string[]) {
+  constructor(nodeIds: string[] | undefined) {
     this.state = new Map<T, boolean>();
     this.roles = new Map<string, number>();
-    for (const nodeId of nodeIds) {
-      this.roles.set(nodeId, Role.ADMIN);
+    for (const nodeId of nodeIds || []) {
+      this.roles.set(nodeId, Role.NONE);
     }
   }
 
