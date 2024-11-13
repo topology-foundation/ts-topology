@@ -1,4 +1,4 @@
-import * as crypto from 'node:crypto';
+import * as crypto from "node:crypto";
 import { beforeEach, describe, expect, test } from "vitest";
 import { Decoder } from "../src/riblt/decoder.js";
 import { Encoder } from "../src/riblt/encoder.js";
@@ -19,7 +19,7 @@ class VertexSymbol implements SourceSymbol {
 	hash(): Uint8Array {
 		return new Uint8Array(
 			crypto
-				.createHash('sha1')
+				.createHash("sha1")
 				.update(new Uint32Array([this.data]))
 				.digest(),
 		);
@@ -33,7 +33,6 @@ class VertexSymbol implements SourceSymbol {
 		return `${this.data}`;
 	}
 }
-
 
 class VertexSymbolFactory extends SymbolFactory<VertexSymbol> {
 	emptySource(): VertexSymbol {
@@ -53,10 +52,8 @@ class VertexSymbolFactory extends SymbolFactory<VertexSymbol> {
 	}
 }
 
-
 describe("RIBLT test", async () => {
 	const factory = new VertexSymbolFactory();
-
 
 	test.each([10, 20, 40, 100, 1000, 10000, 50000, 100000, 300000])(
 		"d=%i",
@@ -98,7 +95,11 @@ describe("RIBLT test", async () => {
 				remoteEncoder.producePrefix(sequenceSize);
 				// console.log(`localEncoder[${sequenceSize - 1}]: ${localEncoder.codedSymbols[sequenceSize - 1]}`);
 				// console.log(`remoteEncoder[${sequenceSize - 1}]: ${remoteEncoder.codedSymbols[sequenceSize - 1]}`);
-				localDecoder.addCodedSymbol(sequenceSize - 1, localEncoder.codedSymbols[sequenceSize - 1], remoteEncoder.codedSymbols[sequenceSize - 1]);
+				localDecoder.addCodedSymbol(
+					sequenceSize - 1,
+					localEncoder.codedSymbols[sequenceSize - 1],
+					remoteEncoder.codedSymbols[sequenceSize - 1]
+				);
 				// console.log(`localDecoder[${sequenceSize - 1}]: ${localDecoder.codedSymbols[sequenceSize - 1]}`);
 			} while (!localDecoder.tryDecode());
 
@@ -107,5 +108,6 @@ describe("RIBLT test", async () => {
 			// console.log(localDecoder.remaining);
 
 			console.log(`${sequenceSize/d} symbols/diff`);
-	});
+		}
+	);
 });

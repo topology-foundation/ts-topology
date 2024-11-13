@@ -4,7 +4,7 @@ import {
 	HashedSymbol,
 	type SymbolFactory,
 	type CodedSymbol
-} from "./symbol.js"
+} from "./symbol.js";
 
 
 class SymbolMapping {
@@ -98,7 +98,7 @@ export class CodingPrefix<T extends SourceSymbol> {
 
 	addSymbol(symbol: T, direction = 1): void {
 		const hashedSymbol = new HashedSymbol<T>(
-			this.symbolFactory.cloneSource(symbol)
+			this.symbolFactory.cloneSource(symbol),
 		);
 		const mapping = new RandomMapping(hashedSymbol.checksum, 0);
 		
@@ -106,7 +106,7 @@ export class CodingPrefix<T extends SourceSymbol> {
 		this.sourceSymbolDirections.push(direction);
 		this.mapGenerators.push(mapping);
 		this.queue.push(
-			new SymbolMapping(this.sourceSymbols.length - 1, mapping.lastIdx)
+			new SymbolMapping(this.sourceSymbols.length - 1, mapping.lastIdx),
 		);
 	}
 
@@ -129,7 +129,7 @@ export class CodingPrefix<T extends SourceSymbol> {
 				this.maps(
 					codedIdx,
 					this.sourceSymbols[sourceIdx],
-					this.sourceSymbolDirections[sourceIdx]
+					this.sourceSymbolDirections[sourceIdx],
 				);
 				mapping.codedIdx = this.mapGenerators[sourceIdx].nextIndex();
 			}

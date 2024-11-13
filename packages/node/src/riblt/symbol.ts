@@ -4,7 +4,6 @@ export interface SourceSymbol {
 	toString(): string;
 }
 
-
 export class HashedSymbol<T extends SourceSymbol> {
 	sum: T;
 	checksum: Uint8Array;

@@ -40,7 +40,7 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 	addCodedSymbol(
 		index: number,
 		localSymbol: CodedSymbol<T>,
-		remoteSymbol: CodedSymbol<T>
+		remoteSymbol: CodedSymbol<T>,
 	): void {
 		this.extendPrefix(index + 1);
 		this.codedSymbols[index].apply(localSymbol, localSymbol.count);
