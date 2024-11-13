@@ -198,7 +198,7 @@ async function createConnectHandlers() {
 
 async function main() {
 	// node.networkNode.setOnPeerConnect((peerId : any) => {
-	// 	console.log("NEW PEER CONNECTED", peerId);	
+	// 	console.log("NEW PEER CONNECTED", peerId);
 	// 	peers = node.networkNode.getAllPeers();
 	// 	render();
 	// });
@@ -215,8 +215,6 @@ async function main() {
 		peers = node.networkNode.getAllPeers();
 		render();
 	});
-
-	
 
 	const button_create = <HTMLButtonElement>(
 		document.getElementById("createGrid")

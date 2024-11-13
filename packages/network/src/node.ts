@@ -22,7 +22,11 @@ import type {
 	Stream,
 	StreamHandler,
 } from "@libp2p/interface";
-import { kadDHT, removePrivateAddressesMapper, removePublicAddressesMapper } from "@libp2p/kad-dht";
+import {
+	kadDHT,
+	removePrivateAddressesMapper,
+	removePublicAddressesMapper,
+} from "@libp2p/kad-dht";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
@@ -48,7 +52,7 @@ export interface TopologyNetworkNodeConfig {
 	private_key_seed?: string;
 	log_config?: LoggerOptions;
 	onPeerConnect?: PeerConnectionCallback;
-    onPeerDisconnect?: PeerConnectionCallback;
+	onPeerDisconnect?: PeerConnectionCallback;
 }
 
 export class TopologyNetworkNode {
@@ -134,12 +138,13 @@ export class TopologyNetworkNode {
 			services: this._config?.bootstrap
 				? _bootstrap_node_services
 				: _node_services,
-			streamMuxers: [yamux({
-				enableKeepAlive: true,
-				keepAliveInterval: 10000,
-				maxMessageSize: 4194304,
-
-			})],
+			streamMuxers: [
+				yamux({
+					enableKeepAlive: true,
+					keepAliveInterval: 10000,
+					maxMessageSize: 4194304,
+				}),
+			],
 			transports: [
 				circuitRelayTransport({
 					discoverRelays: 2,
@@ -180,9 +185,9 @@ export class TopologyNetworkNode {
 			log.info("::start::multiaddrs", ma);
 		}, 5000);
 
-		this._node.addEventListener("peer:connect", async (e) => { });
+		this._node.addEventListener("peer:connect", async (e) => {});
 
-		this._node.addEventListener("peer:disconnect", async (e) => { });
+		this._node.addEventListener("peer:disconnect", async (e) => {});
 
 		this._node.addEventListener("peer:discovery", async (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)

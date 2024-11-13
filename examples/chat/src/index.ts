@@ -69,7 +69,7 @@ async function createConnectHandlers() {
 	});
 }
 
-async function main() { 
+async function main() {
 	await node.start();
 	render();
 
