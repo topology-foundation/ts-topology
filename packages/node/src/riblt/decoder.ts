@@ -1,5 +1,10 @@
-import type { SourceSymbol, CodedSymbol, SymbolFactory, HashedSymbol } from "./symbol.js";
 import { CodingPrefix } from "./encoder.js";
+import type {
+	CodedSymbol,
+	HashedSymbol,
+	SourceSymbol,
+	SymbolFactory,
+} from "./symbol.js";
 
 
 export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
@@ -32,7 +37,11 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 	}
 
 	// called at most once for each index
-	addCodedSymbol(index: number, localSymbol: CodedSymbol<T>, remoteSymbol: CodedSymbol<T>): void {
+	addCodedSymbol(
+		index: number,
+		localSymbol: CodedSymbol<T>,
+		remoteSymbol: CodedSymbol<T>
+	): void {
 		this.extendPrefix(index + 1);
 		this.codedSymbols[index].apply(localSymbol, localSymbol.count);
 		this.codedSymbols[index].apply(remoteSymbol, -remoteSymbol.count);
@@ -44,7 +53,10 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 		if (!this.isDecoded[index]) {
 			// console.log(`+ map ${hashedSymbol}, dir=${direction} to index ${index}`)
 			this.codedSymbols[index].apply(hashedSymbol, direction);
-			this.modifiedCodedSymbols.push(index);
+			if (!this.visited[index]) {
+				this.visited[index] = true;
+				this.modifiedCodedSymbols.push(index);
+			}
 		}
 	}
 
@@ -52,7 +64,7 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 		while (this.modifiedCodedSymbols.length > 0) {
 			const candidates: number[] = [];
 			for (const index of this.modifiedCodedSymbols) {
-				if (this.isDecoded[index] || this.visited[index]) {
+				if (this.isDecoded[index]) {
 					continue;
 				}
 				this.visited[index] = true;

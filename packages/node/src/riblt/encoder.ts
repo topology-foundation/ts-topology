@@ -1,5 +1,10 @@
-import { type SourceSymbol, type SymbolFactory, type CodedSymbol, HashedSymbol } from "./symbol.js"
 import { RandomMapping } from "./mapping.js";
+import {
+	type SourceSymbol,
+	HashedSymbol,
+	type SymbolFactory,
+	type CodedSymbol
+} from "./symbol.js"
 
 
 class SymbolMapping {
@@ -92,13 +97,17 @@ export class CodingPrefix<T extends SourceSymbol> {
 	}
 
 	addSymbol(symbol: T, direction = 1): void {
-		const hashedSymbol = new HashedSymbol<T>(this.symbolFactory.cloneSource(symbol));
+		const hashedSymbol = new HashedSymbol<T>(
+			this.symbolFactory.cloneSource(symbol)
+		);
 		const mapping = new RandomMapping(hashedSymbol.checksum, 0);
 		
 		this.sourceSymbols.push(hashedSymbol);
 		this.sourceSymbolDirections.push(direction);
 		this.mapGenerators.push(mapping);
-		this.queue.push(new SymbolMapping(this.sourceSymbols.length - 1, mapping.lastIdx));
+		this.queue.push(
+			new SymbolMapping(this.sourceSymbols.length - 1, mapping.lastIdx)
+		);
 	}
 
 	maps(index: number, hashedSymbol: HashedSymbol<T>, direction: number): void {
@@ -117,7 +126,11 @@ export class CodingPrefix<T extends SourceSymbol> {
 			while (mapping.codedIdx < size) {
 				const sourceIdx = mapping.sourceIdx;
 				const codedIdx = mapping.codedIdx;
-				this.maps(codedIdx, this.sourceSymbols[sourceIdx], this.sourceSymbolDirections[sourceIdx]);
+				this.maps(
+					codedIdx,
+					this.sourceSymbols[sourceIdx],
+					this.sourceSymbolDirections[sourceIdx]
+				);
 				mapping.codedIdx = this.mapGenerators[sourceIdx].nextIndex();
 			}
 			this.queue.push(mapping);

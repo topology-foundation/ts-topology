@@ -39,7 +39,7 @@ export class HashedSymbol<T extends SourceSymbol> {
 	}
 
 	toString(): string {
-		return `HashedSymbol(sum=${this.sum}, hash=[${this.checksum}])`
+		return `HashedSymbol(sum=${this.sum}, hash=[${this.checksum}])`;
 	}
 }
 
