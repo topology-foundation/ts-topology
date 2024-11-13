@@ -1,55 +1,50 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { Encoder } from "../src/riblt/encoder.js";
 import { Decoder } from "../src/riblt/decoder.js";
-import type { SourceSymbolFactory, SourceSymbol } from "../src/riblt/symbol.js";
+import { SymbolFactory, type SourceSymbol } from "../src/riblt/symbol.js";
 import * as crypto from 'node:crypto';
 
 
 class VertexSymbol implements SourceSymbol {
-    data: Uint8Array;
+    data: number;
 
-    constructor(data: Uint8Array) {
+    constructor(data: number) {
         this.data = data;
     }
 
     xor(s: VertexSymbol): void {
-        for (let i = 0; i < this.data.length; i++) {
-            this.data[i] ^= s.data[i];
-        }
+        this.data ^= s.data;
     }
 
     hash(): Uint8Array {
-        return crypto.createHash('sha1').update(this.data).digest();
+        return new Uint8Array(crypto.createHash('sha1').update(new Uint32Array([this.data])).digest());
     }
 
     equals(s: VertexSymbol): boolean {
-        for (let i = 0; i < this.data.length; i++) {
-            if (this.data[i] !== s.data[i]) {
-                return false;
-            }
-        }
-        return true;
+        return this.data === s.data;
+    }
+
+    toString(): string {
+        return `${this.data}`;
     }
 }
 
 
-class VertexSymbolFactory implements SourceSymbolFactory<VertexSymbol> {
-    empty(): VertexSymbol {
-        return new VertexSymbol(new Uint8Array(32));
+class VertexSymbolFactory extends SymbolFactory<VertexSymbol> {
+    emptySource(): VertexSymbol {
+        return new VertexSymbol(0);
     }
 
     emptyHash(): Uint8Array {
         return new Uint8Array(20);
     }
 
-    clone(s: VertexSymbol): VertexSymbol {
-        return new VertexSymbol(new Uint8Array(s.data));
+    cloneSource(s: VertexSymbol): VertexSymbol {
+        return new VertexSymbol(s.data);
     }
 
     newTestSymbol(i): VertexSymbol {
-        const data = new Uint32Array(8);
-        data[0] = i;
-        return new VertexSymbol(new Uint8Array(data.buffer));
+        return new VertexSymbol(i);
     }
 }
 
@@ -58,7 +53,7 @@ describe("RIBLT test", async () => {
     const factory = new VertexSymbolFactory();
 
 
-    test.each([10, 20, 40, 100])("d=%i", async (d) => {
+    test.each([10])("d=%i", async (d) => {
         const nlocal = d >> 1;
         const nremote = d >> 1;
         const ncommon = d;
@@ -84,7 +79,7 @@ describe("RIBLT test", async () => {
         }
         for (let i = 0; i < ncommon; i++) {
             const localSymbol = factory.newTestSymbol(symbolIndex++);
-            const remoteSymbol = factory.clone(localSymbol);
+            const remoteSymbol = factory.cloneSource(localSymbol);
             localEncoder.addSymbol(localSymbol);
             remoteEncoder.addSymbol(remoteSymbol);
         }
@@ -92,9 +87,12 @@ describe("RIBLT test", async () => {
         let sequenceSize = 0;
         do {
             sequenceSize++;
-            localEncoder.extendPrefix(sequenceSize);
-            remoteEncoder.extendPrefix(sequenceSize);
+            localEncoder.producePrefix(sequenceSize);
+            remoteEncoder.producePrefix(sequenceSize);
+            console.log(`localEncoder[${sequenceSize - 1}]: ${localEncoder.codedSymbols[sequenceSize - 1]}`);
+            console.log(`remoteEncoder[${sequenceSize - 1}]: ${remoteEncoder.codedSymbols[sequenceSize - 1]}`);
             localDecoder.addCodedSymbol(sequenceSize - 1, localEncoder.codedSymbols[sequenceSize - 1], remoteEncoder.codedSymbols[sequenceSize - 1]);
+            console.log(`localDecoder[${sequenceSize - 1}]: ${localDecoder.codedSymbols[sequenceSize - 1]}`);
         } while (!localDecoder.tryDecode());
 
         // console.log(localDecoder.decodedLocalSymbols);

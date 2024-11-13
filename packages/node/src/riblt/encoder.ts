@@ -1,4 +1,4 @@
-import { type SourceSymbol, type SourceSymbolFactory, CodedSymbol, HashedSymbol } from "./symbol.js"
+import { type SourceSymbol, type SymbolFactory, type CodedSymbol, HashedSymbol } from "./symbol.js"
 import { RandomMapping } from "./mapping.js";
 
 
@@ -83,16 +83,16 @@ export class CodingPrefix<T extends SourceSymbol> {
 	private mapGenerators: RandomMapping[];
 	private queue: MappingHeap;
 
-	constructor(protected readonly sourceSymbolFactory: SourceSymbolFactory<T>) {
+	constructor(protected readonly symbolFactory: SymbolFactory<T>) {
 		this.sourceSymbols = [];
 		this.sourceSymbolDirections = [];
-		this.codedSymbols = [new CodedSymbol<T>(sourceSymbolFactory.empty(), sourceSymbolFactory.emptyHash(), 0)];
+		this.codedSymbols = [symbolFactory.emptyCoded()];
 		this.mapGenerators = [];
 		this.queue = new MappingHeap();
 	}
 
 	addSymbol(symbol: T, direction = 1): void {
-		const hashedSymbol = new HashedSymbol<T>(this.sourceSymbolFactory.clone(symbol), symbol.hash());
+		const hashedSymbol = new HashedSymbol<T>(this.symbolFactory.cloneSource(symbol));
 		const mapping = new RandomMapping(hashedSymbol.checksum, 0);
 		
 		this.sourceSymbols.push(hashedSymbol);
@@ -107,8 +107,11 @@ export class CodingPrefix<T extends SourceSymbol> {
 
 	extendPrefix(size: number): void {
 		while (this.codedSymbols.length < size) {
-			this.codedSymbols.push(new CodedSymbol<T>(this.sourceSymbolFactory.empty(), this.sourceSymbolFactory.emptyHash(), 0));
+			this.codedSymbols.push(this.symbolFactory.emptyCoded());
 		}
+	}
+
+	computePrefix(size: number): void {
 		while (this.queue.size > 0 && this.queue.top.codedIdx < size) {
 			const mapping = this.queue.pop();
 			while (mapping.codedIdx < size) {
@@ -123,8 +126,8 @@ export class CodingPrefix<T extends SourceSymbol> {
 }
 
 export class Encoder<T extends SourceSymbol> extends CodingPrefix<T> {
-	producePrefix(size: number): CodedSymbol<T>[] {
+	producePrefix(size: number): void {
 		super.extendPrefix(size);
-		return this.codedSymbols.slice(0, size);
+		super.computePrefix(size);
 	}
 }

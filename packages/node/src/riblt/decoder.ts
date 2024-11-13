@@ -1,5 +1,4 @@
-import { type SourceSymbol, type CodedSymbol, type SourceSymbolFactory, HashedSymbol } from "./symbol.js";
-import { RandomMapping } from "./mapping.js";
+import type { SourceSymbol, CodedSymbol, SymbolFactory, HashedSymbol } from "./symbol.js";
 import { CodingPrefix } from "./encoder.js";
 
 
@@ -10,7 +9,7 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 	remaining: number;
 	pureSymbols: CodedSymbol<T>[];
 
-	constructor(sourceSymbolFactory: SourceSymbolFactory<T>) {
+	constructor(sourceSymbolFactory: SymbolFactory<T>) {
 		super(sourceSymbolFactory);
 		this.decodedLocalSymbols = [];
 		this.decodedRemoteSymbols = [];
@@ -31,24 +30,28 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 		this.extendPrefix(index + 1);
 		this.codedSymbols[index].apply(localSymbol, localSymbol.count);
 		this.codedSymbols[index].apply(remoteSymbol, -remoteSymbol.count);
+		this.computePrefix(index + 1);
 		if (this.codedSymbols[index].isZero()) {
 			this.isDecoded[index] = true;
 		} else {
 			this.remaining++;
 			if (this.codedSymbols[index].isPure()) {
-				this.pureSymbols.push(this.codedSymbols[index]);
+				console.log(`- addCodedSymbol[${index}]: ${this.codedSymbols[index]}`);
+				this.pureSymbols.push(this.symbolFactory.cloneCoded(this.codedSymbols[index]));
 			}
 		}
 	}
 
 	maps(index: number, hashedSymbol: HashedSymbol<T>, direction: number): void {
 		if (!this.isDecoded[index]) {
+			console.log(`+ map ${hashedSymbol}, dir=${direction} to index ${index}`)
 			this.codedSymbols[index].apply(hashedSymbol, direction);
 			if (this.codedSymbols[index].isZero()) {
 				this.isDecoded[index] = true;
 				this.remaining--;
 			} else if (this.codedSymbols[index].isPure()) {
-				this.pureSymbols.push(this.codedSymbols[index]);
+				console.log(`- maps[${index}]: ${this.codedSymbols[index]}`);
+				this.pureSymbols.push(this.symbolFactory.cloneCoded(this.codedSymbols[index]));
 			}
 		}
 	}
@@ -60,19 +63,17 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 			if (symbol.isZero()) {
 				continue;
 			}
-			const decodedSymbol = this.sourceSymbolFactory.clone(symbol.sum)
+			const decodedSymbol = this.symbolFactory.cloneSource(symbol.sum)
 			if (symbol.count === 1) {
 				this.decodedLocalSymbols.push(decodedSymbol);
 			} else if (symbol.count === -1) {
 				this.decodedRemoteSymbols.push(decodedSymbol);
 			} else {
-				throw Error(`Invalid pure symbol ${symbol.sum.data} ${symbol.count}`);
+				throw Error(`Invalid pure symbol ${symbol}`);
 			}
 
-			const mapping = new RandomMapping(symbol.checksum, 0);
 			this.addSymbol(decodedSymbol, -symbol.count);
-			this.extendPrefix(this.codedSymbols.length);	// trigger updates
-			// console.log('abc')
+			this.computePrefix(this.codedSymbols.length);
 		}
 		return this.remaining === 0;
 	}

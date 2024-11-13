@@ -1,13 +1,7 @@
 export interface SourceSymbol {
 	xor(s: SourceSymbol): void;
 	hash(): Uint8Array;
-}
-
-
-export interface SourceSymbolFactory<T> {
-	empty(): T;
-	emptyHash(): Uint8Array;
-	clone(s: T): T;
+	toString(): string;
 }
 
 
@@ -43,6 +37,10 @@ export class HashedSymbol<T extends SourceSymbol> {
 		}
 		return true;
 	}
+
+	toString(): string {
+		return `HashedSymbol(sum=${this.sum}, hash=[${this.checksum}])`
+	}
 }
 
 export class CodedSymbol<T extends SourceSymbol> extends HashedSymbol<T> {
@@ -73,5 +71,21 @@ export class CodedSymbol<T extends SourceSymbol> extends HashedSymbol<T> {
 			}
 		}
 		return true;
+	}
+
+	toString(): string {
+		return `CodedSymbol(sum=${this.sum}, hash=[${this.checksum}], ${this.count})`;
+	}
+}
+
+export abstract class SymbolFactory<T extends SourceSymbol> {
+	abstract emptySource(): T;
+	abstract emptyHash(): Uint8Array;
+	abstract cloneSource(s: T): T;
+	cloneCoded(s: CodedSymbol<T>): CodedSymbol<T> {
+		return new CodedSymbol(this.cloneSource(s.sum), new Uint8Array(s.checksum), s.count);
+	}
+	emptyCoded(): CodedSymbol<T> {
+		return new CodedSymbol(this.emptySource(), this.emptyHash(), 0);
 	}
 }
