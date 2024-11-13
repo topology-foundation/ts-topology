@@ -1,9 +1,9 @@
 import { RandomMapping } from "./mapping.js";
 import {
-	type SourceSymbol,
-	HashedSymbol,
-	type SymbolFactory,
 	type CodedSymbol,
+	HashedSymbol,
+	type SourceSymbol,
+	type SymbolFactory,
 } from "./symbol.js";
 
 class SymbolMapping {
