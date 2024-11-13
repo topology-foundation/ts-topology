@@ -99,7 +99,7 @@ export class TopologyObject implements ITopologyObject {
 
 	async merge(
 		vertices: Vertex[],
-		synchronizeVertices: (croId: string, nodeId: string) => void,
+		synchronizeVertices?: (croId: string, nodeId: string) => void,
 	) {
 		for (const vertex of vertices) {
 			// Check to avoid manually crafted `undefined` operations
@@ -107,13 +107,14 @@ export class TopologyObject implements ITopologyObject {
 				continue;
 			}
 			if (
-				this.hashGraph.checkVertexDependency(
+				!this.hashGraph.checkVertexDependency(
 					vertex.operation,
 					vertex.dependencies,
 					vertex.nodeId,
 				)
 			) {
-				await synchronizeVertices(this.id, vertex.nodeId);
+				if (synchronizeVertices)
+					await synchronizeVertices(this.id, vertex.nodeId);
 			}
 
 			this.hashGraph.addVertex(

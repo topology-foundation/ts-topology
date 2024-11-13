@@ -92,43 +92,8 @@ function updateHandler(node: TopologyNode, data: Uint8Array) {
 		}),
 		async (croId: string, nodeId: string) => {
 			await node.syncObject(croId, nodeId);
-		}
+		},
 	);
-
-	// const _merge = () => {
-	// 	object.merge(
-	// 		updateMessage.vertices.map((v) => {
-	// 			return {
-	// 				hash: v.hash,
-	// 				nodeId: v.nodeId,
-	// 				operation: {
-	// 					type: v.operation?.type ?? "",
-	// 					value: v.operation?.value,
-	// 				},
-	// 				dependencies: v.dependencies,
-	// 			};
-	// 		}),
-	// 	);
-	// };
-
-	// try {
-	// 	_merge();
-	// } catch (err) {
-	// 	if ((err as Error).name === "InvalidDependencyError") {
-	// 		if (updateMessage.vertices.length === 0) return false;
-	// 		const peerId = updateMessage.vertices[0].nodeId;
-	// 		node.syncObject(object.id, peerId).then(() => {
-	// 			_merge();
-	// 		});
-	// 	} else {
-	// 		console.error(
-	// 			"topology::node::updateHandler",
-	// 			"Error merging vertices",
-	// 			err,
-	// 		);
-	// 		return false;
-	// 	}
-	// }
 
 	node.objectStore.put(object.id, object);
 

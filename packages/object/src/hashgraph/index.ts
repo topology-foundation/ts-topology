@@ -118,7 +118,11 @@ export class HashGraph {
 		return vertex;
 	}
 
-	checkVertexDependency(operation: Operation, deps: Hash[], nodeId: string): boolean {
+	checkVertexDependency(
+		operation: Operation,
+		deps: Hash[],
+		nodeId: string,
+	): boolean {
 		const hash = computeHash(nodeId, operation, deps);
 		if (this.vertices.has(hash)) {
 			return true;
@@ -128,15 +132,13 @@ export class HashGraph {
 		if (
 			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
 		) {
-			console.log("THE DEPENDENCIES ARE NOT OKAY");
 			return false;
 		}
 
 		return true;
-		
 	}
 
-	addVertex(operation: Operation, deps: Hash[], nodeId: string): Hash | boolean {
+	addVertex(operation: Operation, deps: Hash[], nodeId: string): Hash {
 		const hash = computeHash(nodeId, operation, deps);
 		if (this.vertices.has(hash)) {
 			return hash; // Vertex already exists
