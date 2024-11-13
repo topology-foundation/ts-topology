@@ -82,9 +82,6 @@ export abstract class SymbolFactory<T extends SourceSymbol> {
 	abstract emptySource(): T;
 	abstract emptyHash(): Uint8Array;
 	abstract cloneSource(s: T): T;
-	cloneCoded(s: CodedSymbol<T>): CodedSymbol<T> {
-		return new CodedSymbol(this.cloneSource(s.sum), new Uint8Array(s.checksum), s.count);
-	}
 	emptyCoded(): CodedSymbol<T> {
 		return new CodedSymbol(this.emptySource(), this.emptyHash(), 0);
 	}
