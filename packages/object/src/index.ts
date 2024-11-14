@@ -103,6 +103,7 @@ export class TopologyObject implements ITopologyObject {
 			if (!vertex.operation) {
 				continue;
 			}
+			
 			this.hashGraph.addVertex(
 				vertex.operation,
 				vertex.dependencies,

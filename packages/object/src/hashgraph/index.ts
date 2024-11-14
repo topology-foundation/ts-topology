@@ -128,9 +128,8 @@ export class HashGraph {
 		if (
 			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
 		) {
-			const error = new Error("Invalid dependency detected.");
-			error.name = "InvalidDependencyError";
-			throw error;
+			console.error("Invalid dependency detected.");
+			return "";
 		}
 
 		const vertex: Vertex = {
