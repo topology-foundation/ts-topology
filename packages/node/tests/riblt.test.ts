@@ -54,7 +54,7 @@ class VertexSymbolFactory extends SymbolFactory<VertexSymbol> {
 describe("RIBLT test", async () => {
 	const factory = new VertexSymbolFactory();
 
-	test.each([10, 20, 40, 100, 1000, 10000, 50000, 100000])(
+	test.each([10, 20, 40, 100, 1000, 10000, 50000, 100000, 200000])(
 		"d=%i",
 		async (d) => {
 			const nlocal = d >> 1;
@@ -124,7 +124,7 @@ describe("RIBLT test", async () => {
 				expect(symbolState[symbol.data]).toBe(SymbolState.Remote);
 			}
 
-			console.log(`${sequenceSize / d} symbols/diff`);
+			console.log(`${sequenceSize} symbols, ${(sequenceSize / d).toFixed(3)} symbols/diff`);
 		},
 	);
 });

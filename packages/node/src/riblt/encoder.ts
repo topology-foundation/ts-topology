@@ -61,13 +61,10 @@ class MappingHeap {
 		this.fixTail();
 	}
 
-	pop(): SymbolMapping {
+	set top(mapping: SymbolMapping) {
 		if (this.heap.length === 0) throw Error("Heap is empty");
-		const root = this.heap[0];
-		this.heap[0] = this.heap[this.heap.length - 1];
-		this.heap.pop();
+		this.heap[0] = mapping;
 		this.fixHead();
-		return root;
 	}
 
 	get top(): SymbolMapping {
@@ -121,7 +118,7 @@ export class CodingPrefix<T extends SourceSymbol> {
 
 	computePrefix(size: number): void {
 		while (this.queue.size > 0 && this.queue.top.codedIdx < size) {
-			const mapping = this.queue.pop();
+			const mapping = this.queue.top;
 			while (mapping.codedIdx < size) {
 				const sourceIdx = mapping.sourceIdx;
 				const codedIdx = mapping.codedIdx;
@@ -132,7 +129,7 @@ export class CodingPrefix<T extends SourceSymbol> {
 				);
 				mapping.codedIdx = this.mapGenerators[sourceIdx].nextIndex();
 			}
-			this.queue.push(mapping);
+			this.queue.top = mapping;
 		}
 	}
 }
