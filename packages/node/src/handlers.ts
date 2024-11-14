@@ -32,7 +32,7 @@ export async function topologyMessagesHandler(
 
 	switch (message.type) {
 		case NetworkPb.Message_MessageType.UPDATE:
-			updateHandler(node, message.data);
+			updateHandler(node, message.data, message.sender);
 			break;
 		case NetworkPb.Message_MessageType.SYNC:
 			if (!stream) {
@@ -71,7 +71,11 @@ export async function topologyMessagesHandler(
   data: { id: string, operations: {nonce: string, fn: string, args: string[] }[] }
   operations array doesn't contain the full remote operations array
 */
-async function updateHandler(node: TopologyNode, data: Uint8Array) {
+async function updateHandler(
+	node: TopologyNode,
+	data: Uint8Array,
+	senderPeerId: string,
+) {
 	const updateMessage = NetworkPb.Update.decode(data);
 	const object = node.objectStore.get(updateMessage.objectId);
 	if (!object) {
@@ -79,11 +83,7 @@ async function updateHandler(node: TopologyNode, data: Uint8Array) {
 		return false;
 	}
 
-	if (updateMessage.vertices.length > 0)
-		await node.syncObject(
-			updateMessage.objectId,
-			updateMessage.vertices[0].nodeId,
-		);
+	await node.syncObject(updateMessage.objectId, senderPeerId);
 
 	object.merge(
 		updateMessage.vertices.map((v) => {
@@ -180,7 +180,7 @@ async function syncAcceptHandler(
 	});
 
 	if (vertices.length !== 0) {
-		await node.syncObject(object.id, vertices[0].nodeId);
+		await node.syncObject(object.id, sender);
 		object.merge(vertices);
 		node.objectStore.put(object.id, object);
 	}
