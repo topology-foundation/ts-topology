@@ -74,7 +74,7 @@ export async function topologyMessagesHandler(
 async function updateHandler(
 	node: TopologyNode,
 	data: Uint8Array,
-	senderPeerId: string,
+	sender: string,
 ) {
 	const updateMessage = NetworkPb.Update.decode(data);
 	const object = node.objectStore.get(updateMessage.objectId);
@@ -83,9 +83,7 @@ async function updateHandler(
 		return false;
 	}
 
-	await node.syncObject(updateMessage.objectId, senderPeerId);
-
-	object.merge(
+	const [merged, _] = object.merge(
 		updateMessage.vertices.map((v) => {
 			return {
 				hash: v.hash,
@@ -98,6 +96,10 @@ async function updateHandler(
 			};
 		}),
 	);
+
+	if (!merged) {
+		await node.syncObject(updateMessage.objectId, sender);
+	}
 
 	node.objectStore.put(object.id, object);
 
@@ -180,7 +182,6 @@ async function syncAcceptHandler(
 	});
 
 	if (vertices.length !== 0) {
-		await node.syncObject(object.id, sender);
 		object.merge(vertices);
 		node.objectStore.put(object.id, object);
 	}
