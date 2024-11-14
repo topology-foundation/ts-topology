@@ -22,11 +22,7 @@ import type {
 	Stream,
 	StreamHandler,
 } from "@libp2p/interface";
-import {
-	kadDHT,
-	removePrivateAddressesMapper,
-	removePublicAddressesMapper,
-} from "@libp2p/kad-dht";
+import { kadDHT, removePrivateAddressesMapper } from "@libp2p/kad-dht";
 import { webRTC, webRTCDirect } from "@libp2p/webrtc";
 import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
@@ -41,7 +37,6 @@ import { uint8ArrayToStream } from "./stream.js";
 export * from "./stream.js";
 
 let log: Logger;
-type PeerConnectionCallback = (peerId: CustomEvent<PeerId>) => void;
 
 // snake_casing to match the JSON config
 export interface TopologyNetworkNodeConfig {
@@ -51,8 +46,6 @@ export interface TopologyNetworkNodeConfig {
 	browser_metrics?: boolean;
 	private_key_seed?: string;
 	log_config?: LoggerOptions;
-	onPeerConnect?: PeerConnectionCallback;
-	onPeerDisconnect?: PeerConnectionCallback;
 }
 
 export class TopologyNetworkNode {
@@ -99,12 +92,9 @@ export class TopologyNetworkNode {
 			pubsub: gossipsub(),
 			dht: kadDHT({
 				protocol: "/topology/dht/1.0.0",
-				kBucketSize: this._config?.bootstrap ? 40 : 20,
-				clientMode: false,
-				peerInfoMapper: removePublicAddressesMapper,
-				querySelfInterval: 20000,
-				initialQuerySelfInterval: 10000,
-				allowQueryWithZeroPeers: false,
+				// both undefined and false should run client mode
+				clientMode: !this._config?.bootstrap,
+				peerInfoMapper: removePrivateAddressesMapper,
 			}),
 		};
 
@@ -158,11 +148,11 @@ export class TopologyNetworkNode {
 			this.peerId,
 		);
 
-		this._node.addEventListener("peer:connect", async (e) => {
+		this._node.addEventListener("peer:connect", (e) => {
 			log.info("::peer:connect", e.detail);
 		});
 
-		this._node.addEventListener("peer:disconnect", async (e) => {
+		this._node.addEventListener("peer:disconnect", (e) => {
 			log.info("::peer:disconnect", e.detail);
 		});
 
@@ -185,7 +175,7 @@ export class TopologyNetworkNode {
 
 			// Dial non-local multiaddrs, then WebRTC multiaddrs
 			for (const address of sortedAddrs) {
-				this._node?.dial(address);
+				await this._node?.dial(address);
 			}
 		});
 
