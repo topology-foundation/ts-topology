@@ -16,7 +16,7 @@ export async function compileWasm(path: string) {
 			readFile: (filename: string) => {
 				if (!fs.existsSync(filename)) return null;
 				return fs
-					.readFileSync(filename, "utf8")
+					.readFileSync(filename, "utf8") 
 					.replace(
 						"@topology-foundation/blueprints",
 						"@topology-foundation/blueprints/src/index.asc",
@@ -25,7 +25,7 @@ export async function compileWasm(path: string) {
 			writeFile: (
 				filename: string,
 				contents: string | Uint8Array,
-				baseDir: string,
+				baseDir: string, 
 			) => fs.writeFileSync(filename, contents),
 			listFiles: () => [],
 		},
