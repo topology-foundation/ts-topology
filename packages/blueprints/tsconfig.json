@@ -8,6 +8,6 @@
 			"path": "../object"
 		}
 	],
-	"include": ["src/**/*.ts"],
+	"include": ["src/**/*.ts", "../object/src/constants.ts"],
 	"exclude": ["src/**/*.asc.ts"]
 }
