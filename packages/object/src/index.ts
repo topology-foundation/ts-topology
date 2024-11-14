@@ -97,8 +97,7 @@ export class TopologyObject implements ITopologyObject {
 		this._notify("callFn", [serializedVertex]);
 	}
 
-	/*
-	 * Merges the vertices into the hashgraph
+	/* Merges the vertices into the hashgraph
 	 * Returns a tuple with a boolean indicating if there were
 	 * missing vertices and an array with the missing vertices
 	 */
