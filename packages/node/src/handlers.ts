@@ -156,7 +156,7 @@ function syncHandler(
   data: { id: string, operations: {nonce: string, fn: string, args: string[] }[] }
   operations array contain the full remote operations array
 */
-async function syncAcceptHandler(
+function syncAcceptHandler(
 	node: TopologyNode,
 	protocol: string,
 	sender: string,
