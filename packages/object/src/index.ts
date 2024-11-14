@@ -103,9 +103,7 @@ export class TopologyObject implements ITopologyObject {
 	 * @param synchronizeVertices - A callback to synchronize vertices if there is a dependency issue with the hashgraph
 	 * @returns void
 	 */
-	async merge(
-		vertices: Vertex[],
-	) {
+	async merge(vertices: Vertex[]) {
 		for (const vertex of vertices) {
 			// Check to avoid manually crafted `undefined` operations
 			if (!vertex.operation) {

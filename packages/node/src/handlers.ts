@@ -78,7 +78,10 @@ async function updateHandler(node: TopologyNode, data: Uint8Array) {
 		console.error("topology::node::updateHandler", "Object not found");
 		return false;
 	}
-	await node.syncObject(updateMessage.objectId, node.networkNode.peerId);
+	await node.syncObject(
+		updateMessage.objectId,
+		updateMessage.vertices[0].nodeId,
+	);
 	object.merge(
 		updateMessage.vertices.map((v) => {
 			return {
