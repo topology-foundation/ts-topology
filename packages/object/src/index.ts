@@ -99,25 +99,18 @@ export class TopologyObject implements ITopologyObject {
 
 	/*
 	 * Merges the given vertices into the object's hashgraph.
-	 * If `synchronizeVertices` is provided, it will be called for each vertex that cannot be merged due to a dependency issue.
 	 * @param vertices - The vertices to merge
 	 * @param synchronizeVertices - A callback to synchronize vertices if there is a dependency issue with the hashgraph
 	 * @returns void
 	 */
 	async merge(
 		vertices: Vertex[],
-		synchronizeVertices: (croId: string, nodeId: string) => void,
 	) {
 		for (const vertex of vertices) {
 			// Check to avoid manually crafted `undefined` operations
 			if (!vertex.operation) {
 				continue;
 			}
-			if (!this.hashGraph.checkDependencyInHashgraph(vertex.dependencies)) {
-				if (synchronizeVertices)
-					await synchronizeVertices(this.id, vertex.nodeId);
-			}
-
 			this.hashGraph.addVertex(
 				vertex.operation,
 				vertex.dependencies,

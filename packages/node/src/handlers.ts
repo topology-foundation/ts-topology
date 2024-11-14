@@ -71,13 +71,14 @@ export async function topologyMessagesHandler(
   data: { id: string, operations: {nonce: string, fn: string, args: string[] }[] }
   operations array doesn't contain the full remote operations array
 */
-function updateHandler(node: TopologyNode, data: Uint8Array) {
+async function updateHandler(node: TopologyNode, data: Uint8Array) {
 	const updateMessage = NetworkPb.Update.decode(data);
 	const object = node.objectStore.get(updateMessage.objectId);
 	if (!object) {
 		console.error("topology::node::updateHandler", "Object not found");
 		return false;
 	}
+	await node.syncObject(updateMessage.objectId, node.networkNode.peerId);
 	object.merge(
 		updateMessage.vertices.map((v) => {
 			return {
@@ -90,9 +91,6 @@ function updateHandler(node: TopologyNode, data: Uint8Array) {
 				dependencies: v.dependencies,
 			};
 		}),
-		async (croId: string, nodeId: string) => {
-			await node.syncObject(croId, nodeId);
-		},
 	);
 
 	node.objectStore.put(object.id, object);
@@ -150,7 +148,7 @@ function syncHandler(
   data: { id: string, operations: {nonce: string, fn: string, args: string[] }[] }
   operations array contain the full remote operations array
 */
-function syncAcceptHandler(
+async function syncAcceptHandler(
 	node: TopologyNode,
 	protocol: string,
 	sender: string,
@@ -176,9 +174,8 @@ function syncAcceptHandler(
 	});
 
 	if (vertices.length !== 0) {
-		object.merge(vertices, async (croId: string, nodeId: string) => {
-			await node.syncObject(croId, nodeId);
-		});
+		await node.syncObject(object.id, vertices[0].nodeId);
+		object.merge(vertices);
 		node.objectStore.put(object.id, object);
 	}
 

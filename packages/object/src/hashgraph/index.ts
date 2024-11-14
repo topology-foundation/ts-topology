@@ -118,16 +118,6 @@ export class HashGraph {
 		return vertex;
 	}
 
-	checkDependencyInHashgraph(deps: Hash[]): boolean {
-		if (
-			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
-		) {
-			return false;
-		}
-
-		return true;
-	}
-
 	addVertex(operation: Operation, deps: Hash[], nodeId: string): Hash {
 		const hash = computeHash(nodeId, operation, deps);
 		if (this.vertices.has(hash)) {
