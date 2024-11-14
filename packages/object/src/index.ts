@@ -106,7 +106,7 @@ export class TopologyObject implements ITopologyObject {
 	 */
 	async merge(
 		vertices: Vertex[],
-		synchronizeVertices?: (croId: string, nodeId: string) => void,
+		synchronizeVertices: (croId: string, nodeId: string) => void,
 	) {
 		for (const vertex of vertices) {
 			// Check to avoid manually crafted `undefined` operations
