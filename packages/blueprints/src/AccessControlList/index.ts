@@ -3,17 +3,17 @@ import {
 	type CRO,
 	type Operation,
 	type ResolveConflictsType,
+	Role,
 	SemanticsType,
 	type Vertex,
 } from "@topology-foundation/object";
-import { Role } from "@topology-foundation/object/src/constants.js";
 
 export class ACL implements CRO {
 	operations: string[] = ["grant", "revoke"];
 	roles: Map<string, number>;
 	semanticsType = SemanticsType.pair;
 
-	constructor(nodeIds: string[] | undefined) {
+	constructor(nodeIds?: string[] | undefined) {
 		this.roles = new Map<string, Role>();
 		if (nodeIds) {
 			for (const nodeId of nodeIds) {

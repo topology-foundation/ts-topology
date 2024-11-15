@@ -25,6 +25,12 @@ export enum OperationType {
 	NOP = "-1",
 }
 
+export enum Role {
+	NONE = 0,
+	GUEST = 1,
+	ADMIN = 2,
+}
+
 export enum ActionType {
 	DropLeft = 0,
 	DropRight = 1,

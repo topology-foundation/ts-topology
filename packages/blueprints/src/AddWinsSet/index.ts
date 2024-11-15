@@ -6,14 +6,17 @@ import {
 	SemanticsType,
 	type Vertex,
 } from "@topology-foundation/object";
+import { ACL } from "../AccessControlList/index.js";
 
 export class AddWinsSet<T> implements CRO {
-	operations: string[] = ["add", "remove"];
+	operations: string[] = ["add", "remove", "grant", "revoke"];
 	state: Map<T, boolean>;
 	semanticsType = SemanticsType.pair;
+	accessControlList: ACL;
 
-	constructor() {
+	constructor(nodeIds?: string[] | undefined) {
 		this.state = new Map<T, boolean>();
+		this.accessControlList = new ACL(nodeIds);
 	}
 
 	private _add(value: T): void {
@@ -51,9 +54,24 @@ export class AddWinsSet<T> implements CRO {
 			vertices[0].operation?.type !== vertices[1].operation?.type &&
 			vertices[0].operation?.value === vertices[1].operation?.value
 		) {
-			return vertices[0].operation.type === "add"
-				? { action: ActionType.DropRight }
-				: { action: ActionType.DropLeft };
+			const vertex0Type =
+				vertices[0].operation.type === "add" ||
+				vertices[0].operation.type === "remove";
+			const vertex1Type =
+				vertices[1].operation.type === "add" ||
+				vertices[1].operation.type === "remove";
+
+			if (vertex0Type !== vertex1Type) {
+				return { action: ActionType.Nop };
+			}
+
+			if (vertex0Type) {
+				return vertices[0].operation.type === "add"
+					? { action: ActionType.DropRight }
+					: { action: ActionType.DropLeft };
+			}
+
+			return this.accessControlList.resolveConflicts(vertices);
 		}
 		return { action: ActionType.Nop };
 	}
@@ -61,6 +79,7 @@ export class AddWinsSet<T> implements CRO {
 	// merged at HG level and called as a callback
 	mergeCallback(operations: Operation[]): void {
 		this.state = new Map<T, boolean>();
+		const aclOperations: Operation[] = [];
 		for (const op of operations) {
 			switch (op.type) {
 				case "add":
@@ -69,9 +88,17 @@ export class AddWinsSet<T> implements CRO {
 				case "remove":
 					if (op.value !== null) this._remove(op.value);
 					break;
+				case "grant":
+					aclOperations.push(op);
+					break;
+				case "revoke":
+					aclOperations.push(op);
+					break;
 				default:
 					break;
 			}
 		}
+
+		this.accessControlList.mergeCallback(aclOperations);
 	}
 }
