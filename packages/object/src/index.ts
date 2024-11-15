@@ -11,11 +11,26 @@ import * as ObjectPb from "./proto/topology/object/object_pb.js";
 export * as ObjectPb from "./proto/topology/object/object_pb.js";
 export * from "./hashgraph/index.js";
 
+// biome-ignore lint:
+type ElementsState = Map<any, any>;
+
 export interface CRO {
 	operations: string[];
 	semanticsType: SemanticsType;
+	elementsState: ElementsState;
+	// mapping from vertices to state of the CRO at that point
+	states: Map<string, CROState>; 
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
 	mergeCallback: (operations: Operation[]) => void;
+}
+
+export class CROState {
+	elementsState: ElementsState;
+	// ACL in the future
+
+	constructor(elementsState: ElementsState = new Map()) {
+		this.elementsState = elementsState;
+	}
 }
 
 export type TopologyObjectCallback = (

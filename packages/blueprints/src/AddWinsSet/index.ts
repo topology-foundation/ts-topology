@@ -1,6 +1,7 @@
 import {
 	ActionType,
 	type CRO,
+	type CROState,
 	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
@@ -9,15 +10,17 @@ import {
 
 export class AddWinsSet<T> implements CRO {
 	operations: string[] = ["add", "remove"];
-	state: Map<T, boolean>;
 	semanticsType = SemanticsType.pair;
+	elementsState: Map<T, boolean>;
+	states: Map<string, CROState>;
 
 	constructor() {
-		this.state = new Map<T, boolean>();
+		this.elementsState = new Map<T, boolean>();
+		this.states = new Map<string, CROState>();
 	}
 
 	private _add(value: T): void {
-		if (!this.state.get(value)) this.state.set(value, true);
+		if (!this.elementsState.get(value)) this.elementsState.set(value, true);
 	}
 
 	add(value: T): void {
@@ -25,7 +28,7 @@ export class AddWinsSet<T> implements CRO {
 	}
 
 	private _remove(value: T): void {
-		if (this.state.get(value)) this.state.set(value, false);
+		if (this.elementsState.get(value)) this.elementsState.set(value, false);
 	}
 
 	remove(value: T): void {
@@ -33,11 +36,11 @@ export class AddWinsSet<T> implements CRO {
 	}
 
 	contains(value: T): boolean {
-		return this.state.get(value) === true;
+		return this.elementsState.get(value) === true;
 	}
 
 	values(): T[] {
-		return Array.from(this.state.entries())
+		return Array.from(this.elementsState.entries())
 			.filter(([_, exists]) => exists)
 			.map(([value, _]) => value);
 	}
@@ -60,7 +63,7 @@ export class AddWinsSet<T> implements CRO {
 
 	// merged at HG level and called as a callback
 	mergeCallback(operations: Operation[]): void {
-		this.state = new Map<T, boolean>();
+		this.elementsState = new Map<T, boolean>();
 		for (const op of operations) {
 			switch (op.type) {
 				case "add":
