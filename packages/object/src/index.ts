@@ -97,18 +97,27 @@ export class TopologyObject implements ITopologyObject {
 		this._notify("callFn", [serializedVertex]);
 	}
 
-	merge(vertices: Vertex[]) {
+	/* Merges the vertices into the hashgraph
+	 * Returns a tuple with a boolean indicating if there were
+	 * missing vertices and an array with the missing vertices
+	 */
+	merge(vertices: Vertex[]): [merged: boolean, missing: string[]] {
+		const missing = [];
 		for (const vertex of vertices) {
 			// Check to avoid manually crafted `undefined` operations
 			if (!vertex.operation) {
 				continue;
 			}
 
-			this.hashGraph.addVertex(
-				vertex.operation,
-				vertex.dependencies,
-				vertex.nodeId,
-			);
+			try {
+				this.hashGraph.addVertex(
+					vertex.operation,
+					vertex.dependencies,
+					vertex.nodeId,
+				);
+			} catch (e) {
+				missing.push(vertex.hash);
+			}
 		}
 
 		const operations = this.hashGraph.linearizeOperations();
@@ -116,6 +125,8 @@ export class TopologyObject implements ITopologyObject {
 
 		(this.cro as CRO).mergeCallback(operations);
 		this._notify("merge", this.vertices);
+
+		return [missing.length === 0, missing];
 	}
 
 	subscribe(callback: TopologyObjectCallback) {

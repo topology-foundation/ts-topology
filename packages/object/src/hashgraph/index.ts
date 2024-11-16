@@ -118,18 +118,20 @@ export class HashGraph {
 		return vertex;
 	}
 
+	/* Add a vertex to the hashgraph with the given operation and dependencies.
+	 * If the vertex already exists, return the hash of the existing vertex.
+	 * Throws an error if any of the dependencies are not present in the hashgraph.
+	 */
 	addVertex(operation: Operation, deps: Hash[], nodeId: string): Hash {
 		const hash = computeHash(nodeId, operation, deps);
 		if (this.vertices.has(hash)) {
 			return hash; // Vertex already exists
 		}
 
-		// Temporary fix: don't add the vertex if the dependencies are not present in the local HG.
 		if (
 			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
 		) {
-			console.error("Invalid dependency detected.");
-			return "";
+			throw new Error("Invalid dependency detected.");
 		}
 
 		const vertex: Vertex = {
