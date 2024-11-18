@@ -19,24 +19,20 @@ jobs:
   generate-matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.examples }}
+      matrix: ${{ steps.list-examples.outputs.examples }}
     steps:
       - uses: actions/checkout@v4
       - name: List examples
         id: list-examples
         run: |
           echo "examples=$(ls -d examples/*/ | xargs -n 1 basename | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
-      - name: Set Matrix
-        id: set-matrix
-        run: |
-          echo "examples=${{ steps.list-examples.outputs.examples }}" >> $GITHUB_OUTPUT
 
   build-examples:
     needs: generate-matrix
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        examples: ${{ fromJSON(needs.generate-matrix.outputs.examples) }}
+        example: ${{ fromJSON(needs.generate-matrix.outputs.examples) }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
