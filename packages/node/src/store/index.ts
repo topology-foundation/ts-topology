@@ -1,4 +1,4 @@
-import type { DRPObject } from "@topology-foundation/object";
+import type { DRPObject } from "@ts-drp/object";
 
 export type DRPObjectStoreCallback = (
 	objectId: string,

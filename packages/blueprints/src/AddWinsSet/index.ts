@@ -1,13 +1,13 @@
 import {
 	ActionType,
-	type CRO,
+	type DRP,
 	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
-} from "@topology-foundation/object";
+} from "@ts-drp/object";
 
-export class AddWinsSet<T> implements CRO {
+export class AddWinsSet<T> implements DRP {
 	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
 	semanticsType = SemanticsType.pair;

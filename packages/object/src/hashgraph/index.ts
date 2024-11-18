@@ -1,11 +1,11 @@
 import * as crypto from "node:crypto";
-import { Logger } from "@topology-foundation/logger";
+import { Logger } from "@ts-drp/logger";
 import { linearizeMultiple } from "../linearize/multipleSemantics.js";
 import { linearizePair } from "../linearize/pairSemantics.js";
 import {
 	Vertex_Operation as Operation,
 	Vertex,
-} from "../proto/topology/object/object_pb.js";
+} from "../proto/drp/object/v1/object_pb.js";
 import { BitSet } from "./bitset.js";
 
 const log: Logger = new Logger("hashgraph");

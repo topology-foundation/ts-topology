@@ -1,4 +1,4 @@
-# Conflict-free Replicated Objects (CROs)
+# DRP Objects
 
 This package provides a simple implementation of Conflict-free Replicated Objects (CROs) as defined in the Topology Protocol. CROs are a type of composable object that can be replicated across multiple nodes in a network, and can be updated concurrently by multiple clients without the need for coordination.
 
@@ -9,9 +9,5 @@ This package is intended to implement a basic abstract class that can be extende
 For starting, you can install it using:
 
 ```bash
-# yarn
-yarn add @topology-foundation/object
-
-# npm
-npm install @topology-foundation/object
+pnpm install @ts-drp/object
 ```

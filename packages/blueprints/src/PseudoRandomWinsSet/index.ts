@@ -1,13 +1,13 @@
 import { Smush32 } from "@thi.ng/random";
 import {
 	ActionType,
-	type CRO,
+	type DRP,
 	type Hash,
 	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
-} from "@topology-foundation/object";
+} from "@ts-drp/object";
 
 const MOD = 1e9 + 9;
 
@@ -21,12 +21,12 @@ function computeHash(s: string): number {
 	return hash;
 }
 
-/* 	
+/*
 	Example implementation of multi-vertex semantics that uses the reduce action type.
 	An arbitrary number of concurrent operations can be reduced to a single operation.
 	The winning operation is chosen using a pseudo-random number generator.
 */
-export class PseudoRandomWinsSet<T> implements CRO {
+export class PseudoRandomWinsSet<T> implements DRP {
 	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
 	semanticsType = SemanticsType.multiple;

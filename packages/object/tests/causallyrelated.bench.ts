@@ -1,34 +1,34 @@
 import { bench, describe } from "vitest";
 import { AddWinsSet } from "../../blueprints/src/AddWinsSet/index.js";
-import { type Hash, TopologyObject } from "../src/index.js";
+import { type Hash, DRPObject } from "../src/index.js";
 
 describe("AreCausallyDependent benchmark", async () => {
 	const samples = 100000;
 	const tests: Hash[][] = [];
 
-	const obj1 = new TopologyObject("peer1", new AddWinsSet<number>());
-	const obj2 = new TopologyObject("peer2", new AddWinsSet<number>());
-	const obj3 = new TopologyObject("peer3", new AddWinsSet<number>());
+	const obj1 = new DRPObject("peer1", new AddWinsSet<number>());
+	const obj2 = new DRPObject("peer2", new AddWinsSet<number>());
+	const obj3 = new DRPObject("peer3", new AddWinsSet<number>());
 
-	const cro1 = obj1.cro as AddWinsSet<number>;
-	const cro2 = obj2.cro as AddWinsSet<number>;
-	const cro3 = obj3.cro as AddWinsSet<number>;
+	const drp1 = obj1.drp as AddWinsSet<number>;
+	const drp2 = obj2.drp as AddWinsSet<number>;
+	const drp3 = obj3.drp as AddWinsSet<number>;
 
-	cro1.add(1);
+	drp1.add(1);
 	obj2.merge(obj1.hashGraph.getAllVertices());
 
-	cro1.add(1);
-	cro1.remove(2);
-	cro2.remove(2);
-	cro2.add(2);
+	drp1.add(1);
+	drp1.remove(2);
+	drp2.remove(2);
+	drp2.add(2);
 
 	obj3.merge(obj1.hashGraph.getAllVertices());
-	cro3.add(3);
-	cro1.remove(1);
+	drp3.add(3);
+	drp1.remove(1);
 
 	obj1.merge(obj2.hashGraph.getAllVertices());
-	cro1.remove(3);
-	cro2.remove(1);
+	drp1.remove(3);
+	drp2.remove(1);
 
 	obj1.merge(obj2.hashGraph.getAllVertices());
 	obj1.merge(obj3.hashGraph.getAllVertices());

@@ -1,10 +1,7 @@
-import { NetworkPb } from "@topology-foundation/network";
-import { ObjectPb, type TopologyObject } from "@topology-foundation/object";
-import {
-	topologyMessagesHandler,
-	topologyObjectChangesHandler,
-} from "./handlers.js";
-import type { TopologyNode } from "./index.js";
+import { NetworkPb } from "@ts-drp/network";
+import { ObjectPb, type DRPObject } from "@ts-drp/object";
+import { drpMessagesHandler, drpObjectChangesHandler } from "./handlers.js";
+import type { DRPNode } from "./index.js";
 
 /* Object operations */
 enum OPERATIONS {
@@ -21,23 +18,23 @@ enum OPERATIONS {
 	SYNC = 4,
 }
 
-export function createObject(node: TopologyNode, object: TopologyObject) {
+export function createObject(node: DRPNode, object: DRPObject) {
 	node.objectStore.put(object.id, object);
 	object.subscribe((obj, originFn, vertices) =>
-		topologyObjectChangesHandler(node, obj, originFn, vertices),
+		drpObjectChangesHandler(node, obj, originFn, vertices),
 	);
 }
 
 /* data: { id: string } */
-export async function subscribeObject(node: TopologyNode, objectId: string) {
+export async function subscribeObject(node: DRPNode, objectId: string) {
 	node.networkNode.subscribe(objectId);
 	node.networkNode.addGroupMessageHandler(objectId, async (e) =>
-		topologyMessagesHandler(node, undefined, e.detail.msg.data),
+		drpMessagesHandler(node, undefined, e.detail.msg.data),
 	);
 }
 
 export function unsubscribeObject(
-	node: TopologyNode,
+	node: DRPNode,
 	objectId: string,
 	purge?: boolean,
 ) {
@@ -49,11 +46,11 @@ export function unsubscribeObject(
   data: { vertex_hashes: string[] }
 */
 export async function syncObject(
-	node: TopologyNode,
+	node: DRPNode,
 	objectId: string,
 	peerId?: string,
 ) {
-	const object: TopologyObject | undefined = node.objectStore.get(objectId);
+	const object: DRPObject | undefined = node.objectStore.get(objectId);
 	if (!object) {
 		console.error("topology::node::syncObject", "Object not found");
 		return;
@@ -64,21 +61,13 @@ export async function syncObject(
 	});
 	const message = NetworkPb.Message.create({
 		sender: node.networkNode.peerId,
-		type: NetworkPb.Message_MessageType.SYNC,
+		type: NetworkPb.MessageType.MESSAGE_TYPE_SYNC,
 		data: NetworkPb.Sync.encode(data).finish(),
 	});
 
 	if (!peerId) {
-		await node.networkNode.sendGroupMessageRandomPeer(
-			objectId,
-			["/topology/message/0.0.1"],
-			message,
-		);
+		await node.networkNode.sendGroupMessageRandomPeer(objectId, message);
 	} else {
-		await node.networkNode.sendMessage(
-			peerId,
-			["/topology/message/0.0.1"],
-			message,
-		);
+		await node.networkNode.sendMessage(peerId, message);
 	}
 }

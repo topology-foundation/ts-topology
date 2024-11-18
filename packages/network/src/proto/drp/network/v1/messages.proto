@@ -20,7 +20,7 @@ message Message {
 
 message Update {
   string object_id = 1;
-  repeated topology.object.v1.Vertex vertices = 2;
+  repeated drp.object.v1.Vertex vertices = 2;
 }
 
 message Sync {
@@ -30,7 +30,7 @@ message Sync {
 
 message SyncAccept {
   string object_id = 1;
-  repeated topology.object.v1.Vertex requested = 2;
+  repeated drp.object.v1.Vertex requested = 2;
   repeated string requesting = 3;
 }
 

@@ -3,17 +3,15 @@
 	"version": "0.3.1",
 	"license": "MIT",
 	"scripts": {
-		"asbuild": "asc --config asconfig.json --target release",
 		"build": "vite build",
 		"clean": "rm -rf dist/ node_modules/",
 		"dev": "vite serve",
 		"start": "ts-node ./src/index.ts"
 	},
 	"dependencies": {
-		"@topology-foundation/network": "0.3.1",
-		"@topology-foundation/node": "0.3.1",
-		"@topology-foundation/object": "0.3.1",
-		"assemblyscript": "^0.27.29",
+		"@ts-drp/network": "0.3.1",
+		"@ts-drp/node": "0.3.1",
+		"@ts-drp/object": "0.3.1",
 		"crypto-browserify": "^3.12.0",
 		"memfs": "^4.11.1",
 		"process": "^0.11.10",

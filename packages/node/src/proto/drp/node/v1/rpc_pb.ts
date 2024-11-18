@@ -9,49 +9,49 @@ import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export const protobufPackage = "topology.node";
 
-export interface SubscribeCroRequest {
-	croId: string;
+export interface SubscribeDRPRequest {
+	drpId: string;
 }
 
-export interface SubscribeCroResponse {
+export interface SubscribeDRPResponse {
 	/** can return error codes if different than 0 */
 	returnCode: number;
 }
 
-export interface UnsubscribeCroRequest {
-	croId: string;
+export interface UnsubscribeDRPRequest {
+	drpId: string;
 }
 
-export interface UnsubscribeCroResponse {
+export interface UnsubscribeDRPResponse {
 	/** can return error codes if different than 0 */
 	returnCode: number;
 }
 
-export interface GetCroHashGraphRequest {
-	croId: string;
+export interface GetDRPHashGraphRequest {
+	drpId: string;
 }
 
-export interface GetCroHashGraphResponse {
+export interface GetDRPHashGraphResponse {
 	/** linearized vertices hashes */
 	verticesHashes: string[];
 }
 
-function createBaseSubscribeCroRequest(): SubscribeCroRequest {
-	return { croId: "" };
+function createBaseSubscribeDRPRequest(): SubscribeDRPRequest {
+	return { drpId: "" };
 }
 
-export const SubscribeCroRequest = {
-	encode(message: SubscribeCroRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-		if (message.croId !== "") {
-			writer.uint32(10).string(message.croId);
+export const SubscribeDRPRequest = {
+	encode(message: SubscribeDRPRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+		if (message.drpId !== "") {
+			writer.uint32(10).string(message.drpId);
 		}
 		return writer;
 	},
 
-	decode(input: BinaryReader | Uint8Array, length?: number): SubscribeCroRequest {
+	decode(input: BinaryReader | Uint8Array, length?: number): SubscribeDRPRequest {
 		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
 		let end = length === undefined ? reader.len : reader.pos + length;
-		const message = createBaseSubscribeCroRequest();
+		const message = createBaseSubscribeDRPRequest();
 		while (reader.pos < end) {
 			const tag = reader.uint32();
 			switch (tag >>> 3) {
@@ -60,7 +60,7 @@ export const SubscribeCroRequest = {
 						break;
 					}
 
-					message.croId = reader.string();
+					message.drpId = reader.string();
 					continue;
 			}
 			if ((tag & 7) === 4 || tag === 0) {
@@ -71,44 +71,44 @@ export const SubscribeCroRequest = {
 		return message;
 	},
 
-	fromJSON(object: any): SubscribeCroRequest {
-		return { croId: isSet(object.croId) ? globalThis.String(object.croId) : "" };
+	fromJSON(object: any): SubscribeDRPRequest {
+		return { drpId: isSet(object.drpId) ? globalThis.String(object.drpId) : "" };
 	},
 
-	toJSON(message: SubscribeCroRequest): unknown {
+	toJSON(message: SubscribeDRPRequest): unknown {
 		const obj: any = {};
-		if (message.croId !== "") {
-			obj.croId = message.croId;
+		if (message.drpId !== "") {
+			obj.drpId = message.drpId;
 		}
 		return obj;
 	},
 
-	create<I extends Exact<DeepPartial<SubscribeCroRequest>, I>>(base?: I): SubscribeCroRequest {
-		return SubscribeCroRequest.fromPartial(base ?? ({} as any));
+	create<I extends Exact<DeepPartial<SubscribeDRPRequest>, I>>(base?: I): SubscribeDRPRequest {
+		return SubscribeDRPRequest.fromPartial(base ?? ({} as any));
 	},
-	fromPartial<I extends Exact<DeepPartial<SubscribeCroRequest>, I>>(object: I): SubscribeCroRequest {
-		const message = createBaseSubscribeCroRequest();
-		message.croId = object.croId ?? "";
+	fromPartial<I extends Exact<DeepPartial<SubscribeDRPRequest>, I>>(object: I): SubscribeDRPRequest {
+		const message = createBaseSubscribeDRPRequest();
+		message.drpId = object.drpId ?? "";
 		return message;
 	},
 };
 
-function createBaseSubscribeCroResponse(): SubscribeCroResponse {
+function createBaseSubscribeDRPResponse(): SubscribeDRPResponse {
 	return { returnCode: 0 };
 }
 
-export const SubscribeCroResponse = {
-	encode(message: SubscribeCroResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const SubscribeDRPResponse = {
+	encode(message: SubscribeDRPResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
 		if (message.returnCode !== 0) {
 			writer.uint32(8).int32(message.returnCode);
 		}
 		return writer;
 	},
 
-	decode(input: BinaryReader | Uint8Array, length?: number): SubscribeCroResponse {
+	decode(input: BinaryReader | Uint8Array, length?: number): SubscribeDRPResponse {
 		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
 		let end = length === undefined ? reader.len : reader.pos + length;
-		const message = createBaseSubscribeCroResponse();
+		const message = createBaseSubscribeDRPResponse();
 		while (reader.pos < end) {
 			const tag = reader.uint32();
 			switch (tag >>> 3) {
@@ -128,11 +128,11 @@ export const SubscribeCroResponse = {
 		return message;
 	},
 
-	fromJSON(object: any): SubscribeCroResponse {
+	fromJSON(object: any): SubscribeDRPResponse {
 		return { returnCode: isSet(object.returnCode) ? globalThis.Number(object.returnCode) : 0 };
 	},
 
-	toJSON(message: SubscribeCroResponse): unknown {
+	toJSON(message: SubscribeDRPResponse): unknown {
 		const obj: any = {};
 		if (message.returnCode !== 0) {
 			obj.returnCode = Math.round(message.returnCode);
@@ -140,32 +140,32 @@ export const SubscribeCroResponse = {
 		return obj;
 	},
 
-	create<I extends Exact<DeepPartial<SubscribeCroResponse>, I>>(base?: I): SubscribeCroResponse {
-		return SubscribeCroResponse.fromPartial(base ?? ({} as any));
+	create<I extends Exact<DeepPartial<SubscribeDRPResponse>, I>>(base?: I): SubscribeDRPResponse {
+		return SubscribeDRPResponse.fromPartial(base ?? ({} as any));
 	},
-	fromPartial<I extends Exact<DeepPartial<SubscribeCroResponse>, I>>(object: I): SubscribeCroResponse {
-		const message = createBaseSubscribeCroResponse();
+	fromPartial<I extends Exact<DeepPartial<SubscribeDRPResponse>, I>>(object: I): SubscribeDRPResponse {
+		const message = createBaseSubscribeDRPResponse();
 		message.returnCode = object.returnCode ?? 0;
 		return message;
 	},
 };
 
-function createBaseUnsubscribeCroRequest(): UnsubscribeCroRequest {
-	return { croId: "" };
+function createBaseUnsubscribeDRPRequest(): UnsubscribeDRPRequest {
+	return { drpId: "" };
 }
 
-export const UnsubscribeCroRequest = {
-	encode(message: UnsubscribeCroRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-		if (message.croId !== "") {
-			writer.uint32(10).string(message.croId);
+export const UnsubscribeDRPRequest = {
+	encode(message: UnsubscribeDRPRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+		if (message.drpId !== "") {
+			writer.uint32(10).string(message.drpId);
 		}
 		return writer;
 	},
 
-	decode(input: BinaryReader | Uint8Array, length?: number): UnsubscribeCroRequest {
+	decode(input: BinaryReader | Uint8Array, length?: number): UnsubscribeDRPRequest {
 		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
 		let end = length === undefined ? reader.len : reader.pos + length;
-		const message = createBaseUnsubscribeCroRequest();
+		const message = createBaseUnsubscribeDRPRequest();
 		while (reader.pos < end) {
 			const tag = reader.uint32();
 			switch (tag >>> 3) {
@@ -174,7 +174,7 @@ export const UnsubscribeCroRequest = {
 						break;
 					}
 
-					message.croId = reader.string();
+					message.drpId = reader.string();
 					continue;
 			}
 			if ((tag & 7) === 4 || tag === 0) {
@@ -185,44 +185,44 @@ export const UnsubscribeCroRequest = {
 		return message;
 	},
 
-	fromJSON(object: any): UnsubscribeCroRequest {
-		return { croId: isSet(object.croId) ? globalThis.String(object.croId) : "" };
+	fromJSON(object: any): UnsubscribeDRPRequest {
+		return { drpId: isSet(object.drpId) ? globalThis.String(object.drpId) : "" };
 	},
 
-	toJSON(message: UnsubscribeCroRequest): unknown {
+	toJSON(message: UnsubscribeDRPRequest): unknown {
 		const obj: any = {};
-		if (message.croId !== "") {
-			obj.croId = message.croId;
+		if (message.drpId !== "") {
+			obj.drpId = message.drpId;
 		}
 		return obj;
 	},
 
-	create<I extends Exact<DeepPartial<UnsubscribeCroRequest>, I>>(base?: I): UnsubscribeCroRequest {
-		return UnsubscribeCroRequest.fromPartial(base ?? ({} as any));
+	create<I extends Exact<DeepPartial<UnsubscribeDRPRequest>, I>>(base?: I): UnsubscribeDRPRequest {
+		return UnsubscribeDRPRequest.fromPartial(base ?? ({} as any));
 	},
-	fromPartial<I extends Exact<DeepPartial<UnsubscribeCroRequest>, I>>(object: I): UnsubscribeCroRequest {
-		const message = createBaseUnsubscribeCroRequest();
-		message.croId = object.croId ?? "";
+	fromPartial<I extends Exact<DeepPartial<UnsubscribeDRPRequest>, I>>(object: I): UnsubscribeDRPRequest {
+		const message = createBaseUnsubscribeDRPRequest();
+		message.drpId = object.drpId ?? "";
 		return message;
 	},
 };
 
-function createBaseUnsubscribeCroResponse(): UnsubscribeCroResponse {
+function createBaseUnsubscribeDRPResponse(): UnsubscribeDRPResponse {
 	return { returnCode: 0 };
 }
 
-export const UnsubscribeCroResponse = {
-	encode(message: UnsubscribeCroResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const UnsubscribeDRPResponse = {
+	encode(message: UnsubscribeDRPResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
 		if (message.returnCode !== 0) {
 			writer.uint32(8).int32(message.returnCode);
 		}
 		return writer;
 	},
 
-	decode(input: BinaryReader | Uint8Array, length?: number): UnsubscribeCroResponse {
+	decode(input: BinaryReader | Uint8Array, length?: number): UnsubscribeDRPResponse {
 		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
 		let end = length === undefined ? reader.len : reader.pos + length;
-		const message = createBaseUnsubscribeCroResponse();
+		const message = createBaseUnsubscribeDRPResponse();
 		while (reader.pos < end) {
 			const tag = reader.uint32();
 			switch (tag >>> 3) {
@@ -242,11 +242,11 @@ export const UnsubscribeCroResponse = {
 		return message;
 	},
 
-	fromJSON(object: any): UnsubscribeCroResponse {
+	fromJSON(object: any): UnsubscribeDRPResponse {
 		return { returnCode: isSet(object.returnCode) ? globalThis.Number(object.returnCode) : 0 };
 	},
 
-	toJSON(message: UnsubscribeCroResponse): unknown {
+	toJSON(message: UnsubscribeDRPResponse): unknown {
 		const obj: any = {};
 		if (message.returnCode !== 0) {
 			obj.returnCode = Math.round(message.returnCode);
@@ -254,32 +254,32 @@ export const UnsubscribeCroResponse = {
 		return obj;
 	},
 
-	create<I extends Exact<DeepPartial<UnsubscribeCroResponse>, I>>(base?: I): UnsubscribeCroResponse {
-		return UnsubscribeCroResponse.fromPartial(base ?? ({} as any));
+	create<I extends Exact<DeepPartial<UnsubscribeDRPResponse>, I>>(base?: I): UnsubscribeDRPResponse {
+		return UnsubscribeDRPResponse.fromPartial(base ?? ({} as any));
 	},
-	fromPartial<I extends Exact<DeepPartial<UnsubscribeCroResponse>, I>>(object: I): UnsubscribeCroResponse {
-		const message = createBaseUnsubscribeCroResponse();
+	fromPartial<I extends Exact<DeepPartial<UnsubscribeDRPResponse>, I>>(object: I): UnsubscribeDRPResponse {
+		const message = createBaseUnsubscribeDRPResponse();
 		message.returnCode = object.returnCode ?? 0;
 		return message;
 	},
 };
 
-function createBaseGetCroHashGraphRequest(): GetCroHashGraphRequest {
-	return { croId: "" };
+function createBaseGetDRPHashGraphRequest(): GetDRPHashGraphRequest {
+	return { drpId: "" };
 }
 
-export const GetCroHashGraphRequest = {
-	encode(message: GetCroHashGraphRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-		if (message.croId !== "") {
-			writer.uint32(10).string(message.croId);
+export const GetDRPHashGraphRequest = {
+	encode(message: GetDRPHashGraphRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+		if (message.drpId !== "") {
+			writer.uint32(10).string(message.drpId);
 		}
 		return writer;
 	},
 
-	decode(input: BinaryReader | Uint8Array, length?: number): GetCroHashGraphRequest {
+	decode(input: BinaryReader | Uint8Array, length?: number): GetDRPHashGraphRequest {
 		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
 		let end = length === undefined ? reader.len : reader.pos + length;
-		const message = createBaseGetCroHashGraphRequest();
+		const message = createBaseGetDRPHashGraphRequest();
 		while (reader.pos < end) {
 			const tag = reader.uint32();
 			switch (tag >>> 3) {
@@ -288,7 +288,7 @@ export const GetCroHashGraphRequest = {
 						break;
 					}
 
-					message.croId = reader.string();
+					message.drpId = reader.string();
 					continue;
 			}
 			if ((tag & 7) === 4 || tag === 0) {
@@ -299,44 +299,44 @@ export const GetCroHashGraphRequest = {
 		return message;
 	},
 
-	fromJSON(object: any): GetCroHashGraphRequest {
-		return { croId: isSet(object.croId) ? globalThis.String(object.croId) : "" };
+	fromJSON(object: any): GetDRPHashGraphRequest {
+		return { drpId: isSet(object.drpId) ? globalThis.String(object.drpId) : "" };
 	},
 
-	toJSON(message: GetCroHashGraphRequest): unknown {
+	toJSON(message: GetDRPHashGraphRequest): unknown {
 		const obj: any = {};
-		if (message.croId !== "") {
-			obj.croId = message.croId;
+		if (message.drpId !== "") {
+			obj.drpId = message.drpId;
 		}
 		return obj;
 	},
 
-	create<I extends Exact<DeepPartial<GetCroHashGraphRequest>, I>>(base?: I): GetCroHashGraphRequest {
-		return GetCroHashGraphRequest.fromPartial(base ?? ({} as any));
+	create<I extends Exact<DeepPartial<GetDRPHashGraphRequest>, I>>(base?: I): GetDRPHashGraphRequest {
+		return GetDRPHashGraphRequest.fromPartial(base ?? ({} as any));
 	},
-	fromPartial<I extends Exact<DeepPartial<GetCroHashGraphRequest>, I>>(object: I): GetCroHashGraphRequest {
-		const message = createBaseGetCroHashGraphRequest();
-		message.croId = object.croId ?? "";
+	fromPartial<I extends Exact<DeepPartial<GetDRPHashGraphRequest>, I>>(object: I): GetDRPHashGraphRequest {
+		const message = createBaseGetDRPHashGraphRequest();
+		message.drpId = object.drpId ?? "";
 		return message;
 	},
 };
 
-function createBaseGetCroHashGraphResponse(): GetCroHashGraphResponse {
+function createBaseGetDRPHashGraphResponse(): GetDRPHashGraphResponse {
 	return { verticesHashes: [] };
 }
 
-export const GetCroHashGraphResponse = {
-	encode(message: GetCroHashGraphResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const GetDRPHashGraphResponse = {
+	encode(message: GetDRPHashGraphResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
 		for (const v of message.verticesHashes) {
 			writer.uint32(10).string(v!);
 		}
 		return writer;
 	},
 
-	decode(input: BinaryReader | Uint8Array, length?: number): GetCroHashGraphResponse {
+	decode(input: BinaryReader | Uint8Array, length?: number): GetDRPHashGraphResponse {
 		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
 		let end = length === undefined ? reader.len : reader.pos + length;
-		const message = createBaseGetCroHashGraphResponse();
+		const message = createBaseGetDRPHashGraphResponse();
 		while (reader.pos < end) {
 			const tag = reader.uint32();
 			switch (tag >>> 3) {
@@ -356,7 +356,7 @@ export const GetCroHashGraphResponse = {
 		return message;
 	},
 
-	fromJSON(object: any): GetCroHashGraphResponse {
+	fromJSON(object: any): GetDRPHashGraphResponse {
 		return {
 			verticesHashes: globalThis.Array.isArray(object?.verticesHashes)
 				? object.verticesHashes.map((e: any) => globalThis.String(e))
@@ -364,7 +364,7 @@ export const GetCroHashGraphResponse = {
 		};
 	},
 
-	toJSON(message: GetCroHashGraphResponse): unknown {
+	toJSON(message: GetDRPHashGraphResponse): unknown {
 		const obj: any = {};
 		if (message.verticesHashes?.length) {
 			obj.verticesHashes = message.verticesHashes;
@@ -372,20 +372,20 @@ export const GetCroHashGraphResponse = {
 		return obj;
 	},
 
-	create<I extends Exact<DeepPartial<GetCroHashGraphResponse>, I>>(base?: I): GetCroHashGraphResponse {
-		return GetCroHashGraphResponse.fromPartial(base ?? ({} as any));
+	create<I extends Exact<DeepPartial<GetDRPHashGraphResponse>, I>>(base?: I): GetDRPHashGraphResponse {
+		return GetDRPHashGraphResponse.fromPartial(base ?? ({} as any));
 	},
-	fromPartial<I extends Exact<DeepPartial<GetCroHashGraphResponse>, I>>(object: I): GetCroHashGraphResponse {
-		const message = createBaseGetCroHashGraphResponse();
+	fromPartial<I extends Exact<DeepPartial<GetDRPHashGraphResponse>, I>>(object: I): GetDRPHashGraphResponse {
+		const message = createBaseGetDRPHashGraphResponse();
 		message.verticesHashes = object.verticesHashes?.map((e) => e) || [];
 		return message;
 	},
 };
 
 export interface TopologyRpc {
-	subscribeCro(request: SubscribeCroRequest): Promise<SubscribeCroResponse>;
-	unsubscribeCro(request: UnsubscribeCroRequest): Promise<UnsubscribeCroResponse>;
-	getCroHashGraph(request: GetCroHashGraphRequest): Promise<GetCroHashGraphResponse>;
+	subscribeDRP(request: SubscribeDRPRequest): Promise<SubscribeDRPResponse>;
+	unsubscribeDRP(request: UnsubscribeDRPRequest): Promise<UnsubscribeDRPResponse>;
+	getDRPHashGraph(request: GetDRPHashGraphRequest): Promise<GetDRPHashGraphResponse>;
 }
 
 export const TopologyRpcServiceName = "topology.node.TopologyRpc";
@@ -395,26 +395,26 @@ export class TopologyRpcClientImpl implements TopologyRpc {
 	constructor(rpc: Rpc, opts?: { service?: string }) {
 		this.service = opts?.service || TopologyRpcServiceName;
 		this.rpc = rpc;
-		this.subscribeCro = this.subscribeCro.bind(this);
-		this.unsubscribeCro = this.unsubscribeCro.bind(this);
-		this.getCroHashGraph = this.getCroHashGraph.bind(this);
+		this.subscribeDRP = this.subscribeDRP.bind(this);
+		this.unsubscribeDRP = this.unsubscribeDRP.bind(this);
+		this.getDRPHashGraph = this.getDRPHashGraph.bind(this);
 	}
-	subscribeCro(request: SubscribeCroRequest): Promise<SubscribeCroResponse> {
-		const data = SubscribeCroRequest.encode(request).finish();
-		const promise = this.rpc.request(this.service, "subscribeCro", data);
-		return promise.then((data) => SubscribeCroResponse.decode(new BinaryReader(data)));
-	}
-
-	unsubscribeCro(request: UnsubscribeCroRequest): Promise<UnsubscribeCroResponse> {
-		const data = UnsubscribeCroRequest.encode(request).finish();
-		const promise = this.rpc.request(this.service, "unsubscribeCro", data);
-		return promise.then((data) => UnsubscribeCroResponse.decode(new BinaryReader(data)));
+	subscribeDRP(request: SubscribeDRPRequest): Promise<SubscribeDRPResponse> {
+		const data = SubscribeDRPRequest.encode(request).finish();
+		const promise = this.rpc.request(this.service, "subscribeDRP", data);
+		return promise.then((data) => SubscribeDRPResponse.decode(new BinaryReader(data)));
 	}
 
-	getCroHashGraph(request: GetCroHashGraphRequest): Promise<GetCroHashGraphResponse> {
-		const data = GetCroHashGraphRequest.encode(request).finish();
-		const promise = this.rpc.request(this.service, "getCroHashGraph", data);
-		return promise.then((data) => GetCroHashGraphResponse.decode(new BinaryReader(data)));
+	unsubscribeDRP(request: UnsubscribeDRPRequest): Promise<UnsubscribeDRPResponse> {
+		const data = UnsubscribeDRPRequest.encode(request).finish();
+		const promise = this.rpc.request(this.service, "unsubscribeDRP", data);
+		return promise.then((data) => UnsubscribeDRPResponse.decode(new BinaryReader(data)));
+	}
+
+	getDRPHashGraph(request: GetDRPHashGraphRequest): Promise<GetDRPHashGraphResponse> {
+		const data = GetDRPHashGraphRequest.encode(request).finish();
+		const promise = this.rpc.request(this.service, "getDRPHashGraph", data);
+		return promise.then((data) => GetDRPHashGraphResponse.decode(new BinaryReader(data)));
 	}
 }
 

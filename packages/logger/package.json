@@ -18,8 +18,7 @@
 	"scripts": {
 		"build": "tsc -b",
 		"clean": "rm -rf dist/ node_modules/",
-		"prepack": "tsc -b",
-		"test": "vitest"
+		"prepack": "tsc -b"
 	},
 	"dependencies": {
 		"loglevel": "^1.9.2",

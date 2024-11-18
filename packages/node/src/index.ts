@@ -2,35 +2,34 @@ import type { GossipsubMessage } from "@chainsafe/libp2p-gossipsub";
 import type { EventCallback, StreamHandler } from "@libp2p/interface";
 import {
 	NetworkPb,
-	TopologyNetworkNode,
-	type TopologyNetworkNodeConfig,
-} from "@topology-foundation/network";
-import { type CRO, TopologyObject } from "@topology-foundation/object";
-import { topologyMessagesHandler } from "./handlers.js";
+	DRPNetworkNode,
+	type DRPNetworkNodeConfig,
+} from "@ts-drp/network";
+import { type DRP, DRPObject } from "@ts-drp/object";
+import { drpMessagesHandler } from "./handlers.js";
 import * as operations from "./operations.js";
-import { TopologyObjectStore } from "./store/index.js";
+import { DRPObjectStore } from "./store/index.js";
 
 // snake_casing to match the JSON config
-export interface TopologyNodeConfig {
-	network_config?: TopologyNetworkNodeConfig;
+export interface DRPNodeConfig {
+	network_config?: DRPNetworkNodeConfig;
 }
 
-export class TopologyNode {
-	config?: TopologyNodeConfig;
-	objectStore: TopologyObjectStore;
-	networkNode: TopologyNetworkNode;
+export class DRPNode {
+	config?: DRPNodeConfig;
+	objectStore: DRPObjectStore;
+	networkNode: DRPNetworkNode;
 
-	constructor(config?: TopologyNodeConfig) {
+	constructor(config?: DRPNodeConfig) {
 		this.config = config;
-		this.networkNode = new TopologyNetworkNode(config?.network_config);
-		this.objectStore = new TopologyObjectStore();
+		this.networkNode = new DRPNetworkNode(config?.network_config);
+		this.objectStore = new DRPObjectStore();
 	}
 
 	async start(): Promise<void> {
 		await this.networkNode.start();
-		this.networkNode.addMessageHandler(
-			["/topology/message/0.0.1"],
-			async ({ stream }) => topologyMessagesHandler(this, stream),
+		this.networkNode.addMessageHandler(async ({ stream }) =>
+			drpMessagesHandler(this, stream),
 		);
 	}
 
@@ -48,33 +47,33 @@ export class TopologyNode {
 	sendGroupMessage(group: string, data: Uint8Array) {
 		const message = NetworkPb.Message.create({
 			sender: this.networkNode.peerId,
-			type: NetworkPb.Message_MessageType.CUSTOM,
+			type: NetworkPb.MessageType.MESSAGE_TYPE_CUSTOM,
 			data,
 		});
 		this.networkNode.broadcastMessage(group, message);
 	}
 
 	addCustomMessageHandler(protocol: string | string[], handler: StreamHandler) {
-		this.networkNode.addMessageHandler(protocol, handler);
+		this.networkNode.addCustomMessageHandler(protocol, handler);
 	}
 
 	sendCustomMessage(peerId: string, protocol: string, data: Uint8Array) {
 		const message = NetworkPb.Message.create({
 			sender: this.networkNode.peerId,
-			type: NetworkPb.Message_MessageType.CUSTOM,
+			type: NetworkPb.MessageType.MESSAGE_TYPE_CUSTOM,
 			data,
 		});
-		this.networkNode.sendMessage(peerId, [protocol], message);
+		this.networkNode.sendMessage(peerId, message);
 	}
 
 	async createObject(
-		cro: CRO,
+		cro: DRP,
 		id?: string,
 		abi?: string,
 		sync?: boolean,
 		peerId?: string,
 	) {
-		const object = new TopologyObject(this.networkNode.peerId, cro, id, abi);
+		const object = new DRPObject(this.networkNode.peerId, cro, id, abi);
 		operations.createObject(this, object);
 		operations.subscribeObject(this, object.id);
 		if (sync) {

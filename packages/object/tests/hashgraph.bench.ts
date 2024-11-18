@@ -1,6 +1,6 @@
 import Benchmark from "benchmark";
 import { AddWinsSet } from "../../blueprints/src/AddWinsSet/index.js";
-import { TopologyObject } from "../src/index.js";
+import { DRPObject } from "../src/index.js";
 
 function benchmarkForAddWinSet(
 	name: string,
@@ -9,13 +9,13 @@ function benchmarkForAddWinSet(
 	mergeFn: boolean,
 ) {
 	return suite.add(name, () => {
-		const objects: TopologyObject[] = [];
+		const objects: DRPObject[] = [];
 		for (let i = 0; i < numCROs; i++) {
-			const obj: TopologyObject = new TopologyObject(
+			const obj: DRPObject = new DRPObject(
 				`peer${i + 1}`,
 				new AddWinsSet<number>(),
 			);
-			const cro = obj.cro as AddWinsSet<number>;
+			const cro = obj.drp as AddWinsSet<number>;
 			for (let j = 0; j < verticesPerCRO; j++) {
 				if (i % 3 === 2) {
 					cro.add(j);
@@ -47,7 +47,7 @@ const suite = new Benchmark.Suite();
 benchmarkForAddWinSet("Create HashGraph with 1000 vertices", 1, 1000, false);
 
 benchmarkForAddWinSet(
-	"Create 2 CROs (1000 vertices each) and Merge",
+	"Create 2 DRP Objects (1000 vertices each) and Merge",
 	2,
 	1000,
 	true,

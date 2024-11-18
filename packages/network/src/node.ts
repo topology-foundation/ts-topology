@@ -27,18 +27,19 @@ import { webSockets } from "@libp2p/websockets";
 import * as filters from "@libp2p/websockets/filters";
 import { webTransport } from "@libp2p/webtransport";
 import { multiaddr } from "@multiformats/multiaddr";
-import { Logger, type LoggerOptions } from "@topology-foundation/logger";
+import { Logger, type LoggerOptions } from "@ts-drp/logger";
 import { type Libp2p, createLibp2p } from "libp2p";
 import { fromString as uint8ArrayFromString } from "uint8arrays/from-string";
-import { Message } from "./proto/topology/network/messages_pb.js";
+import { Message } from "./proto/drp/network/v1/messages_pb.js";
 import { uint8ArrayToStream } from "./stream.js";
 
 export * from "./stream.js";
 
+export const DRP_MESSAGE_PROTOCOL = "/drp/message/0.0.1";
 let log: Logger;
 
 // snake_casing to match the JSON config
-export interface TopologyNetworkNodeConfig {
+export interface DRPNetworkNodeConfig {
 	addresses?: string[];
 	bootstrap?: boolean;
 	bootstrap_peers?: string[];
@@ -47,16 +48,16 @@ export interface TopologyNetworkNodeConfig {
 	log_config?: LoggerOptions;
 }
 
-export class TopologyNetworkNode {
-	private _config?: TopologyNetworkNodeConfig;
+export class DRPNetworkNode {
+	private _config?: DRPNetworkNodeConfig;
 	private _node?: Libp2p;
 	private _pubsub?: PubSub<GossipsubEvents>;
 
 	peerId = "";
 
-	constructor(config?: TopologyNetworkNodeConfig) {
+	constructor(config?: DRPNetworkNodeConfig) {
 		this._config = config;
-		log = new Logger("topology::network", config?.log_config);
+		log = new Logger("drp::network", config?.log_config);
 	}
 
 	async start() {
@@ -231,10 +232,10 @@ export class TopologyNetworkNode {
 		}
 	}
 
-	async sendMessage(peerId: string, protocols: string[], message: Message) {
+	async sendMessage(peerId: string, message: Message) {
 		try {
 			const connection = await this._node?.dial([multiaddr(`/p2p/${peerId}`)]);
-			const stream = <Stream>await connection?.newStream(protocols);
+			const stream = <Stream>await connection?.newStream(DRP_MESSAGE_PROTOCOL);
 			const messageBuffer = Message.encode(message).finish();
 			uint8ArrayToStream(stream, messageBuffer);
 		} catch (e) {
@@ -242,18 +243,16 @@ export class TopologyNetworkNode {
 		}
 	}
 
-	async sendGroupMessageRandomPeer(
-		group: string,
-		protocols: string[],
-		message: Message,
-	) {
+	async sendGroupMessageRandomPeer(group: string, message: Message) {
 		try {
 			const peers = this._pubsub?.getSubscribers(group);
 			if (!peers || peers.length === 0) throw Error("Topic wo/ peers");
 			const peerId = peers[Math.floor(Math.random() * peers.length)];
 
 			const connection = await this._node?.dial(peerId);
-			const stream: Stream = (await connection?.newStream(protocols)) as Stream;
+			const stream: Stream = (await connection?.newStream(
+				DRP_MESSAGE_PROTOCOL,
+			)) as Stream;
 			const messageBuffer = Message.encode(message).finish();
 			uint8ArrayToStream(stream, messageBuffer);
 		} catch (e) {
@@ -271,7 +270,11 @@ export class TopologyNetworkNode {
 		});
 	}
 
-	addMessageHandler(protocol: string | string[], handler: StreamHandler) {
+	addMessageHandler(handler: StreamHandler) {
+		this._node?.handle(DRP_MESSAGE_PROTOCOL, handler);
+	}
+
+	addCustomMessageHandler(protocol: string | string[], handler: StreamHandler) {
 		this._node?.handle(protocol, handler);
 	}
 }
