@@ -27,17 +27,6 @@ jobs:
         run: |
           echo "examples=$(ls -d examples/*/ | xargs -n 1 basename | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
-  test-matrix:
-    needs: generate-matrix
-    runs-on: ubuntu-latest
-    steps:
-      - shell: bash
-        run: |
-          echo ${{needs.generate-matrix.outputs.examples}}
-      - shell: bash
-        run: |
-          echo ${{ fromJSON(needs.generate-matrix.outputs.examples) }}
-
   build-examples:
     needs: generate-matrix
     runs-on: ubuntu-latest
