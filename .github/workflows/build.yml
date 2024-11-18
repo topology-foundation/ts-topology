@@ -19,7 +19,7 @@ jobs:
   generate-matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.list-examples.outputs.examples }}
+      examples: ${{ steps.list-examples.outputs.examples }}
     steps:
       - uses: actions/checkout@v4
       - name: List examples
