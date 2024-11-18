@@ -1,13 +1,18 @@
 import {
 	ActionType,
-	type HashGraph,
 	type Operation,
+	type Hash,
+	type HashGraph,
 } from "../hashgraph/index.js";
 
-export function linearizePair(hashGraph: HashGraph): Operation[] {
-	const order = hashGraph.topologicalSort(true);
+export function linearizePair(
+	hashGraph: HashGraph,
+	toLinearizeTopoSorted?: Hash[],
+): Operation[] {
+	const order: Hash[] =
+		toLinearizeTopoSorted || hashGraph.topologicalSort(true);
 	const dropped = new Array(order.length).fill(false);
-	const result: Operation[] = [];
+	const result = [];
 	let i = 0;
 
 	while (i < order.length) {

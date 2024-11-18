@@ -7,8 +7,11 @@ import {
 	type Vertex,
 } from "../hashgraph/index.js";
 
-export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
-	const order = hashGraph.topologicalSort(true);
+export function linearizeMultiple(
+	hashGraph: HashGraph,
+	toLinearizeTopoSorted?: Hash[],
+): Operation[] {
+	const order = toLinearizeTopoSorted || hashGraph.topologicalSort(true);
 	const dropped = new Array(order.length).fill(false);
 	const indices: Map<Hash, number> = new Map();
 	const result: Operation[] = [];

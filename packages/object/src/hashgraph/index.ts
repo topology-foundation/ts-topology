@@ -116,9 +116,6 @@ export class HashGraph {
 		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
 		this.arePredecessorsFresh = false;
 
-		// Object state updates
-		
-
 		return vertex;
 	}
 
@@ -227,12 +224,44 @@ export class HashGraph {
 		return result;
 	}
 
-	linearizeOperations(): Operation[] {
+	topoSortPastLightcone(inDegree: Map<Hash, number>): Hash[] {
+		const queue: Hash[] = [];
+		const result: Hash[] = [];
+		let head = 0;
+
+		queue.push(HashGraph.rootHash);
+
+		while (head < queue.length) {
+			const current = queue[head];
+			head++;
+			result.push(current);
+
+			const children = this.forwardEdges.get(current) || [];
+
+			for (const child of children) {
+				if (inDegree.has(child)) {
+					inDegree.set(child, (inDegree.get(child) || 0) - 1);
+					if (inDegree.get(child) === 0) {
+						queue.push(child);
+					}
+				}
+			}
+
+			if (head > queue.length / 2) {
+				queue.splice(0, head);
+				head = 0;
+			}
+		}
+
+		return result;
+	}
+
+	linearizeOperations(lightcone?: Hash[]): Operation[] {
 		switch (this.semanticsType) {
 			case SemanticsType.pair:
-				return linearizePair(this);
+				return linearizePair(this, lightcone || []);
 			case SemanticsType.multiple:
-				return linearizeMultiple(this);
+				return linearizeMultiple(this, lightcone || []);
 			default:
 				return [];
 		}

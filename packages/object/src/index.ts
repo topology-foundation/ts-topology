@@ -5,6 +5,7 @@ import {
 	type ResolveConflictsType,
 	type SemanticsType,
 	type Vertex,
+	type Hash,
 } from "./hashgraph/index.js";
 import * as ObjectPb from "./proto/topology/object/object_pb.js";
 
@@ -21,11 +22,14 @@ export interface CRO {
 export class CROState {
 	cro: CRO;
 	linearizedOperations: Operation[];
+	// past lightcone includes the vertex itself, root has in-degree 0
+	pastLightconeInDegree: Map<Hash, number>;
 	// ACL state in the near future
 
-	constructor(cro: CRO, linearizedOperations: Operation[] = []) {
+	constructor(cro: CRO, linearizedOperations: Operation[] = [], pastLightconeInDegree: Map<Hash, number> = new Map()) {
 		this.cro = cro;
 		this.linearizedOperations = linearizedOperations;
+		this.pastLightconeInDegree = pastLightconeInDegree;
 	}
 }
 
@@ -101,6 +105,16 @@ export class TopologyObject implements ITopologyObject {
 	// biome-ignore lint: value can't be unknown because of protobuf
 	callFn(fn: string, args: any) {
 		const vertex = this.hashGraph.addToFrontier({ type: fn, value: args });
+		let pastLightconeInDegree: Map<Hash, number> = new Map();
+		for (const dep of vertex.dependencies) {
+			for (const ancestor of this.states.get(dep)?.pastLightconeInDegree.keys() ?? []) {
+				// improve this!!
+				pastLightconeInDegree = new Map([...pastLightconeInDegree, ...this.states.get(ancestor)?.pastLightconeInDegree || []]);
+			}
+		}
+		pastLightconeInDegree.set(vertex.hash, vertex.dependencies.length);
+		this.states.set(vertex.hash, new CROState(this.cro as CRO, this.hashGraph.linearizeOperations(), pastLightconeInDegree));
+
 		const serializedVertex = ObjectPb.Vertex.create({
 			hash: vertex.hash,
 			nodeId: vertex.nodeId,
@@ -129,6 +143,19 @@ export class TopologyObject implements ITopologyObject {
 					vertex.dependencies,
 					vertex.nodeId,
 				);
+
+				let pastLightconeInDegree = new Map([[vertex.hash, 0]]);
+				for (const dep of vertex.dependencies) {
+					for (const ancestor of this.states.get(dep)?.pastLightconeInDegree.keys() ?? []) {
+						// improve this!!
+						pastLightconeInDegree = new Map({ ...pastLightconeInDegree, ...this.states.get(ancestor)?.pastLightconeInDegree || [] });
+					}
+					pastLightconeInDegree.set(dep, (pastLightconeInDegree.get(dep) || 0) + 1);
+				}
+				// start only from lca of all deps
+				const topoSortedlightcone = this.hashGraph.topoSortPastLightcone(pastLightconeInDegree);
+				this.states.set(vertex.hash, new CROState(this.cro as CRO, this.hashGraph.linearizeOperations(topoSortedlightcone), pastLightconeInDegree));
+
 			} catch (e) {
 				missing.push(vertex.hash);
 			}
