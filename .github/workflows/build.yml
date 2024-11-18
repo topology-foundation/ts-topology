@@ -25,7 +25,7 @@ jobs:
       - name: List examples
         id: list-examples
         run: |
-          echo "examples=$(ls -d examples/*/ | xargs -n 1 basename | jq -R -s -c 'split("\n")[:-1]'))" >> $GITHUB_OUTPUT
+          echo "examples=$(ls -d examples/*/ | xargs -n 1 basename | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
       - name: Set Matrix
         id: set-matrix
         run: |
