@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://avatars.githubusercontent.com/u/157637200" height="128">
   <br />
-  <h1>The TypeScript implementation of the Topology Protocol</h1>
+  <h1>The TypeScript implementation of Distributed Replicated Programs (DRP)</h1>
 </div>
 
 <div align="center">
@@ -17,26 +17,28 @@
 [![X](https://img.shields.io/badge/X-000000)](https://x.com/topology_gg)
 [![Telegram](https://img.shields.io/badge/Telegram-24A1DE)](https://t.me/topologyfrens)
 [![Discord](https://img.shields.io/badge/Discord-7289da)](https://discord.gg/GUDGzBP5mn)
+
 </div>
 
 # Overview
 
-This is the official TypeScript implementation of the Topology Protocol. The Topology Protocol is a local-first decentralized protocol for real-time applications. It introduces a new concept for Conflict-free Replicated Objects (CRO), that are built on top of libp2p and composed of CRDTs.
+This is the official TypeScript implementation of Distributed Replicated Programs (DRP). DRP is a local-first decentralized protocol for real-time applications. It is built on top of libp2p and with a similar design with CRDTs.
 
 # Specifications
 
-The specifications of the Topology Protocol are shared across different client implementations and can be found in the [specs repository](https://github.com/topology-foundation/specs). Currently the specifications are starting to be written based on this implementation.
+The specifications of DRP are shared across different client implementations and can be found in the [specs repository](https://github.com/topology-foundation/specs). Currently the specifications are starting to be written based on this implementation.
 
 # Packages
 
 This repository is a monorepo that contains the following packages:
 
-| Package | Description                                      |
-|---------|--------------------------------------------------|
-| crdt    | CRDT implementations intended to use as builtins |
-| network | Network middleware to abstract libp2p            |
-| node    | Topology Node library and CLI                    |
-| object  | CRO objects structure implementation             |
+| Package    | Description                                     |
+| ---------- | ----------------------------------------------- |
+| blueprints | Blueprints of some DRPs that can be freely used |
+| logger     | Logger for the whole project                    |
+| network    | Network middleware to abstract libp2p           |
+| node       | Node for interacting with DRPs library and CLI  |
+| object     | DRP objects structure implementation            |
 
 # Examples
 
@@ -44,7 +46,7 @@ All the examples are located in the `examples` directory. Currently, there is on
 
 # Usage
 
-This workspae has all packages and examples linked together, so you can run the following commands to start the development:
+This workspace has all packages and examples linked together, so you can run the following commands to start the development:
 
 ```bash
 # pnpm

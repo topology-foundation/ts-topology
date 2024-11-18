@@ -1,0 +1,37 @@
+syntax = "proto3";
+package topology.network.v1;
+
+import "drp/object/v1/object.proto";
+
+enum MessageType {
+  MESSAGE_TYPE_UNSPECIFIED	= 0;
+  MESSAGE_TYPE_UPDATE		= 1;
+  MESSAGE_TYPE_SYNC			= 2;
+  MESSAGE_TYPE_SYNC_ACCEPT	= 3;
+  MESSAGE_TYPE_SYNC_REJECT	= 4;
+  MESSAGE_TYPE_CUSTOM		= 5;
+}
+
+message Message {
+  string sender = 1;
+  MessageType type = 2;
+  bytes data = 3;
+}
+
+message Update {
+  string object_id = 1;
+  repeated topology.object.v1.Vertex vertices = 2;
+}
+
+message Sync {
+  string object_id = 1;
+  repeated string vertex_hashes = 2;
+}
+
+message SyncAccept {
+  string object_id = 1;
+  repeated topology.object.v1.Vertex requested = 2;
+  repeated string requesting = 3;
+}
+
+message SyncReject {}

@@ -6,41 +6,41 @@ import {
 	type SemanticsType,
 	type Vertex,
 } from "./hashgraph/index.js";
-import * as ObjectPb from "./proto/topology/object/object_pb.js";
+import * as ObjectPb from "./proto/drp/object/object_pb.js";
 
-export * as ObjectPb from "./proto/topology/object/object_pb.js";
+export * as ObjectPb from "./proto/drp/object/object_pb.js";
 export * from "./hashgraph/index.js";
 
-export interface CRO {
+export interface DRP {
 	operations: string[];
 	semanticsType: SemanticsType;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
 	mergeCallback: (operations: Operation[]) => void;
 }
 
-export type TopologyObjectCallback = (
-	object: TopologyObject,
+export type DRPObjectCallback = (
+	object: DRPObject,
 	origin: string,
 	vertices: ObjectPb.Vertex[],
 ) => void;
 
-export interface ITopologyObject extends ObjectPb.TopologyObjectBase {
-	cro: ProxyHandler<CRO> | null;
+export interface IDRPObject extends ObjectPb.DRPObjectBase {
+	drp: ProxyHandler<DRP> | null;
 	hashGraph: HashGraph;
-	subscriptions: TopologyObjectCallback[];
+	subscriptions: DRPObjectCallback[];
 }
 
-export class TopologyObject implements ITopologyObject {
+export class DRPObject implements IDRPObject {
 	nodeId: string;
 	id: string;
 	abi: string;
 	bytecode: Uint8Array;
 	vertices: ObjectPb.Vertex[];
-	cro: ProxyHandler<CRO> | null;
+	drp: ProxyHandler<DRP> | null;
 	hashGraph: HashGraph;
-	subscriptions: TopologyObjectCallback[];
+	subscriptions: DRPObjectCallback[];
 
-	constructor(nodeId: string, cro: CRO, id?: string, abi?: string) {
+	constructor(nodeId: string, drp: DRP, id?: string, abi?: string) {
 		this.nodeId = nodeId;
 		this.id =
 			id ??
@@ -53,11 +53,11 @@ export class TopologyObject implements ITopologyObject {
 		this.abi = abi ?? "";
 		this.bytecode = new Uint8Array();
 		this.vertices = [];
-		this.cro = new Proxy(cro, this.proxyCROHandler());
+		this.drp = drp ? new Proxy(drp, this.proxyCROHandler()) : null;
 		this.hashGraph = new HashGraph(
 			nodeId,
-			cro.resolveConflicts.bind(cro),
-			cro.semanticsType,
+			drp?.resolveConflicts?.bind(drp ?? this),
+			drp?.semanticsType,
 		);
 		this.subscriptions = [];
 	}
@@ -123,13 +123,13 @@ export class TopologyObject implements ITopologyObject {
 		const operations = this.hashGraph.linearizeOperations();
 		this.vertices = this.hashGraph.getAllVertices();
 
-		(this.cro as CRO).mergeCallback(operations);
+		(this.drp as DRP).mergeCallback(operations);
 		this._notify("merge", this.vertices);
 
 		return [missing.length === 0, missing];
 	}
 
-	subscribe(callback: TopologyObjectCallback) {
+	subscribe(callback: DRPObjectCallback) {
 		this.subscriptions.push(callback);
 	}
 

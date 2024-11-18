@@ -1,36 +1,33 @@
 {
-  "name": "topology-example-grid",
-  "version": "0.3.1",
-  "description": "Topology Protocol Grid Exmaple",
-  "main": "src/index.ts",
-  "repository": "https://github.com/topology-foundation/ts-topology.git",
-  "license": "MIT",
-  "scripts": {
-    "asbuild": "asc --config asconfig.json --target release",
-    "build": "vite build",
-    "clean": "rm -rf dist/ node_modules/",
-    "dev": "vite serve",
-    "start": "ts-node ./src/index.ts"
-  },
-  "dependencies": {
-    "@topology-foundation/network": "0.3.1",
-    "@topology-foundation/node": "0.3.1",
-    "@topology-foundation/object": "0.3.1",
-    "assemblyscript": "^0.27.29",
-    "crypto-browserify": "^3.12.0",
-    "memfs": "^4.11.1",
-    "process": "^0.11.10",
-    "react-spring": "^9.7.4",
-    "stream-browserify": "^3.0.0",
-    "ts-node": "^10.9.2",
-    "uint8arrays": "^5.1.0",
-    "vm-browserify": "^1.1.2"
-  },
-  "devDependencies": {
-    "@types/node": "^22.5.4",
-    "ts-loader": "^9.5.1",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.9",
-    "vite-plugin-node-polyfills": "^0.22.0"
-  }
+	"name": "ts-drp-example-grid",
+	"version": "0.3.1",
+	"license": "MIT",
+	"scripts": {
+		"asbuild": "asc --config asconfig.json --target release",
+		"build": "vite build",
+		"clean": "rm -rf dist/ node_modules/",
+		"dev": "vite serve",
+		"start": "ts-node ./src/index.ts"
+	},
+	"dependencies": {
+		"@topology-foundation/network": "0.3.1",
+		"@topology-foundation/node": "0.3.1",
+		"@topology-foundation/object": "0.3.1",
+		"assemblyscript": "^0.27.29",
+		"crypto-browserify": "^3.12.0",
+		"memfs": "^4.11.1",
+		"process": "^0.11.10",
+		"react-spring": "^9.7.4",
+		"stream-browserify": "^3.0.0",
+		"ts-node": "^10.9.2",
+		"uint8arrays": "^5.1.0",
+		"vm-browserify": "^1.1.2"
+	},
+	"devDependencies": {
+		"@types/node": "^22.5.4",
+		"ts-loader": "^9.5.1",
+		"typescript": "^5.5.4",
+		"vite": "^5.4.9",
+		"vite-plugin-node-polyfills": "^0.22.0"
+	}
 }

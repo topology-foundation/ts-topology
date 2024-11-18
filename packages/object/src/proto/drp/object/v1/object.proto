@@ -1,10 +1,8 @@
 syntax = "proto3";
 
-package topology.object;
+package topology.object.v1;
 
 import "google/protobuf/struct.proto";
-
-option go_package = "ts-topology/packages/object";
 
 // Supposed to be the RIBLT stuff
 message Vertex {
@@ -13,7 +11,7 @@ message Vertex {
     google.protobuf.Value value = 2;
   }
   string hash = 1;
-  string nodeId = 2;
+  string node_id = 2;
   Operation operation = 3;
   repeated string dependencies = 4;
 }

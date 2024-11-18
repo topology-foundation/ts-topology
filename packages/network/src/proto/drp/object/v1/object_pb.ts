@@ -2,13 +2,13 @@
 // versions:
 //   protoc-gen-ts_proto  v2.2.5
 //   protoc               unknown
-// source: topology/object/object.proto
+// source: drp/object/v1/object.proto
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { Value } from "../../google/protobuf/struct_pb.js";
+import { Value } from "../../../google/protobuf/struct_pb";
 
-export const protobufPackage = "topology.object";
+export const protobufPackage = "topology.object.v1";
 
 /** Supposed to be the RIBLT stuff */
 export interface Vertex {

@@ -1,37 +1,37 @@
-import type { TopologyObject } from "@topology-foundation/object";
+import type { DRPObject } from "@topology-foundation/object";
 
-export type TopologyObjectStoreCallback = (
+export type DRPObjectStoreCallback = (
 	objectId: string,
-	object: TopologyObject,
+	object: DRPObject,
 ) => void;
 
-export class TopologyObjectStore {
+export class DRPObjectStore {
 	// TODO: should be abstracted in handling multiple types of storage
-	private _store: Map<string, TopologyObject>;
-	private _subscriptions: Map<string, TopologyObjectStoreCallback[]>;
+	private _store: Map<string, DRPObject>;
+	private _subscriptions: Map<string, DRPObjectStoreCallback[]>;
 
 	constructor() {
-		this._store = new Map<string, TopologyObject>();
-		this._subscriptions = new Map<string, TopologyObjectStoreCallback[]>();
+		this._store = new Map<string, DRPObject>();
+		this._subscriptions = new Map<string, DRPObjectStoreCallback[]>();
 	}
 
-	get(objectId: string): TopologyObject | undefined {
+	get(objectId: string): DRPObject | undefined {
 		return this._store.get(objectId);
 	}
 
-	put(objectId: string, object: TopologyObject) {
+	put(objectId: string, object: DRPObject) {
 		this._store.set(objectId, object);
 		this._notifySubscribers(objectId, object);
 	}
 
-	subscribe(objectId: string, callback: TopologyObjectStoreCallback): void {
+	subscribe(objectId: string, callback: DRPObjectStoreCallback): void {
 		if (!this._subscriptions.has(objectId)) {
 			this._subscriptions.set(objectId, []);
 		}
 		this._subscriptions.get(objectId)?.push(callback);
 	}
 
-	private _notifySubscribers(objectId: string, object: TopologyObject): void {
+	private _notifySubscribers(objectId: string, object: DRPObject): void {
 		const callbacks = this._subscriptions.get(objectId);
 		if (callbacks) {
 			for (const callback of callbacks) {
