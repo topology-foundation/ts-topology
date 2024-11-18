@@ -24,11 +24,11 @@ jobs:
       - name: List examples
         id: list-examples
         run: |
-          echo "::set-output name=examples::$(ls -d examples/*/ | xargs -n 1 basename | jq -R -s -c 'split("\n")[:-1]'))"
+          echo "examples=$(ls -d examples/*/ | xargs -n 1 basename | jq -R -s -c 'split("\n")[:-1]'))" >> $GITHUB_OUTPUT
       - name: Set Matrix
         id: set-matrix
         run: |
-          echo "::set-output name=matrix::{\"example\": ${{ steps.list-examples.outputs.examples }}}"
+          echo "matrix={\"example\": ${{ steps.list-examples.outputs.examples }}}" >> $GITHUB_OUTPUT
 
   build-examples:
     runs-on: ubuntu-latest
