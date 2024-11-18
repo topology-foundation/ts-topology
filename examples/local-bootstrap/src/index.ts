@@ -1,7 +1,4 @@
-import {
-	TopologyNode,
-	type TopologyNodeConfig,
-} from "@topology-foundation/node";
+import { DRPNode } from "@ts-drp/node";
 
 const local_peer_id = "12D3KooWC6sm9iwmYbeQJCJipKTRghmABNz1wnpJANvSMabvecwJ";
 // This is the IP of the local bootstrap node, replace it with the IP of the local node
@@ -9,12 +6,12 @@ const local_bootstrap_peer_ip = "127.0.0.1";
 
 if (!local_peer_id) {
 	console.error(
-		"topology::network::start::bootstrap: Set local_peer_id in `/examples/local-bootstrap/src/index.ts` file with the peer id of the local bootstrap node",
+		"Set local_peer_id in `/examples/local-bootstrap/src/index.ts` file with the peer id of the local bootstrap node",
 	);
 	process.exit(1);
 }
 
-let node: TopologyNode;
+let node: DRPNode;
 let peers: string[] = [];
 
 const render = () => {
@@ -25,7 +22,7 @@ const render = () => {
 	element_peers.innerHTML = `[${peers.join(", ")}]`;
 };
 
-async function initTopologyNode() {
+async function initDRPNode() {
 	if (node) {
 		node.addCustomGroupMessageHandler("", (e) => {
 			peers = node.networkNode.getAllPeers();
@@ -92,7 +89,7 @@ async function main() {
 			document.getElementById("fieldset_connect_bootstrap_node")
 		);
 		try {
-			node = new TopologyNode({
+			node = new DRPNode({
 				network_config: {
 					bootstrap_peers: [
 						`/${select_address_type.value}/${bootstrap_node_addr.value}/tcp/${bootstrap_node_port.value}/${ws_protocl}/p2p/${bootstrap_node_peer_id.value}`,
@@ -103,7 +100,7 @@ async function main() {
 
 			await node.start();
 			field_set.style.backgroundColor = "rgba(0, 255, 0, 0.2)";
-			initTopologyNode();
+			initDRPNode();
 			render();
 		} catch (e) {
 			field_set.style.backgroundColor = "rgba(255, 0, 0, 0.2)";

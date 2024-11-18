@@ -1,11 +1,11 @@
-import { TopologyNode } from "@topology-foundation/node";
-import type { TopologyObject } from "@topology-foundation/object";
+import { DRPNode } from "@ts-drp/node";
+import type { DRPObject } from "@ts-drp/object";
 import { Grid } from "./objects/grid";
 import { hslToRgb, rgbToHex, rgbToHsl } from "./util/color";
 
-const node = new TopologyNode();
-let topologyObject: TopologyObject;
-let gridCRO: Grid;
+const node = new DRPNode();
+let drpObject: DRPObject;
+let gridDRP: Grid;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
 let objectPeers: string[] = [];
@@ -45,9 +45,9 @@ const getColorForNodeId = (id: string): string => {
 };
 
 const render = () => {
-	if (topologyObject) {
+	if (drpObject) {
 		const gridIdElement = <HTMLSpanElement>document.getElementById("gridId");
-		gridIdElement.innerText = topologyObject.id;
+		gridIdElement.innerText = drpObject.id;
 		const copyGridIdButton = document.getElementById("copyGridId");
 		if (copyGridIdButton) {
 			copyGridIdButton.style.display = "inline"; // Show the button
@@ -75,8 +75,8 @@ const render = () => {
 	);
 	element_objectPeers.innerHTML = `[${objectPeers.map((peer) => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
 
-	if (!gridCRO) return;
-	const users = gridCRO.getUsers();
+	if (!gridDRP) return;
+	const users = gridDRP.getUsers();
 	const element_grid = <HTMLDivElement>document.getElementById("grid");
 	element_grid.innerHTML = "";
 
@@ -113,7 +113,7 @@ const render = () => {
 
 	for (const userColorString of users) {
 		const [id, color] = userColorString.split(":");
-		const position = gridCRO.getUserPosition(userColorString);
+		const position = gridDRP.getUserPosition(userColorString);
 
 		if (position) {
 			const div = document.createElement("div");
@@ -165,13 +165,13 @@ function hexToRgba(hex: string, alpha: number) {
 }
 
 async function addUser() {
-	if (!gridCRO) {
-		console.error("Grid CRO not initialized");
+	if (!gridDRP) {
+		console.error("Grid DRP not initialized");
 		alert("Please create or join a grid first");
 		return;
 	}
 
-	gridCRO.addUser(
+	gridDRP.addUser(
 		node.networkNode.peerId,
 		getColorForNodeId(node.networkNode.peerId),
 	);
@@ -179,24 +179,23 @@ async function addUser() {
 }
 
 async function moveUser(direction: string) {
-	if (!gridCRO) {
-		console.error("Grid CRO not initialized");
+	if (!gridDRP) {
+		console.error("Grid DRP not initialized");
 		alert("Please create or join a grid first");
 		return;
 	}
 
-	gridCRO.moveUser(node.networkNode.peerId, direction);
+	gridDRP.moveUser(node.networkNode.peerId, direction);
 	render();
 }
 
 async function createConnectHandlers() {
-	node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
-		if (topologyObject)
-			objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
+	node.addCustomGroupMessageHandler(drpObject.id, (e) => {
+		if (drpObject) objectPeers = node.networkNode.getGroupPeers(drpObject.id);
 		render();
 	});
 
-	node.objectStore.subscribe(topologyObject.id, (_, obj) => {
+	node.objectStore.subscribe(drpObject.id, (_, obj) => {
 		render();
 	});
 }
@@ -215,8 +214,8 @@ async function main() {
 		document.getElementById("createGrid")
 	);
 	button_create.addEventListener("click", async () => {
-		topologyObject = await node.createObject(new Grid());
-		gridCRO = topologyObject.cro as Grid;
+		drpObject = await node.createObject(new Grid());
+		gridDRP = drpObject.drp as Grid;
 		createConnectHandlers();
 		await addUser();
 		render();
@@ -224,22 +223,17 @@ async function main() {
 
 	const button_connect = <HTMLButtonElement>document.getElementById("joinGrid");
 	button_connect.addEventListener("click", async () => {
-		const croId = (<HTMLInputElement>document.getElementById("gridInput"))
+		const drpId = (<HTMLInputElement>document.getElementById("gridInput"))
 			.value;
 		try {
-			topologyObject = await node.createObject(
-				new Grid(),
-				croId,
-				undefined,
-				true,
-			);
-			gridCRO = topologyObject.cro as Grid;
+			drpObject = await node.createObject(new Grid(), drpId, undefined, true);
+			gridDRP = drpObject.drp as Grid;
 			createConnectHandlers();
 			await addUser();
 			render();
-			console.log("Succeeded in connecting with CRO", croId);
+			console.log("Succeeded in connecting with DRP", drpId);
 		} catch (e) {
-			console.error("Error while connecting with CRO", croId, e);
+			console.error("Error while connecting with DRP", drpId, e);
 		}
 	});
 
@@ -257,8 +251,7 @@ async function main() {
 		navigator.clipboard
 			.writeText(gridIdText)
 			.then(() => {
-				// alert("Grid CRO ID copied to clipboard!");
-				console.log("Grid CRO ID copied to clipboard");
+				console.log("Grid DRP ID copied to clipboard");
 			})
 			.catch((err) => {
 				console.error("Failed to copy: ", err);
