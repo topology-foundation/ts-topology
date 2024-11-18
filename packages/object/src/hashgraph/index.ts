@@ -115,6 +115,10 @@ export class HashGraph {
 		const depsSet = new Set(deps);
 		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
 		this.arePredecessorsFresh = false;
+
+		// Object state updates
+		
+
 		return vertex;
 	}
 

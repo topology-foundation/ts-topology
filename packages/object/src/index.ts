@@ -18,6 +18,17 @@ export interface CRO {
 	mergeCallback: (operations: Operation[]) => void;
 }
 
+export class CROState {
+	cro: CRO;
+	linearizedOperations: Operation[];
+	// ACL state in the near future
+
+	constructor(cro: CRO, linearizedOperations: Operation[] = []) {
+		this.cro = cro;
+		this.linearizedOperations = linearizedOperations;
+	}
+}
+
 export type TopologyObjectCallback = (
 	object: TopologyObject,
 	origin: string,
@@ -39,6 +50,8 @@ export class TopologyObject implements ITopologyObject {
 	cro: ProxyHandler<CRO> | null;
 	hashGraph: HashGraph;
 	subscriptions: TopologyObjectCallback[];
+	// mapping from vertex hash to the CRO state
+	states: Map<string, CROState>;
 
 	constructor(nodeId: string, cro: CRO, id?: string, abi?: string) {
 		this.nodeId = nodeId;
@@ -60,6 +73,7 @@ export class TopologyObject implements ITopologyObject {
 			cro.semanticsType,
 		);
 		this.subscriptions = [];
+		this.states = new Map([[HashGraph.rootHash, new CROState(cro)]]);
 	}
 
 	// This function is black magic, it allows us to intercept calls to the CRO object
