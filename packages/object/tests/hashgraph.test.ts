@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { AddWinsSet } from "../../blueprints/src/AddWinsSet/index.js";
 import { PseudoRandomWinsSet } from "../../blueprints/src/PseudoRandomWinsSet/index.js";
-import { type Operation, OperationType, DRPObject } from "../src/index.js";
+import { DRPObject, type Operation, OperationType } from "../src/index.js";
 
 describe("HashGraph construction tests", () => {
 	let obj1: DRPObject;
@@ -12,7 +12,7 @@ describe("HashGraph construction tests", () => {
 		obj2 = new DRPObject("peer2", new AddWinsSet<number>());
 	});
 
-	test("Test: HashGraph should be DAG compatibility", () => {
+	test("Test: HashGraph DAG compatibility", () => {
 		/*		   - V1:ADD(1)
 			root /
 				 \ - V2:ADD(2)
@@ -34,7 +34,7 @@ describe("HashGraph construction tests", () => {
 		]);
 	});
 
-	test("Test: HashGraph has 2 root vertices", () => {
+	test("Test: HashGraph with 2 root vertices", () => {
 		/*
 			root - V1:ADD(1)
 			fakeRoot - V2:ADD(1)

@@ -21,16 +21,14 @@
 		"clean": "rm -rf dist/ node_modules/",
 		"prepack": "tsc -b",
 		"test": "vitest",
-		"benchmark": "npx tsx tests/hashgraph.bench.ts | tee benchmark-output.txt"
+		"benchmark": "tsx tests/hashgraph.bench.ts | tee benchmark-output.txt"
 	},
 	"devDependencies": {
-		"assemblyscript": "^0.27.29",
+		"@bufbuild/protobuf": "^2.0.0",
 		"benchmark": "^2.1.4",
 		"tsx": "4.19.1"
 	},
 	"dependencies": {
-		"@bufbuild/protobuf": "^2.0.0",
-		"@ts-drp/logger": "^0.3.1",
-		"ts-proto": "^2.2.4"
+		"@ts-drp/logger": "^0.3.1"
 	}
 }

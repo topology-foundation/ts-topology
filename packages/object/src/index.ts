@@ -1,4 +1,5 @@
 import * as crypto from "node:crypto";
+import { Logger, type LoggerOptions } from "@ts-drp/logger";
 import {
 	HashGraph,
 	type Operation,
@@ -30,6 +31,13 @@ export interface IDRPObject extends ObjectPb.DRPObjectBase {
 	subscriptions: DRPObjectCallback[];
 }
 
+// snake_casing to match the JSON config
+export interface DRPObjectConfig {
+	log_config?: LoggerOptions;
+}
+
+export let log: Logger;
+
 export class DRPObject implements IDRPObject {
 	nodeId: string;
 	id: string;
@@ -40,8 +48,15 @@ export class DRPObject implements IDRPObject {
 	hashGraph: HashGraph;
 	subscriptions: DRPObjectCallback[];
 
-	constructor(nodeId: string, drp: DRP, id?: string, abi?: string) {
+	constructor(
+		nodeId: string,
+		drp: DRP,
+		id?: string,
+		abi?: string,
+		config?: DRPObjectConfig,
+	) {
 		this.nodeId = nodeId;
+		log = new Logger("drp::object", config?.log_config);
 		this.id =
 			id ??
 			crypto

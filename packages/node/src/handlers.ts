@@ -1,7 +1,7 @@
 import type { Stream } from "@libp2p/interface";
 import { NetworkPb, streamToUint8Array } from "@ts-drp/network";
-import type { ObjectPb, DRPObject, Vertex } from "@ts-drp/object";
-import type { DRPNode } from "./index.js";
+import type { DRPObject, ObjectPb, Vertex } from "@ts-drp/object";
+import { type DRPNode, log } from "./index.js";
 
 /*
   Handler for all CRO messages, including pubsub messages and direct messages
@@ -19,10 +19,7 @@ export async function drpMessagesHandler(
 	} else if (data) {
 		message = NetworkPb.Message.decode(data);
 	} else {
-		console.error(
-			"topology::node::messageHandler",
-			"Stream and data are undefined",
-		);
+		log.error("::messageHandler: Stream and data are undefined");
 		return;
 	}
 
@@ -32,14 +29,14 @@ export async function drpMessagesHandler(
 			break;
 		case NetworkPb.MessageType.MESSAGE_TYPE_SYNC:
 			if (!stream) {
-				console.error("topology::node::messageHandler", "Stream is undefined");
+				log.error("::messageHandler: Stream is undefined");
 				return;
 			}
 			syncHandler(node, message.sender, message.data);
 			break;
 		case NetworkPb.MessageType.MESSAGE_TYPE_SYNC_ACCEPT:
 			if (!stream) {
-				console.error("topology::node::messageHandler", "Stream is undefined");
+				log.error("::messageHandler: Stream is undefined");
 				return;
 			}
 			syncAcceptHandler(node, message.sender, message.data);
@@ -48,7 +45,7 @@ export async function drpMessagesHandler(
 			syncRejectHandler(node, message.data);
 			break;
 		default:
-			console.error("topology::node::messageHandler", "Invalid operation");
+			log.error("::messageHandler: Invalid operation");
 			break;
 	}
 }
@@ -61,7 +58,7 @@ async function updateHandler(node: DRPNode, data: Uint8Array, sender: string) {
 	const updateMessage = NetworkPb.Update.decode(data);
 	const object = node.objectStore.get(updateMessage.objectId);
 	if (!object) {
-		console.error("topology::node::updateHandler", "Object not found");
+		log.error("::updateHandler: Object not found");
 		return false;
 	}
 
@@ -97,7 +94,7 @@ function syncHandler(node: DRPNode, sender: string, data: Uint8Array) {
 	const syncMessage = NetworkPb.Sync.decode(data);
 	const object = node.objectStore.get(syncMessage.objectId);
 	if (!object) {
-		console.error("topology::node::syncHandler", "Object not found");
+		log.error("::syncHandler: Object not found");
 		return;
 	}
 
@@ -137,7 +134,7 @@ function syncAcceptHandler(node: DRPNode, sender: string, data: Uint8Array) {
 	const syncAcceptMessage = NetworkPb.SyncAccept.decode(data);
 	const object = node.objectStore.get(syncAcceptMessage.objectId);
 	if (!object) {
-		console.error("drp::node::syncAcceptHandler", "Object not found");
+		log.error("::syncAcceptHandler: Object not found");
 		return;
 	}
 
@@ -218,6 +215,6 @@ export function drpObjectChangesHandler(
 			break;
 		}
 		default:
-			console.error("drp::node::createObject", "Invalid origin function");
+			log.error("::createObject: Invalid origin function");
 	}
 }

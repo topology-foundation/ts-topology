@@ -1,6 +1,6 @@
 import { bench, describe } from "vitest";
 import { AddWinsSet } from "../../blueprints/src/AddWinsSet/index.js";
-import { type Hash, DRPObject } from "../src/index.js";
+import { DRPObject, type Hash } from "../src/index.js";
 
 describe("AreCausallyDependent benchmark", async () => {
 	const samples = 100000;

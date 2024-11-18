@@ -39,7 +39,6 @@
 		"@ts-drp/network": "0.3.1",
 		"@ts-drp/object": "0.3.1",
 		"@ts-drp/logger": "0.3.1",
-		"commander": "^12.1.0",
-		"google-protobuf": "^3.21.2"
+		"commander": "^12.1.0"
 	}
 }

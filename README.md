@@ -42,7 +42,7 @@ This repository is a monorepo that contains the following packages:
 
 # Examples
 
-All the examples are located in the `examples` directory. Currently, there is only one example, which is a simple canvas where you can paint pixels. You can also look into the [counter-splash](https://github.com/topology-foundation/counter-splash) (demo for EthCC 2024) repository for a more complex example.
+All the examples are located in the `examples` directory.
 
 # Usage
 

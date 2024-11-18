@@ -1,8 +1,7 @@
 import * as grpc from "@grpc/grpc-js";
 
 import type { ServerUnaryCall, sendUnaryData } from "@grpc/grpc-js";
-import { Logger } from "@ts-drp/logger";
-import type { DRPNode } from "../index.js";
+import { type DRPNode, log } from "../index.js";
 import { DRPRpcService } from "../proto/drp/node/v1/rpc_grpc_pb.js";
 import type {
 	GetDRPHashGraphRequest,
@@ -14,8 +13,6 @@ import type {
 } from "../proto/drp/node/v1/rpc_pb.js";
 
 export function init(node: DRPNode) {
-	const log = new Logger("drp::rpc", node.config?.network_config?.log_config);
-
 	function subscribeDRP(
 		call: ServerUnaryCall<SubscribeDRPRequest, SubscribeDRPResponse>,
 		callback: sendUnaryData<SubscribeDRPResponse>,
@@ -24,7 +21,7 @@ export function init(node: DRPNode) {
 		try {
 			node.subscribeObject(call.request.drpId);
 		} catch (e) {
-			console.error(e);
+			log.error("::rpc::subscribeDRP: Error", e);
 			returnCode = 1;
 		}
 
@@ -42,7 +39,7 @@ export function init(node: DRPNode) {
 		try {
 			node.unsubscribeObject(call.request.drpId);
 		} catch (e) {
-			console.error(e);
+			log.error("::rpc::unsubscribeDRP: Error", e);
 			returnCode = 1;
 		}
 
@@ -64,7 +61,7 @@ export function init(node: DRPNode) {
 				hashes.push(v.hash);
 			}
 		} catch (e) {
-			console.error(e);
+			log.error("::rpc::getDRPHashGraph: Error", e);
 		}
 
 		const response: GetDRPHashGraphResponse = {
@@ -83,7 +80,7 @@ export function init(node: DRPNode) {
 		"0.0.0.0:6969",
 		grpc.ServerCredentials.createInsecure(),
 		(_error, _port) => {
-			log.info("running grpc in port:", _port);
+			log.info("::rpc::init: running grpc in port:", _port);
 		},
 	);
 }

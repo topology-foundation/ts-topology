@@ -1,5 +1,5 @@
 import * as crypto from "node:crypto";
-import { Logger } from "@ts-drp/logger";
+import { log } from "../index.js";
 import { linearizeMultiple } from "../linearize/multipleSemantics.js";
 import { linearizePair } from "../linearize/pairSemantics.js";
 import {
@@ -7,8 +7,6 @@ import {
 	Vertex,
 } from "../proto/drp/object/v1/object_pb.js";
 import { BitSet } from "./bitset.js";
-
-const log: Logger = new Logger("hashgraph");
 
 // Reexporting the Vertex and Operation types from the protobuf file
 export { Vertex, Operation };

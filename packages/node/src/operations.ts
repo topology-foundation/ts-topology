@@ -1,7 +1,7 @@
 import { NetworkPb } from "@ts-drp/network";
-import { ObjectPb, type DRPObject } from "@ts-drp/object";
+import { type DRPObject, ObjectPb } from "@ts-drp/object";
 import { drpMessagesHandler, drpObjectChangesHandler } from "./handlers.js";
-import type { DRPNode } from "./index.js";
+import { type DRPNode, log } from "./index.js";
 
 /* Object operations */
 enum OPERATIONS {
@@ -52,7 +52,7 @@ export async function syncObject(
 ) {
 	const object: DRPObject | undefined = node.objectStore.get(objectId);
 	if (!object) {
-		console.error("topology::node::syncObject", "Object not found");
+		log.error("::syncObject: Object not found");
 		return;
 	}
 	const data = NetworkPb.Sync.create({

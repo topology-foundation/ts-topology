@@ -292,12 +292,6 @@ importers:
       '@libp2p/identify':
         specifier: ^3.0.6
         version: 3.0.10
-      '@libp2p/mdns':
-        specifier: ^11.0.8
-        version: 11.0.10
-      '@libp2p/peer-id':
-        specifier: ^5.0.4
-        version: 5.0.7
       '@libp2p/pubsub-peer-discovery':
         specifier: ^11.0.0
         version: 11.0.0
@@ -328,9 +322,6 @@ importers:
       libp2p:
         specifier: ^2.1.6
         version: 2.2.1
-      ts-proto:
-        specifier: ^2.2.4
-        version: 2.2.5
       uint8arrays:
         specifier: ^5.1.0
         version: 5.1.0
@@ -338,9 +329,6 @@ importers:
       '@libp2p/interface':
         specifier: ^2.1.3
         version: 2.2.0
-      react-native-webrtc:
-        specifier: ^124.0.3
-        version: 124.0.4(react-native@0.76.1(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))
 
   packages/node:
     dependencies:
@@ -371,9 +359,6 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
-      google-protobuf:
-        specifier: ^3.21.2
-        version: 3.21.4
     devDependencies:
       '@bufbuild/protobuf':
         specifier: ^2.0.0
@@ -393,19 +378,13 @@ importers:
 
   packages/object:
     dependencies:
-      '@bufbuild/protobuf':
-        specifier: ^2.0.0
-        version: 2.2.1
       '@ts-drp/logger':
         specifier: ^0.3.1
         version: link:../logger
-      ts-proto:
-        specifier: ^2.2.4
-        version: 2.2.5
     devDependencies:
-      assemblyscript:
-        specifier: ^0.27.29
-        version: 0.27.30
+      '@bufbuild/protobuf':
+        specifier: ^2.0.0
+        version: 2.2.1
       benchmark:
         specifier: ^2.1.4
         version: 2.1.4
@@ -1595,9 +1574,6 @@ packages:
   '@libp2p/logger@5.1.3':
     resolution: {integrity: sha512-NUVWEWGbXlBDgDE5ntdm51+ZICmaKYI8mor6KrlPeB1WXDyIFxRWIBw6uzt+HgprQJWzLTojeUEGv6OPsj95Dg==}
 
-  '@libp2p/mdns@11.0.10':
-    resolution: {integrity: sha512-9U/byQsGmTC6Vqc+DaIsFPpIWBlh7CHT24PSg4CvUHC8CrypHADlTEGUxQjP5KTW1i50ZR1hkGlQZUC592RQxw==}
-
   '@libp2p/multistream-select@6.0.8':
     resolution: {integrity: sha512-CSgTXvuw5ObZs/EIa4mtynsYEO+BxyZTNz3AEgjsPyZKxLJ9usrZ8lGxn4sK4g65CKcTI2mVJBmh0duz+sXxBw==}
 
@@ -2128,9 +2104,6 @@ packages:
 
   '@types/minimatch@3.0.5':
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
-
-  '@types/multicast-dns@7.2.4':
-    resolution: {integrity: sha512-ib5K4cIDR4Ro5SR3Sx/LROkMDa0BHz0OPaCBL/OSPDsAXEGZ3/KQeS6poBKYVN7BfjXDL9lWNwzyHVgt/wkyCw==}
 
   '@types/murmurhash3js-revisited@3.0.3':
     resolution: {integrity: sha512-QvlqvYtGBYIDeO8dFdY4djkRubcrc+yTJtBc7n8VZPlJDUS/00A+PssbvERM8f9bYRmcaSEHPZgZojeQj7kzAA==}
@@ -3221,9 +3194,6 @@ packages:
   globrex@0.1.2:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
 
-  google-protobuf@3.21.4:
-    resolution: {integrity: sha512-MnG7N936zcKTco4Jd2PX2U96Kf9PxygAPKBug+74LHzmHXmceN16MmRcdgZv+DGef/S9YvQAfRsNCn4cjf9yyQ==}
-
   gopd@1.0.1:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
 
@@ -4026,10 +3996,6 @@ packages:
   ms@3.0.0-canary.1:
     resolution: {integrity: sha512-kh8ARjh8rMN7Du2igDRO9QJnqCb2xYTJxyQYK7vJJS4TvLLmsbyhiKpSW+t+y26gyOyMd0riphX0GeWKU3ky5g==}
     engines: {node: '>=12.13'}
-
-  multicast-dns@7.2.5:
-    resolution: {integrity: sha512-2eznPJP8z2BFLX50tf0LuODrpINqP1RVIm/CObbTcBRITQgmC/TjcREF1NeTBzIcR5XO/ukWo+YHOjBbFwIupg==}
-    hasBin: true
 
   multiformats@13.3.1:
     resolution: {integrity: sha512-QxowxTNwJ3r5RMctoGA5p13w5RbRT2QDkoM+yFlqfLiioBp78nhDjnRLvmSBI9+KAqN4VdgOVWM9c0CHd86m3g==}
@@ -5000,9 +4966,6 @@ packages:
 
   through2@2.0.5:
     resolution: {integrity: sha512-/mrRod8xqpA+IHSLyGCQ2s8SPHiCDEeQJSep1jqLYeEUClOFG2Qsh+4FU6G9VeqpZnGW/Su8LQGc4YKni5rYSQ==}
-
-  thunky@1.1.0:
-    resolution: {integrity: sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==}
 
   timers-browserify@2.0.12:
     resolution: {integrity: sha512-9phl76Cqm6FhSX9Xe1ZUAMLtm1BLkKj2Qd5ApyWkXzsMRaA7dgr81kf4wJmQf/hAvg8EEyJxDo3du/0KlhPiKQ==}
@@ -6874,17 +6837,6 @@ snapshots:
       multiformats: 13.3.1
       weald: 1.0.4
 
-  '@libp2p/mdns@11.0.10':
-    dependencies:
-      '@libp2p/interface': 2.2.0
-      '@libp2p/interface-internal': 2.0.10
-      '@libp2p/peer-id': 5.0.7
-      '@libp2p/utils': 6.1.3
-      '@multiformats/multiaddr': 12.3.1
-      '@types/multicast-dns': 7.2.4
-      dns-packet: 5.6.1
-      multicast-dns: 7.2.5
-
   '@libp2p/multistream-select@6.0.8':
     dependencies:
       '@libp2p/interface': 2.2.0
@@ -7640,11 +7592,6 @@ snapshots:
       '@types/unist': 3.0.3
 
   '@types/minimatch@3.0.5': {}
-
-  '@types/multicast-dns@7.2.4':
-    dependencies:
-      '@types/dns-packet': 5.6.5
-      '@types/node': 22.8.4
 
   '@types/murmurhash3js-revisited@3.0.3': {}
 
@@ -8881,8 +8828,6 @@ snapshots:
 
   globrex@0.1.2: {}
 
-  google-protobuf@3.21.4: {}
-
   gopd@1.0.1:
     dependencies:
       get-intrinsic: 1.2.4
@@ -9877,11 +9822,6 @@ snapshots:
   ms@2.1.3: {}
 
   ms@3.0.0-canary.1: {}
-
-  multicast-dns@7.2.5:
-    dependencies:
-      dns-packet: 5.6.1
-      thunky: 1.1.0
 
   multiformats@13.3.1: {}
 
@@ -11007,8 +10947,6 @@ snapshots:
     dependencies:
       readable-stream: 2.3.8
       xtend: 4.0.2
-
-  thunky@1.1.0: {}
 
   timers-browserify@2.0.12:
     dependencies:
