@@ -20,7 +20,7 @@ export function linearizePair(hashGraph: HashGraph): Operation[] {
 
 		while (j < order.length) {
 			if (dropped[j]) {
-				j = hashGraph.findNextUnusuallyRelated(anchor, j) ?? order.length;
+				j++;
 				continue;
 			}
 			const moving = order[j];
@@ -43,18 +43,18 @@ export function linearizePair(hashGraph: HashGraph): Operation[] {
 						break;
 					case ActionType.DropRight:
 						dropped[j] = true;
-						j = hashGraph.findNextUnusuallyRelated(anchor, j) ?? order.length;
+						j++;
 						break;
 					case ActionType.Swap:
 						[order[i], order[j]] = [order[j], order[i]];
 						j = i + 1;
 						break;
 					case ActionType.Nop:
-						j = hashGraph.findNextUnusuallyRelated(anchor, j) ?? order.length;
+						j++;
 						break;
 				}
 			} else {
-				j = hashGraph.findNextUnusuallyRelated(anchor, j) ?? order.length;
+				j++;
 			}
 		}
 
