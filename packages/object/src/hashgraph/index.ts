@@ -190,13 +190,12 @@ export class HashGraph {
 	}
 
 	topologicalSort(updateBitsets = false): Hash[] {
-		this.reachablePredecessors.clear();
-		this.topoSortedIndex.clear();
-
 		const result = this.depthFirstSearch();
 		result.reverse();
-
 		if (!updateBitsets) return result;
+
+		this.reachablePredecessors.clear();
+		this.topoSortedIndex.clear();
 
 		// Double the size until it's enough to hold all the vertices
 		while (this.currentBitsetSize < result.length) this.currentBitsetSize *= 2;
