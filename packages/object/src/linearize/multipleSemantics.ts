@@ -35,13 +35,17 @@ export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 				indices.set(anchor, i);
 				concurrentOps.push(moving);
 				indices.set(moving, j);
-				
-				let reachableVertices : BitSet = new BitSet(hashGraph.getCurrentBitsetSize());
-				const anchorReachablePredecessors = hashGraph.getReachablePredecessors(anchor);
+
+				let reachableVertices: BitSet = new BitSet(
+					hashGraph.getCurrentBitsetSize(),
+				);
+				const anchorReachablePredecessors =
+					hashGraph.getReachablePredecessors(anchor);
 				if (anchorReachablePredecessors) {
 					reachableVertices = reachableVertices.or(anchorReachablePredecessors);
 				}
-				const movingReachablePredecessors = hashGraph.getReachablePredecessors(moving);
+				const movingReachablePredecessors =
+					hashGraph.getReachablePredecessors(moving);
 				if (movingReachablePredecessors) {
 					reachableVertices = reachableVertices.or(movingReachablePredecessors);
 				}
@@ -63,7 +67,9 @@ export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 					if (add) {
 						concurrentOps.push(order[k]);
 						indices.set(order[k], k);
-						const reachablePredecessors = hashGraph.getReachablePredecessors(order[k]);
+						const reachablePredecessors = hashGraph.getReachablePredecessors(
+							order[k],
+						);
 						if (reachablePredecessors) {
 							reachableVertices = reachableVertices.or(reachablePredecessors);
 						}
