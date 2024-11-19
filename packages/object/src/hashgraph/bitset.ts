@@ -89,9 +89,7 @@ export class BitSet {
 
 		while (wordIndex < this.data.length) {
 			let currentWord = this.data[wordIndex];
-
 			if (bit === 0) currentWord = ~currentWord;
-
 			currentWord &= mask;
 
 			if (currentWord !== 0) {
