@@ -35,4 +35,19 @@ describe("BitSet Test", () => {
 		other = other.and(bitset);
 		expect(other.get(0)).toBe(false);
 	});
+
+	test("find next index of one-bit", () => {
+		bitset.set(5, true);
+		bitset.set(10, true);
+		bitset.set(20, true);
+		bitset.set(30, true);
+		bitset.set(40, true);
+
+		expect(bitset.findNext(0, 1)).toBe(5);
+		expect(bitset.findNext(5, 1)).toBe(10);
+		expect(bitset.findNext(10, 1)).toBe(20);
+		expect(bitset.findNext(20, 1)).toBe(30);
+		expect(bitset.findNext(30, 1)).toBe(40);
+		expect(bitset.findNext(40, 1)).toBe(undefined);
+	});
 });
