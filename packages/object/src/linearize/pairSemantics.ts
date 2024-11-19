@@ -5,30 +5,27 @@ import {
 } from "../hashgraph/index.js";
 
 export function linearizePair(hashGraph: HashGraph): Operation[] {
-	const reachableState = hashGraph.topologicalSort();
-	const dropped = new Array(reachableState.getLength()).fill(false);
+	const order = hashGraph.topologicalSort(true);
+	const dropped = new Array(order.length).fill(false);
 	const result: Operation[] = [];
 	let i = 0;
 
-	while (i < reachableState.getLength()) {
+	while (i < order.length) {
 		if (dropped[i]) {
 			i++;
 			continue;
 		}
-		const anchor = reachableState.getHash(i);
-		let j: number = i + 1;
+		const anchor = order[i];
+		let j = i + 1;
 
-		while (j < reachableState.getLength()) {
-			if (dropped[i]) break;
+		while (j < order.length) {
 			if (dropped[j]) {
-				const nextIndex = reachableState.findNextCausallyUnrelated(anchor, j);
-				if (nextIndex === undefined) break;
-				j = nextIndex;
+				j = hashGraph.findNextUnusuallyRelated(anchor, j) ?? order.length;
 				continue;
 			}
-			const moving = reachableState.getHash(j);
+			const moving = order[j];
 
-			if (!reachableState.areCausallyRelatedUsingBitsets(anchor, moving)) {
+			if (!hashGraph.areCausallyRelatedUsingBitsets(anchor, moving)) {
 				const v1 = hashGraph.vertices.get(anchor);
 				const v2 = hashGraph.vertices.get(moving);
 				let action: ActionType;
@@ -41,31 +38,31 @@ export function linearizePair(hashGraph: HashGraph): Operation[] {
 				switch (action) {
 					case ActionType.DropLeft:
 						dropped[i] = true;
+						i++;
+						j = i + 1;
 						break;
 					case ActionType.DropRight:
 						dropped[j] = true;
+						j = hashGraph.findNextUnusuallyRelated(anchor, j) ?? order.length;
 						break;
 					case ActionType.Swap:
-						reachableState.swap(i, j);
-						j = i;
+						[order[i], order[j]] = [order[j], order[i]];
+						j = i + 1;
 						break;
 					case ActionType.Nop:
+						j = hashGraph.findNextUnusuallyRelated(anchor, j) ?? order.length;
 						break;
 				}
+			} else {
+				j = hashGraph.findNextUnusuallyRelated(anchor, j) ?? order.length;
 			}
-
-			const nextIndex = reachableState.findNextCausallyUnrelated(anchor, j);
-			if (nextIndex === undefined) break;
-			j = nextIndex;
 		}
-		if (dropped[i]) {
+
+		if (i < order.length && !dropped[i]) {
+			const op = hashGraph.vertices.get(order[i])?.operation;
+			if (op && op.value !== null) result.push(op);
 			i++;
-			continue;
 		}
-
-		const op = hashGraph.vertices.get(anchor)?.operation;
-		if (op && op.value !== null) result.push(op);
-		i++;
 	}
 
 	return result;
