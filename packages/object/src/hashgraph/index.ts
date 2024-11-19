@@ -341,6 +341,14 @@ export class HashGraph {
 	getAllVertices(): Vertex[] {
 		return Array.from(this.vertices.values());
 	}
+
+	getReachablePredecessors(hash: Hash): BitSet | undefined {
+		return this.reachablePredecessors.get(hash);
+	}
+
+	getCurrentBitsetSize(): number {
+		return this.currentBitsetSize;
+	}
 }
 
 function computeHash<T>(
