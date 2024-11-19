@@ -316,16 +316,7 @@ export class HashGraph {
 	}
 
 	findNextUnusuallyRelated(hash: Hash, start: number): number | undefined {
-		if (!this.arePredecessorsFresh) {
-			this.topologicalSort(true);
-		}
-		const currentIndex = this.topoSortedIndex.get(hash);
-		if (currentIndex === undefined) return undefined;
-
-		const nextIndex = this.reachablePredecessors.get(hash)?.findNext(start, 0);
-		if (nextIndex === undefined) return undefined;
-
-		return nextIndex;
+		return this.reachablePredecessors.get(hash)?.findNext(start, 0);
 	}
 
 	areCausallyRelatedUsingBFS(hash1: Hash, hash2: Hash): boolean {
