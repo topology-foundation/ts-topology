@@ -57,7 +57,7 @@ export function linearizePair(hashGraph: HashGraph): Operation[] {
 			}
 		}
 
-		if (i < order.length && !dropped[i]) {
+		if (!dropped[i]) {
 			const op = hashGraph.vertices.get(order[i])?.operation;
 			if (op && op.value !== null) result.push(op);
 		}
