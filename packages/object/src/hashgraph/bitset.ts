@@ -6,106 +6,106 @@
 	Algorithm for more optimal causality check inspired by https://stackoverflow.com/a/78133041
 */
 export class BitSet {
-  private data: Uint32Array;
+	private data: Uint32Array;
 
-  constructor(size = 1) {
-    // Always start with size 32
-    this.data = new Uint32Array(size);
-  }
+	constructor(size = 1) {
+		// Always start with size 32
+		this.data = new Uint32Array(size);
+	}
 
-  clear(): void {
-    this.data = new Uint32Array(this.data.length);
-  }
+	clear(): void {
+		this.data = new Uint32Array(this.data.length);
+	}
 
-  set(index: number, value: boolean): void {
-    // (index / 32) | 0 is equivalent to Math.floor(index / 32)
-    const byteIndex = (index / 32) | 0;
-    const bitIndex = index % 32;
-    // if value is false, and with all 1s except the bit at bitIndex
-    if (value) this.data[byteIndex] |= 1 << bitIndex;
-    else this.data[byteIndex] &= ~(1 << bitIndex);
-  }
+	set(index: number, value: boolean): void {
+		// (index / 32) | 0 is equivalent to Math.floor(index / 32)
+		const byteIndex = (index / 32) | 0;
+		const bitIndex = index % 32;
+		// if value is false, and with all 1s except the bit at bitIndex
+		if (value) this.data[byteIndex] |= 1 << bitIndex;
+		else this.data[byteIndex] &= ~(1 << bitIndex);
+	}
 
-  get(index: number): boolean {
-    // (index / 32) | 0 is equivalent to Math.floor(index / 32)
-    const byteIndex = (index / 32) | 0;
-    const bitIndex = index % 32;
-    return (this.data[byteIndex] & (1 << bitIndex)) !== 0;
-  }
+	get(index: number): boolean {
+		// (index / 32) | 0 is equivalent to Math.floor(index / 32)
+		const byteIndex = (index / 32) | 0;
+		const bitIndex = index % 32;
+		return (this.data[byteIndex] & (1 << bitIndex)) !== 0;
+	}
 
-  flip(index: number): void {
-    // (index / 32) | 0 is equivalent to Math.floor(index / 32)
-    const byteIndex = (index / 32) | 0;
-    const bitIndex = index % 32;
-    this.data[byteIndex] ^= 1 << bitIndex;
-  }
+	flip(index: number): void {
+		// (index / 32) | 0 is equivalent to Math.floor(index / 32)
+		const byteIndex = (index / 32) | 0;
+		const bitIndex = index % 32;
+		this.data[byteIndex] ^= 1 << bitIndex;
+	}
 
-  // AND two bitsets of the same size
-  and(other: BitSet): BitSet {
-    const result = new BitSet(this.data.length);
-    for (let i = 0; i < this.data.length; i++) {
-      result.data[i] = this.data[i] & other.data[i];
-    }
-    return result;
-  }
+	// AND two bitsets of the same size
+	and(other: BitSet): BitSet {
+		const result = new BitSet(this.data.length);
+		for (let i = 0; i < this.data.length; i++) {
+			result.data[i] = this.data[i] & other.data[i];
+		}
+		return result;
+	}
 
-  // OR two bitsets of the same size
-  or(other: BitSet): BitSet {
-    const result = new BitSet(this.data.length);
-    for (let i = 0; i < this.data.length; i++) {
-      result.data[i] = this.data[i] | other.data[i];
-    }
-    return result;
-  }
+	// OR two bitsets of the same size
+	or(other: BitSet): BitSet {
+		const result = new BitSet(this.data.length);
+		for (let i = 0; i < this.data.length; i++) {
+			result.data[i] = this.data[i] | other.data[i];
+		}
+		return result;
+	}
 
-  // XOR two bitsets of the same size
-  xor(other: BitSet): BitSet {
-    const result = new BitSet(this.data.length);
-    for (let i = 0; i < this.data.length; i++) {
-      result.data[i] = this.data[i] ^ other.data[i];
-    }
-    return result;
-  }
+	// XOR two bitsets of the same size
+	xor(other: BitSet): BitSet {
+		const result = new BitSet(this.data.length);
+		for (let i = 0; i < this.data.length; i++) {
+			result.data[i] = this.data[i] ^ other.data[i];
+		}
+		return result;
+	}
 
-  not(): BitSet {
-    const result = new BitSet(this.data.length * 32);
-    for (let i = 0; i < this.data.length; i++) {
-      result.data[i] = ~this.data[i];
-    }
-    return result;
-  }
+	not(): BitSet {
+		const result = new BitSet(this.data.length * 32);
+		for (let i = 0; i < this.data.length; i++) {
+			result.data[i] = ~this.data[i];
+		}
+		return result;
+	}
 
-  toString(): string {
-    return Array.from(this.data)
-      .reverse()
-      .map((int) => int.toString(2).padStart(32, "0"))
-      .join("");
-  }
+	toString(): string {
+		return Array.from(this.data)
+			.reverse()
+			.map((int) => int.toString(2).padStart(32, "0"))
+			.join("");
+	}
 
-  findNext(index: number, bit: number): number | undefined {
-    let wordIndex = Math.floor((index + 1) / 32);
-    const bitIndex = (index + 1) % 32;
+	findNext(index: number, bit: number): number | undefined {
+		let wordIndex = Math.floor((index + 1) / 32);
+		const bitIndex = (index + 1) % 32;
 		let mask = ~((1 << bitIndex) - 1);
 
-    while (wordIndex < this.data.length) {
-      let currentWord = this.data[wordIndex];
+		while (wordIndex < this.data.length) {
+			let currentWord = this.data[wordIndex];
 
-      if (bit === 0) currentWord = ~currentWord;
+			if (bit === 0) currentWord = ~currentWord;
 
-      currentWord &= mask;
+			currentWord &= mask;
 
-      if (currentWord !== 0) {
-        let nextBitIndex = 0;
+			if (currentWord !== 0) {
+				let nextBitIndex = 0;
 				while (!(currentWord & (1 << nextBitIndex))) {
 					++nextBitIndex;
 				}
-        return wordIndex * 32 + nextBitIndex;
-      }
+				return wordIndex * 32 + nextBitIndex;
+			}
 
-      wordIndex++;
-      mask = ~0;
-    }
+			wordIndex++;
+			mask = ~0;
+		}
 
-    return undefined;
-  }
+		return undefined;
+	}
 }
