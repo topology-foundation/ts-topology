@@ -95,11 +95,7 @@ export class BitSet {
 			currentWord &= mask;
 
 			if (currentWord !== 0) {
-				let nextBitIndex = 0;
-				while (!(currentWord & (1 << nextBitIndex))) {
-					++nextBitIndex;
-				}
-				return wordIndex * 32 + nextBitIndex;
+				return wordIndex * 32 + 31 - Math.clz32(currentWord & -currentWord);
 			}
 
 			wordIndex++;
