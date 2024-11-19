@@ -82,7 +82,7 @@ export class BitSet {
 			.join("");
 	}
 
-	findNext(index: number, bit: number): number | undefined {
+	findNext(index: number, bit: number): number {
 		let wordIndex = Math.floor((index + 1) / 32);
 		const bitIndex = (index + 1) % 32;
 		let mask = ~((1 << bitIndex) - 1);
@@ -106,6 +106,6 @@ export class BitSet {
 			mask = ~0;
 		}
 
-		return undefined;
+		return this.data.length * 32;
 	}
 }
