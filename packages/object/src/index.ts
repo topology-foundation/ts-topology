@@ -68,7 +68,7 @@ export class DRPObject implements IDRPObject {
 		this.abi = abi ?? "";
 		this.bytecode = new Uint8Array();
 		this.vertices = [];
-		this.drp = drp ? new Proxy(drp, this.proxyCROHandler()) : null;
+		this.drp = drp ? new Proxy(drp, this.proxyDRPHandler()) : null;
 		this.hashGraph = new HashGraph(
 			nodeId,
 			drp?.resolveConflicts?.bind(drp ?? this),
@@ -77,8 +77,8 @@ export class DRPObject implements IDRPObject {
 		this.subscriptions = [];
 	}
 
-	// This function is black magic, it allows us to intercept calls to the CRO object
-	proxyCROHandler(): ProxyHandler<object> {
+	// This function is black magic, it allows us to intercept calls to the DRP object
+	proxyDRPHandler(): ProxyHandler<object> {
 		const obj = this;
 		return {
 			get(target, propKey, receiver) {
