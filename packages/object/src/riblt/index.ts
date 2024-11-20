@@ -1,8 +1,8 @@
 import * as crypto from "node:crypto";
-import { Encoder } from "./encoder.js";
-import { Decoder } from "./decoder.js";
-import { CodedSymbol, type SourceSymbol } from "./symbol.js";
 import type * as ObjectPb from "../proto/topology/object/object_pb.js";
+import { Decoder } from "./decoder.js";
+import { Encoder } from "./encoder.js";
+import { CodedSymbol, type SourceSymbol } from "./symbol.js";
 
 class VertexHash implements SourceSymbol {
 	data: Uint8Array;
@@ -73,23 +73,23 @@ export class VertexHashDecoder extends Decoder<VertexHash> {
 		);
 	}
 
-    getDecodedLocal(): string[] {
-        return this.decodedLocalSymbols.map((symbol) => {
-            let hash = "";
-            for (let i = 0; i < 32; i++) {
-                hash += symbol.data[i].toString(16).padStart(2, "0");
-            }
-            return hash;
-        });
-    }
+	getDecodedLocal(): string[] {
+		return this.decodedLocalSymbols.map((symbol) => {
+			let hash = "";
+			for (let i = 0; i < 32; i++) {
+				hash += symbol.data[i].toString(16).padStart(2, "0");
+			}
+			return hash;
+		});
+	}
 
-    getDecodedRemote(): string[] {
-        return this.decodedRemoteSymbols.map((symbol) => {
-            let hash = "";
-            for (let i = 0; i < 32; i++) {
-                hash += symbol.data[i].toString(16).padStart(2, "0");
-            }
-            return hash;
-        });
-    }
+	getDecodedRemote(): string[] {
+		return this.decodedRemoteSymbols.map((symbol) => {
+			let hash = "";
+			for (let i = 0; i < 32; i++) {
+				hash += symbol.data[i].toString(16).padStart(2, "0");
+			}
+			return hash;
+		});
+	}
 }

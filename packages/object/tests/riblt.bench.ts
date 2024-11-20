@@ -1,5 +1,5 @@
-import Benchmark from "benchmark";
 import * as crypto from "node:crypto";
+import Benchmark from "benchmark";
 import { VertexHashDecoder, VertexHashEncoder } from "../src/riblt/index.js";
 
 function benchmarkForEncoding(name: string, numVertices: number, size: number) {
