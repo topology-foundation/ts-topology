@@ -43,7 +43,9 @@ describe("RIBLT test", async () => {
 
 			let symbolIndex = 0;
 
-			const newCodedSymbol = () => { return new CodedSymbol(new VertexSymbol(0), new Uint8Array(20), 0); };
+			const newCodedSymbol = () => {
+				return new CodedSymbol(new VertexSymbol(0), new Uint8Array(20), 0);
+			};
 
 			const localEncoder = new Encoder(newCodedSymbol);
 			const remoteEncoder = new Encoder(newCodedSymbol);
@@ -53,7 +55,7 @@ describe("RIBLT test", async () => {
 				Local = 0,
 				Remote = 1,
 				Common = 2,
-			};
+			}
 			const symbolState: SymbolState[] = [];
 
 			for (let i = 0; i < nlocal; i++) {
@@ -106,7 +108,9 @@ describe("RIBLT test", async () => {
 				expect(symbolState[symbol.data]).toBe(SymbolState.Remote);
 			}
 
-			console.log(`${sequenceSize} symbols, ${(sequenceSize / d).toFixed(3)} symbols/diff`);
+			console.log(
+				`${sequenceSize} symbols, ${(sequenceSize / d).toFixed(3)} symbols/diff`,
+			);
 		},
 	);
 });
