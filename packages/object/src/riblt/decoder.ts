@@ -103,6 +103,8 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 					} else {
 						throw Error(`Invalid pure symbol ${symbol}`);
 					}
+					this.isDecoded[index] = true;
+					this.remaining--;
 					this.addSymbol(decodedSymbol, -symbol.count);
 					this.computePrefix(this.codedSymbols.length);
 				}
