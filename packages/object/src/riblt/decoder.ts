@@ -95,7 +95,7 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 					this.isDecoded[index] = true;
 					this.remaining--;
 				} else if (symbol.isPure()) {
-					const decodedSymbol = this.symbolFactory.cloneSource(symbol.sum);
+					const decodedSymbol = symbol.sum;
 					if (symbol.count === 1) {
 						this.decodedLocalSymbols.push(decodedSymbol);
 					} else if (symbol.count === -1) {

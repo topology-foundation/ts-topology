@@ -93,9 +93,7 @@ export class CodingPrefix<T extends SourceSymbol> {
 	}
 
 	addSymbol(symbol: T, direction = 1): void {
-		const hashedSymbol = new HashedSymbol<T>(
-			this.symbolFactory.cloneSource(symbol),
-		);
+		const hashedSymbol = new HashedSymbol<T>(symbol);
 		const mapping = new RandomMapping(hashedSymbol.checksum, 0);
 
 		this.sourceSymbols.push(hashedSymbol);

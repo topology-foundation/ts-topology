@@ -80,7 +80,6 @@ export class CodedSymbol<T extends SourceSymbol> extends HashedSymbol<T> {
 export abstract class SymbolFactory<T extends SourceSymbol> {
 	abstract emptySource(): T;
 	abstract emptyHash(): Uint8Array;
-	abstract cloneSource(s: T): T;
 	emptyCoded(): CodedSymbol<T> {
 		return new CodedSymbol(this.emptySource(), this.emptyHash(), 0);
 	}
