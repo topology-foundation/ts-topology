@@ -3,7 +3,6 @@ import {
 	type CodedSymbol,
 	HashedSymbol,
 	type SourceSymbol,
-	type SymbolFactory,
 } from "./symbol.js";
 
 class SymbolMapping {
@@ -84,10 +83,10 @@ export class CodingPrefix<T extends SourceSymbol> {
 	private mapGenerators: RandomMapping[];
 	private queue: MappingHeap;
 
-	constructor(protected readonly symbolFactory: SymbolFactory<T>) {
+	constructor(private readonly newCodedSymbol: () => CodedSymbol<T>) {
 		this.sourceSymbols = [];
 		this.sourceSymbolDirections = [];
-		this.codedSymbols = [symbolFactory.emptyCoded()];
+		this.codedSymbols = [newCodedSymbol()];
 		this.mapGenerators = [];
 		this.queue = new MappingHeap();
 	}
@@ -110,7 +109,7 @@ export class CodingPrefix<T extends SourceSymbol> {
 
 	extendPrefix(size: number): void {
 		while (this.codedSymbols.length < size) {
-			this.codedSymbols.push(this.symbolFactory.emptyCoded());
+			this.codedSymbols.push(this.newCodedSymbol());
 		}
 	}
 

@@ -3,28 +3,16 @@ import type {
 	CodedSymbol,
 	HashedSymbol,
 	SourceSymbol,
-	SymbolFactory,
 } from "./symbol.js";
 
 export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
-	decodedLocalSymbols: T[];
-	decodedRemoteSymbols: T[];
-	isDecoded: boolean[];
-	modifiedCodedSymbols: number[];
-	visited: boolean[];
-	remaining: number;
-	pureSymbols: CodedSymbol<T>[];
-
-	constructor(sourceSymbolFactory: SymbolFactory<T>) {
-		super(sourceSymbolFactory);
-		this.decodedLocalSymbols = [];
-		this.decodedRemoteSymbols = [];
-		this.isDecoded = [];
-		this.modifiedCodedSymbols = [];
-		this.visited = [];
-		this.remaining = 0;
-		this.pureSymbols = [];
-	}
+	decodedLocalSymbols: T[] = [];
+	decodedRemoteSymbols: T[] = [];
+	isDecoded: boolean[] = [];
+	modifiedCodedSymbols: number[] = [];
+	visited: boolean[] = [];
+	remaining = 0;
+	pureSymbols: CodedSymbol<T>[] = [];
 
 	extendPrefix(size: number): void {
 		super.extendPrefix(size);

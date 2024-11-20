@@ -2,7 +2,7 @@ import * as crypto from "node:crypto";
 import { beforeEach, describe, expect, test } from "vitest";
 import { Decoder } from "../src/riblt/decoder.js";
 import { Encoder } from "../src/riblt/encoder.js";
-import { type SourceSymbol, SymbolFactory } from "../src/riblt/symbol.js";
+import { CodedSymbol, type SourceSymbol } from "../src/riblt/symbol.js";
 
 class VertexSymbol implements SourceSymbol {
 	data: number;
@@ -33,27 +33,7 @@ class VertexSymbol implements SourceSymbol {
 	}
 }
 
-class VertexSymbolFactory extends SymbolFactory<VertexSymbol> {
-	emptySource(): VertexSymbol {
-		return new VertexSymbol(0);
-	}
-
-	emptyHash(): Uint8Array {
-		return new Uint8Array(20);
-	}
-
-	cloneSource(s: VertexSymbol): VertexSymbol {
-		return new VertexSymbol(s.data);
-	}
-
-	newTestSymbol(i): VertexSymbol {
-		return new VertexSymbol(i);
-	}
-}
-
 describe("RIBLT test", async () => {
-	const factory = new VertexSymbolFactory();
-
 	test.each([10, 20, 40, 100, 1000, 10000, 50000, 100000, 200000])(
 		"d=%i",
 		async (d) => {
@@ -63,9 +43,11 @@ describe("RIBLT test", async () => {
 
 			let symbolIndex = 0;
 
-			const localEncoder = new Encoder(factory);
-			const remoteEncoder = new Encoder(factory);
-			const localDecoder = new Decoder(factory);
+			const newCodedSymbol = () => { return new CodedSymbol(new VertexSymbol(0), new Uint8Array(20), 0); };
+
+			const localEncoder = new Encoder(newCodedSymbol);
+			const remoteEncoder = new Encoder(newCodedSymbol);
+			const localDecoder = new Decoder(newCodedSymbol);
 
 			enum SymbolState {
 				Local = 0,
@@ -75,20 +57,20 @@ describe("RIBLT test", async () => {
 			const symbolState: SymbolState[] = [];
 
 			for (let i = 0; i < nlocal; i++) {
-				const localSymbol = factory.newTestSymbol(symbolIndex);
+				const localSymbol = new VertexSymbol(symbolIndex);
 				symbolState.push(SymbolState.Local);
 				localEncoder.addSymbol(localSymbol);
 				symbolIndex++;
 			}
 			for (let i = 0; i < nremote; i++) {
-				const remoteSymbol = factory.newTestSymbol(symbolIndex);
+				const remoteSymbol = new VertexSymbol(symbolIndex);
 				symbolState.push(SymbolState.Remote);
 				remoteEncoder.addSymbol(remoteSymbol);
 				symbolIndex++;
 			}
 			for (let i = 0; i < ncommon; i++) {
-				const localSymbol = factory.newTestSymbol(symbolIndex);
-				const remoteSymbol = factory.cloneSource(localSymbol);
+				const localSymbol = new VertexSymbol(symbolIndex);
+				const remoteSymbol = new VertexSymbol(symbolIndex);
 				symbolState.push(SymbolState.Common);
 				localEncoder.addSymbol(localSymbol);
 				remoteEncoder.addSymbol(remoteSymbol);

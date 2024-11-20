@@ -76,11 +76,3 @@ export class CodedSymbol<T extends SourceSymbol> extends HashedSymbol<T> {
 		return `CodedSymbol(sum=${this.sum}, hash=[${this.checksum}], ${this.count})`;
 	}
 }
-
-export abstract class SymbolFactory<T extends SourceSymbol> {
-	abstract emptySource(): T;
-	abstract emptyHash(): Uint8Array;
-	emptyCoded(): CodedSymbol<T> {
-		return new CodedSymbol(this.emptySource(), this.emptyHash(), 0);
-	}
-}
