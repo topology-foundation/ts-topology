@@ -18,6 +18,12 @@ message Vertex {
   repeated string dependencies = 4;
 }
 
+message CodedSymbol {
+  bytes sum = 1;
+  bytes checksum = 2;
+  int32 count = 3;
+}
+
 message TopologyObjectBase {
   string id = 1;
   optional string abi = 2;

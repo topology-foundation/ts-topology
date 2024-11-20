@@ -28,6 +28,11 @@ message Sync {
   repeated string vertex_hashes = 2;
 }
 
+message SyncFixed {
+  string objectId = 1;
+  repeated topology.object.CodedSymbol symbols = 2;
+}
+
 message SyncAccept {
   string objectId = 1;
   repeated topology.object.Vertex requested = 2;
