@@ -1,9 +1,5 @@
 import { RandomMapping } from "./mapping.js";
-import {
-	type CodedSymbol,
-	HashedSymbol,
-	type SourceSymbol,
-} from "./symbol.js";
+import { type CodedSymbol, HashedSymbol, type SourceSymbol } from "./symbol.js";
 
 class SymbolMapping {
 	sourceIdx: number;

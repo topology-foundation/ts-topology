@@ -1,9 +1,5 @@
 import { CodingPrefix } from "./encoder.js";
-import type {
-	CodedSymbol,
-	HashedSymbol,
-	SourceSymbol,
-} from "./symbol.js";
+import type { CodedSymbol, HashedSymbol, SourceSymbol } from "./symbol.js";
 
 export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 	decodedLocalSymbols: T[] = [];
