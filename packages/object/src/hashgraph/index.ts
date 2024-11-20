@@ -315,7 +315,7 @@ export class HashGraph {
 		return true;
 	}
 
-	findNextUnusuallyRelated(hash: Hash, start: number): number | undefined {
+	findNextCausallyUnrelated(hash: Hash, start: number): number | undefined {
 		return this.reachablePredecessors.get(hash)?.findNext(start, 0);
 	}
 

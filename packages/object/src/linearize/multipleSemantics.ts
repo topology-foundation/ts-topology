@@ -24,7 +24,7 @@ export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 
 		while (j < order.length) {
 			if (dropped[j]) {
-				j = hashGraph.findNextUnusuallyRelated(anchor, j) ?? order.length;
+				j = hashGraph.findNextCausallyUnrelated(anchor, j) ?? order.length;
 				continue;
 			}
 			const moving = order[j];
@@ -92,13 +92,13 @@ export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 						break;
 					}
 					case ActionType.Nop:
-						j = hashGraph.findNextUnusuallyRelated(anchor, j) ?? order.length;
+						j = hashGraph.findNextCausallyUnrelated(anchor, j) ?? order.length;
 						break;
 					default:
 						break;
 				}
 			} else {
-				j = hashGraph.findNextUnusuallyRelated(anchor, j) ?? order.length;
+				j = hashGraph.findNextCausallyUnrelated(anchor, j) ?? order.length;
 			}
 		}
 
