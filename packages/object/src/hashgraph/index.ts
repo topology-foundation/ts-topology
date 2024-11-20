@@ -224,7 +224,8 @@ export class HashGraph {
 		return result;
 	}
 
-	topoSortPastLightcone(inDegree: Map<Hash, number>): Hash[] {
+	// Returns the topological sort of the past of the given hash
+	topoSortPast(inDegree: Map<Hash, number>): Hash[] {
 		const queue: Hash[] = [];
 		const result: Hash[] = [];
 		let head = 0;
@@ -256,12 +257,12 @@ export class HashGraph {
 		return result;
 	}
 
-	linearizeOperations(lightcone?: Hash[]): Operation[] {
+	linearizeOperations(topoSortedPast?: Hash[]): Operation[] {
 		switch (this.semanticsType) {
 			case SemanticsType.pair:
-				return linearizePair(this, lightcone || []);
+				return linearizePair(this, topoSortedPast);
 			case SemanticsType.multiple:
-				return linearizeMultiple(this, lightcone || []);
+				return linearizeMultiple(this, topoSortedPast);
 			default:
 				return [];
 		}
