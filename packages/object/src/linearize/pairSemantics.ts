@@ -1,8 +1,8 @@
 import {
 	ActionType,
-	type Operation,
 	type Hash,
 	type HashGraph,
+	type Operation,
 } from "../hashgraph/index.js";
 
 export function linearizePair(
