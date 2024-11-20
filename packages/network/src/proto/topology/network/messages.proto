@@ -30,7 +30,7 @@ message Sync {
 
 message SyncFixed {
   string objectId = 1;
-  repeated topology.object.CodedSymbol symbols = 2;
+  repeated topology.object.CodedVertexHash symbols = 2;
 }
 
 message SyncAccept {

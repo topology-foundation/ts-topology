@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { Value } from "../../google/protobuf/struct_pb.js";
+import { Value } from "../../google/protobuf/struct_pb";
 
 export const protobufPackage = "topology.object";
 
@@ -23,7 +23,7 @@ export interface Vertex_Operation {
   value: any | undefined;
 }
 
-export interface CodedSymbol {
+export interface CodedVertexHash {
   sum: Uint8Array;
   checksum: Uint8Array;
   count: number;
@@ -224,12 +224,12 @@ export const Vertex_Operation: MessageFns<Vertex_Operation> = {
   },
 };
 
-function createBaseCodedSymbol(): CodedSymbol {
+function createBaseCodedVertexHash(): CodedVertexHash {
   return { sum: new Uint8Array(0), checksum: new Uint8Array(0), count: 0 };
 }
 
-export const CodedSymbol: MessageFns<CodedSymbol> = {
-  encode(message: CodedSymbol, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const CodedVertexHash: MessageFns<CodedVertexHash> = {
+  encode(message: CodedVertexHash, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.sum.length !== 0) {
       writer.uint32(10).bytes(message.sum);
     }
@@ -242,10 +242,10 @@ export const CodedSymbol: MessageFns<CodedSymbol> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): CodedSymbol {
+  decode(input: BinaryReader | Uint8Array, length?: number): CodedVertexHash {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCodedSymbol();
+    const message = createBaseCodedVertexHash();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -282,7 +282,7 @@ export const CodedSymbol: MessageFns<CodedSymbol> = {
     return message;
   },
 
-  fromJSON(object: any): CodedSymbol {
+  fromJSON(object: any): CodedVertexHash {
     return {
       sum: isSet(object.sum) ? bytesFromBase64(object.sum) : new Uint8Array(0),
       checksum: isSet(object.checksum) ? bytesFromBase64(object.checksum) : new Uint8Array(0),
@@ -290,7 +290,7 @@ export const CodedSymbol: MessageFns<CodedSymbol> = {
     };
   },
 
-  toJSON(message: CodedSymbol): unknown {
+  toJSON(message: CodedVertexHash): unknown {
     const obj: any = {};
     if (message.sum.length !== 0) {
       obj.sum = base64FromBytes(message.sum);
@@ -304,11 +304,11 @@ export const CodedSymbol: MessageFns<CodedSymbol> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<CodedSymbol>, I>>(base?: I): CodedSymbol {
-    return CodedSymbol.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<CodedVertexHash>, I>>(base?: I): CodedVertexHash {
+    return CodedVertexHash.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<CodedSymbol>, I>>(object: I): CodedSymbol {
-    const message = createBaseCodedSymbol();
+  fromPartial<I extends Exact<DeepPartial<CodedVertexHash>, I>>(object: I): CodedVertexHash {
+    const message = createBaseCodedVertexHash();
     message.sum = object.sum ?? new Uint8Array(0);
     message.checksum = object.checksum ?? new Uint8Array(0);
     message.count = object.count ?? 0;
