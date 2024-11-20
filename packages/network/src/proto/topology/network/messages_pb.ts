@@ -19,9 +19,10 @@ export interface Message {
 export enum Message_MessageType {
   UPDATE = 0,
   SYNC = 1,
-  SYNC_ACCEPT = 2,
-  SYNC_REJECT = 3,
-  CUSTOM = 4,
+  SYNC_FIXED = 2,
+  SYNC_ACCEPT = 3,
+  SYNC_REJECT = 4,
+  CUSTOM = 5,
   UNRECOGNIZED = -1,
 }
 
@@ -34,12 +35,15 @@ export function message_MessageTypeFromJSON(object: any): Message_MessageType {
     case "SYNC":
       return Message_MessageType.SYNC;
     case 2:
+    case "SYNC_FIXED":
+      return Message_MessageType.SYNC_FIXED;
+    case 3:
     case "SYNC_ACCEPT":
       return Message_MessageType.SYNC_ACCEPT;
-    case 3:
+    case 4:
     case "SYNC_REJECT":
       return Message_MessageType.SYNC_REJECT;
-    case 4:
+    case 5:
     case "CUSTOM":
       return Message_MessageType.CUSTOM;
     case -1:
@@ -55,6 +59,8 @@ export function message_MessageTypeToJSON(object: Message_MessageType): string {
       return "UPDATE";
     case Message_MessageType.SYNC:
       return "SYNC";
+    case Message_MessageType.SYNC_FIXED:
+      return "SYNC_FIXED";
     case Message_MessageType.SYNC_ACCEPT:
       return "SYNC_ACCEPT";
     case Message_MessageType.SYNC_REJECT:

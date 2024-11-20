@@ -6,6 +6,7 @@ import type {
 	Vertex,
 } from "@topology-foundation/object";
 import type { TopologyNode } from "./index.js";
+import { VertexHashDecoder, VertexHashEncoder } from "./riblt/index.js";
 
 /*
   Handler for all CRO messages, including pubsub messages and direct messages
@@ -150,6 +151,77 @@ function syncHandler(
 		).finish(),
 	});
 	node.networkNode.sendMessage(sender, [protocol], message);
+}
+
+function syncFixedHandler(
+	node: TopologyNode,
+	protocol: string,
+	sender: string,
+	data: Uint8Array,
+) {
+	const syncMessage = NetworkPb.SyncFixed.decode(data);
+	const object = node.objectStore.get(syncMessage.objectId);
+	if (!object) {
+		console.error("topology::node::syncFixedHandler", "Object not found");
+		return;
+	}
+
+	const encoder = new VertexHashEncoder();
+	for (const vertex of object.vertices) {
+		encoder.add(vertex.hash);
+	}
+
+	const remoteSymbols = syncMessage.symbols
+	const localSymbols = encoder.getEncoded(remoteSymbols.length);
+	const decoder = new VertexHashDecoder();
+	for (let i = 0; i < remoteSymbols.length; i++) {
+		decoder.add(i, localSymbols[i], remoteSymbols[i]);
+	}
+
+	if (decoder.tryDecode()) {
+		// success
+		const localHashes = decoder.getDecodedLocal();
+		const remoteHashes = decoder.getDecodedRemote();
+
+		const requested: ObjectPb.Vertex[] = [];
+		for (const h of localHashes) {
+			const vertex = object.vertices.find((v) => v.hash === h);
+			if (vertex) {
+				object.vertices.push(vertex);
+			}
+		}
+
+		if (requested.length === 0 && remoteHashes.length === 0) return;
+
+		const message = NetworkPb.Message.create({
+			sender: node.networkNode.peerId,
+			type: NetworkPb.Message_MessageType.SYNC_ACCEPT,
+			// add data here
+			data: NetworkPb.SyncAccept.encode(
+				NetworkPb.SyncAccept.create({
+					objectId: object.id,
+					requested: requested,
+					requesting: remoteHashes,
+				}),
+			).finish(),
+		});
+		node.networkNode.sendMessage(sender, [protocol], message);
+	} else {
+		// fail
+		const size = remoteSymbols.length * 2;
+
+		const message = NetworkPb.Message.create({
+			sender: node.networkNode.peerId,
+			type: NetworkPb.Message_MessageType.SYNC_FIXED,
+			// add data here
+			data: NetworkPb.SyncFixed.encode(
+				NetworkPb.SyncFixed.create({
+					objectId: object.id,
+					symbols: encoder.getEncoded(size),
+				}),
+			).finish(),
+		});
+	}
 }
 
 /*

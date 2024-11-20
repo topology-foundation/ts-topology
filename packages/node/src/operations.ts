@@ -5,6 +5,7 @@ import {
 	topologyObjectChangesHandler,
 } from "./handlers.js";
 import type { TopologyNode } from "./index.js";
+import { VertexHashEncoder } from "./riblt/index.js";
 
 /* Object operations */
 enum OPERATIONS {
@@ -58,14 +59,29 @@ export async function syncObject(
 		console.error("topology::node::syncObject", "Object not found");
 		return;
 	}
-	const data = NetworkPb.Sync.create({
+	// const data = NetworkPb.Sync.create({
+	// 	objectId,
+	// 	vertexHashes: object.vertices.map((v) => v.hash),
+	// });
+	// const message = NetworkPb.Message.create({
+	// 	sender: node.networkNode.peerId,
+	// 	type: NetworkPb.Message_MessageType.SYNC,
+	// 	data: NetworkPb.Sync.encode(data).finish(),
+	// });
+
+	const encoder = new VertexHashEncoder();
+	const initialSize = 10;
+	for (const vertex of object.vertices) {
+		encoder.add(vertex.hash);
+	}
+	const data = NetworkPb.SyncFixed.create({
 		objectId,
-		vertexHashes: object.vertices.map((v) => v.hash),
+		symbols: encoder.getEncoded(initialSize),
 	});
 	const message = NetworkPb.Message.create({
 		sender: node.networkNode.peerId,
-		type: NetworkPb.Message_MessageType.SYNC,
-		data: NetworkPb.Sync.encode(data).finish(),
+		type: NetworkPb.Message_MessageType.SYNC_FIXED,
+		data: NetworkPb.SyncFixed.encode(data).finish(),
 	});
 
 	if (!peerId) {
