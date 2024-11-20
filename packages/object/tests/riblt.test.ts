@@ -43,9 +43,8 @@ describe("RIBLT test", async () => {
 
 			let symbolIndex = 0;
 
-			const newCodedSymbol = () => {
-				return new CodedSymbol(new VertexSymbol(0), new Uint8Array(20), 0);
-			};
+			const newCodedSymbol = () =>
+				new CodedSymbol(new VertexSymbol(0), new Uint8Array(20), 0);
 
 			const localEncoder = new Encoder(newCodedSymbol);
 			const remoteEncoder = new Encoder(newCodedSymbol);

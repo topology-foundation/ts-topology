@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { CodedVertexHash, Vertex } from "../object/object_pb";
+import { CodedSymbol, Vertex } from "../object/object_pb.js";
 
 export const protobufPackage = "topology.network";
 
@@ -79,7 +79,7 @@ export interface Sync {
 
 export interface SyncFixed {
   objectId: string;
-  symbols: CodedVertexHash[];
+  symbols: CodedSymbol[];
 }
 
 export interface SyncAccept {
@@ -347,7 +347,7 @@ export const SyncFixed: MessageFns<SyncFixed> = {
       writer.uint32(10).string(message.objectId);
     }
     for (const v of message.symbols) {
-      CodedVertexHash.encode(v!, writer.uint32(18).fork()).join();
+      CodedSymbol.encode(v!, writer.uint32(18).fork()).join();
     }
     return writer;
   },
@@ -372,7 +372,7 @@ export const SyncFixed: MessageFns<SyncFixed> = {
             break;
           }
 
-          message.symbols.push(CodedVertexHash.decode(reader, reader.uint32()));
+          message.symbols.push(CodedSymbol.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -387,9 +387,7 @@ export const SyncFixed: MessageFns<SyncFixed> = {
   fromJSON(object: any): SyncFixed {
     return {
       objectId: isSet(object.objectId) ? globalThis.String(object.objectId) : "",
-      symbols: globalThis.Array.isArray(object?.symbols)
-        ? object.symbols.map((e: any) => CodedVertexHash.fromJSON(e))
-        : [],
+      symbols: globalThis.Array.isArray(object?.symbols) ? object.symbols.map((e: any) => CodedSymbol.fromJSON(e)) : [],
     };
   },
 
@@ -399,7 +397,7 @@ export const SyncFixed: MessageFns<SyncFixed> = {
       obj.objectId = message.objectId;
     }
     if (message.symbols?.length) {
-      obj.symbols = message.symbols.map((e) => CodedVertexHash.toJSON(e));
+      obj.symbols = message.symbols.map((e) => CodedSymbol.toJSON(e));
     }
     return obj;
   },
@@ -410,7 +408,7 @@ export const SyncFixed: MessageFns<SyncFixed> = {
   fromPartial<I extends Exact<DeepPartial<SyncFixed>, I>>(object: I): SyncFixed {
     const message = createBaseSyncFixed();
     message.objectId = object.objectId ?? "";
-    message.symbols = object.symbols?.map((e) => CodedVertexHash.fromPartial(e)) || [];
+    message.symbols = object.symbols?.map((e) => CodedSymbol.fromPartial(e)) || [];
     return message;
   },
 };
