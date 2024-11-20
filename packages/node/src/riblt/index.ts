@@ -1,5 +1,5 @@
 import * as crypto from "node:crypto";
-import * as ObjectPb from "../proto/topology/object/object_pb.js";
+import { ObjectPb } from "@topology-foundation/object";
 import { Decoder } from "./decoder.js";
 import { Encoder } from "./encoder.js";
 import { CodedSymbol, type SourceSymbol } from "./symbol.js";
@@ -38,13 +38,15 @@ export class VertexHashEncoder extends Encoder<VertexHash> {
 		super.addSymbol(new VertexHash(data));
 	}
 
-	getEncoded(index: number): ObjectPb.CodedSymbol {
-		this.producePrefix(index + 1);
-		return ObjectPb.CodedSymbol.create({
-			sum: new Uint8Array(this.codedSymbols[index].sum.data.buffer),
-			checksum: this.codedSymbols[index].checksum,
-			count: this.codedSymbols[index].count,
-		});
+	getEncoded(size: number): ObjectPb.CodedSymbol[] {
+		this.producePrefix(size);
+		return this.codedSymbols.slice(0, size).map((symbol) =>
+			ObjectPb.CodedSymbol.create({
+				sum: new Uint8Array(symbol.sum.data.buffer),
+				checksum: symbol.checksum,
+				count: symbol.count,
+			}),
+		);
 	}
 }
 

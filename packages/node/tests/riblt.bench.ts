@@ -12,7 +12,7 @@ function benchmarkForEncoding(name: string, numVertices: number, size: number) {
 		for (let i = 0; i < numVertices; i++) {
 			encoder.add(hashes[i]);
 		}
-		encoder.producePrefix(size);
+		const symbols = encoder.getEncoded(size);
 	});
 }
 
