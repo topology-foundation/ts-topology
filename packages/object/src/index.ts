@@ -184,7 +184,9 @@ export class TopologyObject implements ITopologyObject {
 					dfs(dep);
 				}
 				pastInDegree.set(vertex.hash, vertex.dependencies.length);
-				const topoSortedPast = this.hashGraph.topoSortPast(pastInDegree);
+				const topoSortedPast = this.hashGraph.topoSortPast(
+					new Map(pastInDegree),
+				);
 				this.states.set(
 					vertex.hash,
 					new CROState(
