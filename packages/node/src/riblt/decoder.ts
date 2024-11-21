@@ -1,14 +1,14 @@
 import { CodingPrefix } from "./encoder.js";
 import type { CodedSymbol, HashedSymbol, SourceSymbol } from "./symbol.js";
 
-export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
-	decodedLocalSymbols: T[] = [];
-	decodedRemoteSymbols: T[] = [];
+export class Decoder extends CodingPrefix {
+	decodedLocalSymbols: SourceSymbol[] = [];
+	decodedRemoteSymbols: SourceSymbol[] = [];
 	isDecoded: boolean[] = [];
 	modifiedCodedSymbols: number[] = [];
 	visited: boolean[] = [];
 	remaining = 0;
-	pureSymbols: CodedSymbol<T>[] = [];
+	pureSymbols: CodedSymbol[] = [];
 
 	extendPrefix(size: number): void {
 		super.extendPrefix(size);
@@ -22,8 +22,8 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 	// called at most once for each index
 	addCodedSymbol(
 		index: number,
-		localSymbol: CodedSymbol<T>,
-		remoteSymbol: CodedSymbol<T>,
+		localSymbol: CodedSymbol,
+		remoteSymbol: CodedSymbol,
 	): void {
 		this.extendPrefix(index + 1);
 		this.codedSymbols[index].apply(localSymbol, localSymbol.count);
@@ -34,7 +34,7 @@ export class Decoder<T extends SourceSymbol> extends CodingPrefix<T> {
 		}
 	}
 
-	maps(index: number, hashedSymbol: HashedSymbol<T>, direction: number): void {
+	maps(index: number, hashedSymbol: HashedSymbol, direction: number): void {
 		if (!this.isDecoded[index]) {
 			this.codedSymbols[index].apply(hashedSymbol, direction);
 			if (!this.visited[index]) {

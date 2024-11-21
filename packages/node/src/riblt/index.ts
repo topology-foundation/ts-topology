@@ -25,7 +25,7 @@ class VertexHash implements SourceSymbol {
 const newCodedSymbol = () =>
 	new CodedSymbol(new VertexHash(new Uint8Array(32)), new Uint8Array(20), 0);
 
-export class VertexHashEncoder extends Encoder<VertexHash> {
+export class VertexHashEncoder extends Encoder {
 	constructor() {
 		super(newCodedSymbol);
 	}
@@ -42,7 +42,7 @@ export class VertexHashEncoder extends Encoder<VertexHash> {
 		this.producePrefix(size);
 		return this.codedSymbols.slice(0, size).map((symbol) =>
 			ObjectPb.CodedSymbol.create({
-				sum: new Uint8Array(symbol.sum.data.buffer),
+				sum: new Uint8Array((symbol.sum as VertexHash).data.buffer),
 				checksum: symbol.checksum,
 				count: symbol.count,
 			}),
@@ -50,7 +50,7 @@ export class VertexHashEncoder extends Encoder<VertexHash> {
 	}
 }
 
-export class VertexHashDecoder extends Decoder<VertexHash> {
+export class VertexHashDecoder extends Decoder {
 	constructor() {
 		super(newCodedSymbol);
 	}
@@ -79,7 +79,7 @@ export class VertexHashDecoder extends Decoder<VertexHash> {
 		return this.decodedLocalSymbols.map((symbol) => {
 			let hash = "";
 			for (let i = 0; i < 32; i++) {
-				hash += symbol.data[i].toString(16).padStart(2, "0");
+				hash += (symbol as VertexHash).data[i].toString(16).padStart(2, "0");
 			}
 			return hash;
 		});
@@ -89,7 +89,7 @@ export class VertexHashDecoder extends Decoder<VertexHash> {
 		return this.decodedRemoteSymbols.map((symbol) => {
 			let hash = "";
 			for (let i = 0; i < 32; i++) {
-				hash += symbol.data[i].toString(16).padStart(2, "0");
+				hash += (symbol as VertexHash).data[i].toString(16).padStart(2, "0");
 			}
 			return hash;
 		});

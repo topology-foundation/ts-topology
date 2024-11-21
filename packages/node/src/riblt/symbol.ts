@@ -4,11 +4,11 @@ export interface SourceSymbol {
 	toString(): string;
 }
 
-export class HashedSymbol<T extends SourceSymbol> {
-	sum: T;
+export class HashedSymbol {
+	sum: SourceSymbol;
 	checksum: Uint8Array;
 
-	constructor(sum: T, checksum?: Uint8Array) {
+	constructor(sum: SourceSymbol, checksum?: Uint8Array) {
 		this.sum = sum;
 		if (checksum === undefined) {
 			this.checksum = sum.hash();
@@ -17,7 +17,7 @@ export class HashedSymbol<T extends SourceSymbol> {
 		}
 	}
 
-	xor(s: HashedSymbol<T>): void {
+	xor(s: HashedSymbol): void {
 		this.sum.xor(s.sum);
 		for (let i = 0; i < this.checksum.length; i++) {
 			this.checksum[i] ^= s.checksum[i];
@@ -42,20 +42,20 @@ export class HashedSymbol<T extends SourceSymbol> {
 	}
 }
 
-export class CodedSymbol<T extends SourceSymbol> extends HashedSymbol<T> {
+export class CodedSymbol extends HashedSymbol {
 	count: number;
 
-	constructor(sum: T, checksum: Uint8Array, count: number) {
+	constructor(sum: SourceSymbol, checksum: Uint8Array, count: number) {
 		super(sum, checksum);
 		this.count = count;
 	}
 
-	apply(s: HashedSymbol<T>, direction: number) {
+	apply(s: HashedSymbol, direction: number): void {
 		super.xor(s);
 		this.count += direction;
 	}
 
-	xor(s: CodedSymbol<T>) {
+	xor(s: CodedSymbol): void {
 		super.xor(s);
 		this.count -= s.count;
 	}

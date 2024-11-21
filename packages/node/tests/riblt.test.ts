@@ -92,14 +92,14 @@ describe("RIBLT test", async () => {
 
 			const visited = new Array<boolean>(symbolIndex).fill(false);
 
-			for (const symbol of localDecoder.decodedLocalSymbols) {
+			for (const symbol of localDecoder.decodedLocalSymbols as VertexSymbol[]) {
 				expect(Number.isInteger(symbol.data)).toBe(true);
 				expect(symbol.data >= 0 && symbol.data < symbolIndex).toBe(true);
 				expect(visited[symbol.data]).toBe(false);
 				visited[symbol.data] = true;
 				expect(symbolState[symbol.data]).toBe(SymbolState.Local);
 			}
-			for (const symbol of localDecoder.decodedRemoteSymbols) {
+			for (const symbol of localDecoder.decodedRemoteSymbols as VertexSymbol[]) {
 				expect(Number.isInteger(symbol.data)).toBe(true);
 				expect(symbol.data >= 0 && symbol.data < symbolIndex).toBe(true);
 				expect(visited[symbol.data]).toBe(false);
