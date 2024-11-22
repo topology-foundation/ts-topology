@@ -110,18 +110,18 @@ export class TopologyObject implements ITopologyObject {
 	callFn(fn: string, args: any) {
 		const vertex = this.hashGraph.addToFrontier({ type: fn, value: args });
 		// the vertex certainly has dependencies
-		let past: Set<Hash> = this.states.get(vertex.dependencies[0])?.past || new Set();
+		let past: Set<Hash> =
+			this.states.get(vertex.dependencies[0])?.past || new Set();
 		for (const dep of vertex.dependencies) {
-			past = new Set([...past, ...(this.states.get(dep)?.past || new Set<string>())]);
+			past = new Set([
+				...past,
+				...(this.states.get(dep)?.past || new Set<string>()),
+			]);
 		}
 		past.add(vertex.hash);
 		this.states.set(
 			vertex.hash,
-			new CROState(
-				this.cro as CRO,
-				this.hashGraph.linearizeOperations(),
-				past,
-			),
+			new CROState(this.cro as CRO, this.hashGraph.linearizeOperations(), past),
 		);
 
 		const serializedVertex = ObjectPb.Vertex.create({
@@ -153,9 +153,13 @@ export class TopologyObject implements ITopologyObject {
 					vertex.nodeId,
 				);
 
-				let past: Set<Hash> = this.states.get(vertex.dependencies[0])?.past || new Set();
+				let past: Set<Hash> =
+					this.states.get(vertex.dependencies[0])?.past || new Set();
 				for (const dep of vertex.dependencies) {
-					past = new Set([...past, ...(this.states.get(dep)?.past || new Set<string>())]);
+					past = new Set([
+						...past,
+						...(this.states.get(dep)?.past || new Set<string>()),
+					]);
 				}
 				past.add(vertex.hash);
 				this.states.set(
