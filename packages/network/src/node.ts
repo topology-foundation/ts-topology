@@ -116,7 +116,9 @@ export class TopologyNetworkNode {
 			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
 			peerDiscovery: _peerDiscovery,
 			services: this._config?.bootstrap ? _bootstrap_services : _node_services,
-			streamMuxers: [yamux()],
+			streamMuxers: [yamux({
+				
+			})],
 			transports: [
 				circuitRelayTransport({
 					discoverRelays: 2,
