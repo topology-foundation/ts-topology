@@ -9,9 +9,8 @@ import {
 
 export function linearizeMultiple(
 	hashGraph: HashGraph,
-	toLinearizeTopoSorted?: Hash[],
 ): Operation[] {
-	const order = toLinearizeTopoSorted || hashGraph.topologicalSort(true);
+	const order = hashGraph.topologicalSort(true);
 	const dropped = new Array(order.length).fill(false);
 	const indices: Map<Hash, number> = new Map();
 	const result: Operation[] = [];

@@ -24,16 +24,16 @@ export class CROState {
 	linearizedOperations: Operation[];
 	// the past includes all vertices that the vertex depends on and the vertex itself
 	// root has in-degree 0
-	pastInDegree: Map<Hash, number>;
+	past: Set<Hash>;
 
 	constructor(
 		cro: CRO,
 		linearizedOperations: Operation[] = [],
-		pastInDegree: Map<Hash, number> = new Map(),
+		past: Set<Hash> = new Set(),
 	) {
 		this.cro = cro;
 		this.linearizedOperations = linearizedOperations;
-		this.pastInDegree = pastInDegree;
+		this.past = past;
 	}
 }
 
@@ -110,30 +110,17 @@ export class TopologyObject implements ITopologyObject {
 	callFn(fn: string, args: any) {
 		const vertex = this.hashGraph.addToFrontier({ type: fn, value: args });
 		// the vertex certainly has dependencies
-		const pastInDegree: Map<Hash, number> = new Map(
-			this.states.get(vertex.dependencies[0])?.pastInDegree || [],
-		);
+		let past: Set<Hash> = this.states.get(vertex.dependencies[0])?.past || new Set();
 		for (const dep of vertex.dependencies) {
-			const dfs = (hash: Hash) => {
-				if (pastInDegree.has(hash)) {
-					return;
-				}
-				const v = this.hashGraph.getVertex(hash);
-				if (!v) return;
-				pastInDegree.set(hash, v.dependencies.length);
-				for (const d of v.dependencies) {
-					dfs(d);
-				}
-			};
-			dfs(dep);
+			past = new Set([...past, ...(this.states.get(dep)?.past || new Set<string>())]);
 		}
-		pastInDegree.set(vertex.hash, vertex.dependencies.length);
+		past.add(vertex.hash);
 		this.states.set(
 			vertex.hash,
 			new CROState(
 				this.cro as CRO,
 				this.hashGraph.linearizeOperations(),
-				pastInDegree,
+				past,
 			),
 		);
 
@@ -166,33 +153,17 @@ export class TopologyObject implements ITopologyObject {
 					vertex.nodeId,
 				);
 
-				const pastInDegree: Map<Hash, number> = new Map(
-					this.states.get(vertex.dependencies[0])?.pastInDegree || [],
-				);
+				let past: Set<Hash> = this.states.get(vertex.dependencies[0])?.past || new Set();
 				for (const dep of vertex.dependencies) {
-					const dfs = (hash: Hash) => {
-						if (pastInDegree.has(hash)) {
-							return;
-						}
-						const v = this.hashGraph.getVertex(hash);
-						if (!v) return;
-						pastInDegree.set(hash, v.dependencies.length);
-						for (const d of v.dependencies) {
-							dfs(d);
-						}
-					};
-					dfs(dep);
+					past = new Set([...past, ...(this.states.get(dep)?.past || new Set<string>())]);
 				}
-				pastInDegree.set(vertex.hash, vertex.dependencies.length);
-				const topoSortedPast = this.hashGraph.topoSortPast(
-					new Map(pastInDegree),
-				);
+				past.add(vertex.hash);
 				this.states.set(
 					vertex.hash,
 					new CROState(
 						this.cro as CRO,
-						this.hashGraph.linearizeOperations(topoSortedPast),
-						pastInDegree,
+						this.hashGraph.linearizeOperations(past),
+						past,
 					),
 				);
 			} catch (e) {

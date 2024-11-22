@@ -158,16 +158,20 @@ export class HashGraph {
 		return hash;
 	}
 
-	depthFirstSearch(visited: Map<Hash, number> = new Map()): Hash[] {
+	depthFirstSearch(
+		past?: Set<Hash>,
+		visited: Map<Hash, number> = new Map(),
+	): Hash[] {
 		const result: Hash[] = [];
-		for (const vertex of this.getAllVertices()) {
-			visited.set(vertex.hash, DepthFirstSearchState.UNVISITED);
+		for (const hash of past || this.vertices.keys()) {
+			visited.set(hash, DepthFirstSearchState.UNVISITED);
 		}
 		const visit = (hash: Hash) => {
 			visited.set(hash, DepthFirstSearchState.VISITING);
 
 			const children = this.forwardEdges.get(hash) || [];
 			for (const child of children) {
+				if (past && !past.has(child)) continue;
 				if (visited.get(child) === DepthFirstSearchState.VISITING) {
 					log.error("::hashgraph::DFS: Cycle detected");
 					return;
@@ -224,45 +228,12 @@ export class HashGraph {
 		return result;
 	}
 
-	// Returns the topological sort of the past of the given hash
-	topoSortPast(inDegree: Map<Hash, number>): Hash[] {
-		const queue: Hash[] = [];
-		const result: Hash[] = [];
-		let head = 0;
-
-		queue.push(HashGraph.rootHash);
-
-		while (head < queue.length) {
-			const current = queue[head];
-			head++;
-			result.push(current);
-
-			const children = this.forwardEdges.get(current) || [];
-
-			for (const child of children) {
-				if (inDegree.has(child)) {
-					inDegree.set(child, (inDegree.get(child) || 0) - 1);
-					if (inDegree.get(child) === 0) {
-						queue.push(child);
-					}
-				}
-			}
-
-			if (head > queue.length / 2) {
-				queue.splice(0, head);
-				head = 0;
-			}
-		}
-
-		return result;
-	}
-
-	linearizeOperations(topoSortedPast?: Hash[]): Operation[] {
+	linearizeOperations(past?: Set<string>): Operation[] {
 		switch (this.semanticsType) {
 			case SemanticsType.pair:
-				return linearizePair(this, topoSortedPast);
+				return linearizePair(this, past);
 			case SemanticsType.multiple:
-				return linearizeMultiple(this, topoSortedPast);
+				return linearizeMultiple(this, past);
 			default:
 				return [];
 		}
@@ -339,7 +310,7 @@ export class HashGraph {
 		}
 
 		const visited = new Map<Hash, number>();
-		this.depthFirstSearch(visited);
+		this.depthFirstSearch(undefined, visited);
 		for (const vertex of this.getAllVertices()) {
 			if (!visited.has(vertex.hash)) {
 				return false;

@@ -5,12 +5,8 @@ import {
 	type Operation,
 } from "../hashgraph/index.js";
 
-export function linearizePair(
-	hashGraph: HashGraph,
-	toLinearizeTopoSorted?: Hash[],
-): Operation[] {
-	const order: Hash[] =
-		toLinearizeTopoSorted || hashGraph.topologicalSort(true);
+export function linearizePair(hashGraph: HashGraph): Operation[] {
+	const order: Hash[] = hashGraph.topologicalSort(true);
 	const dropped = new Array(order.length).fill(false);
 	const result = [];
 	let i = 0;
