@@ -190,13 +190,12 @@ export class HashGraph {
 	}
 
 	topologicalSort(updateBitsets = false): Hash[] {
-		this.reachablePredecessors.clear();
-		this.topoSortedIndex.clear();
-
 		const result = this.depthFirstSearch();
 		result.reverse();
-
 		if (!updateBitsets) return result;
+
+		this.reachablePredecessors.clear();
+		this.topoSortedIndex.clear();
 
 		// Double the size until it's enough to hold all the vertices
 		while (this.currentBitsetSize < result.length) this.currentBitsetSize *= 2;
@@ -316,6 +315,10 @@ export class HashGraph {
 		return true;
 	}
 
+	findNextCausallyUnrelated(hash: Hash, start: number): number | undefined {
+		return this.reachablePredecessors.get(hash)?.findNext(start, 0);
+	}
+
 	areCausallyRelatedUsingBFS(hash1: Hash, hash2: Hash): boolean {
 		return (
 			this._areCausallyRelatedUsingBFS(hash1, hash2) ||
@@ -337,6 +340,14 @@ export class HashGraph {
 
 	getAllVertices(): Vertex[] {
 		return Array.from(this.vertices.values());
+	}
+
+	getReachablePredecessors(hash: Hash): BitSet | undefined {
+		return this.reachablePredecessors.get(hash);
+	}
+
+	getCurrentBitsetSize(): number {
+		return this.currentBitsetSize;
 	}
 }
 
