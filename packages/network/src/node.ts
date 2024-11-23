@@ -116,9 +116,7 @@ export class TopologyNetworkNode {
 			metrics: this._config?.browser_metrics ? devToolsMetrics() : undefined,
 			peerDiscovery: _peerDiscovery,
 			services: this._config?.bootstrap ? _bootstrap_services : _node_services,
-			streamMuxers: [yamux({
-				
-			})],
+			streamMuxers: [yamux()],
 			transports: [
 				circuitRelayTransport({
 					discoverRelays: 2,
@@ -151,26 +149,6 @@ export class TopologyNetworkNode {
 			log.info("::start::peer::connect", e.detail),
 		);
 		this._node.addEventListener("peer:discovery", (e) => {
-			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
-			const sortedAddrs = e.detail.multiaddrs.sort((a, b) => {
-				const localRegex =
-					/(^\/ip4\/127\.)|(^\/ip4\/10\.)|(^\/ip4\/172\.1[6-9]\.)|(^\/ip4\/172\.2[0-9]\.)|(^\/ip4\/172\.3[0-1]\.)|(^\/ip4\/192\.168\.)/;
-				const aLocal = localRegex.test(a.toString());
-				const bLocal = localRegex.test(b.toString());
-				const aWebrtc = a.toString().includes("/webrtc/");
-				const bWebrtc = b.toString().includes("/webrtc/");
-				if (aLocal && !bLocal) return 1;
-				if (!aLocal && bLocal) return -1;
-				if (aWebrtc && !bWebrtc) return -1;
-				if (!aWebrtc && bWebrtc) return 1;
-				return 0;
-			});
-
-			// Dial non-local multiaddrs, then WebRTC multiaddrs
-			for (const address of sortedAddrs) {
-				this._node?.dial(address);
-			}
-
 			log.info("::start::peer::discovery", e.detail);
 		});
 		this._node.addEventListener("peer:identify", (e) =>
