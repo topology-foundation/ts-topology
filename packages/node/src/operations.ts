@@ -54,6 +54,7 @@ export async function syncObject(
 	objectId: string,
 	peerId?: string,
 ) {
+	console.log("hello sync");
 	const object: TopologyObject | undefined = node.objectStore.get(objectId);
 	if (!object) {
 		console.error("topology::node::syncObject", "Object not found");
@@ -68,6 +69,8 @@ export async function syncObject(
 	// 	type: NetworkPb.Message_MessageType.SYNC,
 	// 	data: NetworkPb.Sync.encode(data).finish(),
 	// });
+
+	console.log(`current hashes: ${object.vertices.map((v) => v.hash)}`);
 
 	const encoder = new VertexHashEncoder();
 	const initialSize = 10;

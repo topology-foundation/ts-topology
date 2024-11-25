@@ -47,6 +47,18 @@ export async function topologyMessagesHandler(
 				message.data,
 			);
 			break;
+		case NetworkPb.Message_MessageType.SYNC_FIXED:
+			if (!stream) {
+				console.error("topology::node::messageHandler", "Stream is undefined");
+				return;
+			}
+			syncFixedHandler(
+				node,
+				stream.protocol ?? "/topology/message/0.0.1",
+				message.sender,
+				message.data,
+			);
+			break;
 		case NetworkPb.Message_MessageType.SYNC_ACCEPT:
 			if (!stream) {
 				console.error("topology::node::messageHandler", "Stream is undefined");
@@ -159,12 +171,15 @@ function syncFixedHandler(
 	sender: string,
 	data: Uint8Array,
 ) {
+	console.log("hello sync handler");
 	const syncMessage = NetworkPb.SyncFixed.decode(data);
 	const object = node.objectStore.get(syncMessage.objectId);
 	if (!object) {
 		console.error("topology::node::syncFixedHandler", "Object not found");
 		return;
 	}
+
+	console.log(`current hashes: ${object.vertices.map((v) => v.hash)}`);
 
 	const encoder = new VertexHashEncoder();
 	for (const vertex of object.vertices) {
@@ -173,6 +188,8 @@ function syncFixedHandler(
 
 	const remoteSymbols = syncMessage.symbols
 	const localSymbols = encoder.getEncoded(remoteSymbols.length);
+	console.log(`local symbols: ${localSymbols}`);
+	console.log(`remote symbols: ${remoteSymbols}`);
 	const decoder = new VertexHashDecoder();
 	for (let i = 0; i < remoteSymbols.length; i++) {
 		decoder.add(i, localSymbols[i], remoteSymbols[i]);
@@ -182,6 +199,7 @@ function syncFixedHandler(
 		// success
 		const localHashes = decoder.getDecodedLocal();
 		const remoteHashes = decoder.getDecodedRemote();
+		console.log("decode successfully");
 
 		const requested: ObjectPb.Vertex[] = [];
 		for (const h of localHashes) {
@@ -190,6 +208,9 @@ function syncFixedHandler(
 				object.vertices.push(vertex);
 			}
 		}
+
+		console.log(`requested: ${requested}`);
+		console.log(`requesting: ${remoteHashes}`);
 
 		if (requested.length === 0 && remoteHashes.length === 0) return;
 
@@ -240,6 +261,9 @@ function syncAcceptHandler(
 		console.error("topology::node::syncAcceptHandler", "Object not found");
 		return;
 	}
+	console.log("hello sync accept handler");
+	console.log(syncAcceptMessage.requested);
+	console.log(syncAcceptMessage.requesting);
 
 	const vertices: Vertex[] = syncAcceptMessage.requested.map((v) => {
 		return {
