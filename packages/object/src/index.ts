@@ -17,23 +17,15 @@ export interface CRO {
 	semanticsType: SemanticsType;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
 	mergeCallback: (operations: Operation[]) => void;
+	// biome-ignore lint: attributes can be anything
+	[key: string]: any;
 }
 
 export class CROState {
 	cro: CRO;
-	linearizedOperations: Operation[];
-	// the past includes all vertices that the vertex depends on and the vertex itself
-	// root has in-degree 0
-	past: Set<Hash>;
 
-	constructor(
-		cro: CRO,
-		linearizedOperations: Operation[] = [],
-		past: Set<Hash> = new Set(),
-	) {
+	constructor(cro: CRO) {
 		this.cro = cro;
-		this.linearizedOperations = linearizedOperations;
-		this.past = past;
 	}
 }
 
@@ -109,20 +101,21 @@ export class TopologyObject implements ITopologyObject {
 	// biome-ignore lint: value can't be unknown because of protobuf
 	callFn(fn: string, args: any) {
 		const vertex = this.hashGraph.addToFrontier({ type: fn, value: args });
-		// the vertex certainly has dependencies
-		let past: Set<Hash> =
-			this.states.get(vertex.dependencies[0])?.past || new Set();
-		for (const dep of vertex.dependencies) {
-			past = new Set([
-				...past,
-				...(this.states.get(dep)?.past || new Set<string>()),
-			]);
-		}
-		past.add(vertex.hash);
-		this.states.set(
-			vertex.hash,
-			new CROState(this.cro as CRO, this.hashGraph.linearizeOperations(), past),
+		// suppose lca is the lca of the dependencies, subgraph contains the relevant hashes
+		const lca: Hash = HashGraph.rootHash;
+		const subgraph: Set<Hash> = new Set(this.hashGraph.vertices.keys());
+		const linearizedOperations = this.hashGraph.linearizeOperations(
+			lca,
+			subgraph,
 		);
+
+		const cro = new Object(this.states.get(lca)?.cro) as CRO;
+
+		for (const op of linearizedOperations) {
+			cro[op.type](op.value);
+		}
+
+		this.states.set(vertex.hash, new CROState(cro));
 
 		const serializedVertex = ObjectPb.Vertex.create({
 			hash: vertex.hash,
@@ -153,23 +146,21 @@ export class TopologyObject implements ITopologyObject {
 					vertex.nodeId,
 				);
 
-				let past: Set<Hash> =
-					this.states.get(vertex.dependencies[0])?.past || new Set();
-				for (const dep of vertex.dependencies) {
-					past = new Set([
-						...past,
-						...(this.states.get(dep)?.past || new Set<string>()),
-					]);
-				}
-				past.add(vertex.hash);
-				this.states.set(
-					vertex.hash,
-					new CROState(
-						this.cro as CRO,
-						this.hashGraph.linearizeOperations(past),
-						past,
-					),
+				// suppose lca is the lca of the dependencies, subgraph contains the relevant hashes
+				const lca: Hash = HashGraph.rootHash;
+				const subgraph: Set<Hash> = new Set(this.hashGraph.vertices.keys());
+				const linearizedOperations = this.hashGraph.linearizeOperations(
+					lca,
+					subgraph,
 				);
+
+				const cro = new Object(this.states.get(lca)?.cro) as CRO;
+
+				for (const op of linearizedOperations) {
+					cro[op.type](op.value);
+				}
+
+				this.states.set(vertex.hash, new CROState(cro));
 			} catch (e) {
 				missing.push(vertex.hash);
 			}
