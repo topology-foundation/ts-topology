@@ -1,10 +1,10 @@
 import * as crypto from "node:crypto";
 import { Logger } from "@topology-foundation/logger";
-import { linearizeMultiple } from "../linearize/multipleSemantics.js";
-import { linearizePair } from "../linearize/pairSemantics.js";
+import { linearizeMultipleSemantics } from "../linearize/multipleSemantics.js";
+import { linearizePairSemantics } from "../linearize/pairSemantics.js";
 import type {
-	Vertex_Operation as Operation,
 	Vertex_Distance as Distance,
+	Vertex_Operation as Operation,
 	Vertex,
 } from "../proto/topology/object/object_pb.js";
 import { BitSet } from "./bitset.js";
@@ -272,9 +272,9 @@ export class HashGraph {
 	): Operation[] {
 		switch (this.semanticsType) {
 			case SemanticsType.pair:
-				return linearizePair(this, origin, subgraph);
+				return linearizePairSemantics(this, origin, subgraph);
 			case SemanticsType.multiple:
-				return linearizeMultiple(this, origin, subgraph);
+				return linearizeMultipleSemantics(this, origin, subgraph);
 			default:
 				return [];
 		}
@@ -285,8 +285,8 @@ export class HashGraph {
 		let currentHash2 = hash2;
 		visited.add(currentHash1);
 		visited.add(currentHash2);
-		
-		while(currentHash1 !== currentHash2) {
+
+		while (currentHash1 !== currentHash2) {
 			const distance1 = this.vertexDistances.get(currentHash1);
 			if (!distance1) {
 				log.error("::hashgraph::LCA: Vertex not found");
