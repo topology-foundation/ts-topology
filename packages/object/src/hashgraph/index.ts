@@ -280,6 +280,49 @@ export class HashGraph {
 		}
 	}
 
+	lowestCommonAncestor(hash1: Hash, hash2: Hash, visited: Set<Hash>): Hash {
+		let currentHash1 = hash1;
+		let currentHash2 = hash2;
+		visited.add(currentHash1);
+		visited.add(currentHash2);
+		
+		while(currentHash1 !== currentHash2) {
+			const distance1 = this.vertexDistances.get(currentHash1);
+			if (!distance1) {
+				log.error("::hashgraph::LCA: Vertex not found");
+				return "";
+			}
+			const distance2 = this.vertexDistances.get(currentHash2);
+			if (!distance2) {
+				log.error("::hashgraph::LCA: Vertex not found");
+				return "";
+			}
+
+			if (distance1.distance > distance2.distance) {
+				if (!distance1.closestDependency) {
+					log.error("::hashgraph::LCA: Closest dependency not found");
+					return "";
+				}
+				currentHash1 = distance1.closestDependency;
+				if (visited.has(currentHash1)) {
+					return hash2;
+				}
+				visited.add(currentHash1);
+			} else {
+				if (!distance2.closestDependency) {
+					log.error("::hashgraph::LCA: Closest dependency not found");
+					return "";
+				}
+				currentHash2 = distance2.closestDependency;
+				if (visited.has(currentHash2)) {
+					return hash1;
+				}
+				visited.add(currentHash2);
+			}
+		}
+		return currentHash1;
+	}
+
 	areCausallyRelatedUsingBitsets(hash1: Hash, hash2: Hash): boolean {
 		if (!this.arePredecessorsFresh) {
 			this.topologicalSort(true);
