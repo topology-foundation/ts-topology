@@ -65,7 +65,7 @@ export class HashGraph {
 	private arePredecessorsFresh = false;
 	private reachablePredecessors: Map<Hash, BitSet> = new Map();
 	private topoSortedIndex: Map<Hash, number> = new Map();
-	private vertexDistance: Map<Hash, Distance> = new Map();
+	private vertexDistances: Map<Hash, Distance> = new Map();
 	// We start with a bitset of size 1, and double it every time we reach the limit
 	private currentBitsetSize = 1;
 
@@ -90,6 +90,9 @@ export class HashGraph {
 		this.vertices.set(HashGraph.rootHash, rootVertex);
 		this.frontier.push(HashGraph.rootHash);
 		this.forwardEdges.set(HashGraph.rootHash, []);
+		this.vertexDistances.set(HashGraph.rootHash, {
+			distance: 0,
+		});
 	}
 
 	addToFrontier(operation: Operation): Vertex {
@@ -113,6 +116,20 @@ export class HashGraph {
 			}
 			this.forwardEdges.get(dep)?.push(hash);
 		}
+
+		// Compute the distance of the vertex
+		const vertexDistance: Distance = {
+			distance: Number.MAX_VALUE,
+			closestDependency: "",
+		};
+		for (const dep of deps) {
+			const depDistance = this.vertexDistances.get(dep);
+			if (depDistance && depDistance.distance + 1 < vertexDistance.distance) {
+				vertexDistance.distance = depDistance.distance + 1;
+				vertexDistance.closestDependency = dep;
+			}
+		}
+		this.vertexDistances.set(hash, vertexDistance);
 
 		const depsSet = new Set(deps);
 		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
@@ -153,6 +170,20 @@ export class HashGraph {
 			}
 			this.forwardEdges.get(dep)?.push(hash);
 		}
+
+		// Compute the distance of the vertex
+		const vertexDistance: Distance = {
+			distance: Number.MAX_VALUE,
+			closestDependency: "",
+		};
+		for (const dep of deps) {
+			const depDistance = this.vertexDistances.get(dep);
+			if (depDistance && depDistance.distance + 1 < vertexDistance.distance) {
+				vertexDistance.distance = depDistance.distance + 1;
+				vertexDistance.closestDependency = dep;
+			}
+		}
+		this.vertexDistances.set(hash, vertexDistance);
 
 		const depsSet = new Set(deps);
 		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));

@@ -25,7 +25,7 @@ export interface Vertex_Operation {
 
 export interface Vertex_Distance {
   distance: number;
-  closestDependency: string;
+  closestDependency?: string;
 }
 
 export interface TopologyObjectBase {
