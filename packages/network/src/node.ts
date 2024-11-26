@@ -148,7 +148,7 @@ export class TopologyNetworkNode {
 		this._node.addEventListener("peer:connect", (e) =>
 			log.info("::start::peer::connect", e.detail),
 		);
-		this._node.addEventListener("peer:discovery", (e) => {
+		this._node.addEventListener("peer:discovery", async (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
 			const sortedAddrs = e.detail.multiaddrs.sort((a, b) => {
 				const localRegex =
@@ -164,10 +164,14 @@ export class TopologyNetworkNode {
 				return 0;
 			});
 
-			// Dial non-local multiaddrs, then WebRTC multiaddrs
-			for (const address of sortedAddrs) {
-				this._node?.dial(address);
-			}
+			console.log("::start::peer::discovery::sortedAddrs", sortedAddrs);
+			const dialAddresses = async () => {
+				for (const address of sortedAddrs) {
+					const result = await this._node?.dial(address);
+					console.log("::start::peer::discovery::dial", address, result);
+				}
+			};
+			await dialAddresses();
 
 			log.info("::start::peer::discovery", e.detail);
 		});
