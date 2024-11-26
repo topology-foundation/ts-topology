@@ -4,6 +4,7 @@ import { linearizeMultiple } from "../linearize/multipleSemantics.js";
 import { linearizePair } from "../linearize/pairSemantics.js";
 import {
 	Vertex_Operation as Operation,
+	Vertex_Distance as Distance,
 	Vertex,
 } from "../proto/topology/object/object_pb.js";
 import { BitSet } from "./bitset.js";
@@ -64,6 +65,7 @@ export class HashGraph {
 	private arePredecessorsFresh = false;
 	private reachablePredecessors: Map<Hash, BitSet> = new Map();
 	private topoSortedIndex: Map<Hash, number> = new Map();
+	private vertexDistance: Map<Hash, Distance> = new Map();
 	// We start with a bitset of size 1, and double it every time we reach the limit
 	private currentBitsetSize = 1;
 
