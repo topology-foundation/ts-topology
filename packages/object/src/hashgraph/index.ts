@@ -2,7 +2,7 @@ import * as crypto from "node:crypto";
 import { Logger } from "@topology-foundation/logger";
 import { linearizeMultiple } from "../linearize/multipleSemantics.js";
 import { linearizePair } from "../linearize/pairSemantics.js";
-import {
+import type {
 	Vertex_Operation as Operation,
 	Vertex_Distance as Distance,
 	Vertex,
@@ -12,7 +12,7 @@ import { BitSet } from "./bitset.js";
 const log: Logger = new Logger("hashgraph");
 
 // Reexporting the Vertex and Operation types from the protobuf file
-export { Vertex, Operation };
+export type { Vertex, Operation };
 
 export type Hash = string;
 
