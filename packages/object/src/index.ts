@@ -101,9 +101,15 @@ export class TopologyObject implements ITopologyObject {
 	// biome-ignore lint: value can't be unknown because of protobuf
 	callFn(fn: string, args: any) {
 		const vertex = this.hashGraph.addToFrontier({ type: fn, value: args });
-		// suppose lca is the lca of the dependencies, subgraph contains the relevant hashes
-		const lca: Hash = HashGraph.rootHash;
-		const subgraph: Set<Hash> = new Set(this.hashGraph.vertices.keys());
+		let lca: Hash = vertex.dependencies[0];
+		const subgraph: Set<Hash> = new Set();
+		for (let i = 1; i < vertex.dependencies.length; i++) {
+			lca = this.hashGraph.lowestCommonAncestor(
+				lca,
+				vertex.dependencies[i],
+				subgraph,
+			);
+		}
 		const linearizedOperations = this.hashGraph.linearizeOperations(
 			lca,
 			subgraph,
@@ -111,9 +117,10 @@ export class TopologyObject implements ITopologyObject {
 
 		const cro = new Object(this.states.get(lca)?.cro) as CRO;
 
-		for (const op of linearizedOperations) {
-			cro[op.type](op.value);
+		for (let i = 1; i < linearizedOperations.length; i++) {
+			cro[linearizedOperations[i].type](linearizedOperations[i].value);
 		}
+		cro[fn](args);
 
 		this.states.set(vertex.hash, new CROState(cro));
 
@@ -146,9 +153,15 @@ export class TopologyObject implements ITopologyObject {
 					vertex.nodeId,
 				);
 
-				// suppose lca is the lca of the dependencies, subgraph contains the relevant hashes
-				const lca: Hash = HashGraph.rootHash;
-				const subgraph: Set<Hash> = new Set(this.hashGraph.vertices.keys());
+				let lca: Hash = vertex.dependencies[0];
+				const subgraph: Set<Hash> = new Set();
+				for (let i = 1; i < vertex.dependencies.length; i++) {
+					lca = this.hashGraph.lowestCommonAncestor(
+						lca,
+						vertex.dependencies[i],
+						subgraph,
+					);
+				}
 				const linearizedOperations = this.hashGraph.linearizeOperations(
 					lca,
 					subgraph,
@@ -156,9 +169,10 @@ export class TopologyObject implements ITopologyObject {
 
 				const cro = new Object(this.states.get(lca)?.cro) as CRO;
 
-				for (const op of linearizedOperations) {
-					cro[op.type](op.value);
+				for (let i = 1; i < linearizedOperations.length; i++) {
+					cro[linearizedOperations[i].type](linearizedOperations[i].value);
 				}
+				cro[vertex.operation.type](vertex.operation.value);
 
 				this.states.set(vertex.hash, new CROState(cro));
 			} catch (e) {
