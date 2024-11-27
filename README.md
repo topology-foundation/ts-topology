@@ -52,3 +52,6 @@ pnpm install
 ```
 
 The postinstall script will build all the packages. In case you have errors, please manually build every package inside the folder `packages`.
+
+# Known Issues
+- Local nodes won't be able to connect with each other if the machine runs them is connecting to a VPN.
