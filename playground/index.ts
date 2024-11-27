@@ -64,6 +64,21 @@ async function test(d: number) {
 	bob_object = await bob_node.createObject(new Chat(), alice_object.id, undefined, true);
 	bob_cro = bob_object.cro as Chat;
 
+	await timeout(500);
+	// (bob_node.networkNode as MockTopologyNetworkNode).stop();
+
+	// for (let i = 0; i < ncommon; i++) {
+	// 	const timestamp = Date.now().toString();
+	// 	alice_cro.addMessage(
+	// 		timestamp,
+	// 		`Hello Common ${i + ncommon}`,
+	// 		alice_node.networkNode.peerId,
+	// 	);
+	// }
+
+	// (bob_node.networkNode as MockTopologyNetworkNode).start();
+	bob_node.syncObject(alice_object.id, alice_node.networkNode.peerId);
+
 	// let first_time = true;
 
 	// // generic message handler
@@ -83,19 +98,40 @@ async function test(d: number) {
 
 	// (bob_node.networkNode as MockTopologyNetworkNode).stop();
 
-	for (let i = 0; i < nlocal; i++) {
-		const timestamp = Date.now().toString();
-		alice_cro.addMessage(
-			timestamp,
-			`Hello, Alice ${i}`,
-			alice_node.networkNode.peerId,
-		);
-	}
+	// for (let i = 0; i < nlocal; i++) {
+	// 	const timestamp = Date.now().toString();
+	// 	alice_cro.addMessage(
+	// 		timestamp,
+	// 		`Hello Alice ${i}`,
+	// 		alice_node.networkNode.peerId,
+	// 	);
+	// }
 
-	await timeout(1000);
+	// await timeout(500);
 
-	console.log(alice_cro.messages);
-	console.log(bob_cro.messages);
+	// (alice_node.networkNode as MockTopologyNetworkNode).stop();
+	// (bob_node.networkNode as MockTopologyNetworkNode).start();
+
+	// for (let i = 0; i < nremote; i++) {
+	// 	const timestamp = Date.now().toString();
+	// 	bob_cro.addMessage(
+	// 		timestamp,
+	// 		`Hello Bob ${i}`,
+	// 		bob_node.networkNode.peerId,
+	// 	);
+	// }
+
+	// (alice_node.networkNode as MockTopologyNetworkNode).start();
+	// alice_node.syncObject(alice_object.id, bob_node.networkNode.peerId);
+
+	// await timeout(500);
+
+	// console.log(alice_cro.messages);
+	// console.log(bob_cro.messages);
+	console.log("ALICE OBJECT:");
+	console.log(alice_object.vertices);
+	console.log("BOB OBJECT:");
+	console.log(bob_object.vertices);
 }
 
 test(10);
