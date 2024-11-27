@@ -110,11 +110,13 @@ export class TopologyObject implements ITopologyObject {
 			}
 
 			try {
-				this.hashGraph.addVertex(
+				console.log(`merging vertex ${vertex.hash}`);
+				const hash = this.hashGraph.addVertex(
 					vertex.operation,
 					vertex.dependencies,
 					vertex.nodeId,
 				);
+				console.log(`merged vertex ${hash}`);
 			} catch (e) {
 				missing.push(vertex.hash);
 			}
