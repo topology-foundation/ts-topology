@@ -179,6 +179,7 @@ function syncFixedHandler(
 		return;
 	}
 
+	console.log(`current peer: ${node.networkNode.peerId}`);
 	console.log(`current hashes: ${object.vertices.map((v) => v.hash)}`);
 
 	const encoder = new VertexHashEncoder();
@@ -242,6 +243,7 @@ function syncFixedHandler(
 				}),
 			).finish(),
 		});
+		node.networkNode.sendMessage(sender, [protocol], message);
 	}
 }
 
@@ -262,6 +264,7 @@ function syncAcceptHandler(
 		return;
 	}
 	console.log("hello sync accept handler");
+	console.log(`current peer: ${node.networkNode.peerId}`);
 	console.log(syncAcceptMessage.requested);
 	console.log(syncAcceptMessage.requesting);
 

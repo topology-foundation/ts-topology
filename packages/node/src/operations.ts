@@ -70,6 +70,7 @@ export async function syncObject(
 	// 	data: NetworkPb.Sync.encode(data).finish(),
 	// });
 
+	console.log(`current peer: ${node.networkNode.peerId}`);
 	console.log(`current hashes: ${object.vertices.map((v) => v.hash)}`);
 
 	const encoder = new VertexHashEncoder();
