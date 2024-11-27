@@ -23,11 +23,6 @@ export interface Vertex_Operation {
   value: any | undefined;
 }
 
-export interface Vertex_Distance {
-  distance: number;
-  closestDependency?: string;
-}
-
 export interface TopologyObjectBase {
   id: string;
   abi?: string | undefined;

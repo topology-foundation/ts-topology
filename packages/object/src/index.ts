@@ -101,15 +101,11 @@ export class TopologyObject implements ITopologyObject {
 	// biome-ignore lint: value can't be unknown because of protobuf
 	callFn(fn: string, args: any) {
 		const vertex = this.hashGraph.addToFrontier({ type: fn, value: args });
-		let lca: Hash = vertex.dependencies[0];
 		const subgraph: Set<Hash> = new Set();
-		for (let i = 1; i < vertex.dependencies.length; i++) {
-			lca = this.hashGraph.lowestCommonAncestor(
-				lca,
-				vertex.dependencies[i],
-				subgraph,
-			);
-		}
+		const lca = this.hashGraph.lowestCommonAncestorMultipleVertices(
+			vertex.dependencies,
+			subgraph,
+		);
 		const linearizedOperations = this.hashGraph.linearizeOperations(
 			lca,
 			subgraph,
@@ -153,15 +149,11 @@ export class TopologyObject implements ITopologyObject {
 					vertex.nodeId,
 				);
 
-				let lca: Hash = vertex.dependencies[0];
 				const subgraph: Set<Hash> = new Set();
-				for (let i = 1; i < vertex.dependencies.length; i++) {
-					lca = this.hashGraph.lowestCommonAncestor(
-						lca,
-						vertex.dependencies[i],
-						subgraph,
-					);
-				}
+				const lca = this.hashGraph.lowestCommonAncestorMultipleVertices(
+					vertex.dependencies,
+					subgraph,
+				);
 				const linearizedOperations = this.hashGraph.linearizeOperations(
 					lca,
 					subgraph,

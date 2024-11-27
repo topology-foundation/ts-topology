@@ -3,7 +3,6 @@ import { Logger } from "@topology-foundation/logger";
 import { linearizeMultipleSemantics } from "../linearize/multipleSemantics.js";
 import { linearizePairSemantics } from "../linearize/pairSemantics.js";
 import type {
-	Vertex_Distance as Distance,
 	Vertex_Operation as Operation,
 	Vertex,
 } from "../proto/topology/object/object_pb.js";
@@ -45,6 +44,11 @@ export type ResolveConflictsType = {
 	vertices?: Hash[];
 };
 
+export type VertexDistance = {
+	distance: number;
+	closestDependency?: Hash;
+};
+
 export class HashGraph {
 	nodeId: string;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
@@ -65,7 +69,7 @@ export class HashGraph {
 	private arePredecessorsFresh = false;
 	private reachablePredecessors: Map<Hash, BitSet> = new Map();
 	private topoSortedIndex: Map<Hash, number> = new Map();
-	private vertexDistances: Map<Hash, Distance> = new Map();
+	private vertexDistances: Map<Hash, VertexDistance> = new Map();
 	// We start with a bitset of size 1, and double it every time we reach the limit
 	private currentBitsetSize = 1;
 
@@ -118,7 +122,7 @@ export class HashGraph {
 		}
 
 		// Compute the distance of the vertex
-		const vertexDistance: Distance = {
+		const vertexDistance: VertexDistance = {
 			distance: Number.MAX_VALUE,
 			closestDependency: "",
 		};
@@ -172,7 +176,7 @@ export class HashGraph {
 		}
 
 		// Compute the distance of the vertex
-		const vertexDistance: Distance = {
+		const vertexDistance: VertexDistance = {
 			distance: Number.MAX_VALUE,
 			closestDependency: "",
 		};
@@ -280,7 +284,38 @@ export class HashGraph {
 		}
 	}
 
-	lowestCommonAncestor(hash1: Hash, hash2: Hash, visited: Set<Hash>): Hash {
+	lowestCommonAncestorMultipleVertices(
+		hashes: Hash[],
+		visited: Set<Hash>,
+	): Hash {
+		if (hashes.length === 0) {
+			log.error("::hashgraph::LCA: Empty array of hashes");
+			return "";
+		}
+		if (hashes.length === 1) {
+			return hashes[0];
+		}
+		let lca = hashes[0];
+		const targetVertices: Hash[] = [...hashes];
+		for (let i = 1; i < targetVertices.length; i++) {
+			if (!visited.has(targetVertices[i])) {
+				lca = this.lowestCommonAncestorPairVertices(
+					lca,
+					targetVertices[i],
+					visited,
+					targetVertices,
+				);
+			}
+		}
+		return lca;
+	}
+
+	lowestCommonAncestorPairVertices(
+		hash1: Hash,
+		hash2: Hash,
+		visited: Set<Hash>,
+		targetVertices: Hash[],
+	): Hash {
 		let currentHash1 = hash1;
 		let currentHash2 = hash2;
 		visited.add(currentHash1);
@@ -303,6 +338,11 @@ export class HashGraph {
 					log.error("::hashgraph::LCA: Closest dependency not found");
 					return "";
 				}
+				for (const dep of this.vertices.get(currentHash1)?.dependencies || []) {
+					if (dep !== distance1.closestDependency && !visited.has(dep)) {
+						targetVertices.push(dep);
+					}
+				}
 				currentHash1 = distance1.closestDependency;
 				if (visited.has(currentHash1)) {
 					return hash2;
@@ -312,6 +352,11 @@ export class HashGraph {
 				if (!distance2.closestDependency) {
 					log.error("::hashgraph::LCA: Closest dependency not found");
 					return "";
+				}
+				for (const dep of this.vertices.get(currentHash2)?.dependencies || []) {
+					if (dep !== distance2.closestDependency && !visited.has(dep)) {
+						targetVertices.push(dep);
+					}
 				}
 				currentHash2 = distance2.closestDependency;
 				if (visited.has(currentHash2)) {
