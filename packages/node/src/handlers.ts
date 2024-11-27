@@ -187,7 +187,7 @@ function syncFixedHandler(
 		encoder.add(vertex.hash);
 	}
 
-	const remoteSymbols = syncMessage.symbols
+	const remoteSymbols = syncMessage.symbols;
 	const localSymbols = encoder.getEncoded(remoteSymbols.length);
 	// console.log("local symbols:");
 	// console.log(localSymbols);
@@ -205,9 +205,8 @@ function syncFixedHandler(
 		console.log("decode successfully");
 
 		const requested: ObjectPb.Vertex[] = [];
-		for (const h of localHashes) {
-			const vertex = object.vertices.find((v) => v.hash === h);
-			if (vertex) {
+		for (const vertex of object.vertices) {
+			if (localHashes.includes(vertex.hash)) {
 				requested.push(vertex);
 			}
 		}
@@ -289,9 +288,8 @@ function syncAcceptHandler(
 
 	// send missing vertices
 	const requested: ObjectPb.Vertex[] = [];
-	for (const h of syncAcceptMessage.requesting) {
-		const vertex = object.vertices.find((v) => v.hash === h);
-		if (vertex) {
+	for (const vertex of object.vertices) {
+		if (syncAcceptMessage.requesting.includes(vertex.hash)) {
 			requested.push(vertex);
 		}
 	}

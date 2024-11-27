@@ -1,17 +1,10 @@
 import type { GossipsubMessage } from "@chainsafe/libp2p-gossipsub";
-import type {
-	Connection,
-	EventCallback,
-	Stream,
-	StreamHandler,
-} from "@libp2p/interface";
+import type { EventCallback, Stream, StreamHandler } from "@libp2p/interface";
 import {
 	type TopologyNetworkNode,
 	uint8ArrayToStream,
 } from "@topology-foundation/network";
 import { Message } from "@topology-foundation/network/dist/src/proto/topology/network/messages_pb.js";
-import type { Duplex, Source } from "it-stream-types";
-import { Uint8ArrayList } from "uint8arraylist";
 
 class MockDuplex {
 	generator: AsyncGenerator<Uint8Array> | undefined;
@@ -46,35 +39,35 @@ class MockDuplex {
 
 export class MockNetwork {
 	nodes: MockNetworkNode[] = [];
-    availableNodes: Set<string>;
+	availableNodes: Set<string>;
 	pubsubMap: Map<string, Set<MockNetworkNode>>;
 	target: EventTarget;
 	groupTarget: EventTarget;
 
 	constructor() {
 		this.nodes = [];
-        this.availableNodes = new Set();
+		this.availableNodes = new Set();
 		this.pubsubMap = new Map();
 		this.target = new EventTarget();
 		this.groupTarget = new EventTarget();
 	}
 
-    dispatchEvent(event: Event) {
-        if (!this.availableNodes.has(event.type)) {
-            return;
-        }
-        this.target.dispatchEvent(event);
-    }
+	dispatchEvent(event: Event) {
+		if (!this.availableNodes.has(event.type)) {
+			return;
+		}
+		this.target.dispatchEvent(event);
+	}
 
-    dispatchGroupEvent(sender: string, topic: string, event: Event) {
-        const subscribers = this.pubsubMap.get(topic) ?? [];
-        for (const node of subscribers) {
-            if (!this.availableNodes.has(node.peerId) || node.peerId === sender) {
-                continue;
-            }
-            node.dispatchEvent(event);
-        }
-    }
+	dispatchGroupEvent(sender: string, topic: string, event: Event) {
+		const subscribers = this.pubsubMap.get(topic) ?? [];
+		for (const node of subscribers) {
+			if (!this.availableNodes.has(node.peerId) || node.peerId === sender) {
+				continue;
+			}
+			node.dispatchEvent(event);
+		}
+	}
 }
 
 class MockNetworkNode extends EventTarget {
@@ -91,8 +84,6 @@ class MockNetworkNode extends EventTarget {
 
 	handle(protocol: string, handle: StreamHandler) {
 		this.network.target.addEventListener(this.peerId, (event) => {
-            // console.log((event as CustomEvent).detail);
-            // console.trace();
 			handle((event as CustomEvent).detail);
 		});
 	}
@@ -126,40 +117,47 @@ class MockNetworkNode extends EventTarget {
 
 	getSubscribers(topic: string): string[] {
 		const subscribers = this.network.pubsubMap.get(topic) ?? [];
-		return Array.from(subscribers).map((node) => node.peerId).filter((id) => id !== this.peerId);
+		return Array.from(subscribers)
+			.map((node) => node.peerId)
+			.filter((id) => id !== this.peerId);
 	}
 
 	getPeers(): string[] {
-		return this.network.nodes.map((node) => node.peerId).filter((id) => id !== this.peerId);
+		return this.network.nodes
+			.map((node) => node.peerId)
+			.filter((id) => id !== this.peerId);
 	}
 
 	publish(topic: string, message: Uint8Array): void {
-        console.log("MAGAAA");
-		this.network.dispatchGroupEvent(this.peerId, topic, new CustomEvent("gossipsub:message", {
-            detail: { msg: { topic, data: message } },
-        }),)
+		this.network.dispatchGroupEvent(
+			this.peerId,
+			topic,
+			new CustomEvent("gossipsub:message", {
+				detail: { msg: { topic, data: message } },
+			}),
+		);
 	}
 }
 
 export class MockTopologyNetworkNode implements TopologyNetworkNode {
 	private _mockNode?: MockNetworkNode;
 
-    network: MockNetwork;
+	network: MockNetwork;
 	peerId = "";
 
 	constructor(network: MockNetwork, peerId: string) {
-        this.network = network;
+		this.network = network;
 		this.peerId = peerId;
-        this._mockNode = new MockNetworkNode(network, this.peerId);
+		this._mockNode = new MockNetworkNode(network, this.peerId);
 	}
 
 	async start() {
-        this.network.availableNodes.add(this.peerId);
+		this.network.availableNodes.add(this.peerId);
 	}
 
-    async stop() {
-        this.network.availableNodes.delete(this.peerId);
-    }
+	async stop() {
+		this.network.availableNodes.delete(this.peerId);
+	}
 
 	subscribe(topic: string): void {
 		this._mockNode?.subscribe(topic);
@@ -213,7 +211,6 @@ export class MockTopologyNetworkNode implements TopologyNetworkNode {
 		handler: EventCallback<CustomEvent<GossipsubMessage>>,
 	): void {
 		this._mockNode?.addEventListener("gossipsub:message", (e) => {
-            console.log(`compare: ${group} === ${(e as CustomEvent).detail.msg.topic}`);
 			if (group && (e as CustomEvent).detail.msg.topic !== group) return;
 			handler(e as CustomEvent);
 		});

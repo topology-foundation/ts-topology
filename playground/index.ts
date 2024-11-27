@@ -64,10 +64,22 @@ async function test(d: number) {
 	bob_object = await bob_node.createObject(new Chat(), alice_object.id, undefined, true);
 	bob_cro = bob_object.cro as Chat;
 
+	// let first_time = true;
+
+	// // generic message handler
+	// bob_node.addCustomGroupMessageHandler("", async (e) => {
+	// 	const peers = bob_node.networkNode.getAllPeers();
+	// 	console.log(`peers: ${peers}`);
+	// 	console.log(`require: ${alice_node.networkNode.peerId}`);
+	// 	if (peers.includes(alice_node.networkNode.peerId) && first_time) {
+	// 		first_time = false;
+	// 	}
+	// });
+
 	// console.log(alice_cro.messages);
 	// console.log(bob_cro.messages);
 
-	await timeout(2000);
+	await timeout(500);
 
 	// (bob_node.networkNode as MockTopologyNetworkNode).stop();
 
@@ -84,18 +96,6 @@ async function test(d: number) {
 
 	console.log(alice_cro.messages);
 	console.log(bob_cro.messages);
-
-	let first_time = true;
-
-	// generic message handler
-	bob_node.addCustomGroupMessageHandler("", async (e) => {
-		const peers = bob_node.networkNode.getAllPeers();
-		console.log(`peers: ${peers}`);
-		console.log(`require: ${alice_node.networkNode.peerId}`);
-		if (peers.includes(alice_node.networkNode.peerId) && first_time) {
-			first_time = false;
-		}
-	});
 }
 
 test(10);
