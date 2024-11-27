@@ -60,6 +60,8 @@ export class TopologyObject implements ITopologyObject {
 			cro.semanticsType,
 		);
 		this.subscriptions = [];
+
+		this.vertices = this.hashGraph.getAllVertices();
 	}
 
 	// This function is black magic, it allows us to intercept calls to the CRO object
@@ -110,13 +112,11 @@ export class TopologyObject implements ITopologyObject {
 			}
 
 			try {
-				console.log(`merging vertex ${vertex.hash}`);
-				const hash = this.hashGraph.addVertex(
+				this.hashGraph.addVertex(
 					vertex.operation,
 					vertex.dependencies,
 					vertex.nodeId,
 				);
-				console.log(`merged vertex ${hash}`);
 			} catch (e) {
 				missing.push(vertex.hash);
 			}
