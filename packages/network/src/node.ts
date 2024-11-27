@@ -165,13 +165,10 @@ export class TopologyNetworkNode {
 			});
 
 			console.log("::start::peer::discovery::sortedAddrs", sortedAddrs);
-			const dialAddresses = async () => {
-				for (const address of sortedAddrs) {
-					const result = await this._node?.dial(address);
-					console.log("::start::peer::discovery::dial", address, result);
-				}
-			};
-			await dialAddresses();
+			for (const address of sortedAddrs) {
+				const result = await this._node?.dial(address);
+				console.log("::start::peer::discovery::dial", address, result);
+			}
 
 			log.info("::start::peer::discovery", e.detail);
 		});
