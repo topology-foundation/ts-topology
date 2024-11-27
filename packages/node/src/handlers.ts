@@ -189,8 +189,10 @@ function syncFixedHandler(
 
 	const remoteSymbols = syncMessage.symbols
 	const localSymbols = encoder.getEncoded(remoteSymbols.length);
-	console.log(`local symbols: ${localSymbols}`);
-	console.log(`remote symbols: ${remoteSymbols}`);
+	// console.log("local symbols:");
+	// console.log(localSymbols);
+	// console.log("remote symbols:");
+	// console.log(remoteSymbols);
 	const decoder = new VertexHashDecoder();
 	for (let i = 0; i < remoteSymbols.length; i++) {
 		decoder.add(i, localSymbols[i], remoteSymbols[i]);
@@ -206,7 +208,7 @@ function syncFixedHandler(
 		for (const h of localHashes) {
 			const vertex = object.vertices.find((v) => v.hash === h);
 			if (vertex) {
-				object.vertices.push(vertex);
+				requested.push(vertex);
 			}
 		}
 
