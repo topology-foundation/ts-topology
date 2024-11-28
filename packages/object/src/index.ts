@@ -112,7 +112,15 @@ export class TopologyObject implements ITopologyObject {
 			subgraph,
 		);
 
-		const cro = new Object(this.states.get(lca)?.cro) as CRO;
+		const originalCRO = this.states.get(lca)?.cro;
+		if (!originalCRO) {
+			throw new Error("CRO is undefined.");
+		}
+
+		const cro = Object.create(
+			Object.getPrototypeOf(originalCRO),
+			Object.getOwnPropertyDescriptors(structuredClone(originalCRO)),
+		) as CRO;
 
 		for (let i = 1; i < linearizedOperations.length; i++) {
 			cro[linearizedOperations[i].type](linearizedOperations[i].value);
@@ -160,7 +168,15 @@ export class TopologyObject implements ITopologyObject {
 					subgraph,
 				);
 
-				const cro = new Object(this.states.get(lca)?.cro) as CRO;
+				const originalCRO = this.states.get(lca)?.cro;
+				if (!originalCRO) {
+					throw new Error("CRO is undefined.");
+				}
+
+				const cro = Object.create(
+					Object.getPrototypeOf(originalCRO),
+					Object.getOwnPropertyDescriptors(structuredClone(originalCRO)),
+				) as CRO;
 
 				for (let i = 1; i < linearizedOperations.length; i++) {
 					cro[linearizedOperations[i].type](linearizedOperations[i].value);
