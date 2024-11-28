@@ -195,6 +195,61 @@ importers:
         specifier: ^0.22.0
         version: 0.22.0(rollup@4.24.4)(vite@6.0.0(@types/node@22.9.0)(terser@5.36.0)(tsx@4.19.1)(yaml@2.6.0))
 
+  examples/grid-collision:
+    dependencies:
+      '@topology-foundation/network':
+        specifier: 0.3.0
+        version: 0.3.0(react-native@0.76.1(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))
+      '@topology-foundation/node':
+        specifier: 0.3.0
+        version: 0.3.0(react-native@0.76.1(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))
+      '@topology-foundation/object':
+        specifier: 0.3.0
+        version: 0.3.0
+      assemblyscript:
+        specifier: ^0.27.29
+        version: 0.27.30
+      crypto-browserify:
+        specifier: ^3.12.0
+        version: 3.12.1
+      memfs:
+        specifier: ^4.11.1
+        version: 4.14.0
+      process:
+        specifier: ^0.11.10
+        version: 0.11.10
+      react-spring:
+        specifier: ^9.7.4
+        version: 9.7.4(@react-three/fiber@8.17.10(react-dom@18.3.1(react@18.3.1))(react-native@0.76.1(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1)(three@0.169.0))(konva@9.3.16)(react-dom@18.3.1(react@18.3.1))(react-konva@18.2.10(konva@9.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-native@0.76.1(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react-zdog@1.2.2)(react@18.3.1)(three@0.169.0)(zdog@1.1.3)
+      stream-browserify:
+        specifier: ^3.0.0
+        version: 3.0.0
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@22.8.4)(typescript@5.6.3)
+      uint8arrays:
+        specifier: ^5.1.0
+        version: 5.1.0
+      vm-browserify:
+        specifier: ^1.1.2
+        version: 1.1.2
+    devDependencies:
+      '@types/node':
+        specifier: ^22.5.4
+        version: 22.8.4
+      ts-loader:
+        specifier: ^9.5.1
+        version: 9.5.1(typescript@5.6.3)(webpack@5.95.0)
+      typescript:
+        specifier: ^5.5.4
+        version: 5.6.3
+      vite:
+        specifier: ^5.4.9
+        version: 5.4.10(@types/node@22.8.4)(terser@5.36.0)
+      vite-plugin-node-polyfills:
+        specifier: ^0.22.0
+        version: 0.22.0(rollup@4.24.3)(vite@5.4.10(@types/node@22.8.4)(terser@5.36.0))
+
   examples/local-bootstrap:
     dependencies:
       '@topology-foundation/blueprints':
@@ -2227,6 +2282,24 @@ packages:
 
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
+
+  '@topology-foundation/blueprints@0.3.0':
+    resolution: {integrity: sha512-Wa3s1jSB2g1qiNc1pcV8nA/MpkmVsgSVayoDYQe9rDysDhza8MLv6sdIGx3GAnYM+8oCgYfpA1mDtWabgGbU3Q==}
+
+  '@topology-foundation/logger@0.3.0':
+    resolution: {integrity: sha512-7TAcFn20ccxx1QvDneOBk+ScZZTQ/Z8BfVY7RBeB76lQPPvPYRh33mrZzi5k+o7fyXhdHJq5Xlxd1ebEloyNnQ==}
+
+  '@topology-foundation/logger@0.3.1':
+    resolution: {integrity: sha512-ABYUFg71dGTvdFmrITv4ZJHY/P9SZzXJqYeIB6jEeVSWrp1oAIdbhKBrqo1GLuKSod0u/YG2a2VDcyuREQWTSA==}
+
+  '@topology-foundation/network@0.3.0':
+    resolution: {integrity: sha512-5+drJJIoMTeFrEarOMbJEmkTt2ET9MCKiVyVbJv8moXLcA6Xr3ZQWSpHMezI9oNiLoe1fmDFEjtDdRgPELFsZw==}
+
+  '@topology-foundation/node@0.3.0':
+    resolution: {integrity: sha512-kXTnErmc65eGJN9slS8912GwOoXUx4GXA2nCz99GGMIhGAP8DV1LzQyFSHBTssGCqkQZTfS7zO0ek3c0XyKb6g==}
+
+  '@topology-foundation/object@0.3.0':
+    resolution: {integrity: sha512-TVIqY9hMHxEWldhzTGmttUmYnThO5YNAtCYT923rXTnsF0x02qcXv6S6yBxdusH1RubXf//7IhLta0kYWk0VXg==}
 
   '@tsconfig/node10@1.0.11':
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
@@ -7851,6 +7924,77 @@ snapshots:
       '@thi.ng/errors': 2.5.17
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
+
+  '@topology-foundation/blueprints@0.3.0':
+    dependencies:
+      '@thi.ng/random': 4.1.2
+
+  '@topology-foundation/logger@0.3.0':
+    dependencies:
+      loglevel: 1.9.2
+      loglevel-plugin-prefix: 0.8.4
+
+  '@topology-foundation/logger@0.3.1':
+    dependencies:
+      loglevel: 1.9.2
+      loglevel-plugin-prefix: 0.8.4
+
+  '@topology-foundation/network@0.3.0(react-native@0.76.1(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))':
+    dependencies:
+      '@bufbuild/protobuf': 2.2.1
+      '@chainsafe/libp2p-gossipsub': 14.1.0
+      '@chainsafe/libp2p-noise': 16.0.0
+      '@chainsafe/libp2p-yamux': 7.0.1
+      '@libp2p/autonat': 2.0.10
+      '@libp2p/bootstrap': 11.0.10
+      '@libp2p/circuit-relay-v2': 2.1.5
+      '@libp2p/crypto': 5.0.6
+      '@libp2p/dcutr': 2.0.10
+      '@libp2p/devtools-metrics': 1.1.8
+      '@libp2p/identify': 3.0.10
+      '@libp2p/mdns': 11.0.10
+      '@libp2p/peer-id': 5.0.7
+      '@libp2p/pubsub-peer-discovery': 11.0.0
+      '@libp2p/webrtc': 5.0.16(react-native@0.76.1(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))
+      '@libp2p/websockets': 9.0.11
+      '@libp2p/webtransport': 5.0.16
+      '@multiformats/multiaddr': 12.3.1
+      '@topology-foundation/logger': 0.3.1
+      it-length-prefixed: 9.1.0
+      it-map: 3.1.1
+      it-pipe: 3.0.1
+      libp2p: 2.2.1
+      ts-proto: 2.2.5
+      uint8arrays: 5.1.0
+    transitivePeerDependencies:
+      - bufferutil
+      - react-native
+      - supports-color
+      - utf-8-validate
+
+  '@topology-foundation/node@0.3.0(react-native@0.76.1(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))':
+    dependencies:
+      '@chainsafe/libp2p-gossipsub': 14.1.0
+      '@grpc/grpc-js': 1.12.2
+      '@libp2p/interface': 2.2.0
+      '@topology-foundation/blueprints': 0.3.0
+      '@topology-foundation/logger': 0.3.0
+      '@topology-foundation/network': 0.3.0(react-native@0.76.1(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))
+      '@topology-foundation/object': 0.3.0
+      commander: 12.1.0
+      dotenv: 16.4.5
+      google-protobuf: 3.21.4
+    transitivePeerDependencies:
+      - bufferutil
+      - react-native
+      - supports-color
+      - utf-8-validate
+
+  '@topology-foundation/object@0.3.0':
+    dependencies:
+      '@bufbuild/protobuf': 2.2.1
+      '@topology-foundation/logger': 0.3.1
+      ts-proto: 2.2.5
 
   '@tsconfig/node10@1.0.11': {}
 
