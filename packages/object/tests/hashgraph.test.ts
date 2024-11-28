@@ -12,6 +12,10 @@ describe("HashGraph construction tests", () => {
 		obj2 = new TopologyObject("peer2", new AddWinsSet<number>());
 	});
 
+	test("Test: Vertices are consistent across data structures", () => {
+		expect(obj1.vertices).toEqual(obj1.hashGraph.getAllVertices());
+	});
+
 	test("Test: HashGraph should be DAG compatibility", () => {
 		/*		   - V1:ADD(1)
 			root /  
