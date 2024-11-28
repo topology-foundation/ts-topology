@@ -73,7 +73,8 @@ export class TopologyObject implements ITopologyObject {
 			cro.semanticsType,
 		);
 		this.subscriptions = [];
-		this.states = new Map([[HashGraph.rootHash, new CROState(cro)]]);
+
+		this.vertices = this.hashGraph.getAllVertices();
 	}
 
 	// This function is black magic, it allows us to intercept calls to the CRO object
