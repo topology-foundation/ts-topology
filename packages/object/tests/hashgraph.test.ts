@@ -14,6 +14,21 @@ describe("HashGraph construction tests", () => {
 
 	test("Test: Vertices are consistent across data structures", () => {
 		expect(obj1.vertices).toEqual(obj1.hashGraph.getAllVertices());
+
+		const cro1 = obj1.cro as AddWinsSet<number>;
+		const cro2 = obj2.cro as AddWinsSet<number>;
+
+		for (let i = 0; i < 100; i++) {
+			cro1.add(i);
+			expect(obj1.vertices).toEqual(obj1.hashGraph.getAllVertices());
+		}
+
+		for (let i = 0; i < 100; i++) {
+			cro2.add(i);
+		}
+
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		expect(obj1.vertices).toEqual(obj1.hashGraph.getAllVertices());
 	});
 
 	test("Test: HashGraph should be DAG compatibility", () => {
