@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { AddWinsSet } from "../../blueprints/src/AddWinsSet/index.js";
 import { PseudoRandomWinsSet } from "../../blueprints/src/PseudoRandomWinsSet/index.js";
-import { type Operation, OperationType, TopologyObject } from "../src/index.js";
+import { CROState, type Operation, OperationType, TopologyObject } from "../src/index.js";
+import exp from "constants";
 
 describe("HashGraph construction tests", () => {
 	let obj1: TopologyObject;
@@ -466,5 +467,33 @@ describe("HashGraph for undefined operations tests", () => {
 		expect(createdVertex.operation).toEqual({
 			type: OperationType.NOP,
 		} as Operation);
+	});
+
+	test("Test: Vertex states work correctly with single HashGraph", () => {
+		/*
+			root---V1:ADD(1)---V2:ADD(2)---V3:ADD(3)
+		*/
+		const cro1 = obj1.cro as AddWinsSet<number>;
+
+		cro1.add(1);
+		cro1.add(2);
+		cro1.add(3);
+
+		const vertices = obj1.hashGraph.topologicalSort();
+		
+		const croState1 = obj1.states.get(vertices[1]);
+		expect(croState1?.cro.contains(1)).toBe(true);
+		expect(croState1?.cro.contains(2)).toBe(false);
+		expect(croState1?.cro.contains(3)).toBe(false);
+
+		const croState2 = obj1.states.get(vertices[2]);
+		expect(croState2?.cro.contains(1)).toBe(true);
+		expect(croState2?.cro.contains(2)).toBe(true);
+		expect(croState2?.cro.contains(3)).toBe(false);
+
+		const croState3 = obj1.states.get(vertices[3]);
+		expect(croState3?.cro.contains(1)).toBe(true);
+		expect(croState3?.cro.contains(2)).toBe(true);
+		expect(croState3?.cro.contains(3)).toBe(true);
 	});
 });
