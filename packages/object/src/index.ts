@@ -73,7 +73,7 @@ export class TopologyObject implements ITopologyObject {
 			cro.semanticsType,
 		);
 		this.subscriptions = [];
-
+		this.states = new Map([[HashGraph.rootHash, new CROState(cro)]]);
 		this.vertices = this.hashGraph.getAllVertices();
 	}
 
@@ -139,7 +139,7 @@ export class TopologyObject implements ITopologyObject {
 		const missing = [];
 		for (const vertex of vertices) {
 			// Check to avoid manually crafted `undefined` operations
-			if (!vertex.operation) {
+			if (!vertex.operation || this.hashGraph.vertices.has(vertex.hash)) {
 				continue;
 			}
 

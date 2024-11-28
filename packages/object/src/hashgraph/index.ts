@@ -289,15 +289,17 @@ export class HashGraph {
 		visited: Set<Hash>,
 	): Hash {
 		if (hashes.length === 0) {
-			log.error("::hashgraph::LCA: Empty array of hashes");
-			return "";
+			throw new Error("Vertex dependencies are empty");
 		}
 		if (hashes.length === 1) {
 			return hashes[0];
 		}
-		let lca = hashes[0];
+		let lca: Hash | undefined = hashes[0];
 		const targetVertices: Hash[] = [...hashes];
 		for (let i = 1; i < targetVertices.length; i++) {
+			if (!lca) {
+				throw new Error("LCA not found");
+			}
 			if (!visited.has(targetVertices[i])) {
 				lca = this.lowestCommonAncestorPairVertices(
 					lca,
@@ -307,15 +309,18 @@ export class HashGraph {
 				);
 			}
 		}
+		if (!lca) {
+			throw new Error("LCA not found");
+		}
 		return lca;
 	}
 
-	lowestCommonAncestorPairVertices(
+	private lowestCommonAncestorPairVertices(
 		hash1: Hash,
 		hash2: Hash,
 		visited: Set<Hash>,
 		targetVertices: Hash[],
-	): Hash {
+	): Hash | undefined {
 		let currentHash1 = hash1;
 		let currentHash2 = hash2;
 		visited.add(currentHash1);
@@ -325,18 +330,18 @@ export class HashGraph {
 			const distance1 = this.vertexDistances.get(currentHash1);
 			if (!distance1) {
 				log.error("::hashgraph::LCA: Vertex not found");
-				return "";
+				return;
 			}
 			const distance2 = this.vertexDistances.get(currentHash2);
 			if (!distance2) {
 				log.error("::hashgraph::LCA: Vertex not found");
-				return "";
+				return;
 			}
 
 			if (distance1.distance > distance2.distance) {
 				if (!distance1.closestDependency) {
 					log.error("::hashgraph::LCA: Closest dependency not found");
-					return "";
+					return;
 				}
 				for (const dep of this.vertices.get(currentHash1)?.dependencies || []) {
 					if (dep !== distance1.closestDependency && !visited.has(dep)) {
@@ -351,7 +356,7 @@ export class HashGraph {
 			} else {
 				if (!distance2.closestDependency) {
 					log.error("::hashgraph::LCA: Closest dependency not found");
-					return "";
+					return;
 				}
 				for (const dep of this.vertices.get(currentHash2)?.dependencies || []) {
 					if (dep !== distance2.closestDependency && !visited.has(dep)) {
