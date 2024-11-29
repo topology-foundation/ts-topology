@@ -507,4 +507,60 @@ describe("Vertex state tests", () => {
 		expect(croState3?.state.get("state").get(2)).toBe(true);
 		expect(croState3?.state.get("state").get(3)).toBe(true);
 	});
+
+	test("Test: Tricky merging", () => {
+		/*
+				  A1 \
+				/	  A4 \
+		root ---> B2 /\	  A6
+				\	  C5 /
+				  C3 /
+		*/
+
+		// in above hashgraph, A represents cro1, B represents cro2, C represents cro3
+		const cro1 = obj1.cro as AddWinsSet<number>;
+		const cro2 = obj2.cro as AddWinsSet<number>;
+		const cro3 = obj3.cro as AddWinsSet<number>;
+
+		cro1.add(1);
+		cro2.add(2);
+		cro3.add(3);
+
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		obj3.merge(obj2.hashGraph.getAllVertices());
+
+		cro1.add(4);
+		cro3.add(5);
+
+		obj1.merge(obj3.hashGraph.getAllVertices());
+		obj3.merge(obj1.hashGraph.getAllVertices());
+
+		cro1.add(6);
+
+		const hashA4 = "8e6f4369010528ae3668efce452da04d077e0957955d62d671b90f2934c755fe";
+		const hashC5 = "a8d94f7e2b421be2d5cd1124ca9ddb831e38246065db6e9a32ce493ca9604038";
+		const hashA6 = "cd6a955f0734a09df1bff44c5e0458365d3a26ec7f1cae0df2c0f708b9f100a8";
+
+		const croState1 = obj1.states.get(hashA4);
+		expect(croState1?.state.get("state").get(1)).toBe(true);
+		expect(croState1?.state.get("state").get(2)).toBe(true);
+		expect(croState1?.state.get("state").get(3)).toBe(undefined);
+		expect(croState1?.state.get("state").get(4)).toBe(true);
+		expect(croState1?.state.get("state").get(5)).toBe(undefined);
+
+		const croState2 = obj1.states.get(hashC5);
+		expect(croState2?.state.get("state").get(1)).toBe(undefined);
+		expect(croState2?.state.get("state").get(2)).toBe(true);
+		expect(croState2?.state.get("state").get(3)).toBe(true);
+		expect(croState2?.state.get("state").get(4)).toBe(undefined);
+		expect(croState2?.state.get("state").get(5)).toBe(true);
+
+		const croState3 = obj1.states.get(hashA6);
+		expect(croState3?.state.get("state").get(1)).toBe(true);
+		expect(croState3?.state.get("state").get(2)).toBe(true);
+		expect(croState3?.state.get("state").get(3)).toBe(true);
+		expect(croState3?.state.get("state").get(4)).toBe(true);
+		expect(croState3?.state.get("state").get(5)).toBe(true);
+		expect(croState3?.state.get("state").get(6)).toBe(true);
+	});
 });
