@@ -381,35 +381,6 @@ describe("HashGraph for AddWinSet tests", () => {
 			{ type: "remove", value: 2 },
 		]);
 	});
-
-	test("Test: Vertex states work correctly with single HashGraph", () => {
-		/*
-			root---V1:ADD(1)---V2:ADD(2)---V3:ADD(3)
-		*/
-		const cro1 = obj1.cro as AddWinsSet<number>;
-
-		cro1.add(1);
-		cro1.add(2);
-		cro1.add(3);
-
-		const vertices = obj1.hashGraph.topologicalSort();
-
-		const croState1 = obj1.states.get(vertices[1]);
-
-		expect(croState1?.state.get("state").get(1)).toBe(true);
-		expect(croState1?.state.get("state").get(2)).toBe(undefined);
-		expect(croState1?.state.get("state").get(3)).toBe(undefined);
-
-		const croState2 = obj1.states.get(vertices[2]);
-		expect(croState2?.state.get("state").get(1)).toBe(true);
-		expect(croState2?.state.get("state").get(2)).toBe(true);
-		expect(croState2?.state.get("state").get(3)).toBe(undefined);
-
-		const croState3 = obj1.states.get(vertices[3]);
-		expect(croState3?.state.get("state").get(1)).toBe(true);
-		expect(croState3?.state.get("state").get(2)).toBe(true);
-		expect(croState3?.state.get("state").get(3)).toBe(true);
-	});
 });
 
 describe("HashGraph for PseudoRandomWinsSet tests", () => {
@@ -495,5 +466,45 @@ describe("HashGraph for undefined operations tests", () => {
 		expect(createdVertex.operation).toEqual({
 			type: OperationType.NOP,
 		} as Operation);
+	});
+});
+
+describe("Vertex state tests", () => {
+	let obj1: TopologyObject;
+	let obj2: TopologyObject;
+	let obj3: TopologyObject;
+
+	beforeEach(async () => {
+		obj1 = new TopologyObject("peer1", new AddWinsSet<number>());
+		obj2 = new TopologyObject("peer2", new AddWinsSet<number>());
+		obj3 = new TopologyObject("peer3", new AddWinsSet<number>());
+	});
+
+	test("Test: Vertex states work correctly with single HashGraph", () => {
+		/*
+			root---V1:ADD(1)---V2:ADD(2)---V3:ADD(3)
+		*/
+		const cro1 = obj1.cro as AddWinsSet<number>;
+
+		cro1.add(1);
+		cro1.add(2);
+		cro1.add(3);
+
+		const vertices = obj1.hashGraph.topologicalSort();
+
+		const croState1 = obj1.states.get(vertices[1]);
+		expect(croState1?.state.get("state").get(1)).toBe(true);
+		expect(croState1?.state.get("state").get(2)).toBe(undefined);
+		expect(croState1?.state.get("state").get(3)).toBe(undefined);
+
+		const croState2 = obj1.states.get(vertices[2]);
+		expect(croState2?.state.get("state").get(1)).toBe(true);
+		expect(croState2?.state.get("state").get(2)).toBe(true);
+		expect(croState2?.state.get("state").get(3)).toBe(undefined);
+
+		const croState3 = obj1.states.get(vertices[3]);
+		expect(croState3?.state.get("state").get(1)).toBe(true);
+		expect(croState3?.state.get("state").get(2)).toBe(true);
+		expect(croState3?.state.get("state").get(3)).toBe(true);
 	});
 });

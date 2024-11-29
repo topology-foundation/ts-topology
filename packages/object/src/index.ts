@@ -138,9 +138,16 @@ export class TopologyObject implements ITopologyObject {
 			cro[key] = value;
 		}
 
-		for (let i = 1; i < linearizedOperations.length; i++) {
-			cro[linearizedOperations[i].type](linearizedOperations[i].value);
+		let applyIdx = 1;
+		if (lca === HashGraph.rootHash) {
+			applyIdx = 0;
 		}
+
+		for (; applyIdx < linearizedOperations.length; applyIdx++) {
+			const op = linearizedOperations[applyIdx];
+			cro[op.type](op.value);
+		}
+
 		cro[fn](args);
 
 		const varNames: string[] = Object.keys(cro);
@@ -210,8 +217,13 @@ export class TopologyObject implements ITopologyObject {
 					cro[key] = value;
 				}
 
-				for (let i = 1; i < linearizedOperations.length; i++) {
-					cro[linearizedOperations[i].type](linearizedOperations[i].value);
+				let applyIdx = 1;
+				if (lca === HashGraph.rootHash) {
+					applyIdx = 0;
+				}
+				for (; applyIdx < linearizedOperations.length; applyIdx++) {
+					const op = linearizedOperations[applyIdx];
+					cro[op.type](op.value);
 				}
 				cro[vertex.operation.type](vertex.operation.value);
 
