@@ -337,7 +337,7 @@ export class HashGraph {
 				log.error("::hashgraph::LCA: Vertex not found");
 				return;
 			}
-
+			
 			if (distance1.distance > distance2.distance) {
 				if (!distance1.closestDependency) {
 					log.error("::hashgraph::LCA: Closest dependency not found");
@@ -350,7 +350,7 @@ export class HashGraph {
 				}
 				currentHash1 = distance1.closestDependency;
 				if (visited.has(currentHash1)) {
-					return hash2;
+					return currentHash2;
 				}
 				visited.add(currentHash1);
 			} else {
@@ -365,7 +365,7 @@ export class HashGraph {
 				}
 				currentHash2 = distance2.closestDependency;
 				if (visited.has(currentHash2)) {
-					return hash1;
+					return currentHash1;
 				}
 				visited.add(currentHash2);
 			}
