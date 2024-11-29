@@ -12,6 +12,25 @@ describe("HashGraph construction tests", () => {
 		obj2 = new TopologyObject("peer2", new AddWinsSet<number>());
 	});
 
+	test("Test: Vertices are consistent across data structures", () => {
+		expect(obj1.vertices).toEqual(obj1.hashGraph.getAllVertices());
+
+		const cro1 = obj1.cro as AddWinsSet<number>;
+		const cro2 = obj2.cro as AddWinsSet<number>;
+
+		for (let i = 0; i < 100; i++) {
+			cro1.add(i);
+			expect(obj1.vertices).toEqual(obj1.hashGraph.getAllVertices());
+		}
+
+		for (let i = 0; i < 100; i++) {
+			cro2.add(i);
+		}
+
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		expect(obj1.vertices).toEqual(obj1.hashGraph.getAllVertices());
+	});
+
 	test("Test: HashGraph should be DAG compatibility", () => {
 		/*		   - V1:ADD(1)
 			root /  
@@ -95,10 +114,10 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Add Two Concurrent Vertices With Same Value", () => {
 		/*
-	              _ V2:REMOVE(1)
-	  V1:ADD(1) /
-	            \ _ V3:ADD(1)
-	*/
+	                  _ V2:REMOVE(1)
+	      V1:ADD(1) /
+	                \ _ V3:ADD(1)
+	    */
 
 		const cro1 = obj1.cro as AddWinsSet<number>;
 		const cro2 = obj2.cro as AddWinsSet<number>;
@@ -123,10 +142,10 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Add Two Concurrent Vertices With Different Values", () => {
 		/*
-	              _ V2:REMOVE(1)
-	  V1:ADD(1) /
-	            \ _ V3:ADD(2)
-	*/
+	                  _ V2:REMOVE(1)
+	      V1:ADD(1) /
+	                \ _ V3:ADD(2)
+	    */
 
 		const cro1 = obj1.cro as AddWinsSet<number>;
 		const cro2 = obj2.cro as AddWinsSet<number>;
@@ -153,10 +172,10 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Tricky Case", () => {
 		/*
-	              ___  V2:REMOVE(1) <- V4:ADD(10)
-	  V1:ADD(1) /
-	            \ ___  V3:ADD(1) <- V5:REMOVE(5)
-	*/
+	                  ___  V2:REMOVE(1) <- V4:ADD(10)
+	      V1:ADD(1) /
+	                \ ___  V3:ADD(1) <- V5:REMOVE(5)
+	    */
 
 		const cro1 = obj1.cro as AddWinsSet<number>;
 		const cro2 = obj2.cro as AddWinsSet<number>;
@@ -187,10 +206,10 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Yuta Papa's Case", () => {
 		/*
-	              ___  V2:REMOVE(1) <- V4:ADD(2)
-	  V1:ADD(1) /
-	            \ ___  V3:REMOVE(2) <- V5:ADD(1)
-	*/
+	                  ___  V2:REMOVE(1) <- V4:ADD(2)
+	      V1:ADD(1) /
+	                \ ___  V3:REMOVE(2) <- V5:ADD(1)
+	    */
 
 		const cro1 = obj1.cro as AddWinsSet<number>;
 		const cro2 = obj2.cro as AddWinsSet<number>;
@@ -219,14 +238,14 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Mega Complex Case", () => {
 		/*
-	                                           __ V6:ADD(3)
-	                                         /
-	              ___  V2:ADD(1) <-- V3:RM(2) <-- V7:RM(1) <-- V8:RM(3)
-	            /                              ______________/
-	  V1:ADD(1)/                              /
-	           \                             /
-	            \ ___  V4:RM(2) <-- V5:ADD(2) <-- V9:RM(1)
-	*/
+	                                               __ V6:ADD(3)
+	                                             /
+	                  ___  V2:ADD(1) <-- V3:RM(2) <-- V7:RM(1) <-- V8:RM(3)
+	                /                              ______________/
+	      V1:ADD(1)/                              /
+	               \                             /
+	                \ ___  V4:RM(2) <-- V5:ADD(2) <-- V9:RM(1)
+	    */
 
 		const cro1 = obj1.cro as AddWinsSet<number>;
 		const cro2 = obj2.cro as AddWinsSet<number>;
@@ -274,14 +293,14 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Mega Complex Case 1", () => {
 		/*
-	                                           __ V5:ADD(3)
-	                                         /
-	              ___  V2:ADD(1) <-- V3:RM(2) <-- V6:RM(1) <-- V8:RM(3)
-	            /                                       ^
-	  V1:ADD(1)/                                         \
-	           \                                          \
-	            \ ___  V4:RM(2) <-------------------- V7:ADD(2) <-- V9:RM(1)
-	*/
+	                                               __ V5:ADD(3)
+	                                             /
+	                  ___  V2:ADD(1) <-- V3:RM(2) <-- V6:RM(1) <-- V8:RM(3)
+	                /                                       ^
+	      V1:ADD(1)/                                         \
+	               \                                          \
+	                \ ___  V4:RM(2) <-------------------- V7:ADD(2) <-- V9:RM(1)
+	    */
 
 		const cro1 = obj1.cro as AddWinsSet<number>;
 		const cro2 = obj2.cro as AddWinsSet<number>;
@@ -331,10 +350,10 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Joao's latest brain teaser", () => {
 		/*
-	             __ V2:Add(2) <------------\
-	  V1:Add(1) /                           \ - V5:RM(2)
-	            \__ V3:RM(2) <- V4:RM(2) <--/
-	*/
+	                 __ V2:Add(2) <------------\
+	      V1:Add(1) /                           \ - V5:RM(2)
+	                \__ V3:RM(2) <- V4:RM(2) <--/
+	    */
 
 		const cro1 = obj1.cro as AddWinsSet<number>;
 		const cro2 = obj2.cro as AddWinsSet<number>;

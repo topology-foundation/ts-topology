@@ -6,15 +6,23 @@ import {
 
 export function linearizePair(hashGraph: HashGraph): Operation[] {
 	const order = hashGraph.topologicalSort(true);
+	const dropped = new Array(order.length).fill(false);
 	const result: Operation[] = [];
 	let i = 0;
 
 	while (i < order.length) {
+		if (dropped[i]) {
+			i++;
+			continue;
+		}
 		const anchor = order[i];
 		let j = i + 1;
-		let shouldIncrementI = true;
 
 		while (j < order.length) {
+			if (dropped[j]) {
+				j++;
+				continue;
+			}
 			const moving = order[j];
 
 			if (!hashGraph.areCausallyRelatedUsingBitsets(anchor, moving)) {
@@ -29,16 +37,16 @@ export function linearizePair(hashGraph: HashGraph): Operation[] {
 
 				switch (action) {
 					case ActionType.DropLeft:
-						order.splice(i, 1);
-						j = order.length; // Break out of inner loop
-						shouldIncrementI = false;
-						continue; // Continue outer loop without incrementing i
+						dropped[i] = true;
+						j = order.length;
+						break;
 					case ActionType.DropRight:
-						order.splice(j, 1);
-						continue; // Continue with the same j
+						dropped[j] = true;
+						j++;
+						break;
 					case ActionType.Swap:
 						[order[i], order[j]] = [order[j], order[i]];
-						j = order.length; // Break out of inner loop
+						j = i + 1;
 						break;
 					case ActionType.Nop:
 						j++;
@@ -49,11 +57,11 @@ export function linearizePair(hashGraph: HashGraph): Operation[] {
 			}
 		}
 
-		if (shouldIncrementI) {
+		if (!dropped[i]) {
 			const op = hashGraph.vertices.get(order[i])?.operation;
 			if (op && op.value !== null) result.push(op);
-			i++;
 		}
+		i++;
 	}
 
 	return result;
