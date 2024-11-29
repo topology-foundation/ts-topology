@@ -1,3 +1,4 @@
+import { BitSet } from "../hashgraph/bitset.js";
 import {
 	ActionType,
 	type Hash,
@@ -7,17 +8,25 @@ import {
 } from "../hashgraph/index.js";
 
 export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
-	let order = hashGraph.topologicalSort(true);
+	const order = hashGraph.topologicalSort(true);
+	const dropped = new Array(order.length).fill(false);
 	const indices: Map<Hash, number> = new Map();
 	const result: Operation[] = [];
 	let i = 0;
 
 	while (i < order.length) {
+		if (dropped[i]) {
+			i++;
+			continue;
+		}
 		const anchor = order[i];
 		let j = i + 1;
-		let shouldIncrementI = true;
 
 		while (j < order.length) {
+			if (dropped[j]) {
+				j = hashGraph.findNextCausallyUnrelated(anchor, j) ?? order.length;
+				continue;
+			}
 			const moving = order[j];
 
 			if (!hashGraph.areCausallyRelatedUsingBitsets(anchor, moving)) {
@@ -26,8 +35,28 @@ export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 				indices.set(anchor, i);
 				concurrentOps.push(moving);
 				indices.set(moving, j);
-				let k = j + 1;
-				for (; k < order.length; k++) {
+
+				let reachableVertices: BitSet = new BitSet(
+					hashGraph.getCurrentBitsetSize(),
+				);
+				const anchorReachablePredecessors =
+					hashGraph.getReachablePredecessors(anchor);
+				if (anchorReachablePredecessors) {
+					reachableVertices = reachableVertices.or(anchorReachablePredecessors);
+				}
+				const movingReachablePredecessors =
+					hashGraph.getReachablePredecessors(moving);
+				if (movingReachablePredecessors) {
+					reachableVertices = reachableVertices.or(movingReachablePredecessors);
+				}
+
+				let k = reachableVertices.findNext(j, 0);
+				while (k < order.length) {
+					if (dropped[k]) {
+						k = reachableVertices.findNext(k, 0);
+						continue;
+					}
+
 					let add = true;
 					for (const hash of concurrentOps) {
 						if (hashGraph.areCausallyRelatedUsingBitsets(hash, order[k])) {
@@ -38,7 +67,15 @@ export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 					if (add) {
 						concurrentOps.push(order[k]);
 						indices.set(order[k], k);
+						const reachablePredecessors = hashGraph.getReachablePredecessors(
+							order[k],
+						);
+						if (reachablePredecessors) {
+							reachableVertices = reachableVertices.or(reachablePredecessors);
+						}
 					}
+
+					k = reachableVertices.findNext(k, 0);
 				}
 				const resolved = hashGraph.resolveConflicts(
 					concurrentOps.map((hash) => hashGraph.vertices.get(hash) as Vertex),
@@ -46,32 +83,30 @@ export function linearizeMultiple(hashGraph: HashGraph): Operation[] {
 
 				switch (resolved.action) {
 					case ActionType.Drop: {
-						const newOrder = [];
 						for (const hash of resolved.vertices || []) {
-							if (indices.get(hash) === i) shouldIncrementI = false;
-							order[indices.get(hash) || -1] = "";
+							dropped[indices.get(hash) || -1] = true;
 						}
-						for (const val of order) {
-							if (val !== "") newOrder.push(val);
+						if (dropped[i]) {
+							j = order.length;
 						}
-						order = newOrder;
-						if (!shouldIncrementI) j = order.length; // Break out of inner loop
 						break;
 					}
 					case ActionType.Nop:
-						j++;
+						j = hashGraph.findNextCausallyUnrelated(anchor, j) ?? order.length;
+						break;
+					default:
 						break;
 				}
 			} else {
-				j++;
+				j = hashGraph.findNextCausallyUnrelated(anchor, j) ?? order.length;
 			}
 		}
 
-		if (shouldIncrementI) {
+		if (!dropped[i]) {
 			const op = hashGraph.vertices.get(order[i])?.operation;
 			if (op && op.value !== null) result.push(op);
-			i++;
 		}
+		i++;
 	}
 
 	return result;

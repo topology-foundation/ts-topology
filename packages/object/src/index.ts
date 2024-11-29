@@ -75,6 +75,8 @@ export class DRPObject implements IDRPObject {
 			drp?.semanticsType,
 		);
 		this.subscriptions = [];
+
+		this.vertices = this.hashGraph.getAllVertices();
 	}
 
 	// This function is black magic, it allows us to intercept calls to the DRP object
