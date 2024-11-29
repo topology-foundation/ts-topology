@@ -22,10 +22,12 @@ export interface CRO {
 }
 
 export class CROState {
-	cro: CRO;
+	// biome-ignore lint: attributes can be anything
+	state: Map<string, any>;
 
-	constructor(cro: CRO) {
-		this.cro = cro;
+	// biome-ignore lint: attributes can be anything
+	constructor(state: Map<string, any>) {
+		this.state = state;
 	}
 }
 
@@ -52,6 +54,7 @@ export class TopologyObject implements ITopologyObject {
 	subscriptions: TopologyObjectCallback[];
 	// mapping from vertex hash to the CRO state
 	states: Map<string, CROState>;
+	originalCRO: CRO;
 
 	constructor(nodeId: string, cro: CRO, id?: string, abi?: string) {
 		this.nodeId = nodeId;
@@ -73,7 +76,11 @@ export class TopologyObject implements ITopologyObject {
 			cro.semanticsType,
 		);
 		this.subscriptions = [];
-		this.states = new Map([[HashGraph.rootHash, new CROState(cro)]]);
+		this.states = new Map([[HashGraph.rootHash, new CROState(new Map())]]);
+		this.originalCRO = Object.create(
+			Object.getPrototypeOf(cro),
+			Object.getOwnPropertyDescriptors(structuredClone(cro)),
+		);
 		this.vertices = this.hashGraph.getAllVertices();
 	}
 
@@ -112,22 +119,38 @@ export class TopologyObject implements ITopologyObject {
 			subgraph,
 		);
 
-		const originalCRO = this.states.get(lca)?.cro;
-		if (!originalCRO) {
-			throw new Error("CRO is undefined.");
+		const cro = Object.create(
+			Object.getPrototypeOf(this.originalCRO),
+			Object.getOwnPropertyDescriptors(structuredClone(this.originalCRO)),
+		) as CRO;
+
+		const fetchedState = this.states.get(lca);
+		if (!fetchedState) {
+			throw new Error("State is undefined");
 		}
 
-		const cro = Object.create(
-			Object.getPrototypeOf(originalCRO),
-			Object.getOwnPropertyDescriptors(structuredClone(originalCRO)),
-		) as CRO;
+		const state = Object.create(
+			Object.getPrototypeOf(fetchedState),
+			Object.getOwnPropertyDescriptors(structuredClone(fetchedState)),
+		).state;
+
+		for (const [key, value] of state.entries()) {
+			cro[key] = value;
+		}
 
 		for (let i = 1; i < linearizedOperations.length; i++) {
 			cro[linearizedOperations[i].type](linearizedOperations[i].value);
 		}
 		cro[fn](args);
 
-		this.states.set(vertex.hash, new CROState(cro));
+		const varNames: string[] = Object.keys(cro);
+		// biome-ignore lint: values can be anything
+		const newState: Map<string, any> = new Map();
+		for (const varName of varNames) {
+			newState.set(varName, cro[varName]);
+		}
+
+		this.states.set(vertex.hash, new CROState(newState));
 
 		const serializedVertex = ObjectPb.Vertex.create({
 			hash: vertex.hash,
@@ -168,22 +191,38 @@ export class TopologyObject implements ITopologyObject {
 					subgraph,
 				);
 
-				const originalCRO = this.states.get(lca)?.cro;
-				if (!originalCRO) {
-					throw new Error("CRO is undefined.");
+				const cro = Object.create(
+					Object.getPrototypeOf(this.originalCRO),
+					Object.getOwnPropertyDescriptors(structuredClone(this.originalCRO)),
+				) as CRO;
+
+				const fetchedState = this.states.get(lca);
+				if (!fetchedState) {
+					throw new Error("State is undefined");
 				}
 
-				const cro = Object.create(
-					Object.getPrototypeOf(originalCRO),
-					Object.getOwnPropertyDescriptors(structuredClone(originalCRO)),
-				) as CRO;
+				const state = Object.create(
+					Object.getPrototypeOf(fetchedState),
+					Object.getOwnPropertyDescriptors(structuredClone(fetchedState)),
+				).state;
+
+				for (const [key, value] of state.entries()) {
+					cro[key] = value;
+				}
 
 				for (let i = 1; i < linearizedOperations.length; i++) {
 					cro[linearizedOperations[i].type](linearizedOperations[i].value);
 				}
 				cro[vertex.operation.type](vertex.operation.value);
 
-				this.states.set(vertex.hash, new CROState(cro));
+				const varNames: string[] = Object.keys(cro);
+				// biome-ignore lint: values can be anything
+				const newState: Map<string, any> = new Map();
+				for (const varName of varNames) {
+					newState.set(varName, cro[varName]);
+				}
+
+				this.states.set(vertex.hash, new CROState(newState));
 			} catch (e) {
 				missing.push(vertex.hash);
 			}

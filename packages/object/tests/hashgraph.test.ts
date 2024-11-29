@@ -481,18 +481,19 @@ describe("HashGraph for undefined operations tests", () => {
 		const vertices = obj1.hashGraph.topologicalSort();
 
 		const croState1 = obj1.states.get(vertices[1]);
-		expect(croState1?.cro.contains(1)).toBe(true);
-		expect(croState1?.cro.contains(2)).toBe(false);
-		expect(croState1?.cro.contains(3)).toBe(false);
+
+		expect(croState1?.state.get("state").get(1)).toBe(true);
+		expect(croState1?.state.get("state").get(2)).toBe(undefined);
+		expect(croState1?.state.get("state").get(3)).toBe(undefined);
 
 		const croState2 = obj1.states.get(vertices[2]);
-		expect(croState2?.cro.contains(1)).toBe(true);
-		expect(croState2?.cro.contains(2)).toBe(true);
-		expect(croState2?.cro.contains(3)).toBe(false);
+		expect(croState2?.state.get("state").get(1)).toBe(true);
+		expect(croState2?.state.get("state").get(2)).toBe(true);
+		expect(croState2?.state.get("state").get(3)).toBe(undefined);
 
 		const croState3 = obj1.states.get(vertices[3]);
-		expect(croState3?.cro.contains(1)).toBe(true);
-		expect(croState3?.cro.contains(2)).toBe(true);
-		expect(croState3?.cro.contains(3)).toBe(true);
+		expect(croState3?.state.get("state").get(1)).toBe(true);
+		expect(croState3?.state.get("state").get(2)).toBe(true);
+		expect(croState3?.state.get("state").get(3)).toBe(true);
 	});
 });
