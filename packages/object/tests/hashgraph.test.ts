@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { AddWinsSet } from "../../blueprints/src/AddWinsSet/index.js";
 import { PseudoRandomWinsSet } from "../../blueprints/src/PseudoRandomWinsSet/index.js";
-import { CROState, type Operation, OperationType, TopologyObject } from "../src/index.js";
-import exp from "constants";
+import { type Operation, OperationType, TopologyObject } from "../src/index.js";
 
 describe("HashGraph construction tests", () => {
 	let obj1: TopologyObject;
@@ -480,7 +479,7 @@ describe("HashGraph for undefined operations tests", () => {
 		cro1.add(3);
 
 		const vertices = obj1.hashGraph.topologicalSort();
-		
+
 		const croState1 = obj1.states.get(vertices[1]);
 		expect(croState1?.cro.contains(1)).toBe(true);
 		expect(croState1?.cro.contains(2)).toBe(false);
