@@ -537,9 +537,12 @@ describe("Vertex state tests", () => {
 
 		cro1.add(6);
 
-		const hashA4 = "8e6f4369010528ae3668efce452da04d077e0957955d62d671b90f2934c755fe";
-		const hashC5 = "a8d94f7e2b421be2d5cd1124ca9ddb831e38246065db6e9a32ce493ca9604038";
-		const hashA6 = "cd6a955f0734a09df1bff44c5e0458365d3a26ec7f1cae0df2c0f708b9f100a8";
+		const hashA4 =
+			"8e6f4369010528ae3668efce452da04d077e0957955d62d671b90f2934c755fe";
+		const hashC5 =
+			"a8d94f7e2b421be2d5cd1124ca9ddb831e38246065db6e9a32ce493ca9604038";
+		const hashA6 =
+			"cd6a955f0734a09df1bff44c5e0458365d3a26ec7f1cae0df2c0f708b9f100a8";
 
 		const croState1 = obj1.states.get(hashA4);
 		expect(croState1?.state.get("state").get(1)).toBe(true);
