@@ -171,16 +171,12 @@ function syncFixedHandler(
 	sender: string,
 	data: Uint8Array,
 ) {
-	console.log("hello sync handler");
 	const syncMessage = NetworkPb.SyncFixed.decode(data);
 	const object = node.objectStore.get(syncMessage.objectId);
 	if (!object) {
 		console.error("topology::node::syncFixedHandler", "Object not found");
 		return;
 	}
-
-	console.log(`current peer: ${node.networkNode.peerId}`);
-	console.log(`current hashes: ${object.vertices.map((v) => v.hash)}`);
 
 	const encoder = new VertexHashEncoder();
 	for (const vertex of object.vertices) {
@@ -189,10 +185,7 @@ function syncFixedHandler(
 
 	const remoteSymbols = syncMessage.symbols;
 	const localSymbols = encoder.getEncoded(remoteSymbols.length);
-	// console.log("local symbols:");
-	// console.log(localSymbols);
-	// console.log("remote symbols:");
-	// console.log(remoteSymbols);
+
 	const decoder = new VertexHashDecoder();
 	for (let i = 0; i < remoteSymbols.length; i++) {
 		decoder.add(i, localSymbols[i], remoteSymbols[i]);
@@ -202,7 +195,6 @@ function syncFixedHandler(
 		// success
 		const localHashes = decoder.getDecodedLocal();
 		const remoteHashes = decoder.getDecodedRemote();
-		console.log("decode successfully");
 
 		const requested: ObjectPb.Vertex[] = [];
 		for (const vertex of object.vertices) {
@@ -210,9 +202,6 @@ function syncFixedHandler(
 				requested.push(vertex);
 			}
 		}
-
-		console.log(`requested: ${requested}`);
-		console.log(`requesting: ${remoteHashes}`);
 
 		if (requested.length === 0 && remoteHashes.length === 0) return;
 
@@ -264,10 +253,6 @@ function syncAcceptHandler(
 		console.error("topology::node::syncAcceptHandler", "Object not found");
 		return;
 	}
-	console.log("hello sync accept handler");
-	console.log(`current peer: ${node.networkNode.peerId}`);
-	console.log(syncAcceptMessage.requested);
-	console.log(syncAcceptMessage.requesting);
 
 	const vertices: Vertex[] = syncAcceptMessage.requested.map((v) => {
 		return {

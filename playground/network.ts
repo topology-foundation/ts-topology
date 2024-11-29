@@ -6,6 +6,13 @@ import {
 } from "@topology-foundation/network";
 import { Message } from "@topology-foundation/network/dist/src/proto/topology/network/messages_pb.js";
 
+class NetworkStats {
+	bytesTransmitted = 0;
+	roundTrips = 0;
+}
+
+export const globalNetworkStats = new NetworkStats();
+
 class MockDuplex {
 	generator: AsyncGenerator<Uint8Array> | undefined;
 	pipeTarget: EventTarget;
@@ -31,7 +38,9 @@ class MockDuplex {
 				}
 				for await (const buf of duplex.generator as AsyncGenerator<Uint8Array>) {
 					yield buf;
+					globalNetworkStats.bytesTransmitted += buf.length;
 				}
+				globalNetworkStats.roundTrips += 1;
 			})(this);
 		this.protocol = protocol;
 	}
