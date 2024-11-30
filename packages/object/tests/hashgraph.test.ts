@@ -566,4 +566,50 @@ describe("Vertex state tests", () => {
 		expect(croState3?.state.get("state").get(5)).toBe(true);
 		expect(croState3?.state.get("state").get(6)).toBe(true);
 	});
+
+	test("Test: Vertex states with mega complex case", () => {
+		/*
+											   __ V6:ADD(3)
+											 /
+				  ___  V2:ADD(1) <-- V3:RM(2) <-- V7:RM(1) <-- V8:RM(3)
+				/                              ______________/
+	  V1:ADD(1)/                              /
+			   \                             /
+				\ ___  V4:RM(2) <-- V5:ADD(2) <-- V9:RM(1)
+	*/
+
+		const cro1 = obj1.cro as AddWinsSet<number>;
+		const cro2 = obj2.cro as AddWinsSet<number>;
+		const cro3 = obj3.cro as AddWinsSet<number>;
+
+		cro1.add(1);
+		obj2.merge(obj1.hashGraph.getAllVertices());
+
+		cro1.add(1);
+		cro1.remove(2);
+		cro2.remove(2);
+		cro2.add(2);
+
+		obj3.merge(obj1.hashGraph.getAllVertices());
+		cro3.add(3);
+		cro1.remove(1);
+
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		cro1.remove(3);
+		cro2.remove(1);
+
+		obj1.merge(obj2.hashGraph.getAllVertices());
+		obj1.merge(obj3.hashGraph.getAllVertices());
+		obj2.merge(obj1.hashGraph.getAllVertices());
+		obj2.merge(obj3.hashGraph.getAllVertices());
+		obj3.merge(obj1.hashGraph.getAllVertices());
+		obj3.merge(obj2.hashGraph.getAllVertices());
+
+		const hashV8 =
+			"be97d8fe9169800893c28b3d8aaefda517b98936efb069673e0250317b5e4a0b";
+		const croStateV8 = obj1.states.get(hashV8);
+		expect(croStateV8?.state.get("state").get(1)).toBe(false);
+		expect(croStateV8?.state.get("state").get(2)).toBe(true);
+		expect(croStateV8?.state.get("state").get(3)).toBe(undefined);
+	});
 });
