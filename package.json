@@ -33,7 +33,7 @@
 		"ts-proto": "^2.2.4",
 		"typedoc": "^0.26.6",
 		"typescript": "^5.5.4",
-		"vite": "^5.4.9",
+		"vite": "^6.0.2",
 		"vite-tsconfig-paths": "^5.0.1",
 		"vitest": "^2.1.1"
 	},
