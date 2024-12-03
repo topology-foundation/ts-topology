@@ -72,7 +72,7 @@ export class DRPNode {
 	}
 
 	async createObject(
-		cro: DRP,
+		drp: DRP,
 		id?: string,
 		abi?: string,
 		sync?: boolean,
