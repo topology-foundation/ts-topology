@@ -2,69 +2,75 @@
 // versions:
 //   protoc-gen-ts_proto  v2.2.5
 //   protoc               unknown
-// source: topology/network/messages.proto
+// source: drp/network/v1/messages.proto
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { Vertex } from "../object/object_pb.js";
+import { Vertex } from "../../object/v1/object_pb.js";
 
-export const protobufPackage = "topology.network";
+export const protobufPackage = "drp.network.v1";
 
-export interface Message {
-  sender: string;
-  type: Message_MessageType;
-  data: Uint8Array;
-}
-
-export enum Message_MessageType {
-  UPDATE = 0,
-  SYNC = 1,
-  SYNC_ACCEPT = 2,
-  SYNC_REJECT = 3,
-  CUSTOM = 4,
+export enum MessageType {
+  MESSAGE_TYPE_UNSPECIFIED = 0,
+  MESSAGE_TYPE_UPDATE = 1,
+  MESSAGE_TYPE_SYNC = 2,
+  MESSAGE_TYPE_SYNC_ACCEPT = 3,
+  MESSAGE_TYPE_SYNC_REJECT = 4,
+  MESSAGE_TYPE_CUSTOM = 5,
   UNRECOGNIZED = -1,
 }
 
-export function message_MessageTypeFromJSON(object: any): Message_MessageType {
+export function messageTypeFromJSON(object: any): MessageType {
   switch (object) {
     case 0:
-    case "UPDATE":
-      return Message_MessageType.UPDATE;
+    case "MESSAGE_TYPE_UNSPECIFIED":
+      return MessageType.MESSAGE_TYPE_UNSPECIFIED;
     case 1:
-    case "SYNC":
-      return Message_MessageType.SYNC;
+    case "MESSAGE_TYPE_UPDATE":
+      return MessageType.MESSAGE_TYPE_UPDATE;
     case 2:
-    case "SYNC_ACCEPT":
-      return Message_MessageType.SYNC_ACCEPT;
+    case "MESSAGE_TYPE_SYNC":
+      return MessageType.MESSAGE_TYPE_SYNC;
     case 3:
-    case "SYNC_REJECT":
-      return Message_MessageType.SYNC_REJECT;
+    case "MESSAGE_TYPE_SYNC_ACCEPT":
+      return MessageType.MESSAGE_TYPE_SYNC_ACCEPT;
     case 4:
-    case "CUSTOM":
-      return Message_MessageType.CUSTOM;
+    case "MESSAGE_TYPE_SYNC_REJECT":
+      return MessageType.MESSAGE_TYPE_SYNC_REJECT;
+    case 5:
+    case "MESSAGE_TYPE_CUSTOM":
+      return MessageType.MESSAGE_TYPE_CUSTOM;
     case -1:
     case "UNRECOGNIZED":
     default:
-      return Message_MessageType.UNRECOGNIZED;
+      return MessageType.UNRECOGNIZED;
   }
 }
 
-export function message_MessageTypeToJSON(object: Message_MessageType): string {
+export function messageTypeToJSON(object: MessageType): string {
   switch (object) {
-    case Message_MessageType.UPDATE:
-      return "UPDATE";
-    case Message_MessageType.SYNC:
-      return "SYNC";
-    case Message_MessageType.SYNC_ACCEPT:
-      return "SYNC_ACCEPT";
-    case Message_MessageType.SYNC_REJECT:
-      return "SYNC_REJECT";
-    case Message_MessageType.CUSTOM:
-      return "CUSTOM";
-    case Message_MessageType.UNRECOGNIZED:
+    case MessageType.MESSAGE_TYPE_UNSPECIFIED:
+      return "MESSAGE_TYPE_UNSPECIFIED";
+    case MessageType.MESSAGE_TYPE_UPDATE:
+      return "MESSAGE_TYPE_UPDATE";
+    case MessageType.MESSAGE_TYPE_SYNC:
+      return "MESSAGE_TYPE_SYNC";
+    case MessageType.MESSAGE_TYPE_SYNC_ACCEPT:
+      return "MESSAGE_TYPE_SYNC_ACCEPT";
+    case MessageType.MESSAGE_TYPE_SYNC_REJECT:
+      return "MESSAGE_TYPE_SYNC_REJECT";
+    case MessageType.MESSAGE_TYPE_CUSTOM:
+      return "MESSAGE_TYPE_CUSTOM";
+    case MessageType.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
   }
+}
+
+export interface Message {
+  sender: string;
+  type: MessageType;
+  data: Uint8Array;
 }
 
 export interface Update {
@@ -147,7 +153,7 @@ export const Message: MessageFns<Message> = {
   fromJSON(object: any): Message {
     return {
       sender: isSet(object.sender) ? globalThis.String(object.sender) : "",
-      type: isSet(object.type) ? message_MessageTypeFromJSON(object.type) : 0,
+      type: isSet(object.type) ? messageTypeFromJSON(object.type) : 0,
       data: isSet(object.data) ? bytesFromBase64(object.data) : new Uint8Array(0),
     };
   },
@@ -158,7 +164,7 @@ export const Message: MessageFns<Message> = {
       obj.sender = message.sender;
     }
     if (message.type !== 0) {
-      obj.type = message_MessageTypeToJSON(message.type);
+      obj.type = messageTypeToJSON(message.type);
     }
     if (message.data.length !== 0) {
       obj.data = base64FromBytes(message.data);

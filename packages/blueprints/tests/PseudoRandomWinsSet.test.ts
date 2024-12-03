@@ -2,34 +2,34 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { PseudoRandomWinsSet } from "../src/PseudoRandomWinsSet/index.js";
 
 describe("HashGraph for PseudoRandomWinsSet tests", () => {
-	let cro: PseudoRandomWinsSet<number>;
+	let drp: PseudoRandomWinsSet<number>;
 
 	beforeEach(() => {
-		cro = new PseudoRandomWinsSet();
+		drp = new PseudoRandomWinsSet();
 	});
 
 	test("Test: Add", () => {
-		cro.add(1);
-		let set = cro.values();
+		drp.add(1);
+		let set = drp.values();
 		expect(set).toEqual([1]);
 
-		cro.add(2);
-		set = cro.values();
+		drp.add(2);
+		set = drp.values();
 		expect(set).toEqual([1, 2]);
 	});
 
 	test("Test: Add and Remove", () => {
-		cro.add(1);
-		let set = cro.values();
+		drp.add(1);
+		let set = drp.values();
 		expect(set).toEqual([1]);
 
-		cro.add(2);
-		set = cro.values();
+		drp.add(2);
+		set = drp.values();
 		expect(set).toEqual([1, 2]);
 
-		cro.remove(1);
-		set = cro.values();
-		expect(cro.contains(1)).toBe(false);
+		drp.remove(1);
+		set = drp.values();
+		expect(drp.contains(1)).toBe(false);
 		expect(set).toEqual([2]);
 	});
 });

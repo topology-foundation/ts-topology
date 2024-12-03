@@ -2,34 +2,34 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { AddWinsSet } from "../src/AddWinsSet/index.js";
 
 describe("HashGraph for AddWinSet tests", () => {
-	let cro: AddWinsSet<number>;
+	let drp: AddWinsSet<number>;
 
 	beforeEach(() => {
-		cro = new AddWinsSet();
+		drp = new AddWinsSet();
 	});
 
 	test("Test: Add", () => {
-		cro.add(1);
-		let set = cro.values();
+		drp.add(1);
+		let set = drp.values();
 		expect(set).toEqual([1]);
 
-		cro.add(2);
-		set = cro.values();
+		drp.add(2);
+		set = drp.values();
 		expect(set).toEqual([1, 2]);
 	});
 
 	test("Test: Add and Remove", () => {
-		cro.add(1);
-		let set = cro.values();
+		drp.add(1);
+		let set = drp.values();
 		expect(set).toEqual([1]);
 
-		cro.add(2);
-		set = cro.values();
+		drp.add(2);
+		set = drp.values();
 		expect(set).toEqual([1, 2]);
 
-		cro.remove(1);
-		set = cro.values();
-		expect(cro.contains(1)).toBe(false);
+		drp.remove(1);
+		set = drp.values();
+		expect(drp.contains(1)).toBe(false);
 		expect(set).toEqual([2]);
 	});
 });

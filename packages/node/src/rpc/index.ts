@@ -1,92 +1,86 @@
 import * as grpc from "@grpc/grpc-js";
 
 import type { ServerUnaryCall, sendUnaryData } from "@grpc/grpc-js";
-import { Logger } from "@topology-foundation/logger";
-import type { TopologyNode } from "../index.js";
-import { TopologyRpcService } from "../proto/topology/node/rpc_grpc_pb.js";
+import { type DRPNode, log } from "../index.js";
+import { DRPRpcService } from "../proto/drp/node/v1/rpc_grpc_pb.js";
 import type {
-	GetCroHashGraphRequest,
-	GetCroHashGraphResponse,
-	SubscribeCroRequest,
-	SubscribeCroResponse,
-	UnsubscribeCroRequest,
-	UnsubscribeCroResponse,
-} from "../proto/topology/node/rpc_pb.js";
+	GetDRPHashGraphRequest,
+	GetDRPHashGraphResponse,
+	SubscribeDRPRequest,
+	SubscribeDRPResponse,
+	UnsubscribeDRPRequest,
+	UnsubscribeDRPResponse,
+} from "../proto/drp/node/v1/rpc_pb.js";
 
-export function init(node: TopologyNode) {
-	const log = new Logger(
-		"topology::rpc",
-		node.config?.network_config?.log_config,
-	);
-
-	function subscribeCro(
-		call: ServerUnaryCall<SubscribeCroRequest, SubscribeCroResponse>,
-		callback: sendUnaryData<SubscribeCroResponse>,
+export function init(node: DRPNode) {
+	function subscribeDRP(
+		call: ServerUnaryCall<SubscribeDRPRequest, SubscribeDRPResponse>,
+		callback: sendUnaryData<SubscribeDRPResponse>,
 	) {
 		let returnCode = 0;
 		try {
-			node.subscribeObject(call.request.croId);
+			node.subscribeObject(call.request.drpId);
 		} catch (e) {
-			console.error(e);
+			log.error("::rpc::subscribeDRP: Error", e);
 			returnCode = 1;
 		}
 
-		const response: SubscribeCroResponse = {
+		const response: SubscribeDRPResponse = {
 			returnCode,
 		};
 		callback(null, response);
 	}
 
-	function unsubscribeCro(
-		call: ServerUnaryCall<UnsubscribeCroRequest, UnsubscribeCroResponse>,
-		callback: sendUnaryData<UnsubscribeCroResponse>,
+	function unsubscribeDRP(
+		call: ServerUnaryCall<UnsubscribeDRPRequest, UnsubscribeDRPResponse>,
+		callback: sendUnaryData<UnsubscribeDRPResponse>,
 	) {
 		let returnCode = 0;
 		try {
-			node.unsubscribeObject(call.request.croId);
+			node.unsubscribeObject(call.request.drpId);
 		} catch (e) {
-			console.error(e);
+			log.error("::rpc::unsubscribeDRP: Error", e);
 			returnCode = 1;
 		}
 
-		const response: UnsubscribeCroResponse = {
+		const response: UnsubscribeDRPResponse = {
 			returnCode,
 		};
 		callback(null, response);
 	}
 
-	function getCroHashGraph(
-		call: ServerUnaryCall<GetCroHashGraphRequest, GetCroHashGraphResponse>,
-		callback: sendUnaryData<GetCroHashGraphResponse>,
+	function getDRPHashGraph(
+		call: ServerUnaryCall<GetDRPHashGraphRequest, GetDRPHashGraphResponse>,
+		callback: sendUnaryData<GetDRPHashGraphResponse>,
 	) {
 		const hashes: string[] = [];
 		try {
-			const object = node.objectStore.get(call.request.croId);
-			if (!object) throw Error("cro not found");
+			const object = node.objectStore.get(call.request.drpId);
+			if (!object) throw Error("drp not found");
 			for (const v of object.hashGraph.getAllVertices()) {
 				hashes.push(v.hash);
 			}
 		} catch (e) {
-			console.error(e);
+			log.error("::rpc::getDRPHashGraph: Error", e);
 		}
 
-		const response: GetCroHashGraphResponse = {
+		const response: GetDRPHashGraphResponse = {
 			verticesHashes: hashes,
 		};
 		callback(null, response);
 	}
 
 	const server = new grpc.Server();
-	server.addService(TopologyRpcService, {
-		subscribeCro,
-		unsubscribeCro,
-		getCroHashGraph,
+	server.addService(DRPRpcService, {
+		subscribeDRP,
+		unsubscribeDRP,
+		getDRPHashGraph,
 	});
 	server.bindAsync(
 		"0.0.0.0:6969",
 		grpc.ServerCredentials.createInsecure(),
 		(_error, _port) => {
-			log.info("running grpc in port:", _port);
+			log.info("::rpc::init: running grpc in port:", _port);
 		},
 	);
 }

@@ -14,7 +14,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			"@topology-foundation": path.resolve(__dirname, "../../packages"),
+			"@ts-drp": path.resolve(__dirname, "../../packages"),
 		},
 	},
 });

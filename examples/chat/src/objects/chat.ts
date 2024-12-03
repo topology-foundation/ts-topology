@@ -1,13 +1,13 @@
 import {
 	ActionType,
-	type CRO,
+	type DRP,
 	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
-} from "@topology-foundation/object";
+} from "@ts-drp/object";
 
-export class Chat implements CRO {
+export class Chat implements DRP {
 	operations: string[] = ["addMessage"];
 	semanticsType: SemanticsType = SemanticsType.pair;
 	// store messages as strings in the format (timestamp, message, nodeId)

@@ -1,10 +1,10 @@
-import { TopologyNode } from "@topology-foundation/node";
-import type { TopologyObject } from "@topology-foundation/object";
+import { DRPNode } from "@ts-drp/node";
+import type { DRPObject } from "@ts-drp/object";
 import { Canvas } from "./objects/canvas";
 
-const node = new TopologyNode();
-let topologyObject: TopologyObject;
-let canvasCRO: Canvas;
+const node = new DRPNode();
+let drpObject: DRPObject;
+let canvasDRP: Canvas;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
 let objectPeers: string[] = [];
@@ -23,10 +23,10 @@ const render = () => {
 	);
 	object_element.innerHTML = `[${objectPeers.join(", ")}]`;
 	(<HTMLSpanElement>document.getElementById("canvasId")).innerText =
-		topologyObject?.id;
+		drpObject?.id;
 
-	if (!canvasCRO) return;
-	const canvas = canvasCRO.canvas;
+	if (!canvasDRP) return;
+	const canvas = canvasDRP.canvas;
 	for (let x = 0; x < canvas.length; x++) {
 		for (let y = 0; y < canvas[x].length; y++) {
 			const pixel = document.getElementById(`${x}-${y}`);
@@ -45,19 +45,18 @@ function paint_pixel(pixel: HTMLDivElement) {
 		random_int(256),
 		random_int(256),
 	];
-	canvasCRO.paint([x, y], painting);
-	const [r, g, b] = canvasCRO.pixel(x, y).color();
+	canvasDRP.paint([x, y], painting);
+	const [r, g, b] = canvasDRP.pixel(x, y).color();
 	pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 }
 
 async function createConnectHandlers() {
-	node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
-		if (topologyObject)
-			objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
+	node.addCustomGroupMessageHandler(drpObject.id, (e) => {
+		if (drpObject) objectPeers = node.networkNode.getGroupPeers(drpObject.id);
 		render();
 	});
 
-	node.objectStore.subscribe(topologyObject.id, (_, _obj) => {
+	node.objectStore.subscribe(drpObject.id, (_, _obj) => {
 		render();
 	});
 }
@@ -86,14 +85,14 @@ async function init() {
 
 	node.addCustomGroupMessageHandler("", (e) => {
 		peers = node.networkNode.getAllPeers();
-		discoveryPeers = node.networkNode.getGroupPeers("topology::discovery");
+		discoveryPeers = node.networkNode.getGroupPeers("drp::discovery");
 		render();
 	});
 
 	const create_button = <HTMLButtonElement>document.getElementById("create");
 	create_button.addEventListener("click", async () => {
-		topologyObject = await node.createObject(new Canvas(5, 10));
-		canvasCRO = topologyObject.cro as Canvas;
+		drpObject = await node.createObject(new Canvas(5, 10));
+		canvasDRP = drpObject.drp as Canvas;
 
 		createConnectHandlers();
 		render();
@@ -101,21 +100,21 @@ async function init() {
 
 	const connect_button = <HTMLButtonElement>document.getElementById("connect");
 	connect_button.addEventListener("click", async () => {
-		const croId = (<HTMLInputElement>document.getElementById("canvasIdInput"))
+		const drpId = (<HTMLInputElement>document.getElementById("canvasIdInput"))
 			.value;
 		try {
-			topologyObject = await node.createObject(
+			drpObject = await node.createObject(
 				new Canvas(5, 10),
-				croId,
+				drpId,
 				undefined,
 				true,
 			);
-			canvasCRO = topologyObject.cro as Canvas;
+			canvasDRP = drpObject.drp as Canvas;
 
 			createConnectHandlers();
 			render();
 		} catch (e) {
-			console.error("Error while connecting with CRO", croId, e);
+			console.error("Error while connecting with DRP", drpId, e);
 		}
 	});
 }

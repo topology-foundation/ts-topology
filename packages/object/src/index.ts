@@ -1,4 +1,5 @@
 import * as crypto from "node:crypto";
+import { Logger, type LoggerOptions } from "@ts-drp/logger";
 import {
 	type Hash,
 	HashGraph,
@@ -7,12 +8,12 @@ import {
 	type SemanticsType,
 	type Vertex,
 } from "./hashgraph/index.js";
-import * as ObjectPb from "./proto/topology/object/object_pb.js";
+import * as ObjectPb from "./proto/drp/object/v1/object_pb.js";
 
-export * as ObjectPb from "./proto/topology/object/object_pb.js";
+export * as ObjectPb from "./proto/drp/object/v1/object_pb.js";
 export * from "./hashgraph/index.js";
 
-export interface CRO {
+export interface DRP {
 	operations: string[];
 	semanticsType: SemanticsType;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
@@ -21,7 +22,7 @@ export interface CRO {
 	[key: string]: any;
 }
 
-export class CROState {
+export class DRPState {
 	// biome-ignore lint: attributes can be anything
 	state: Map<string, any>;
 
@@ -31,33 +32,47 @@ export class CROState {
 	}
 }
 
-export type TopologyObjectCallback = (
-	object: TopologyObject,
+export type DRPObjectCallback = (
+	object: DRPObject,
 	origin: string,
 	vertices: ObjectPb.Vertex[],
 ) => void;
 
-export interface ITopologyObject extends ObjectPb.TopologyObjectBase {
-	cro: ProxyHandler<CRO> | null;
+export interface IDRPObject extends ObjectPb.DRPObjectBase {
+	drp: ProxyHandler<DRP> | null;
 	hashGraph: HashGraph;
-	subscriptions: TopologyObjectCallback[];
+	subscriptions: DRPObjectCallback[];
 }
 
-export class TopologyObject implements ITopologyObject {
+// snake_casing to match the JSON config
+export interface DRPObjectConfig {
+	log_config?: LoggerOptions;
+}
+
+export let log: Logger;
+
+export class DRPObject implements IDRPObject {
 	nodeId: string;
 	id: string;
 	abi: string;
 	bytecode: Uint8Array;
 	vertices: ObjectPb.Vertex[];
-	cro: ProxyHandler<CRO> | null;
+	drp: ProxyHandler<DRP> | null;
 	hashGraph: HashGraph;
-	subscriptions: TopologyObjectCallback[];
-	// mapping from vertex hash to the CRO state
-	states: Map<string, CROState>;
-	originalCRO: CRO;
+	// mapping from vertex hash to the DRP state
+	states: Map<string, DRPState>;
+	originalDRP: DRP;
+	subscriptions: DRPObjectCallback[];
 
-	constructor(nodeId: string, cro: CRO, id?: string, abi?: string) {
+	constructor(
+		nodeId: string,
+		drp: DRP,
+		id?: string,
+		abi?: string,
+		config?: DRPObjectConfig,
+	) {
 		this.nodeId = nodeId;
+		log = new Logger("drp::object", config?.log_config);
 		this.id =
 			id ??
 			crypto
@@ -69,23 +84,23 @@ export class TopologyObject implements ITopologyObject {
 		this.abi = abi ?? "";
 		this.bytecode = new Uint8Array();
 		this.vertices = [];
-		this.cro = new Proxy(cro, this.proxyCROHandler());
+		this.drp = drp ? new Proxy(drp, this.proxyDRPHandler()) : null;
 		this.hashGraph = new HashGraph(
 			nodeId,
-			cro.resolveConflicts.bind(cro),
-			cro.semanticsType,
+			drp?.resolveConflicts?.bind(drp ?? this),
+			drp?.semanticsType,
 		);
 		this.subscriptions = [];
-		this.states = new Map([[HashGraph.rootHash, new CROState(new Map())]]);
-		this.originalCRO = Object.create(
-			Object.getPrototypeOf(cro),
-			Object.getOwnPropertyDescriptors(structuredClone(cro)),
+		this.states = new Map([[HashGraph.rootHash, new DRPState(new Map())]]);
+		this.originalDRP = Object.create(
+			Object.getPrototypeOf(drp),
+			Object.getOwnPropertyDescriptors(structuredClone(drp)),
 		);
 		this.vertices = this.hashGraph.getAllVertices();
 	}
 
-	// This function is black magic, it allows us to intercept calls to the CRO object
-	proxyCROHandler(): ProxyHandler<object> {
+	// This function is black magic, it allows us to intercept calls to the DRP object
+	proxyDRPHandler(): ProxyHandler<object> {
 		const obj = this;
 		return {
 			get(target, propKey, receiver) {
@@ -119,10 +134,10 @@ export class TopologyObject implements ITopologyObject {
 			subgraph,
 		);
 
-		const cro = Object.create(
-			Object.getPrototypeOf(this.originalCRO),
-			Object.getOwnPropertyDescriptors(structuredClone(this.originalCRO)),
-		) as CRO;
+		const drp = Object.create(
+			Object.getPrototypeOf(this.originalDRP),
+			Object.getOwnPropertyDescriptors(structuredClone(this.originalDRP)),
+		) as DRP;
 
 		const fetchedState = this.states.get(lca);
 		if (!fetchedState) {
@@ -135,7 +150,7 @@ export class TopologyObject implements ITopologyObject {
 		).state;
 
 		for (const [key, value] of state.entries()) {
-			cro[key] = value;
+			drp[key] = value;
 		}
 
 		let applyIdx = 1;
@@ -145,19 +160,19 @@ export class TopologyObject implements ITopologyObject {
 
 		for (; applyIdx < linearizedOperations.length; applyIdx++) {
 			const op = linearizedOperations[applyIdx];
-			cro[op.type](op.value);
+			drp[op.type](op.value);
 		}
 
-		cro[fn](args);
+		drp[fn](args);
 
-		const varNames: string[] = Object.keys(cro);
+		const varNames: string[] = Object.keys(drp);
 		// biome-ignore lint: values can be anything
 		const newState: Map<string, any> = new Map();
 		for (const varName of varNames) {
-			newState.set(varName, cro[varName]);
+			newState.set(varName, drp[varName]);
 		}
 
-		this.states.set(vertex.hash, new CROState(newState));
+		this.states.set(vertex.hash, new DRPState(newState));
 
 		const serializedVertex = ObjectPb.Vertex.create({
 			hash: vertex.hash,
@@ -198,10 +213,10 @@ export class TopologyObject implements ITopologyObject {
 					subgraph,
 				);
 
-				const cro = Object.create(
-					Object.getPrototypeOf(this.originalCRO),
-					Object.getOwnPropertyDescriptors(structuredClone(this.originalCRO)),
-				) as CRO;
+				const drp = Object.create(
+					Object.getPrototypeOf(this.originalDRP),
+					Object.getOwnPropertyDescriptors(structuredClone(this.originalDRP)),
+				) as DRP;
 
 				const fetchedState = this.states.get(lca);
 				if (!fetchedState) {
@@ -214,7 +229,7 @@ export class TopologyObject implements ITopologyObject {
 				).state;
 
 				for (const [key, value] of state.entries()) {
-					cro[key] = value;
+					drp[key] = value;
 				}
 
 				let applyIdx = 1;
@@ -223,18 +238,18 @@ export class TopologyObject implements ITopologyObject {
 				}
 				for (; applyIdx < linearizedOperations.length; applyIdx++) {
 					const op = linearizedOperations[applyIdx];
-					cro[op.type](op.value);
+					drp[op.type](op.value);
 				}
-				cro[vertex.operation.type](vertex.operation.value);
+				drp[vertex.operation.type](vertex.operation.value);
 
-				const varNames: string[] = Object.keys(cro);
+				const varNames: string[] = Object.keys(drp);
 				// biome-ignore lint: values can be anything
 				const newState: Map<string, any> = new Map();
 				for (const varName of varNames) {
-					newState.set(varName, cro[varName]);
+					newState.set(varName, drp[varName]);
 				}
 
-				this.states.set(vertex.hash, new CROState(newState));
+				this.states.set(vertex.hash, new DRPState(newState));
 			} catch (e) {
 				missing.push(vertex.hash);
 			}
@@ -243,13 +258,13 @@ export class TopologyObject implements ITopologyObject {
 		const operations = this.hashGraph.linearizeOperations();
 		this.vertices = this.hashGraph.getAllVertices();
 
-		(this.cro as CRO).mergeCallback(operations);
+		(this.drp as DRP).mergeCallback(operations);
 		this._notify("merge", this.vertices);
 
 		return [missing.length === 0, missing];
 	}
 
-	subscribe(callback: TopologyObjectCallback) {
+	subscribe(callback: DRPObjectCallback) {
 		this.subscriptions.push(callback);
 	}
 

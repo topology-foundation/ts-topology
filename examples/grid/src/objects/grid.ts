@@ -1,13 +1,13 @@
 import {
 	ActionType,
-	type CRO,
+	type DRP,
 	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
-} from "@topology-foundation/object";
+} from "@ts-drp/object";
 
-export class Grid implements CRO {
+export class Grid implements DRP {
 	operations: string[] = ["addUser", "moveUser"];
 	semanticsType: SemanticsType = SemanticsType.pair;
 	positions: Map<string, { x: number; y: number }>;
