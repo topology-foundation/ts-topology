@@ -510,11 +510,11 @@ describe("Vertex state tests", () => {
 
 	test("Test: Tricky merging", () => {
 		/*
-				  A1 \
-				/	  A4 \
-		root ---> B2 /\	  A6
-				\	  C5 /
-				  C3 /
+          A1<----------A4 __
+        /             /      \
+      root <-- B2 <--        A6
+        \          \         /
+         C3<--------C5 -----
 		*/
 
 		// in above hashgraph, A represents drp1, B represents drp2, C represents drp3
