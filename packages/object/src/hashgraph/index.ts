@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
+import { log } from "../index.js";
 import { linearizeMultipleSemantics } from "../linearize/multipleSemantics.js";
 import { linearizePairSemantics } from "../linearize/pairSemantics.js";
-import { log } from "../index.js";
 import type {
 	Vertex_Operation as Operation,
 	Vertex,
