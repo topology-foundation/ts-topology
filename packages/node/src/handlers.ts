@@ -4,7 +4,7 @@ import type { DRPObject, ObjectPb, Vertex } from "@ts-drp/object";
 import { type DRPNode, log } from "./index.js";
 
 /*
-  Handler for all CRO messages, including pubsub messages and direct messages
+  Handler for all DRP messages, including pubsub messages and direct messages
   You need to setup stream xor data
 */
 export async function drpMessagesHandler(
