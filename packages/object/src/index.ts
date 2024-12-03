@@ -124,6 +124,63 @@ export class DRPObject implements IDRPObject {
 	// biome-ignore lint: value can't be unknown because of protobuf
 	callFn(fn: string, args: any) {
 		const vertex = this.hashGraph.addToFrontier({ type: fn, value: args });
+		this._setState(vertex);
+
+		const serializedVertex = ObjectPb.Vertex.create({
+			hash: vertex.hash,
+			nodeId: vertex.nodeId,
+			operation: vertex.operation,
+			dependencies: vertex.dependencies,
+		});
+		this.vertices.push(serializedVertex);
+		this._notify("callFn", [serializedVertex]);
+	}
+
+	/* Merges the vertices into the hashgraph
+	 * Returns a tuple with a boolean indicating if there were
+	 * missing vertices and an array with the missing vertices
+	 */
+	merge(vertices: Vertex[]): [merged: boolean, missing: string[]] {
+		const missing = [];
+		for (const vertex of vertices) {
+			// Check to avoid manually crafted `undefined` operations
+			if (!vertex.operation || this.hashGraph.vertices.has(vertex.hash)) {
+				continue;
+			}
+
+			try {
+				this.hashGraph.addVertex(
+					vertex.operation,
+					vertex.dependencies,
+					vertex.nodeId,
+				);
+
+				this._setState(vertex);
+			} catch (e) {
+				missing.push(vertex.hash);
+			}
+		}
+
+		const operations = this.hashGraph.linearizeOperations();
+		this.vertices = this.hashGraph.getAllVertices();
+
+		(this.drp as DRP).mergeCallback(operations);
+		this._notify("merge", this.vertices);
+
+		return [missing.length === 0, missing];
+	}
+
+	subscribe(callback: DRPObjectCallback) {
+		this.subscriptions.push(callback);
+	}
+
+	private _notify(origin: string, vertices: ObjectPb.Vertex[]) {
+		for (const callback of this.subscriptions) {
+			callback(this, origin, vertices);
+		}
+	}
+
+	private _setState(vertex: Vertex) {
 		const subgraph: Set<Hash> = new Set();
 		const lca = this.hashGraph.lowestCommonAncestorMultipleVertices(
 			vertex.dependencies,
@@ -162,8 +219,9 @@ export class DRPObject implements IDRPObject {
 			const op = linearizedOperations[applyIdx];
 			drp[op.type](op.value);
 		}
-
-		drp[fn](args);
+		if (vertex.operation) {
+			drp[vertex.operation.type](vertex.operation.value);
+		}
 
 		const varNames: string[] = Object.keys(drp);
 		// biome-ignore lint: values can be anything
@@ -173,104 +231,5 @@ export class DRPObject implements IDRPObject {
 		}
 
 		this.states.set(vertex.hash, new DRPState(newState));
-
-		const serializedVertex = ObjectPb.Vertex.create({
-			hash: vertex.hash,
-			nodeId: vertex.nodeId,
-			operation: vertex.operation,
-			dependencies: vertex.dependencies,
-		});
-		this.vertices.push(serializedVertex);
-		this._notify("callFn", [serializedVertex]);
-	}
-
-	/* Merges the vertices into the hashgraph
-	 * Returns a tuple with a boolean indicating if there were
-	 * missing vertices and an array with the missing vertices
-	 */
-	merge(vertices: Vertex[]): [merged: boolean, missing: string[]] {
-		const missing = [];
-		for (const vertex of vertices) {
-			// Check to avoid manually crafted `undefined` operations
-			if (!vertex.operation || this.hashGraph.vertices.has(vertex.hash)) {
-				continue;
-			}
-
-			try {
-				this.hashGraph.addVertex(
-					vertex.operation,
-					vertex.dependencies,
-					vertex.nodeId,
-				);
-
-				const subgraph: Set<Hash> = new Set();
-				const lca = this.hashGraph.lowestCommonAncestorMultipleVertices(
-					vertex.dependencies,
-					subgraph,
-				);
-				const linearizedOperations = this.hashGraph.linearizeOperations(
-					lca,
-					subgraph,
-				);
-
-				const drp = Object.create(
-					Object.getPrototypeOf(this.originalDRP),
-					Object.getOwnPropertyDescriptors(structuredClone(this.originalDRP)),
-				) as DRP;
-
-				const fetchedState = this.states.get(lca);
-				if (!fetchedState) {
-					throw new Error("State is undefined");
-				}
-
-				const state = Object.create(
-					Object.getPrototypeOf(fetchedState),
-					Object.getOwnPropertyDescriptors(structuredClone(fetchedState)),
-				).state;
-
-				for (const [key, value] of state.entries()) {
-					drp[key] = value;
-				}
-
-				let applyIdx = 1;
-				if (lca === HashGraph.rootHash) {
-					applyIdx = 0;
-				}
-				for (; applyIdx < linearizedOperations.length; applyIdx++) {
-					const op = linearizedOperations[applyIdx];
-					drp[op.type](op.value);
-				}
-				drp[vertex.operation.type](vertex.operation.value);
-
-				const varNames: string[] = Object.keys(drp);
-				// biome-ignore lint: values can be anything
-				const newState: Map<string, any> = new Map();
-				for (const varName of varNames) {
-					newState.set(varName, drp[varName]);
-				}
-
-				this.states.set(vertex.hash, new DRPState(newState));
-			} catch (e) {
-				missing.push(vertex.hash);
-			}
-		}
-
-		const operations = this.hashGraph.linearizeOperations();
-		this.vertices = this.hashGraph.getAllVertices();
-
-		(this.drp as DRP).mergeCallback(operations);
-		this._notify("merge", this.vertices);
-
-		return [missing.length === 0, missing];
-	}
-
-	subscribe(callback: DRPObjectCallback) {
-		this.subscriptions.push(callback);
-	}
-
-	private _notify(origin: string, vertices: ObjectPb.Vertex[]) {
-		for (const callback of this.subscriptions) {
-			callback(this, origin, vertices);
-		}
 	}
 }
