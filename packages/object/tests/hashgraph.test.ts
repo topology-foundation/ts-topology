@@ -470,42 +470,42 @@ describe("HashGraph for undefined operations tests", () => {
 });
 
 describe("Vertex state tests", () => {
-	let obj1: TopologyObject;
-	let obj2: TopologyObject;
-	let obj3: TopologyObject;
+	let obj1: DRPObject;
+	let obj2: DRPObject;
+	let obj3: DRPObject;
 
 	beforeEach(async () => {
-		obj1 = new TopologyObject("peer1", new AddWinsSet<number>());
-		obj2 = new TopologyObject("peer2", new AddWinsSet<number>());
-		obj3 = new TopologyObject("peer3", new AddWinsSet<number>());
+		obj1 = new DRPObject("peer1", new AddWinsSet<number>());
+		obj2 = new DRPObject("peer2", new AddWinsSet<number>());
+		obj3 = new DRPObject("peer3", new AddWinsSet<number>());
 	});
 
 	test("Test: Vertex states work correctly with single HashGraph", () => {
 		/*
 			root---V1:ADD(1)---V2:ADD(2)---V3:ADD(3)
 		*/
-		const cro1 = obj1.cro as AddWinsSet<number>;
+		const drp1 = obj1.drp as AddWinsSet<number>;
 
-		cro1.add(1);
-		cro1.add(2);
-		cro1.add(3);
+		drp1.add(1);
+		drp1.add(2);
+		drp1.add(3);
 
 		const vertices = obj1.hashGraph.topologicalSort();
 
-		const croState1 = obj1.states.get(vertices[1]);
-		expect(croState1?.state.get("state").get(1)).toBe(true);
-		expect(croState1?.state.get("state").get(2)).toBe(undefined);
-		expect(croState1?.state.get("state").get(3)).toBe(undefined);
+		const drpState1 = obj1.states.get(vertices[1]);
+		expect(drpState1?.state.get("state").get(1)).toBe(true);
+		expect(drpState1?.state.get("state").get(2)).toBe(undefined);
+		expect(drpState1?.state.get("state").get(3)).toBe(undefined);
 
-		const croState2 = obj1.states.get(vertices[2]);
-		expect(croState2?.state.get("state").get(1)).toBe(true);
-		expect(croState2?.state.get("state").get(2)).toBe(true);
-		expect(croState2?.state.get("state").get(3)).toBe(undefined);
+		const drpState2 = obj1.states.get(vertices[2]);
+		expect(drpState2?.state.get("state").get(1)).toBe(true);
+		expect(drpState2?.state.get("state").get(2)).toBe(true);
+		expect(drpState2?.state.get("state").get(3)).toBe(undefined);
 
-		const croState3 = obj1.states.get(vertices[3]);
-		expect(croState3?.state.get("state").get(1)).toBe(true);
-		expect(croState3?.state.get("state").get(2)).toBe(true);
-		expect(croState3?.state.get("state").get(3)).toBe(true);
+		const drpState3 = obj1.states.get(vertices[3]);
+		expect(drpState3?.state.get("state").get(1)).toBe(true);
+		expect(drpState3?.state.get("state").get(2)).toBe(true);
+		expect(drpState3?.state.get("state").get(3)).toBe(true);
 	});
 
 	test("Test: Tricky merging", () => {
@@ -517,25 +517,25 @@ describe("Vertex state tests", () => {
 				  C3 /
 		*/
 
-		// in above hashgraph, A represents cro1, B represents cro2, C represents cro3
-		const cro1 = obj1.cro as AddWinsSet<number>;
-		const cro2 = obj2.cro as AddWinsSet<number>;
-		const cro3 = obj3.cro as AddWinsSet<number>;
+		// in above hashgraph, A represents drp1, B represents drp2, C represents drp3
+		const drp1 = obj1.drp as AddWinsSet<number>;
+		const drp2 = obj2.drp as AddWinsSet<number>;
+		const drp3 = obj3.drp as AddWinsSet<number>;
 
-		cro1.add(1);
-		cro2.add(2);
-		cro3.add(3);
+		drp1.add(1);
+		drp2.add(2);
+		drp3.add(3);
 
 		obj1.merge(obj2.hashGraph.getAllVertices());
 		obj3.merge(obj2.hashGraph.getAllVertices());
 
-		cro1.add(4);
-		cro3.add(5);
+		drp1.add(4);
+		drp3.add(5);
 
 		obj1.merge(obj3.hashGraph.getAllVertices());
 		obj3.merge(obj1.hashGraph.getAllVertices());
 
-		cro1.add(6);
+		drp1.add(6);
 
 		const hashA4 =
 			"8e6f4369010528ae3668efce452da04d077e0957955d62d671b90f2934c755fe";
@@ -544,27 +544,27 @@ describe("Vertex state tests", () => {
 		const hashA6 =
 			"cd6a955f0734a09df1bff44c5e0458365d3a26ec7f1cae0df2c0f708b9f100a8";
 
-		const croState1 = obj1.states.get(hashA4);
-		expect(croState1?.state.get("state").get(1)).toBe(true);
-		expect(croState1?.state.get("state").get(2)).toBe(true);
-		expect(croState1?.state.get("state").get(3)).toBe(undefined);
-		expect(croState1?.state.get("state").get(4)).toBe(true);
-		expect(croState1?.state.get("state").get(5)).toBe(undefined);
+		const drpState1 = obj1.states.get(hashA4);
+		expect(drpState1?.state.get("state").get(1)).toBe(true);
+		expect(drpState1?.state.get("state").get(2)).toBe(true);
+		expect(drpState1?.state.get("state").get(3)).toBe(undefined);
+		expect(drpState1?.state.get("state").get(4)).toBe(true);
+		expect(drpState1?.state.get("state").get(5)).toBe(undefined);
 
-		const croState2 = obj1.states.get(hashC5);
-		expect(croState2?.state.get("state").get(1)).toBe(undefined);
-		expect(croState2?.state.get("state").get(2)).toBe(true);
-		expect(croState2?.state.get("state").get(3)).toBe(true);
-		expect(croState2?.state.get("state").get(4)).toBe(undefined);
-		expect(croState2?.state.get("state").get(5)).toBe(true);
+		const drpState2 = obj1.states.get(hashC5);
+		expect(drpState2?.state.get("state").get(1)).toBe(undefined);
+		expect(drpState2?.state.get("state").get(2)).toBe(true);
+		expect(drpState2?.state.get("state").get(3)).toBe(true);
+		expect(drpState2?.state.get("state").get(4)).toBe(undefined);
+		expect(drpState2?.state.get("state").get(5)).toBe(true);
 
-		const croState3 = obj1.states.get(hashA6);
-		expect(croState3?.state.get("state").get(1)).toBe(true);
-		expect(croState3?.state.get("state").get(2)).toBe(true);
-		expect(croState3?.state.get("state").get(3)).toBe(true);
-		expect(croState3?.state.get("state").get(4)).toBe(true);
-		expect(croState3?.state.get("state").get(5)).toBe(true);
-		expect(croState3?.state.get("state").get(6)).toBe(true);
+		const drpState3 = obj1.states.get(hashA6);
+		expect(drpState3?.state.get("state").get(1)).toBe(true);
+		expect(drpState3?.state.get("state").get(2)).toBe(true);
+		expect(drpState3?.state.get("state").get(3)).toBe(true);
+		expect(drpState3?.state.get("state").get(4)).toBe(true);
+		expect(drpState3?.state.get("state").get(5)).toBe(true);
+		expect(drpState3?.state.get("state").get(6)).toBe(true);
 	});
 
 	test("Test: Vertex states with mega complex case", () => {
@@ -578,25 +578,25 @@ describe("Vertex state tests", () => {
 				  \ ___  V4:RM(2) <-- V5:ADD(2) <-- V9:RM(1)
 		*/
 
-		const cro1 = obj1.cro as AddWinsSet<number>;
-		const cro2 = obj2.cro as AddWinsSet<number>;
-		const cro3 = obj3.cro as AddWinsSet<number>;
+		const drp1 = obj1.drp as AddWinsSet<number>;
+		const drp2 = obj2.drp as AddWinsSet<number>;
+		const drp3 = obj3.drp as AddWinsSet<number>;
 
-		cro1.add(1);
+		drp1.add(1);
 		obj2.merge(obj1.hashGraph.getAllVertices());
 
-		cro1.add(1);
-		cro1.remove(2);
-		cro2.remove(2);
-		cro2.add(2);
+		drp1.add(1);
+		drp1.remove(2);
+		drp2.remove(2);
+		drp2.add(2);
 
 		obj3.merge(obj1.hashGraph.getAllVertices());
-		cro3.add(3);
-		cro1.remove(1);
+		drp3.add(3);
+		drp1.remove(1);
 
 		obj1.merge(obj2.hashGraph.getAllVertices());
-		cro1.remove(3);
-		cro2.remove(1);
+		drp1.remove(3);
+		drp2.remove(1);
 
 		obj1.merge(obj2.hashGraph.getAllVertices());
 		obj1.merge(obj3.hashGraph.getAllVertices());
@@ -607,9 +607,9 @@ describe("Vertex state tests", () => {
 
 		const hashV8 =
 			"be97d8fe9169800893c28b3d8aaefda517b98936efb069673e0250317b5e4a0b";
-		const croStateV8 = obj1.states.get(hashV8);
-		expect(croStateV8?.state.get("state").get(1)).toBe(false);
-		expect(croStateV8?.state.get("state").get(2)).toBe(true);
-		expect(croStateV8?.state.get("state").get(3)).toBe(undefined);
+		const drpStateV8 = obj1.states.get(hashV8);
+		expect(drpStateV8?.state.get("state").get(1)).toBe(false);
+		expect(drpStateV8?.state.get("state").get(2)).toBe(true);
+		expect(drpStateV8?.state.get("state").get(3)).toBe(undefined);
 	});
 });
