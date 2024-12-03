@@ -8,7 +8,7 @@
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 import { Vertex } from "../../object/v1/object_pb.js";
 
-export const protobufPackage = "topology.network.v1";
+export const protobufPackage = "drp.network.v1";
 
 export enum MessageType {
   MESSAGE_TYPE_UNSPECIFIED = 0,

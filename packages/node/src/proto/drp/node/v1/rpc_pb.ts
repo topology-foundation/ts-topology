@@ -7,7 +7,7 @@
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
-export const protobufPackage = "topology.node";
+export const protobufPackage = "drp.node";
 
 export interface SubscribeDRPRequest {
 	drpId: string;
@@ -382,18 +382,18 @@ export const GetDRPHashGraphResponse = {
 	},
 };
 
-export interface TopologyRpc {
+export interface DRPRpc {
 	subscribeDRP(request: SubscribeDRPRequest): Promise<SubscribeDRPResponse>;
 	unsubscribeDRP(request: UnsubscribeDRPRequest): Promise<UnsubscribeDRPResponse>;
 	getDRPHashGraph(request: GetDRPHashGraphRequest): Promise<GetDRPHashGraphResponse>;
 }
 
-export const TopologyRpcServiceName = "topology.node.TopologyRpc";
-export class TopologyRpcClientImpl implements TopologyRpc {
+export const DRPRpcServiceName = "drp.node.DRPRpc";
+export class DRPRpcClientImpl implements DRPRpc {
 	private readonly rpc: Rpc;
 	private readonly service: string;
 	constructor(rpc: Rpc, opts?: { service?: string }) {
-		this.service = opts?.service || TopologyRpcServiceName;
+		this.service = opts?.service || DRPRpcServiceName;
 		this.rpc = rpc;
 		this.subscribeDRP = this.subscribeDRP.bind(this);
 		this.unsubscribeDRP = this.unsubscribeDRP.bind(this);

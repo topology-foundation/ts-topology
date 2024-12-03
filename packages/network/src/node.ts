@@ -79,7 +79,7 @@ export class DRPNetworkNode {
 
 		const _pubsubPeerDiscovery = pubsubPeerDiscovery({
 			interval: 10_000,
-			topics: ["topology::discovery"],
+			topics: ["drp::discovery"],
 		});
 
 		const _peerDiscovery = _bootstrapNodesList.length
@@ -142,7 +142,7 @@ export class DRPNetworkNode {
 		this.peerId = this._node.peerId.toString();
 
 		log.info(
-			"::start: Successfuly started topology network w/ peer_id",
+			"::start: Successfuly started DRP network w/ peer_id",
 			this.peerId,
 		);
 

@@ -5,16 +5,16 @@ import { type DRPNode, log } from "./index.js";
 
 /* Object operations */
 enum OPERATIONS {
-	/* Create a new CRO */
+	/* Create a new DRP */
 	CREATE = 0,
-	/* Update operation on a CRO */
+	/* Update operation on a DRP */
 	UPDATE = 1,
 
-	/* Subscribe to a PubSub group (either CRO or custom) */
+	/* Subscribe to a PubSub group (either DRP or custom) */
 	SUBSCRIBE = 2,
 	/* Unsubscribe from a PubSub group */
 	UNSUBSCRIBE = 3,
-	/* Actively send the CRO RIBLT to a random peer */
+	/* Actively send the DRP to a random peer */
 	SYNC = 4,
 }
 

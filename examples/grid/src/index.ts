@@ -206,7 +206,7 @@ async function main() {
 
 	node.addCustomGroupMessageHandler("", (e) => {
 		peers = node.networkNode.getAllPeers();
-		discoveryPeers = node.networkNode.getGroupPeers("topology::discovery");
+		discoveryPeers = node.networkNode.getGroupPeers("drp::discovery");
 		render();
 	});
 

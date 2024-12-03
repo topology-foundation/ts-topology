@@ -1,5 +1,5 @@
 syntax = "proto3";
-package topology.network.v1;
+package drp.network.v1;
 
 import "drp/object/v1/object.proto";
 
