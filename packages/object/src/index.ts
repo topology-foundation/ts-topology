@@ -1,6 +1,7 @@
 import * as crypto from "node:crypto";
 import { Logger, type LoggerOptions } from "@ts-drp/logger";
 import {
+	type Hash,
 	HashGraph,
 	type Operation,
 	type ResolveConflictsType,
@@ -17,7 +18,14 @@ export interface DRP {
 	semanticsType: SemanticsType;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
 	mergeCallback: (operations: Operation[]) => void;
+	// biome-ignore lint: attributes can be anything
+	[key: string]: any;
 }
+
+type DRPState = {
+	// biome-ignore lint: attributes can be anything
+	state: Map<string, any>;
+};
 
 export type DRPObjectCallback = (
 	object: DRPObject,
@@ -46,6 +54,9 @@ export class DRPObject implements IDRPObject {
 	vertices: ObjectPb.Vertex[];
 	drp: ProxyHandler<DRP> | null;
 	hashGraph: HashGraph;
+	// mapping from vertex hash to the DRP state
+	states: Map<string, DRPState>;
+	originalDRP: DRP;
 	subscriptions: DRPObjectCallback[];
 
 	constructor(
@@ -75,7 +86,11 @@ export class DRPObject implements IDRPObject {
 			drp?.semanticsType,
 		);
 		this.subscriptions = [];
-
+		this.states = new Map([[HashGraph.rootHash, { state: new Map() }]]);
+		this.originalDRP = Object.create(
+			Object.getPrototypeOf(drp),
+			Object.getOwnPropertyDescriptors(structuredClone(drp)),
+		);
 		this.vertices = this.hashGraph.getAllVertices();
 	}
 
@@ -104,6 +119,8 @@ export class DRPObject implements IDRPObject {
 	// biome-ignore lint: value can't be unknown because of protobuf
 	callFn(fn: string, args: any) {
 		const vertex = this.hashGraph.addToFrontier({ type: fn, value: args });
+		this._setState(vertex);
+
 		const serializedVertex = ObjectPb.Vertex.create({
 			hash: vertex.hash,
 			nodeId: vertex.nodeId,
@@ -122,7 +139,7 @@ export class DRPObject implements IDRPObject {
 		const missing = [];
 		for (const vertex of vertices) {
 			// Check to avoid manually crafted `undefined` operations
-			if (!vertex.operation) {
+			if (!vertex.operation || this.hashGraph.vertices.has(vertex.hash)) {
 				continue;
 			}
 
@@ -132,6 +149,8 @@ export class DRPObject implements IDRPObject {
 					vertex.dependencies,
 					vertex.nodeId,
 				);
+
+				this._setState(vertex);
 			} catch (e) {
 				missing.push(vertex.hash);
 			}
@@ -154,5 +173,58 @@ export class DRPObject implements IDRPObject {
 		for (const callback of this.subscriptions) {
 			callback(this, origin, vertices);
 		}
+	}
+
+	private _setState(vertex: Vertex) {
+		const subgraph: Set<Hash> = new Set();
+		const lca = this.hashGraph.lowestCommonAncestorMultipleVertices(
+			vertex.dependencies,
+			subgraph,
+		);
+		const linearizedOperations = this.hashGraph.linearizeOperations(
+			lca,
+			subgraph,
+		);
+
+		const drp = Object.create(
+			Object.getPrototypeOf(this.originalDRP),
+			Object.getOwnPropertyDescriptors(structuredClone(this.originalDRP)),
+		) as DRP;
+
+		const fetchedState = this.states.get(lca);
+		if (!fetchedState) {
+			throw new Error("State is undefined");
+		}
+
+		const state = Object.create(
+			Object.getPrototypeOf(fetchedState),
+			Object.getOwnPropertyDescriptors(structuredClone(fetchedState)),
+		).state;
+
+		for (const [key, value] of state.entries()) {
+			drp[key] = value;
+		}
+
+		let applyIdx = 1;
+		if (lca === HashGraph.rootHash) {
+			applyIdx = 0;
+		}
+
+		for (; applyIdx < linearizedOperations.length; applyIdx++) {
+			const op = linearizedOperations[applyIdx];
+			drp[op.type](op.value);
+		}
+		if (vertex.operation) {
+			drp[vertex.operation.type](vertex.operation.value);
+		}
+
+		const varNames: string[] = Object.keys(drp);
+		// biome-ignore lint: values can be anything
+		const newState: Map<string, any> = new Map();
+		for (const varName of varNames) {
+			newState.set(varName, drp[varName]);
+		}
+
+		this.states.set(vertex.hash, { state: newState });
 	}
 }
