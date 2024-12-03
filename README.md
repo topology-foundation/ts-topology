@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://avatars.githubusercontent.com/u/157637200" height="128">
   <br />
-  <h1>The TypeScript implementation of Distributed Replicated Programs (DRP)</h1>
+  <h1>The TypeScript implementation of Distributed Replicated Programs (DRPs)</h1>
 </div>
 
 <div align="center">
