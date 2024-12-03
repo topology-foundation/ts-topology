@@ -22,15 +22,10 @@ export interface DRP {
 	[key: string]: any;
 }
 
-export class DRPState {
+type DRPState = {
 	// biome-ignore lint: attributes can be anything
 	state: Map<string, any>;
-
-	// biome-ignore lint: attributes can be anything
-	constructor(state: Map<string, any>) {
-		this.state = state;
-	}
-}
+};
 
 export type DRPObjectCallback = (
 	object: DRPObject,
@@ -91,7 +86,7 @@ export class DRPObject implements IDRPObject {
 			drp?.semanticsType,
 		);
 		this.subscriptions = [];
-		this.states = new Map([[HashGraph.rootHash, new DRPState(new Map())]]);
+		this.states = new Map([[HashGraph.rootHash, { state: new Map() }]]);
 		this.originalDRP = Object.create(
 			Object.getPrototypeOf(drp),
 			Object.getOwnPropertyDescriptors(structuredClone(drp)),
@@ -230,6 +225,6 @@ export class DRPObject implements IDRPObject {
 			newState.set(varName, drp[varName]);
 		}
 
-		this.states.set(vertex.hash, new DRPState(newState));
+		this.states.set(vertex.hash, { state: newState });
 	}
 }
