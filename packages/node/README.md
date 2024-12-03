@@ -1,29 +1,19 @@
-# Topology Node
+# DRP Node
 
-This package provides the implementation of a Topology Node, which is a node in a network that can be connected to other nodes and exchange messages with them. The Topology Node is the entrypoint for interacting with the Topology Protocol in the Topology Network.
+This package provides the implementation of a DRP Node, which is a node in a network that can be connected to other nodes and exchange messages with them.
+The DRP Node is the entrypoint for interacting with the DRP protocol in the network.
 
 ## Usage
 
-Topology Node can be used using the CLI or integrated into an existing application.
+DRP Node can be used using the CLI or integrated into an existing application.
 
 ### CLI
 
-The CLI provides a simple way to start a Topology Node and connect it to other nodes in the network. It can be installed globally using:
-
-```bash
-# yarn
-yarn global add @topology-foundation/node
-
-# npm
-npm install -g @topology-foundation/node
-```
-
-> This part is a lie, the cli is being developed.
-
+The CLI provides a simple way to start a DRP Node and connect it to other nodes in the network.
 For more information on what are the commands available, run:
 
 ```bash
-topology-node --help
+pnpm cli --help
 ```
 
 #### Running a bootstrap node
@@ -33,30 +23,20 @@ You can run a bootstrap node using the following command:
 pnpm cli bootstrap --config configs/bootstrap.json
 ```
 
-If you want to run a local bootstrap node, you can use the following command:
-
-```bash
-pnpm cli bootstrap --config configs/local-bootstrap.json
-```
-
 ### Integration
 
-To integrate the Topology Node into an existing application, you can install it using:
+To integrate the DRP Node into an existing application, you can install it using:
 
 ```bash
-# yarn
-yarn add @topology-foundation/node
-
-# npm
-npm install @topology-foundation/node
+pnpm install @ts-drp/node
 ```
 
-Then, you can import the Topology Node class and create a new instance:
+Then, you can import the DRP Node class and create a new instance:
 
 ```javascript
-import { TopologyNode } from '@topology-foundation/node';
+import { DRPNode } from '@ts-drp/node';
 
-const node = new TopologyNode();
+const node = new DRPNode();
 
 // Start the node
 node.start();

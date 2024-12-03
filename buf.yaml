@@ -1,10 +1,10 @@
 version: v2
 modules:
   - path: packages/node/src/proto
-    name: buf.build/topology/node
+    name: buf.build/drp/node
 
   - path: packages/object/src/proto
-    name: buf.build/topology/object
+    name: buf.build/drp/object
 
   - path: packages/network/src/proto
-    name: buf.build/topology/network
+    name: buf.build/drp/network

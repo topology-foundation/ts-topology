@@ -6,11 +6,7 @@ export default defineConfig({
 	build: {
 		target: "esnext",
 	},
-	plugins: [
-		nodePolyfills({
-			overrides: {},
-		}),
-	],
+	plugins: [nodePolyfills()],
 	optimizeDeps: {
 		esbuildOptions: {
 			target: "esnext",
@@ -18,7 +14,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			"@topology-foundation": path.resolve(__dirname, "../../packages"),
+			"@ts-drp": path.resolve(__dirname, "../../packages"),
 		},
 	},
 });

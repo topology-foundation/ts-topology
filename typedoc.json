@@ -2,6 +2,6 @@
 	"entryPoints": ["packages/*"],
 	"entryPointStrategy": "packages",
 	"includeVersion": true,
-	"name": "Topology Protocol",
+	"name": "Distributed Replicated Programs",
 	"readme": "README.md"
 }

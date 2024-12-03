@@ -12,9 +12,3 @@ plugins:
     out: .
     opt:
       - ts_proto_opt=esModuleInterop=true
-inputs:
-  - directory: ./packages
-    exclude_paths:
-      - packages/node
-      - packages/network/node_modules
-      - packages/object/node_modules
