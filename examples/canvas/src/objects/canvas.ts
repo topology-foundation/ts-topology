@@ -1,13 +1,13 @@
 import {
 	ActionType,
-	type CRO,
+	type DRP,
 	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
-} from "@topology-foundation/object";
+} from "@ts-drp/object";
 import { Pixel } from "./pixel";
 
-export class Canvas implements CRO {
+export class Canvas implements DRP {
 	operations: string[] = ["splash", "paint"];
 	semanticsType: SemanticsType = SemanticsType.pair;
 

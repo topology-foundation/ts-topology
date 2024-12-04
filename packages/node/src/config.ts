@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import * as dotenv from "dotenv";
-import type { TopologyNodeConfig } from "./index.js";
+import type { DRPNodeConfig } from "./index.js";
 
 export function loadConfig(
 	configPath?: string | undefined,
-): TopologyNodeConfig | undefined {
-	let config: TopologyNodeConfig | undefined;
+): DRPNodeConfig | undefined {
+	let config: DRPNodeConfig | undefined;
 
 	if (configPath) {
 		config = JSON.parse(fs.readFileSync(configPath, "utf8"));

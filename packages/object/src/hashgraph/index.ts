@@ -1,17 +1,15 @@
 import * as crypto from "node:crypto";
-import { Logger } from "@topology-foundation/logger";
-import { linearizeMultiple } from "../linearize/multipleSemantics.js";
-import { linearizePair } from "../linearize/pairSemantics.js";
-import {
+import { log } from "../index.js";
+import { linearizeMultipleSemantics } from "../linearize/multipleSemantics.js";
+import { linearizePairSemantics } from "../linearize/pairSemantics.js";
+import type {
 	Vertex_Operation as Operation,
 	Vertex,
-} from "../proto/topology/object/object_pb.js";
+} from "../proto/drp/object/v1/object_pb.js";
 import { BitSet } from "./bitset.js";
 
-const log: Logger = new Logger("hashgraph");
-
 // Reexporting the Vertex and Operation types from the protobuf file
-export { Vertex, Operation };
+export type { Vertex, Operation };
 
 export type Hash = string;
 
@@ -44,6 +42,11 @@ export type ResolveConflictsType = {
 	vertices?: Hash[];
 };
 
+export type VertexDistance = {
+	distance: number;
+	closestDependency?: Hash;
+};
+
 export class HashGraph {
 	nodeId: string;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
@@ -64,6 +67,7 @@ export class HashGraph {
 	private arePredecessorsFresh = false;
 	private reachablePredecessors: Map<Hash, BitSet> = new Map();
 	private topoSortedIndex: Map<Hash, number> = new Map();
+	private vertexDistances: Map<Hash, VertexDistance> = new Map();
 	// We start with a bitset of size 1, and double it every time we reach the limit
 	private currentBitsetSize = 1;
 
@@ -88,6 +92,9 @@ export class HashGraph {
 		this.vertices.set(HashGraph.rootHash, rootVertex);
 		this.frontier.push(HashGraph.rootHash);
 		this.forwardEdges.set(HashGraph.rootHash, []);
+		this.vertexDistances.set(HashGraph.rootHash, {
+			distance: 0,
+		});
 	}
 
 	addToFrontier(operation: Operation): Vertex {
@@ -112,9 +119,24 @@ export class HashGraph {
 			this.forwardEdges.get(dep)?.push(hash);
 		}
 
+		// Compute the distance of the vertex
+		const vertexDistance: VertexDistance = {
+			distance: Number.MAX_VALUE,
+			closestDependency: "",
+		};
+		for (const dep of deps) {
+			const depDistance = this.vertexDistances.get(dep);
+			if (depDistance && depDistance.distance + 1 < vertexDistance.distance) {
+				vertexDistance.distance = depDistance.distance + 1;
+				vertexDistance.closestDependency = dep;
+			}
+		}
+		this.vertexDistances.set(hash, vertexDistance);
+
 		const depsSet = new Set(deps);
 		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
 		this.arePredecessorsFresh = false;
+
 		return vertex;
 	}
 
@@ -151,22 +173,41 @@ export class HashGraph {
 			this.forwardEdges.get(dep)?.push(hash);
 		}
 
+		// Compute the distance of the vertex
+		const vertexDistance: VertexDistance = {
+			distance: Number.MAX_VALUE,
+			closestDependency: "",
+		};
+		for (const dep of deps) {
+			const depDistance = this.vertexDistances.get(dep);
+			if (depDistance && depDistance.distance + 1 < vertexDistance.distance) {
+				vertexDistance.distance = depDistance.distance + 1;
+				vertexDistance.closestDependency = dep;
+			}
+		}
+		this.vertexDistances.set(hash, vertexDistance);
+
 		const depsSet = new Set(deps);
 		this.frontier = this.frontier.filter((hash) => !depsSet.has(hash));
 		this.arePredecessorsFresh = false;
 		return hash;
 	}
 
-	depthFirstSearch(visited: Map<Hash, number> = new Map()): Hash[] {
+	depthFirstSearch(
+		origin: Hash,
+		subgraph: Set<Hash>,
+		visited: Map<Hash, number> = new Map(),
+	): Hash[] {
 		const result: Hash[] = [];
-		for (const vertex of this.getAllVertices()) {
-			visited.set(vertex.hash, DepthFirstSearchState.UNVISITED);
+		for (const hash of subgraph) {
+			visited.set(hash, DepthFirstSearchState.UNVISITED);
 		}
 		const visit = (hash: Hash) => {
 			visited.set(hash, DepthFirstSearchState.VISITING);
 
 			const children = this.forwardEdges.get(hash) || [];
 			for (const child of children) {
+				if (!subgraph.has(child)) continue;
 				if (visited.get(child) === DepthFirstSearchState.VISITING) {
 					log.error("::hashgraph::DFS: Cycle detected");
 					return;
@@ -184,16 +225,20 @@ export class HashGraph {
 			visited.set(hash, DepthFirstSearchState.VISITED);
 		};
 
-		visit(HashGraph.rootHash);
+		visit(origin);
 
 		return result;
 	}
 
-	topologicalSort(updateBitsets = false): Hash[] {
-		const result = this.depthFirstSearch();
+	/* Topologically sort the vertices in the whole hashgraph or the past of a given vertex. */
+	topologicalSort(
+		updateBitsets = false,
+		origin: Hash = HashGraph.rootHash,
+		subgraph: Set<Hash> = new Set(this.vertices.keys()),
+	): Hash[] {
+		const result = this.depthFirstSearch(origin, subgraph);
 		result.reverse();
 		if (!updateBitsets) return result;
-
 		this.reachablePredecessors.clear();
 		this.topoSortedIndex.clear();
 
@@ -223,15 +268,107 @@ export class HashGraph {
 		return result;
 	}
 
-	linearizeOperations(): Operation[] {
+	linearizeOperations(
+		origin: Hash = HashGraph.rootHash,
+		subgraph: Set<string> = new Set(this.vertices.keys()),
+	): Operation[] {
 		switch (this.semanticsType) {
 			case SemanticsType.pair:
-				return linearizePair(this);
+				return linearizePairSemantics(this, origin, subgraph);
 			case SemanticsType.multiple:
-				return linearizeMultiple(this);
+				return linearizeMultipleSemantics(this, origin, subgraph);
 			default:
 				return [];
 		}
+	}
+
+	lowestCommonAncestorMultipleVertices(
+		hashes: Hash[],
+		visited: Set<Hash>,
+	): Hash {
+		if (hashes.length === 0) {
+			throw new Error("Vertex dependencies are empty");
+		}
+		if (hashes.length === 1) {
+			return hashes[0];
+		}
+		let lca: Hash | undefined = hashes[0];
+		const targetVertices: Hash[] = [...hashes];
+		for (let i = 1; i < targetVertices.length; i++) {
+			if (!lca) {
+				throw new Error("LCA not found");
+			}
+			if (!visited.has(targetVertices[i])) {
+				lca = this.lowestCommonAncestorPairVertices(
+					lca,
+					targetVertices[i],
+					visited,
+					targetVertices,
+				);
+			}
+		}
+		if (!lca) {
+			throw new Error("LCA not found");
+		}
+		return lca;
+	}
+
+	private lowestCommonAncestorPairVertices(
+		hash1: Hash,
+		hash2: Hash,
+		visited: Set<Hash>,
+		targetVertices: Hash[],
+	): Hash | undefined {
+		let currentHash1 = hash1;
+		let currentHash2 = hash2;
+		visited.add(currentHash1);
+		visited.add(currentHash2);
+
+		while (currentHash1 !== currentHash2) {
+			const distance1 = this.vertexDistances.get(currentHash1);
+			if (!distance1) {
+				log.error("::hashgraph::LCA: Vertex not found");
+				return;
+			}
+			const distance2 = this.vertexDistances.get(currentHash2);
+			if (!distance2) {
+				log.error("::hashgraph::LCA: Vertex not found");
+				return;
+			}
+
+			if (distance1.distance > distance2.distance) {
+				if (!distance1.closestDependency) {
+					log.error("::hashgraph::LCA: Closest dependency not found");
+					return;
+				}
+				for (const dep of this.vertices.get(currentHash1)?.dependencies || []) {
+					if (dep !== distance1.closestDependency && !visited.has(dep)) {
+						targetVertices.push(dep);
+					}
+				}
+				currentHash1 = distance1.closestDependency;
+				if (visited.has(currentHash1)) {
+					return currentHash2;
+				}
+				visited.add(currentHash1);
+			} else {
+				if (!distance2.closestDependency) {
+					log.error("::hashgraph::LCA: Closest dependency not found");
+					return;
+				}
+				for (const dep of this.vertices.get(currentHash2)?.dependencies || []) {
+					if (dep !== distance2.closestDependency && !visited.has(dep)) {
+						targetVertices.push(dep);
+					}
+				}
+				currentHash2 = distance2.closestDependency;
+				if (visited.has(currentHash2)) {
+					return currentHash1;
+				}
+				visited.add(currentHash2);
+			}
+		}
+		return currentHash1;
 	}
 
 	areCausallyRelatedUsingBitsets(hash1: Hash, hash2: Hash): boolean {
@@ -305,7 +442,11 @@ export class HashGraph {
 		}
 
 		const visited = new Map<Hash, number>();
-		this.depthFirstSearch(visited);
+		this.depthFirstSearch(
+			HashGraph.rootHash,
+			new Set(this.vertices.keys()),
+			visited,
+		);
 		for (const vertex of this.getAllVertices()) {
 			if (!visited.has(vertex.hash)) {
 				return false;

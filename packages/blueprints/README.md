@@ -1,17 +1,13 @@
-# Topology Blueprints
+# DRP Blueprints
 
-This package contains the CRO blueprints intended to be used by other CROs.
+This package contains the DRP blueprints intended to be used by other DRPs.
 
 ## Usage
 
-This package is intended to be used as a dependency for the Topology Protocol. However, you can use it as a standalone package. For that, you can install it using:
+You can use it as a standalone package. For that, you can install it using:
 
 ```bash
-# yarn
-yarn add @topology-foundation/blueprints
-
-# npm
-npm install @topology-foundation/blueprints
+pnpm install @ts-drp/blueprints
 ```
 
 ### Build
@@ -19,7 +15,7 @@ npm install @topology-foundation/blueprints
 To build the package, you can run:
 
 ```bash
-yarn build
+pnpm build
 ```
 
 ### Tests
@@ -27,5 +23,5 @@ yarn build
 To run the tests, you can run:
 
 ```bash
-yarn test
+pnpm test
 ```

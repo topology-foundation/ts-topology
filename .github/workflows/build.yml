@@ -16,21 +16,23 @@ jobs:
         run: |
           pnpm install --no-frozen-lockfile
 
-  build-example-canvas:
+  generate-matrix:
     runs-on: ubuntu-latest
+    outputs:
+      examples: ${{ steps.list-examples.outputs.examples }}
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-      - shell: bash
+      - name: List examples
+        id: list-examples
         run: |
-          pnpm install --no-frozen-lockfile
-          cd examples/canvas
-          pnpm build
+          echo "examples=$(ls -d examples/*/ | xargs -n 1 basename | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
-  build-example-chat:
+  build-examples:
+    needs: generate-matrix
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        example: ${{ fromJSON(needs.generate-matrix.outputs.examples) }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -39,5 +41,5 @@ jobs:
       - shell: bash
         run: |
           pnpm install --no-frozen-lockfile
-          cd examples/chat
+          cd examples/${{ matrix.example }}
           pnpm build

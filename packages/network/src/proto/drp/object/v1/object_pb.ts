@@ -2,13 +2,13 @@
 // versions:
 //   protoc-gen-ts_proto  v2.2.5
 //   protoc               unknown
-// source: topology/object/object.proto
+// source: drp/object/v1/object.proto
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { Value } from "../../google/protobuf/struct_pb.js";
+import { Value } from "../../../google/protobuf/struct_pb.js";
 
-export const protobufPackage = "topology.object";
+export const protobufPackage = "drp.object.v1";
 
 /** Supposed to be the RIBLT stuff */
 export interface Vertex {
@@ -29,7 +29,7 @@ export interface CodedSymbol {
   count: number;
 }
 
-export interface TopologyObjectBase {
+export interface DRPObjectBase {
   id: string;
   abi?: string | undefined;
   bytecode?: Uint8Array | undefined;
@@ -316,12 +316,12 @@ export const CodedSymbol: MessageFns<CodedSymbol> = {
   },
 };
 
-function createBaseTopologyObjectBase(): TopologyObjectBase {
+function createBaseDRPObjectBase(): DRPObjectBase {
   return { id: "", abi: undefined, bytecode: undefined, vertices: [] };
 }
 
-export const TopologyObjectBase: MessageFns<TopologyObjectBase> = {
-  encode(message: TopologyObjectBase, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const DRPObjectBase: MessageFns<DRPObjectBase> = {
+  encode(message: DRPObjectBase, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.id !== "") {
       writer.uint32(10).string(message.id);
     }
@@ -337,10 +337,10 @@ export const TopologyObjectBase: MessageFns<TopologyObjectBase> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): TopologyObjectBase {
+  decode(input: BinaryReader | Uint8Array, length?: number): DRPObjectBase {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseTopologyObjectBase();
+    const message = createBaseDRPObjectBase();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -385,7 +385,7 @@ export const TopologyObjectBase: MessageFns<TopologyObjectBase> = {
     return message;
   },
 
-  fromJSON(object: any): TopologyObjectBase {
+  fromJSON(object: any): DRPObjectBase {
     return {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       abi: isSet(object.abi) ? globalThis.String(object.abi) : undefined,
@@ -394,7 +394,7 @@ export const TopologyObjectBase: MessageFns<TopologyObjectBase> = {
     };
   },
 
-  toJSON(message: TopologyObjectBase): unknown {
+  toJSON(message: DRPObjectBase): unknown {
     const obj: any = {};
     if (message.id !== "") {
       obj.id = message.id;
@@ -411,11 +411,11 @@ export const TopologyObjectBase: MessageFns<TopologyObjectBase> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<TopologyObjectBase>, I>>(base?: I): TopologyObjectBase {
-    return TopologyObjectBase.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<DRPObjectBase>, I>>(base?: I): DRPObjectBase {
+    return DRPObjectBase.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TopologyObjectBase>, I>>(object: I): TopologyObjectBase {
-    const message = createBaseTopologyObjectBase();
+  fromPartial<I extends Exact<DeepPartial<DRPObjectBase>, I>>(object: I): DRPObjectBase {
+    const message = createBaseDRPObjectBase();
     message.id = object.id ?? "";
     message.abi = object.abi ?? undefined;
     message.bytecode = object.bytecode ?? undefined;

@@ -7,8 +7,7 @@
 			"**/doc/*",
 			"**/*_pb.js",
 			"**/*_pb.ts",
-			"**/bundle/*",
-			"**/package.json"
+			"**/bundle/*"
 		]
 	},
 	"linter": {

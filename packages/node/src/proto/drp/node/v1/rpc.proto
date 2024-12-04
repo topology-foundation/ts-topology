@@ -1,0 +1,35 @@
+syntax = "proto3";
+package drp.node.v1;
+
+service DrpRpcService {
+  rpc SubscribeDRP(SubscribeDRPRequest) returns (SubscribeDRPResponse);
+  rpc UnsubscribeDRP(UnsubscribeDRPRequest) returns (UnsubscribeDRPResponse);
+  rpc GetDRPHashGraph(GetDRPHashGraphRequest) returns (GetDRPHashGraphResponse);
+}
+
+message SubscribeDRPRequest {
+  string drp_id = 1;
+}
+
+message SubscribeDRPResponse {
+  // can return error codes if different than 0
+  int32 return_code = 1;
+}
+
+message UnsubscribeDRPRequest {
+  string drp_id = 1;
+}
+
+message UnsubscribeDRPResponse {
+  // can return error codes if different than 0
+  int32 return_code = 1;
+}
+
+message GetDRPHashGraphRequest {
+  string drp_id = 1;
+}
+
+message GetDRPHashGraphResponse {
+  // linearized vertices hashes
+  repeated string vertices_hashes = 1;
+}

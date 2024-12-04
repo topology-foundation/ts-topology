@@ -1,2 +1,2 @@
 export * from "./node.js";
-export * as NetworkPb from "./proto/topology/network/messages_pb.js";
+export * as NetworkPb from "./proto/drp/network/v1/messages_pb.js";

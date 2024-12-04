@@ -1,19 +1,18 @@
-import { TopologyNode } from "@topology-foundation/node";
-import type { TopologyObject } from "@topology-foundation/object";
+import { DRPNode } from "@ts-drp/node";
+import type { DRPObject } from "@ts-drp/object";
 import { Chat } from "./objects/chat";
 
-const node = new TopologyNode();
-// CRO = Conflict-free Replicated Object
-let topologyObject: TopologyObject;
-let chatCRO: Chat;
+const node = new DRPNode();
+let drpObject: DRPObject;
+let chatDRP: Chat;
 let peers: string[] = [];
 let discoveryPeers: string[] = [];
 let objectPeers: string[] = [];
 
 const render = () => {
-	if (topologyObject)
+	if (drpObject)
 		(<HTMLButtonElement>document.getElementById("chatId")).innerText =
-			topologyObject.id;
+			drpObject.id;
 	const element_peerId = <HTMLDivElement>document.getElementById("peerId");
 	element_peerId.innerHTML = node.networkNode.peerId;
 
@@ -30,8 +29,8 @@ const render = () => {
 	);
 	element_objectPeers.innerHTML = `[${objectPeers.join(", ")}]`;
 
-	if (!chatCRO) return;
-	const chat = chatCRO.getMessages();
+	if (!chatDRP) return;
+	const chat = chatDRP.getMessages();
 	const element_chat = <HTMLDivElement>document.getElementById("chat");
 	element_chat.innerHTML = "";
 
@@ -52,25 +51,24 @@ const render = () => {
 
 async function sendMessage(message: string) {
 	const timestamp: string = Date.now().toString();
-	if (!chatCRO) {
-		console.error("Chat CRO not initialized");
+	if (!chatDRP) {
+		console.error("Chat DRP not initialized");
 		alert("Please create or join a chat room first");
 		return;
 	}
 
-	chatCRO.addMessage(timestamp, message, node.networkNode.peerId);
+	chatDRP.addMessage(timestamp, message, node.networkNode.peerId);
 	render();
 }
 
 async function createConnectHandlers() {
-	node.addCustomGroupMessageHandler(topologyObject.id, (e) => {
+	node.addCustomGroupMessageHandler(drpObject.id, (e) => {
 		// on create/connect
-		if (topologyObject)
-			objectPeers = node.networkNode.getGroupPeers(topologyObject.id);
+		if (drpObject) objectPeers = node.networkNode.getGroupPeers(drpObject.id);
 		render();
 	});
 
-	node.objectStore.subscribe(topologyObject.id, (_, _obj) => {
+	node.objectStore.subscribe(drpObject.id, (_, _obj) => {
 		render();
 	});
 }
@@ -82,7 +80,7 @@ async function main() {
 	// generic message handler
 	node.addCustomGroupMessageHandler("", (e) => {
 		peers = node.networkNode.getAllPeers();
-		discoveryPeers = node.networkNode.getGroupPeers("topology::discovery");
+		discoveryPeers = node.networkNode.getGroupPeers("drp::discovery");
 		render();
 	});
 
@@ -90,8 +88,8 @@ async function main() {
 		document.getElementById("createRoom")
 	);
 	button_create.addEventListener("click", async () => {
-		topologyObject = await node.createObject(new Chat());
-		chatCRO = topologyObject.cro as Chat;
+		drpObject = await node.createObject(new Chat());
+		chatDRP = drpObject.drp as Chat;
 		createConnectHandlers();
 		render();
 	});
@@ -107,13 +105,8 @@ async function main() {
 			return;
 		}
 
-		topologyObject = await node.createObject(
-			new Chat(),
-			objectId,
-			undefined,
-			true,
-		);
-		chatCRO = topologyObject.cro as Chat;
+		drpObject = await node.createObject(new Chat(), objectId, undefined, true);
+		chatDRP = drpObject.drp as Chat;
 		createConnectHandlers();
 		render();
 	});
