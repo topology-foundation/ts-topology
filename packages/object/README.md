@@ -1,6 +1,6 @@
 # DRP Objects
 
-This package provides a simple implementation of Distributed Replicated Programs (DRPs).
+This package provides a simple implementation of Distributed Real-Time Programs (DRPs).
 DRPs are a type of composable programs that can be replicated across multiple nodes in a network,
 and can be updated concurrently by multiple clients without the need for coordination.
 
