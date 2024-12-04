@@ -32,9 +32,10 @@ describe("HashGraph construction tests", () => {
 	});
 
 	test("Test: HashGraph should be DAG compatibility", () => {
-		/*       __ V1:ADD(1)
-      ROOT _/
-        \__ V2:ADD(2)
+		/*
+		         __ V1:ADD(1)
+		  ROOT _/
+		    \__ V2:ADD(2)
     */
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
@@ -55,8 +56,8 @@ describe("HashGraph construction tests", () => {
 
 	test("Test: HashGraph with 2 root vertices", () => {
 		/*
-			ROOT -- V1:ADD(1)
-			FAKE_ROOT -- V2:ADD(1)
+		  ROOT -- V1:ADD(1)
+		  FAKE_ROOT -- V2:ADD(1)
 		*/
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		drp1.add(1);
