@@ -32,10 +32,10 @@ describe("HashGraph construction tests", () => {
 	});
 
 	test("Test: HashGraph should be DAG compatibility", () => {
-		/*		   - V1:ADD(1)
-			root /
-				 \ - V2:ADD(2)
-		*/
+    /*       __ V1:ADD(1)
+      ROOT _/
+        \__ V2:ADD(2)
+    */
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
 
@@ -54,10 +54,10 @@ describe("HashGraph construction tests", () => {
 	});
 
 	test("Test: HashGraph with 2 root vertices", () => {
-		/*
-			root - V1:ADD(1)
-			fakeRoot - V2:ADD(1)
-		*/
+    /*
+      ROOT -- V1:ADD(1)
+      FAKE_ROOT -- V2:ADD(1)
+    */
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		drp1.add(1);
 		// add fake root
@@ -96,9 +96,9 @@ describe("HashGraph for AddWinSet tests", () => {
 	});
 
 	test("Test: Add Two Vertices", () => {
-		/*
-	  V1:NOP <- V2:ADD(1) <- V2:REMOVE(1)
-	*/
+    /*
+	    ROOT -- ADD(1) -- REMOVE(1)
+    */
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		drp1.add(1);
@@ -113,11 +113,11 @@ describe("HashGraph for AddWinSet tests", () => {
 	});
 
 	test("Test: Add Two Concurrent Vertices With Same Value", () => {
-		/*
-				  _ V2:REMOVE(1)
-	  V1:ADD(1) /
-				\ _ V3:ADD(1)
-	*/
+    /*
+                          __ V2:REMOVE(1)
+      ROOT -- V1:ADD(1) _/
+                  \__ V3:ADD(1)
+    */
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
@@ -141,11 +141,11 @@ describe("HashGraph for AddWinSet tests", () => {
 	});
 
 	test("Test: Add Two Concurrent Vertices With Different Values", () => {
-		/*
-				  _ V2:REMOVE(1)
-	  V1:ADD(1) /
-				\ _ V3:ADD(2)
-	*/
+    /*
+                          __ V2:REMOVE(1)
+	    ROOT -- V1:ADD(1) _/
+                  \__ V3:ADD(2)
+    */
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
@@ -171,11 +171,11 @@ describe("HashGraph for AddWinSet tests", () => {
 	});
 
 	test("Test: Tricky Case", () => {
-		/*
-				  ___  V2:REMOVE(1) <- V4:ADD(10)
-	  V1:ADD(1) /
-				\ ___  V3:ADD(1) <- V5:REMOVE(5)
-	*/
+    /*
+                          __ V2:REMOVE(1) -- V4:ADD(10)
+      ROOT -- V1:ADD(1) _/
+                  \__ V3:ADD(1) -- V5:REMOVE(5)
+    */
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
@@ -205,11 +205,11 @@ describe("HashGraph for AddWinSet tests", () => {
 	});
 
 	test("Test: Yuta Papa's Case", () => {
-		/*
-				  ___  V2:REMOVE(1) <- V4:ADD(2)
-	  V1:ADD(1) /
-				\ ___  V3:REMOVE(2) <- V5:ADD(1)
-	*/
+    /*
+                          __ V2:REMOVE(1) -- V4:ADD(2)
+      ROOT -- V1:ADD(1) _/
+                  \__ V3:REMOVE(2) -- V5:ADD(1)
+    */
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
@@ -237,15 +237,15 @@ describe("HashGraph for AddWinSet tests", () => {
 	});
 
 	test("Test: Mega Complex Case", () => {
-		/*
-											   __ V6:ADD(3)
-											 /
-				  ___  V2:ADD(1) <-- V3:RM(2) <-- V7:RM(1) <-- V8:RM(3)
-				/                              ______________/
-	  V1:ADD(1)/                              /
-			   \                             /
-				\ ___  V4:RM(2) <-- V5:ADD(2) <-- V9:RM(1)
-	*/
+    /*
+                                       __ V6:ADD(3)
+                                     /
+                  ___ V2:ADD(1) -- V3:RM(2) -- V7:RM(1) <-- V8:RM(3)
+                 /                       _____________________/
+      ROOT -- V1:ADD(1)                 /
+                 \                     /
+                  \__ V4:RM(2) -- V5:ADD(2) -- V9:RM(1)
+    */
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
@@ -292,15 +292,15 @@ describe("HashGraph for AddWinSet tests", () => {
 	});
 
 	test("Test: Mega Complex Case 1", () => {
-		/*
-											   __ V5:ADD(3)
-											 /
-				  ___  V2:ADD(1) <-- V3:RM(2) <-- V6:RM(1) <-- V8:RM(3)
-				/                                       ^
-	  V1:ADD(1)/                                         \
-			   \                                          \
-				\ ___  V4:RM(2) <-------------------- V7:ADD(2) <-- V9:RM(1)
-	*/
+    /*
+                                         __ V5:ADD(3)
+                                        /
+                   ___  V2:ADD(1) -- V3:RM(2) -- V6:RM(1) -- V8:RM(3)
+                  /                                   \
+      ROOT -- V1:ADD(1)                                \
+			            \                                     \
+                   \__ V4:RM(2) <--------------------- V7:ADD(2) -- V9:RM(1)
+    */
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
@@ -349,11 +349,11 @@ describe("HashGraph for AddWinSet tests", () => {
 	});
 
 	test("Test: Joao's latest brain teaser", () => {
-		/*
-				 __ V2:Add(2) <------------\
-	  V1:Add(1) /                           \ - V5:RM(2)
-				\__ V3:RM(2) <- V4:RM(2) <--/
-	*/
+    /*
+                          __ V2:ADD(2) ------\
+	    ROOT -- V1:ADD(1) _/                    \__ V5:RM(2)
+                  \__ V3:RM(2) <- V4:RM(2) --/
+    */
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
@@ -399,13 +399,13 @@ describe("HashGraph for PseudoRandomWinsSet tests", () => {
 	});
 
 	test("Test: Many concurrent operations", () => {
-		/*
-					--- V1:ADD(1)
-				   /---- V2:ADD(2)
-			V0:Nop -- V3:ADD(3)
-				   \---- V4:ADD(4)
-					---- V5:ADD(5)
-		*/
+    /*
+            /-- V1:ADD(1)
+           /--- V2:ADD(2)
+      ROOT -- V3:ADD(3)
+           \__  V4:ADD(4)
+            \__ V5:ADD(5)
+    */
 
 		const drp1 = obj1.drp as PseudoRandomWinsSet<number>;
 		const drp2 = obj2.drp as PseudoRandomWinsSet<number>;
@@ -481,9 +481,9 @@ describe("Vertex state tests", () => {
 	});
 
 	test("Test: Vertex states work correctly with single HashGraph", () => {
-		/*
-			root---V1:ADD(1)---V2:ADD(2)---V3:ADD(3)
-		*/
+    /*
+      ROOT -- V1:ADD(1) -- V2:ADD(2) -- V3:ADD(3)
+    */
 		const drp1 = obj1.drp as AddWinsSet<number>;
 
 		drp1.add(1);
@@ -510,11 +510,11 @@ describe("Vertex state tests", () => {
 
 	test("Test: Tricky merging", () => {
 		/*
-          A1<----------A4 __
-        /             /      \
-      root <-- B2 <--        A6
-        \          \         /
-         C3<--------C5 -----
+         __ V1:ADD(1) --- V4:ADD(4) __
+        /                   /         \
+      ROOT -- V2:ADD(2) --             V6:ADD(6)
+        \                   \         /
+         -- V3:ADD(3) --- V5:ADD(5) --
 		*/
 
 		// in above hashgraph, A represents drp1, B represents drp2, C represents drp3
@@ -568,15 +568,15 @@ describe("Vertex state tests", () => {
 	});
 
 	test("Test: Vertex states with mega complex case", () => {
-		/*
-											   __ V6:ADD(3)
-											 /
-				  ___  V2:ADD(1) <-- V3:RM(2) <-- V7:RM(1) <-- V8:RM(3)
-				/                              ______________/
-	  V1:ADD(1)/                        /
-			   \                           /
-				  \ ___  V4:RM(2) <-- V5:ADD(2) <-- V9:RM(1)
-		*/
+    /*
+                                       __ V6:ADD(3)
+                                     /
+                  ___ V2:ADD(1) -- V3:RM(2) -- V7:RM(1) <-- V8:RM(3)
+                 /                       _____________________/
+      ROOT -- V1:ADD(1)                 /
+                 \                     /
+                  \__ V4:RM(2) -- V5:ADD(2) -- V9:RM(1)
+    */
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
