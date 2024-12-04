@@ -300,7 +300,7 @@ describe("HashGraph for AddWinSet tests", () => {
 		              /                                   \
 		  ROOT -- V1:ADD(1)                                \
 		              \                                     \
-		               \__ V4:RM(2) <--------------------- V7:ADD(2) -- V9:RM(1)
+		               \__ V4:RM(2) ---------------------- V7:ADD(2) -- V9:RM(1)
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
