@@ -13,9 +13,6 @@ args = ["sh", "-c", "pnpm i && cd examples/${EXAMPLE} && pnpm start"]
 args = ["sh", "-c", "pnpm i && pnpm build-examples"]
 
 [env]
-EXAMPLE = "canvas"
-
-[build.env]
 EXAMPLE = "grid"
 
 [[ports]]

@@ -22,7 +22,8 @@
 		"proto-gen:object": "buf generate packages/object/src/proto -o packages/object/src/proto",
 		"proto-gen:network": "buf generate packages/network/src/proto -o packages/network/src/proto",
 		"release": "release-it",
-		"test": "vitest"
+		"test": "vitest",
+		"build-examples": "pnpm --filter 'ts-drp-example*' build"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",
