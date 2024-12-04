@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://avatars.githubusercontent.com/u/157637200" height="128">
   <br />
-  <h1>The TypeScript implementation of Distributed Replicated Programs (DRPs)</h1>
+  <h1>The TypeScript implementation of Distributed Real-Time Programs (DRPs)</h1>
 </div>
 
 <div align="center">
@@ -22,7 +22,7 @@
 
 # Overview
 
-This is the official TypeScript implementation of Distributed Replicated Programs (DRP). DRP is a local-first decentralized protocol for real-time applications. It is built on top of libp2p and with a similar design with CRDTs.
+This is the official TypeScript implementation of Distributed Real-Time Programs (DRP). DRP is a local-first decentralized protocol for real-time applications. It is built on top of libp2p and with a similar design with CRDTs.
 
 # Specifications
 
