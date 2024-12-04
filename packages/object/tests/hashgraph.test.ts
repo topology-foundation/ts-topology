@@ -33,9 +33,9 @@ describe("HashGraph construction tests", () => {
 
 	test("Test: HashGraph should be DAG compatibility", () => {
 		/*
-		         __ V1:ADD(1)
-		  ROOT _/
-		    \__ V2:ADD(2)
+		        __ V1:ADD(1)
+		  ROOT /
+		       \__ V2:ADD(2)
 		*/
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
@@ -115,9 +115,9 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Add Two Concurrent Vertices With Same Value", () => {
 		/*
-		                      __ V2:REMOVE(1)
-		  ROOT -- V1:ADD(1) _/
-		              \__ V3:ADD(1)
+		                     __ V2:REMOVE(1)
+		  ROOT -- V1:ADD(1) /
+		                    \__ V3:ADD(1)
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
@@ -143,9 +143,9 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Add Two Concurrent Vertices With Different Values", () => {
 		/*
-		                      __ V2:REMOVE(1)
-		  ROOT -- V1:ADD(1) _/
-		              \__ V3:ADD(2)
+		                     __ V2:REMOVE(1)
+		  ROOT -- V1:ADD(1) /
+		                    \__ V3:ADD(2)
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
@@ -173,9 +173,9 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Tricky Case", () => {
 		/*
-		                      __ V2:REMOVE(1) -- V4:ADD(10)
-		  ROOT -- V1:ADD(1) _/
-		              \__ V3:ADD(1) -- V5:REMOVE(5)
+		                     __ V2:REMOVE(1) -- V4:ADD(10)
+		  ROOT -- V1:ADD(1) /
+		                    \__ V3:ADD(1) -- V5:REMOVE(5)
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
@@ -207,9 +207,9 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Yuta Papa's Case", () => {
 		/*
-		                      __ V2:REMOVE(1) -- V4:ADD(2)
-		  ROOT -- V1:ADD(1) _/
-		              \__ V3:REMOVE(2) -- V5:ADD(1)
+		                     __ V2:REMOVE(1) -- V4:ADD(2)
+		  ROOT -- V1:ADD(1) /
+		                    \__ V3:REMOVE(2) -- V5:ADD(1)
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
@@ -241,7 +241,8 @@ describe("HashGraph for AddWinSet tests", () => {
 		/*
 		                                   __ V6:ADD(3)
 		                                 /
-		              ___ V2:ADD(1) -- V3:RM(2) -- V7:RM(1) <-- V8:RM(3)
+		               ___ V2:ADD(1) -- V3:RM(2) -- V7:RM(1) --- V8:RM(3)
+		              /                                            /
 		             /                       _____________________/
 		  ROOT -- V1:ADD(1)                 /
 		             \                     /
@@ -296,7 +297,8 @@ describe("HashGraph for AddWinSet tests", () => {
 		/*
 		                                     __ V5:ADD(3)
 		                                    /
-		               ___  V2:ADD(1) -- V3:RM(2) -- V6:RM(1) -- V8:RM(3)
+		                ___  V2:ADD(1) -- V3:RM(2) -- V6:RM(1) -- V8:RM(3)
+		               /                                 \
 		              /                                   \
 		  ROOT -- V1:ADD(1)                                \
 		              \                                     \
@@ -351,9 +353,9 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Joao's latest brain teaser", () => {
 		/*
-		                      __ V2:ADD(2) ------\
-		  ROOT -- V1:ADD(1) _/                    \__ V5:RM(2)
-		              \__ V3:RM(2) <- V4:RM(2) --/
+		                     __ V2:ADD(2) -------------\
+		  ROOT -- V1:ADD(1) /                           \ V5:RM(2)
+		                    \__ V3:RM(2) -- V4:RM(2) --/
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
@@ -570,9 +572,10 @@ describe("Vertex state tests", () => {
 
 	test("Test: Vertex states with mega complex case", () => {
 		/*
-		                                   __ V6:ADD(3)
-		                                 /
-		              ___ V2:ADD(1) -- V3:RM(2) -- V7:RM(1) <-- V8:RM(3)
+		                                    __ V6:ADD(3)
+		                                  /
+		               ___ V2:ADD(1) -- V3:RM(2) -- V7:RM(1) --- V8:RM(3)
+		              /                                            /
 		             /                       _____________________/
 		  ROOT -- V1:ADD(1)                 /
 		             \                     /
