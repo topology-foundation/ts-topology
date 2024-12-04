@@ -36,7 +36,7 @@ describe("HashGraph construction tests", () => {
 		         __ V1:ADD(1)
 		  ROOT _/
 		    \__ V2:ADD(2)
-    */
+		*/
 		const drp1 = obj1.drp as AddWinsSet<number>;
 		const drp2 = obj2.drp as AddWinsSet<number>;
 
@@ -98,7 +98,7 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Add Two Vertices", () => {
 		/*
-			ROOT -- ADD(1) -- REMOVE(1)
+		  ROOT -- ADD(1) -- REMOVE(1)
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
@@ -115,9 +115,9 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Add Two Concurrent Vertices With Same Value", () => {
 		/*
-													__ V2:REMOVE(1)
-			ROOT -- V1:ADD(1) _/
-									\__ V3:ADD(1)
+		                      __ V2:REMOVE(1)
+		  ROOT -- V1:ADD(1) _/
+		              \__ V3:ADD(1)
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
@@ -143,9 +143,9 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Add Two Concurrent Vertices With Different Values", () => {
 		/*
-  		                    __ V2:REMOVE(1)
-			ROOT -- V1:ADD(1) _/
-  		            \__ V3:ADD(2)
+		                      __ V2:REMOVE(1)
+		  ROOT -- V1:ADD(1) _/
+		              \__ V3:ADD(2)
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
@@ -299,7 +299,7 @@ describe("HashGraph for AddWinSet tests", () => {
 		               ___  V2:ADD(1) -- V3:RM(2) -- V6:RM(1) -- V8:RM(3)
 		              /                                   \
 		  ROOT -- V1:ADD(1)                                \
-			            \                                     \
+		              \                                     \
 		               \__ V4:RM(2) <--------------------- V7:ADD(2) -- V9:RM(1)
 		*/
 
