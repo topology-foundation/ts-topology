@@ -15,7 +15,8 @@ export function linearizeMultipleSemantics(
 	const dropped = new Array(order.length).fill(false);
 	const indices: Map<Hash, number> = new Map();
 	const result: Operation[] = [];
-	let i = 0;
+	// always remove the first operation
+	let i = 1;
 
 	while (i < order.length) {
 		if (dropped[i]) {

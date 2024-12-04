@@ -13,7 +13,8 @@ export function linearizePairSemantics(
 	const order: Hash[] = hashGraph.topologicalSort(true, origin, subgraph);
 	const dropped = new Array(order.length).fill(false);
 	const result = [];
-	let i = 0;
+	// alway remove the first operation
+	let i = 1;
 
 	while (i < order.length) {
 		if (dropped[i]) {

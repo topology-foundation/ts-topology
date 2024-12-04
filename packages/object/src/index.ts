@@ -177,14 +177,17 @@ export class DRPObject implements IDRPObject {
 
 	private _setState(vertex: Vertex) {
 		const subgraph: Set<Hash> = new Set();
-		const lca = this.hashGraph.lowestCommonAncestorMultipleVertices(
-			vertex.dependencies,
-			subgraph,
-		);
-		const linearizedOperations = this.hashGraph.linearizeOperations(
-			lca,
-			subgraph,
-		);
+		const lca =
+			vertex.dependencies.length === 1
+				? vertex.dependencies[0]
+				: this.hashGraph.lowestCommonAncestorMultipleVertices(
+						vertex.dependencies,
+						subgraph,
+					);
+		const linearizedOperations =
+			vertex.dependencies.length === 1
+				? []
+				: this.hashGraph.linearizeOperations(lca, subgraph);
 
 		const drp = Object.create(
 			Object.getPrototypeOf(this.originalDRP),
@@ -196,22 +199,13 @@ export class DRPObject implements IDRPObject {
 			throw new Error("State is undefined");
 		}
 
-		const state = Object.create(
-			Object.getPrototypeOf(fetchedState),
-			Object.getOwnPropertyDescriptors(structuredClone(fetchedState)),
-		).state;
+		const state = structuredClone(fetchedState);
 
-		for (const [key, value] of state.entries()) {
+		for (const [key, value] of state.state) {
 			drp[key] = value;
 		}
 
-		let applyIdx = 1;
-		if (lca === HashGraph.rootHash) {
-			applyIdx = 0;
-		}
-
-		for (; applyIdx < linearizedOperations.length; applyIdx++) {
-			const op = linearizedOperations[applyIdx];
+		for (const op of linearizedOperations) {
 			drp[op.type](op.value);
 		}
 		if (vertex.operation) {

@@ -290,6 +290,7 @@ export class HashGraph {
 			throw new Error("Vertex dependencies are empty");
 		}
 		if (hashes.length === 1) {
+			visited.add(hashes[0]);
 			return hashes[0];
 		}
 		let lca: Hash | undefined = hashes[0];
