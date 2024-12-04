@@ -239,14 +239,14 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Mega Complex Case", () => {
 		/*
-		                                   __ V6:ADD(3)
-		                                 /
-		               ___ V2:ADD(1) -- V3:RM(2) -- V7:RM(1) --- V8:RM(3)
-		              /                                            /
-		             /                       _____________________/
-		  ROOT -- V1:ADD(1)                 /
-		             \                     /
-		              \__ V4:RM(2) -- V5:ADD(2) -- V9:RM(1)
+		                                              __ V6:ADD(3)
+		                                             /
+		                    ___ V2:ADD(1) -- V3:RM(2) -- V7:RM(1) --- V8:RM(3)
+		                   /                                         /
+		                  /                           ______________/
+		  ROOT -- V1:ADD(1)                          /
+		                  \                         /
+		                   \__ V4:RM(2) -- V5:ADD(2) -- V9:RM(1)
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
@@ -295,14 +295,14 @@ describe("HashGraph for AddWinSet tests", () => {
 
 	test("Test: Mega Complex Case 1", () => {
 		/*
-		                                     __ V5:ADD(3)
-		                                    /
-		                ___  V2:ADD(1) -- V3:RM(2) -- V6:RM(1) -- V8:RM(3)
-		               /                                 \
-		              /                                   \
-		  ROOT -- V1:ADD(1)                                \
-		              \                                     \
-		               \__ V4:RM(2) ---------------------- V7:ADD(2) -- V9:RM(1)
+		                                                __ V5:ADD(3)
+		                                               /
+		                     ___  V2:ADD(1) -- V3:RM(2) -- V6:RM(1) -- V8:RM(3)
+		                    /                                      \
+		                   /                                        \
+		  ROOT -- V1:ADD(1)                                          \
+		                   \                                          \
+		                    \__ V4:RM(2) ----------------------------- V7:ADD(2) -- V9:RM(1)
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
@@ -513,11 +513,11 @@ describe("Vertex state tests", () => {
 
 	test("Test: Tricky merging", () => {
 		/*
-		     __ V1:ADD(1) --- V4:ADD(4) __
-		    /                   /         \
-		  ROOT -- V2:ADD(2) --             V6:ADD(6)
-		    \                   \         /
-		     -- V3:ADD(3) --- V5:ADD(5) --
+		        __ V1:ADD(1) ------ V4:ADD(4) __
+		       /                   /            \
+		  ROOT -- V2:ADD(2) ------/              \ V6:ADD(6)
+		       \                   \            /
+		        -- V3:ADD(3) ------ V5:ADD(5) --
 		*/
 
 		// in above hashgraph, A represents drp1, B represents drp2, C represents drp3
@@ -572,14 +572,14 @@ describe("Vertex state tests", () => {
 
 	test("Test: Vertex states with mega complex case", () => {
 		/*
-		                                    __ V6:ADD(3)
-		                                  /
-		               ___ V2:ADD(1) -- V3:RM(2) -- V7:RM(1) --- V8:RM(3)
-		              /                                            /
-		             /                       _____________________/
-		  ROOT -- V1:ADD(1)                 /
-		             \                     /
-		              \__ V4:RM(2) -- V5:ADD(2) -- V9:RM(1)
+		                                               __ V6:ADD(3)
+		                                              /
+		                     ___ V2:ADD(1) -- V3:RM(2) -- V7:RM(1) ------ V8:RM(3)
+		                    /                                            /
+		                   /                           _________________/
+		  ROOT -- V1:ADD(1)                           /
+		                   \                         /
+		                    \__ V4:RM(2) -- V5:ADD(2) -- V9:RM(1)
 		*/
 
 		const drp1 = obj1.drp as AddWinsSet<number>;
