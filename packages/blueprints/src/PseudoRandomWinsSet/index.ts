@@ -79,7 +79,7 @@ export class PseudoRandomWinsSet<T> implements DRP {
 			throw new Error(`Key '${String(key)}' does not exist in this object.`);
 		}
 		if (typeof this[key] === "function") {
-			throw new Error(`Cannot update method '${key}' using updateState.`);
+			throw new Error(`Cannot update method '${key}' using updateAttribute.`);
 		}
 		this[key] = value;
 	}
