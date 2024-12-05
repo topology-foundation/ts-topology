@@ -7,21 +7,26 @@
   </head>
   <body>
     <div>
-      <h1>A 2D grid made with DRP</h1>
+      <h1>GRID</h1>
       <p>Your Peer ID: <span id="peerId"></span></p>
-      <p>Peers on dRAM: <span id="peers"></span></p>
-      <p>Discovery Peers: <span id="discoveryPeers"></span></p>
+      <p>Your Peers: <span id="peers"></span></p>
+      <p>Your Discovery Peers: <span id="discoveryPeers"></span></p>
 
-      <button id="createGrid">Spawn a new Grid DRP</button>
-      <span style="margin: 0 10px;">|</span>
-      <input id="gridInput" type="text" placeholder="Enter Grid DRP ID" />
-      <button id="joinGrid">Connect to existing Grid DRP</button>
       <p>
-        Connected to Grid DRP ID:
+        <button id="joinGrid" style="width: 80px">JOIN</button>
+        <span style="margin: 0 5px;"></span>
+        <input id="gridInput" type="text" placeholder="GRID ID" />
+        <span style="margin: 0 5px;"></span>
+        <span id="objectPeers"></span>
+      </p>
+
+      <p>
+        <button id="createGrid" style="width: 80px">CREATE</button>
+        <span style="margin: 0 5px;"></span>
+        <span id="gridIdText"></span>
         <span id="gridId" style="text-decoration: underline;"></span>
         <button id="copyGridId" style="margin-left: 10px; display: none;">Copy</button>
       </p>
-      <p>Peers in DRP: <span id="objectPeers"></span></p>
     </div>
 
     <div
