@@ -17,7 +17,6 @@ export interface DRP {
 	operations: string[];
 	semanticsType: SemanticsType;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
-	mergeCallback: (operations: Operation[]) => void;
 	// biome-ignore lint: attributes can be anything
 	[key: string]: any;
 	// biome-ignore lint: attributes can be anything
@@ -161,7 +160,7 @@ export class DRPObject implements IDRPObject {
 		const operations = this.hashGraph.linearizeOperations();
 		this.vertices = this.hashGraph.getAllVertices();
 
-		(this.drp as DRP).mergeCallback(operations);
+		this._updateDRP();
 		this._notify("merge", this.vertices);
 
 		return [missing.length === 0, missing];
@@ -179,7 +178,7 @@ export class DRPObject implements IDRPObject {
 
 	private _computeState(
 		vertexDependencies: Hash[],
-		vertexOperation: Operation | undefined,
+		vertexOperation?: Operation | undefined,
 		// biome-ignore lint: values can be anything
 	): Map<string, any> {
 		const subgraph: Set<Hash> = new Set();
@@ -230,5 +229,14 @@ export class DRPObject implements IDRPObject {
 	private _setState(vertex: Vertex) {
 		const newState = this._computeState(vertex.dependencies, vertex.operation);
 		this.states.set(vertex.hash, { state: newState });
+	}
+
+	private _updateDRP() {
+		const newState = this._computeState(this.hashGraph.getFrontier());
+		for (const [key, value] of newState.entries()) {
+			if (this.drp) {
+				(this.drp as DRP).updateAttribute(key, value);
+			}
+		}
 	}
 }
