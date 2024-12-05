@@ -232,11 +232,12 @@ export class DRPObject implements IDRPObject {
 	}
 
 	private _updateDRP() {
+		if (!this.drp) {
+			return;
+		}
 		const newState = this._computeState(this.hashGraph.getFrontier());
 		for (const [key, value] of newState.entries()) {
-			if (this.drp) {
-				(this.drp as DRP).updateAttribute(key, value);
-			}
+			(this.drp as DRP).updateAttribute(key, value);
 		}
 	}
 }
