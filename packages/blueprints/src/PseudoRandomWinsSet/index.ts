@@ -30,6 +30,8 @@ export class PseudoRandomWinsSet<T> implements DRP {
 	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
 	semanticsType = SemanticsType.multiple;
+	// biome-ignore lint: attributes can be anything
+	[key: string]: any;
 
 	constructor() {
 		this.state = new Map<T, boolean>();
@@ -86,5 +88,16 @@ export class PseudoRandomWinsSet<T> implements DRP {
 					break;
 			}
 		}
+	}
+
+	// biome-ignore lint: attributes can be anything
+	updateAttribute(key: string, value: any): void {
+		if (!(key in this)) {
+			throw new Error(`Key '${String(key)}' does not exist in this object.`);
+		}
+		if (typeof this[key] === "function") {
+			throw new Error(`Cannot update method '${key}' using updateState.`);
+		}
+		this[key] = value;
 	}
 }

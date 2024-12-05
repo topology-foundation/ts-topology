@@ -20,6 +20,8 @@ export interface DRP {
 	mergeCallback: (operations: Operation[]) => void;
 	// biome-ignore lint: attributes can be anything
 	[key: string]: any;
+	// biome-ignore lint: attributes can be anything
+	updateAttribute(key: string, value: any): void;
 }
 
 type DRPState = {
