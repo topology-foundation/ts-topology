@@ -36,7 +36,7 @@ export abstract class BaseDRP implements DRP {
 			throw new Error(`Key '${String(key)}' does not exist in this object.`);
 		}
 		if (typeof this[key] === "function") {
-			throw new Error(`Cannot update method '${key}' using updateAttribute.`);
+			throw new Error(`Cannot update method '${key}'.`);
 		}
 		this[key] = value;
 	}
@@ -179,7 +179,7 @@ export class DRPObject implements IDRPObject {
 		const operations = this.hashGraph.linearizeOperations();
 		this.vertices = this.hashGraph.getAllVertices();
 
-		this._updateDRP();
+		this._updateDRPState();
 		this._notify("merge", this.vertices);
 
 		return [missing.length === 0, missing];
@@ -250,7 +250,7 @@ export class DRPObject implements IDRPObject {
 		this.states.set(vertex.hash, { state: newState });
 	}
 
-	private _updateDRP() {
+	private _updateDRPState() {
 		if (!this.drp) {
 			return;
 		}
