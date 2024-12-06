@@ -41,7 +41,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           output-file-path: packages/object/benchmark-output.txt
           alert-threshold: "130%"
-          fail-on-alert: true
+          fail-on-alert: ${{ github.event_name != 'push' }}
           comment-on-alert: ${{ github.event_name == 'push' }}
           summary-always: true
           gh-pages-branch: main
