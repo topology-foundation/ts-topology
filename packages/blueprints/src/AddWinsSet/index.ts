@@ -1,20 +1,18 @@
 import {
 	ActionType,
-	type DRP,
-	type Operation,
+	BaseDRP,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
 } from "@ts-drp/object";
 
-export class AddWinsSet<T> implements DRP {
-	operations: string[] = ["add", "remove"];
+export class AddWinsSet<T> extends BaseDRP {
+	operations = ["add", "remove"];
 	state: Map<T, boolean>;
 	semanticsType = SemanticsType.pair;
-	// biome-ignore lint: attributes can be anything
-	[key: string]: any;
 
 	constructor() {
+		super();
 		this.state = new Map<T, boolean>();
 	}
 
@@ -58,16 +56,5 @@ export class AddWinsSet<T> implements DRP {
 				: { action: ActionType.DropLeft };
 		}
 		return { action: ActionType.Nop };
-	}
-
-	// biome-ignore lint: attributes can be anything
-	updateAttribute(key: string, value: any): void {
-		if (!(key in this)) {
-			throw new Error(`Key '${String(key)}' does not exist in this object.`);
-		}
-		if (typeof this[key] === "function") {
-			throw new Error(`Cannot update method '${key}' using updateAttribute.`);
-		}
-		this[key] = value;
 	}
 }

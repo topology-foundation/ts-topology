@@ -23,6 +23,25 @@ export interface DRP {
 	updateAttribute(key: string, value: any): void;
 }
 
+export abstract class BaseDRP implements DRP {
+	abstract operations: string[];
+	abstract semanticsType: SemanticsType;
+	abstract resolveConflicts(vertices: Vertex[]): ResolveConflictsType;
+	// biome-ignore lint: attributes can be anything
+	[key: string]: any;
+
+	// biome-ignore lint: attributes can be anything
+	updateAttribute(key: string, value: any): void {
+		if (!(key in this)) {
+			throw new Error(`Key '${String(key)}' does not exist in this object.`);
+		}
+		if (typeof this[key] === "function") {
+			throw new Error(`Cannot update method '${key}' using updateAttribute.`);
+		}
+		this[key] = value;
+	}
+}
+
 type DRPState = {
 	// biome-ignore lint: attributes can be anything
 	state: Map<string, any>;

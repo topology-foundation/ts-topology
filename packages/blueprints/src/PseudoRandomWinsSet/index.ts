@@ -1,9 +1,8 @@
 import { Smush32 } from "@thi.ng/random";
 import {
 	ActionType,
-	type DRP,
+	BaseDRP,
 	type Hash,
-	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
@@ -26,14 +25,13 @@ function computeHash(s: string): number {
 	An arbitrary number of concurrent operations can be reduced to a single operation.
 	The winning operation is chosen using a pseudo-random number generator.
 */
-export class PseudoRandomWinsSet<T> implements DRP {
+export class PseudoRandomWinsSet<T> extends BaseDRP {
 	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
 	semanticsType = SemanticsType.multiple;
-	// biome-ignore lint: attributes can be anything
-	[key: string]: any;
 
 	constructor() {
+		super();
 		this.state = new Map<T, boolean>();
 	}
 
@@ -71,16 +69,5 @@ export class PseudoRandomWinsSet<T> implements DRP {
 		const hashes: Hash[] = vertices.map((vertex) => vertex.hash);
 		hashes.splice(chosen, 1);
 		return { action: ActionType.Drop, vertices: hashes };
-	}
-
-	// biome-ignore lint: attributes can be anything
-	updateAttribute(key: string, value: any): void {
-		if (!(key in this)) {
-			throw new Error(`Key '${String(key)}' does not exist in this object.`);
-		}
-		if (typeof this[key] === "function") {
-			throw new Error(`Cannot update method '${key}' using updateAttribute.`);
-		}
-		this[key] = value;
 	}
 }
