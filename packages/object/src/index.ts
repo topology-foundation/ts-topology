@@ -17,9 +17,29 @@ export interface DRP {
 	operations: string[];
 	semanticsType: SemanticsType;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
-	mergeCallback: (operations: Operation[]) => void;
 	// biome-ignore lint: attributes can be anything
 	[key: string]: any;
+	// biome-ignore lint: attributes can be anything
+	updateAttribute(key: string, value: any): void;
+}
+
+export abstract class BaseDRP implements DRP {
+	abstract operations: string[];
+	abstract semanticsType: SemanticsType;
+	abstract resolveConflicts(vertices: Vertex[]): ResolveConflictsType;
+	// biome-ignore lint: attributes can be anything
+	[key: string]: any;
+
+	// biome-ignore lint: attributes can be anything
+	updateAttribute(key: string, value: any): void {
+		if (!(key in this)) {
+			throw new Error(`Key '${String(key)}' does not exist in this object.`);
+		}
+		if (typeof this[key] === "function") {
+			throw new Error(`Cannot update method '${key}'.`);
+		}
+		this[key] = value;
+	}
 }
 
 type DRPState = {
@@ -159,7 +179,7 @@ export class DRPObject implements IDRPObject {
 		const operations = this.hashGraph.linearizeOperations();
 		this.vertices = this.hashGraph.getAllVertices();
 
-		(this.drp as DRP).mergeCallback(operations);
+		this._updateDRPState();
 		this._notify("merge", this.vertices);
 
 		return [missing.length === 0, missing];
@@ -175,17 +195,21 @@ export class DRPObject implements IDRPObject {
 		}
 	}
 
-	private _setState(vertex: Vertex) {
+	private _computeState(
+		vertexDependencies: Hash[],
+		vertexOperation?: Operation | undefined,
+		// biome-ignore lint: values can be anything
+	): Map<string, any> {
 		const subgraph: Set<Hash> = new Set();
 		const lca =
-			vertex.dependencies.length === 1
-				? vertex.dependencies[0]
+			vertexDependencies.length === 1
+				? vertexDependencies[0]
 				: this.hashGraph.lowestCommonAncestorMultipleVertices(
-						vertex.dependencies,
+						vertexDependencies,
 						subgraph,
 					);
 		const linearizedOperations =
-			vertex.dependencies.length === 1
+			vertexDependencies.length === 1
 				? []
 				: this.hashGraph.linearizeOperations(lca, subgraph);
 
@@ -208,8 +232,8 @@ export class DRPObject implements IDRPObject {
 		for (const op of linearizedOperations) {
 			drp[op.type](op.value);
 		}
-		if (vertex.operation) {
-			drp[vertex.operation.type](vertex.operation.value);
+		if (vertexOperation) {
+			drp[vertexOperation.type](vertexOperation.value);
 		}
 
 		const varNames: string[] = Object.keys(drp);
@@ -218,7 +242,21 @@ export class DRPObject implements IDRPObject {
 		for (const varName of varNames) {
 			newState.set(varName, drp[varName]);
 		}
+		return newState;
+	}
 
+	private _setState(vertex: Vertex) {
+		const newState = this._computeState(vertex.dependencies, vertex.operation);
 		this.states.set(vertex.hash, { state: newState });
+	}
+
+	private _updateDRPState() {
+		if (!this.drp) {
+			return;
+		}
+		const newState = this._computeState(this.hashGraph.getFrontier());
+		for (const [key, value] of newState.entries()) {
+			(this.drp as DRP).updateAttribute(key, value);
+		}
 	}
 }

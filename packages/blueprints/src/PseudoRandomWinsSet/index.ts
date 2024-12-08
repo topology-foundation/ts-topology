@@ -1,9 +1,8 @@
 import { Smush32 } from "@thi.ng/random";
 import {
 	ActionType,
-	type DRP,
+	BaseDRP,
 	type Hash,
-	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
@@ -26,12 +25,13 @@ function computeHash(s: string): number {
 	An arbitrary number of concurrent operations can be reduced to a single operation.
 	The winning operation is chosen using a pseudo-random number generator.
 */
-export class PseudoRandomWinsSet<T> implements DRP {
+export class PseudoRandomWinsSet<T> extends BaseDRP {
 	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
 	semanticsType = SemanticsType.multiple;
 
 	constructor() {
+		super();
 		this.state = new Map<T, boolean>();
 	}
 
@@ -69,22 +69,5 @@ export class PseudoRandomWinsSet<T> implements DRP {
 		const hashes: Hash[] = vertices.map((vertex) => vertex.hash);
 		hashes.splice(chosen, 1);
 		return { action: ActionType.Drop, vertices: hashes };
-	}
-
-	// merged at HG level and called as a callback
-	mergeCallback(operations: Operation[]): void {
-		this.state = new Map<T, boolean>();
-		for (const op of operations) {
-			switch (op.type) {
-				case "add":
-					if (op.value !== null) this._add(op.value);
-					break;
-				case "remove":
-					if (op.value !== null) this._remove(op.value);
-					break;
-				default:
-					break;
-			}
-		}
 	}
 }
