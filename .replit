@@ -10,7 +10,7 @@ channel = "stable-24_05"
 args = ["sh", "-c", "pnpm i && cd examples/${EXAMPLE} && pnpm start"]
 
 [deployment.build]
-args = ["sh", "-c", "pnpm i && pnpm build-examples"]
+args = ["sh", "-c", "pnpm i && pnpm build:examples"]
 
 [env]
 EXAMPLE = "grid"
