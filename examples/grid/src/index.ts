@@ -46,6 +46,10 @@ const getColorForNodeId = (id: string): string => {
 
 const render = () => {
 	if (drpObject) {
+		const gridIdTextElement = <HTMLSpanElement>(
+			document.getElementById("gridIdText")
+		);
+		gridIdTextElement.innerText = `You're in GRID ID:`;
 		const gridIdElement = <HTMLSpanElement>document.getElementById("gridId");
 		gridIdElement.innerText = drpObject.id;
 		const copyGridIdButton = document.getElementById("copyGridId");
@@ -73,7 +77,9 @@ const render = () => {
 	const element_objectPeers = <HTMLDivElement>(
 		document.getElementById("objectPeers")
 	);
-	element_objectPeers.innerHTML = `[${objectPeers.map((peer) => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
+	element_objectPeers.innerHTML = !gridDRP
+		? ""
+		: `Your frens in GRID: [${objectPeers.map((peer) => `<strong style="color: ${getColorForNodeId(peer)};">${formatNodeId(peer)}</strong>`).join(", ")}]`;
 
 	if (!gridDRP) return;
 	const users = gridDRP.getUsers();
