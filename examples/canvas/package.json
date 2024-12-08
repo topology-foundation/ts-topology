@@ -1,6 +1,6 @@
 {
 	"name": "ts-drp-examples-canvas",
-	"version": "0.4.0-1",
+	"version": "0.4.0-2",
 	"license": "MIT",
 	"scripts": {
 		"build": "vite build",
@@ -8,8 +8,8 @@
 		"dev": "vite serve"
 	},
 	"dependencies": {
-		"@ts-drp/node": "0.4.0-1",
-		"@ts-drp/object": "0.4.0-1"
+		"@ts-drp/node": "0.4.0-2",
+		"@ts-drp/object": "0.4.0-2"
 	},
 	"devDependencies": {
 		"@types/node": "^22.5.4",
