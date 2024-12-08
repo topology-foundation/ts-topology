@@ -1,11 +1,12 @@
 {
-	"name": "ts-drp-examples-canvas",
+	"name": "ts-drp-example-canvas",
 	"version": "0.3.1",
 	"license": "MIT",
 	"scripts": {
 		"build": "vite build",
 		"clean": "rm -rf dist/ node_modules/",
-		"dev": "vite serve"
+		"dev": "vite serve",
+		"start": "vite preview --host --port 5173"
 	},
 	"dependencies": {
 		"@ts-drp/node": "0.3.1",
