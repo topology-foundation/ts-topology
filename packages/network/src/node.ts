@@ -78,7 +78,7 @@ export class DRPNetworkNode {
 				];
 
 		const _pubsubPeerDiscovery = pubsubPeerDiscovery({
-			interval: 10_000,
+			interval: 5_000,
 			topics: ["drp::discovery"],
 		});
 
@@ -95,7 +95,9 @@ export class DRPNetworkNode {
 			autonat: autoNAT(),
 			dcutr: dcutr(),
 			identify: identify(),
-			pubsub: gossipsub(),
+			pubsub: gossipsub({
+				allowPublishToZeroTopicPeers: true,
+			}),
 		};
 
 		const _bootstrap_services = {
@@ -134,7 +136,11 @@ export class DRPNetworkNode {
 
 		if (!this._config?.bootstrap) {
 			for (const addr of this._config?.bootstrap_peers || []) {
-				this._node.dial(multiaddr(addr));
+				try {
+					await this._node.dial(multiaddr(addr));
+				} catch (e) {
+					log.error("::start::dial::error", e);
+				}
 			}
 		}
 
@@ -149,7 +155,7 @@ export class DRPNetworkNode {
 		this._node.addEventListener("peer:connect", (e) =>
 			log.info("::start::peer::connect", e.detail),
 		);
-		this._node.addEventListener("peer:discovery", (e) => {
+		this._node.addEventListener("peer:discovery", async (e) => {
 			// current bug in v11.0.0 requires manual dial (https://github.com/libp2p/js-libp2p-pubsub-peer-discovery/issues/149)
 			const sortedAddrs = e.detail.multiaddrs.sort((a, b) => {
 				const localRegex =
@@ -167,7 +173,11 @@ export class DRPNetworkNode {
 
 			// Dial non-local multiaddrs, then WebRTC multiaddrs
 			for (const address of sortedAddrs) {
-				this._node?.dial(address);
+				try {
+					await this._node?.dial(address);
+				} catch (e) {
+					log.error("::start::peer::dial::error", e);
+				}
 			}
 
 			log.info("::start::peer::discovery", e.detail);

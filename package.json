@@ -1,7 +1,7 @@
 {
 	"name": "ts-drp",
 	"description": "The official TypeScript implementation of DRP protocol",
-	"version": "0.3.1",
+	"version": "0.4.0",
 	"license": "MIT",
 	"homepage": "https://topology.gg/",
 	"repository": {
@@ -39,6 +39,9 @@
 	},
 	"private": true,
 	"release-it": {
+		"hooks": {
+			"after:bump": "pnpm biome check --fix"
+		},
 		"plugins": {
 			"@release-it-plugins/workspaces": {
 				"publish": false
