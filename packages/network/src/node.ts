@@ -96,7 +96,7 @@ export class DRPNetworkNode {
 			dcutr: dcutr(),
 			identify: identify(),
 			pubsub: gossipsub({
-				allowPublishToZeroTopicPeers: true
+				allowPublishToZeroTopicPeers: true,
 			}),
 		};
 
