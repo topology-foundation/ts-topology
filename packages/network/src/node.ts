@@ -120,7 +120,6 @@ export class DRPNetworkNode {
 			streamMuxers: [yamux()],
 			transports: [
 				circuitRelayTransport({
-					discoverRelays: 2,
 					reservationConcurrency: 1,
 				}),
 				webRTC(),
