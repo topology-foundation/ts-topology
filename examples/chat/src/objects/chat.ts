@@ -1,18 +1,19 @@
 import {
 	ActionType,
-	type DRP,
+	BaseDRP,
 	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
 } from "@ts-drp/object";
 
-export class Chat implements DRP {
+export class Chat extends BaseDRP {
 	operations: string[] = ["addMessage"];
 	semanticsType: SemanticsType = SemanticsType.pair;
 	// store messages as strings in the format (timestamp, message, nodeId)
 	messages: Set<string>;
 	constructor() {
+		super();
 		this.messages = new Set<string>();
 	}
 
@@ -34,12 +35,5 @@ export class Chat implements DRP {
 
 	resolveConflicts(vertices: Vertex[]): ResolveConflictsType {
 		return { action: ActionType.Nop };
-	}
-
-	mergeCallback(operations: Operation[]): void {
-		for (const op of operations) {
-			const args = op.value as string[];
-			this._addMessage(args[0], args[1], args[2]);
-		}
 	}
 }
