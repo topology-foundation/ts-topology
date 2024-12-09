@@ -155,7 +155,6 @@ export class DRPObject implements IDRPObject {
 			}
 		}
 
-		const operations = this.hashGraph.linearizeOperations();
 		this.vertices = this.hashGraph.getAllVertices();
 
 		this._updateDRPState();
