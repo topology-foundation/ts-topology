@@ -1,7 +1,6 @@
 import {
 	ActionType,
 	BaseDRP,
-	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
