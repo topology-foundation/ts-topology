@@ -1,18 +1,17 @@
 import {
 	ActionType,
-	BaseDRP,
+	type DRP,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
 } from "@ts-drp/object";
 
-export class AddWinsSet<T> extends BaseDRP {
+export class AddWinsSet<T> implements DRP {
 	operations = ["add", "remove"];
 	state: Map<T, boolean>;
 	semanticsType = SemanticsType.pair;
 
 	constructor() {
-		super();
 		this.state = new Map<T, boolean>();
 	}
 

@@ -19,27 +19,6 @@ export interface DRP {
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
 	// biome-ignore lint: attributes can be anything
 	[key: string]: any;
-	// biome-ignore lint: attributes can be anything
-	updateAttribute(key: string, value: any): void;
-}
-
-export abstract class BaseDRP implements DRP {
-	abstract operations: string[];
-	abstract semanticsType: SemanticsType;
-	abstract resolveConflicts(vertices: Vertex[]): ResolveConflictsType;
-	// biome-ignore lint: attributes can be anything
-	[key: string]: any;
-
-	// biome-ignore lint: attributes can be anything
-	updateAttribute(key: string, value: any): void {
-		if (!(key in this)) {
-			throw new Error(`Key '${String(key)}' does not exist in this object.`);
-		}
-		if (typeof this[key] === "function") {
-			throw new Error(`Cannot update method '${key}'.`);
-		}
-		this[key] = value;
-	}
 }
 
 type DRPState = {
@@ -254,9 +233,12 @@ export class DRPObject implements IDRPObject {
 		if (!this.drp) {
 			return;
 		}
+		const currentDRP = this.drp as DRP;
 		const newState = this._computeState(this.hashGraph.getFrontier());
 		for (const [key, value] of newState.entries()) {
-			(this.drp as DRP).updateAttribute(key, value);
+			if (key in currentDRP && typeof currentDRP[key] !== "function") {
+				currentDRP[key] = value;
+			}
 		}
 	}
 }
