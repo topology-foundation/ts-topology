@@ -6,6 +6,7 @@ import type {
 	Vertex_Operation as Operation,
 	Vertex,
 } from "../proto/drp/object/v1/object_pb.js";
+import { ObjectSet } from "../utils/objectSet.js";
 import { BitSet } from "./bitset.js";
 
 // Reexporting the Vertex and Operation types from the protobuf file
@@ -195,11 +196,11 @@ export class HashGraph {
 
 	depthFirstSearch(
 		origin: Hash,
-		subgraph: Set<Hash>,
+		subgraph: ObjectSet<Hash>,
 		visited: Map<Hash, number> = new Map(),
 	): Hash[] {
 		const result: Hash[] = [];
-		for (const hash of subgraph) {
+		for (const hash of subgraph.entries()) {
 			visited.set(hash, DepthFirstSearchState.UNVISITED);
 		}
 		const visit = (hash: Hash) => {
@@ -234,7 +235,7 @@ export class HashGraph {
 	topologicalSort(
 		updateBitsets = false,
 		origin: Hash = HashGraph.rootHash,
-		subgraph: Set<Hash> = new Set(this.vertices.keys()),
+		subgraph: ObjectSet<Hash> = new ObjectSet(this.vertices.keys()),
 	): Hash[] {
 		const result = this.depthFirstSearch(origin, subgraph);
 		result.reverse();
@@ -270,7 +271,7 @@ export class HashGraph {
 
 	linearizeOperations(
 		origin: Hash = HashGraph.rootHash,
-		subgraph: Set<string> = new Set(this.vertices.keys()),
+		subgraph: ObjectSet<string> = new ObjectSet(this.vertices.keys()),
 	): Operation[] {
 		switch (this.semanticsType) {
 			case SemanticsType.pair:
@@ -284,7 +285,7 @@ export class HashGraph {
 
 	lowestCommonAncestorMultipleVertices(
 		hashes: Hash[],
-		visited: Set<Hash>,
+		visited: ObjectSet<Hash>,
 	): Hash {
 		if (hashes.length === 0) {
 			throw new Error("Vertex dependencies are empty");
@@ -317,7 +318,7 @@ export class HashGraph {
 	private lowestCommonAncestorPairVertices(
 		hash1: Hash,
 		hash2: Hash,
-		visited: Set<Hash>,
+		visited: ObjectSet<Hash>,
 		targetVertices: Hash[],
 	): Hash | undefined {
 		let currentHash1 = hash1;
@@ -445,7 +446,7 @@ export class HashGraph {
 		const visited = new Map<Hash, number>();
 		this.depthFirstSearch(
 			HashGraph.rootHash,
-			new Set(this.vertices.keys()),
+			new ObjectSet(this.vertices.keys()),
 			visited,
 		);
 		for (const vertex of this.getAllVertices()) {

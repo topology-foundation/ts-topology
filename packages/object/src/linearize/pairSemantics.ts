@@ -4,11 +4,12 @@ import {
 	type HashGraph,
 	type Operation,
 } from "../hashgraph/index.js";
+import type { ObjectSet } from "../utils/objectSet.js";
 
 export function linearizePairSemantics(
 	hashGraph: HashGraph,
 	origin: Hash,
-	subgraph: Set<string>,
+	subgraph: ObjectSet<string>,
 ): Operation[] {
 	const order: Hash[] = hashGraph.topologicalSort(true, origin, subgraph);
 	const dropped = new Array(order.length).fill(false);
