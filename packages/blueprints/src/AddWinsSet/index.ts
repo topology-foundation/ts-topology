@@ -7,7 +7,7 @@ import {
 } from "@ts-drp/object";
 
 export class AddWinsSet<T> implements DRP {
-	operations = ["add", "remove"];
+	operations: string[] = ["add", "remove"];
 	state: Map<T, boolean>;
 	semanticsType = SemanticsType.pair;
 
