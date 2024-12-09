@@ -17,7 +17,6 @@ export interface DRP {
 	operations: string[];
 	semanticsType: SemanticsType;
 	resolveConflicts: (vertices: Vertex[]) => ResolveConflictsType;
-	mergeCallback: (operations: Operation[]) => void;
 	// biome-ignore lint: attributes can be anything
 	[key: string]: any;
 }
@@ -159,7 +158,7 @@ export class DRPObject implements IDRPObject {
 		const operations = this.hashGraph.linearizeOperations();
 		this.vertices = this.hashGraph.getAllVertices();
 
-		(this.drp as DRP).mergeCallback(operations);
+		this._updateDRPState();
 		this._notify("merge", this.vertices);
 
 		return [missing.length === 0, missing];
@@ -175,17 +174,21 @@ export class DRPObject implements IDRPObject {
 		}
 	}
 
-	private _setState(vertex: Vertex) {
+	private _computeState(
+		vertexDependencies: Hash[],
+		vertexOperation?: Operation | undefined,
+		// biome-ignore lint: values can be anything
+	): Map<string, any> {
 		const subgraph: Set<Hash> = new Set();
 		const lca =
-			vertex.dependencies.length === 1
-				? vertex.dependencies[0]
+			vertexDependencies.length === 1
+				? vertexDependencies[0]
 				: this.hashGraph.lowestCommonAncestorMultipleVertices(
-						vertex.dependencies,
+						vertexDependencies,
 						subgraph,
 					);
 		const linearizedOperations =
-			vertex.dependencies.length === 1
+			vertexDependencies.length === 1
 				? []
 				: this.hashGraph.linearizeOperations(lca, subgraph);
 
@@ -208,8 +211,8 @@ export class DRPObject implements IDRPObject {
 		for (const op of linearizedOperations) {
 			drp[op.type](op.value);
 		}
-		if (vertex.operation) {
-			drp[vertex.operation.type](vertex.operation.value);
+		if (vertexOperation) {
+			drp[vertexOperation.type](vertexOperation.value);
 		}
 
 		const varNames: string[] = Object.keys(drp);
@@ -218,7 +221,24 @@ export class DRPObject implements IDRPObject {
 		for (const varName of varNames) {
 			newState.set(varName, drp[varName]);
 		}
+		return newState;
+	}
 
+	private _setState(vertex: Vertex) {
+		const newState = this._computeState(vertex.dependencies, vertex.operation);
 		this.states.set(vertex.hash, { state: newState });
+	}
+
+	private _updateDRPState() {
+		if (!this.drp) {
+			return;
+		}
+		const currentDRP = this.drp as DRP;
+		const newState = this._computeState(this.hashGraph.getFrontier());
+		for (const [key, value] of newState.entries()) {
+			if (key in currentDRP && typeof currentDRP[key] !== "function") {
+				currentDRP[key] = value;
+			}
+		}
 	}
 }

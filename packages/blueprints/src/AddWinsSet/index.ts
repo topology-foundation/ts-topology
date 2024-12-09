@@ -1,7 +1,6 @@
 import {
 	ActionType,
 	type DRP,
-	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
@@ -56,22 +55,5 @@ export class AddWinsSet<T> implements DRP {
 				: { action: ActionType.DropLeft };
 		}
 		return { action: ActionType.Nop };
-	}
-
-	// merged at HG level and called as a callback
-	mergeCallback(operations: Operation[]): void {
-		this.state = new Map<T, boolean>();
-		for (const op of operations) {
-			switch (op.type) {
-				case "add":
-					if (op.value !== null) this._add(op.value);
-					break;
-				case "remove":
-					if (op.value !== null) this._remove(op.value);
-					break;
-				default:
-					break;
-			}
-		}
 	}
 }

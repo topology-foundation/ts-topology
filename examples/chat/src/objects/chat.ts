@@ -1,7 +1,6 @@
 import {
 	ActionType,
 	type DRP,
-	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
@@ -34,12 +33,5 @@ export class Chat implements DRP {
 
 	resolveConflicts(vertices: Vertex[]): ResolveConflictsType {
 		return { action: ActionType.Nop };
-	}
-
-	mergeCallback(operations: Operation[]): void {
-		for (const op of operations) {
-			const args = op.value as string[];
-			this._addMessage(args[0], args[1], args[2]);
-		}
 	}
 }

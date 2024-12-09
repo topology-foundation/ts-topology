@@ -1,7 +1,6 @@
 import {
 	ActionType,
 	type DRP,
-	type Operation,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
@@ -70,28 +69,6 @@ export class Grid implements DRP {
 
 	resolveConflicts(vertices: Vertex[]): ResolveConflictsType {
 		return { action: ActionType.Nop };
-	}
-
-	mergeCallback(operations: Operation[]): void {
-		// reset this.positions
-		this.positions = new Map<string, { x: number; y: number }>();
-
-		// apply operations to this.positions
-		for (const op of operations) {
-			if (!op.value) continue;
-			switch (op.type) {
-				case "addUser": {
-					const [userId, color] = op.value;
-					this._addUser(userId, color);
-					break;
-				}
-				case "moveUser": {
-					const [userId, direction] = op.value;
-					this._moveUser(userId, direction);
-					break;
-				}
-			}
-		}
 	}
 }
 
