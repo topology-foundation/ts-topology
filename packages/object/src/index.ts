@@ -3,6 +3,7 @@ import { Logger, type LoggerOptions } from "@ts-drp/logger";
 import {
 	type Hash,
 	HashGraph,
+	ObjectAsSet,
 	type Operation,
 	type ResolveConflictsType,
 	type SemanticsType,
@@ -179,14 +180,14 @@ export class DRPObject implements IDRPObject {
 		vertexOperation?: Operation | undefined,
 		// biome-ignore lint: values can be anything
 	): Map<string, any> {
-		const subgraph: Set<Hash> = new Set();
+		const subgraph: ObjectAsSet<Hash> = new ObjectAsSet();
 		const lca =
 			vertexDependencies.length === 1
 				? vertexDependencies[0]
 				: this.hashGraph.lowestCommonAncestorMultipleVertices(
-						vertexDependencies,
-						subgraph,
-					);
+					vertexDependencies,
+					subgraph,
+				);
 		const linearizedOperations =
 			vertexDependencies.length === 1
 				? []

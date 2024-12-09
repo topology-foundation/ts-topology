@@ -13,6 +13,29 @@ export type { Vertex, Operation };
 
 export type Hash = string;
 
+export class ObjectAsSet<T extends string | number | symbol> {
+	set: { [key in T]: boolean };
+
+	constructor(iterable: Iterable<T> = []) {
+		this.set = {} as { [key in T]: boolean };
+		for (const item of iterable) {
+			this.set[item] = true;
+		}
+	}
+
+	add(item: T): void {
+		this.set[item] = true;
+	}
+
+	has(item: T): boolean {
+		return this.set[item] === true;
+	}
+
+	entries(): Array<T> {
+		return Object.keys(this.set) as Array<T>;
+	}
+}
+
 export enum DepthFirstSearchState {
 	UNVISITED = 0,
 	VISITING = 1,
@@ -195,11 +218,11 @@ export class HashGraph {
 
 	depthFirstSearch(
 		origin: Hash,
-		subgraph: Set<Hash>,
+		subgraph: ObjectAsSet<Hash>,
 		visited: Map<Hash, number> = new Map(),
 	): Hash[] {
 		const result: Hash[] = [];
-		for (const hash of subgraph) {
+		for (const hash of subgraph.entries()) {
 			visited.set(hash, DepthFirstSearchState.UNVISITED);
 		}
 		const visit = (hash: Hash) => {
@@ -234,7 +257,7 @@ export class HashGraph {
 	topologicalSort(
 		updateBitsets = false,
 		origin: Hash = HashGraph.rootHash,
-		subgraph: Set<Hash> = new Set(this.vertices.keys()),
+		subgraph: ObjectAsSet<Hash> = new ObjectAsSet(this.vertices.keys()),
 	): Hash[] {
 		const result = this.depthFirstSearch(origin, subgraph);
 		result.reverse();
@@ -270,7 +293,7 @@ export class HashGraph {
 
 	linearizeOperations(
 		origin: Hash = HashGraph.rootHash,
-		subgraph: Set<string> = new Set(this.vertices.keys()),
+		subgraph: ObjectAsSet<string> = new ObjectAsSet(this.vertices.keys()),
 	): Operation[] {
 		switch (this.semanticsType) {
 			case SemanticsType.pair:
@@ -284,7 +307,7 @@ export class HashGraph {
 
 	lowestCommonAncestorMultipleVertices(
 		hashes: Hash[],
-		visited: Set<Hash>,
+		visited: ObjectAsSet<Hash>,
 	): Hash {
 		if (hashes.length === 0) {
 			throw new Error("Vertex dependencies are empty");
@@ -317,7 +340,7 @@ export class HashGraph {
 	private lowestCommonAncestorPairVertices(
 		hash1: Hash,
 		hash2: Hash,
-		visited: Set<Hash>,
+		visited: ObjectAsSet<Hash>,
 		targetVertices: Hash[],
 	): Hash | undefined {
 		let currentHash1 = hash1;
@@ -445,7 +468,7 @@ export class HashGraph {
 		const visited = new Map<Hash, number>();
 		this.depthFirstSearch(
 			HashGraph.rootHash,
-			new Set(this.vertices.keys()),
+			new ObjectAsSet(this.vertices.keys()),
 			visited,
 		);
 		for (const vertex of this.getAllVertices()) {

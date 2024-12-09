@@ -2,6 +2,7 @@ import {
 	ActionType,
 	type Hash,
 	type HashGraph,
+	type ObjectAsSet,
 	type Operation,
 	type Vertex,
 } from "../hashgraph/index.js";
@@ -9,7 +10,7 @@ import {
 export function linearizeMultipleSemantics(
 	hashGraph: HashGraph,
 	origin: Hash,
-	subgraph: Set<string>,
+	subgraph: ObjectAsSet<string>,
 ): Operation[] {
 	const order = hashGraph.topologicalSort(true, origin, subgraph);
 	const dropped = new Array(order.length).fill(false);
