@@ -1,18 +1,17 @@
 import {
 	ActionType,
-	BaseDRP,
+	type DRP,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
 } from "@ts-drp/object";
 
-export class Grid extends BaseDRP {
+export class Grid implements DRP {
 	operations: string[] = ["addUser", "moveUser"];
 	semanticsType: SemanticsType = SemanticsType.pair;
 	positions: Map<string, { x: number; y: number }>;
 
 	constructor() {
-		super();
 		this.positions = new Map<string, { x: number; y: number }>();
 	}
 
