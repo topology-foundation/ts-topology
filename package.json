@@ -11,21 +11,24 @@
 	"bugs": {
 		"url": "https://github.com/topology-foundation/ts-drp/issues"
 	},
-	"workspaces": ["packages/*", "examples/*"],
+	"workspaces": [
+		"packages/*",
+		"examples/*"
+	],
 	"scripts": {
 		"bench": "vitest bench",
 		"biome-check": "biome check",
+		"build": "pnpm build:packages && pnpm build:examples",
+		"build:examples": "pnpm --filter 'ts-drp-example*' build",
+		"build:packages": "pnpm --filter '@ts-drp/*' build",
 		"clean": "pnpm --filter '@ts-drp/*' clean && rm -r node_modules/ docs/",
 		"docs": "typedoc",
-		"postinstall": "pnpm --filter '@ts-drp/*' build",
+		"postinstall": "pnpm build:packages",
 		"proto-gen": "pnpm proto-gen:object && pnpm proto-gen:network",
-		"proto-gen:object": "buf generate packages/object/src/proto -o packages/object/src/proto",
 		"proto-gen:network": "buf generate packages/network/src/proto -o packages/network/src/proto",
+		"proto-gen:object": "buf generate packages/object/src/proto -o packages/object/src/proto",
 		"release": "release-it",
-		"test": "vitest",
-		"build": "pnpm build:packages && pnpm build:examples",
-		"build:packages": "pnpm --filter '@ts-drp/*' build",
-		"build:examples": "pnpm --filter 'ts-drp-example*' build"
+		"test": "vitest"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",
