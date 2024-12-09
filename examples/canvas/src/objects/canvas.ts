@@ -1,12 +1,12 @@
 import {
 	ActionType,
-	BaseDRP,
+	type DRP,
 	type ResolveConflictsType,
 	SemanticsType,
 } from "@ts-drp/object";
 import { Pixel } from "./pixel";
 
-export class Canvas extends BaseDRP {
+export class Canvas implements DRP {
 	operations: string[] = ["splash", "paint"];
 	semanticsType: SemanticsType = SemanticsType.pair;
 
@@ -15,7 +15,6 @@ export class Canvas extends BaseDRP {
 	canvas: Pixel[][];
 
 	constructor(width: number, height: number) {
-		super();
 		this.width = width;
 		this.height = height;
 		this.canvas = Array.from(new Array(width), () =>

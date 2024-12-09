@@ -1,18 +1,17 @@
 import {
 	ActionType,
-	BaseDRP,
+	type DRP,
 	type ResolveConflictsType,
 	SemanticsType,
 	type Vertex,
 } from "@ts-drp/object";
 
-export class Chat extends BaseDRP {
+export class Chat implements DRP {
 	operations: string[] = ["addMessage"];
 	semanticsType: SemanticsType = SemanticsType.pair;
 	// store messages as strings in the format (timestamp, message, nodeId)
 	messages: Set<string>;
 	constructor() {
-		super();
 		this.messages = new Set<string>();
 	}
 
