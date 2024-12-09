@@ -1,0 +1,21 @@
+modules = ["nodejs-20", "bash"]
+
+[run]
+args = ["sh", "-c", "pnpm i && cd examples/${EXAMPLE} && pnpm dev"] 
+
+[nix]
+channel = "stable-24_05"
+
+[deployment.run]
+args = ["sh", "-c", "pnpm i && cd examples/${EXAMPLE} && pnpm start"]
+
+[deployment.build]
+args = ["sh", "-c", "pnpm i && pnpm build:examples"]
+
+[env]
+EXAMPLE = "grid"
+
+[[ports]]
+localPort = 5173
+externalPort = 80
+exposeLocalhost = true
