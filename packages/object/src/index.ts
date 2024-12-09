@@ -3,13 +3,13 @@ import { Logger, type LoggerOptions } from "@ts-drp/logger";
 import {
 	type Hash,
 	HashGraph,
-	ObjectAsSet,
 	type Operation,
 	type ResolveConflictsType,
 	type SemanticsType,
 	type Vertex,
 } from "./hashgraph/index.js";
 import * as ObjectPb from "./proto/drp/object/v1/object_pb.js";
+import { ObjectSet } from "./utils/objectSet.js";
 
 export * as ObjectPb from "./proto/drp/object/v1/object_pb.js";
 export * from "./hashgraph/index.js";
@@ -180,7 +180,7 @@ export class DRPObject implements IDRPObject {
 		vertexOperation?: Operation | undefined,
 		// biome-ignore lint: values can be anything
 	): Map<string, any> {
-		const subgraph: ObjectAsSet<Hash> = new ObjectAsSet();
+		const subgraph: ObjectSet<Hash> = new ObjectSet();
 		const lca =
 			vertexDependencies.length === 1
 				? vertexDependencies[0]

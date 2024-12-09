@@ -6,35 +6,13 @@ import type {
 	Vertex_Operation as Operation,
 	Vertex,
 } from "../proto/drp/object/v1/object_pb.js";
+import { ObjectSet } from "../utils/objectSet.js";
 import { BitSet } from "./bitset.js";
 
 // Reexporting the Vertex and Operation types from the protobuf file
 export type { Vertex, Operation };
 
 export type Hash = string;
-
-export class ObjectAsSet<T extends string | number | symbol> {
-	set: { [key in T]: boolean };
-
-	constructor(iterable: Iterable<T> = []) {
-		this.set = {} as { [key in T]: boolean };
-		for (const item of iterable) {
-			this.set[item] = true;
-		}
-	}
-
-	add(item: T): void {
-		this.set[item] = true;
-	}
-
-	has(item: T): boolean {
-		return this.set[item] === true;
-	}
-
-	entries(): Array<T> {
-		return Object.keys(this.set) as Array<T>;
-	}
-}
 
 export enum DepthFirstSearchState {
 	UNVISITED = 0,
@@ -218,7 +196,7 @@ export class HashGraph {
 
 	depthFirstSearch(
 		origin: Hash,
-		subgraph: ObjectAsSet<Hash>,
+		subgraph: ObjectSet<Hash>,
 		visited: Map<Hash, number> = new Map(),
 	): Hash[] {
 		const result: Hash[] = [];
@@ -257,7 +235,7 @@ export class HashGraph {
 	topologicalSort(
 		updateBitsets = false,
 		origin: Hash = HashGraph.rootHash,
-		subgraph: ObjectAsSet<Hash> = new ObjectAsSet(this.vertices.keys()),
+		subgraph: ObjectSet<Hash> = new ObjectSet(this.vertices.keys()),
 	): Hash[] {
 		const result = this.depthFirstSearch(origin, subgraph);
 		result.reverse();
@@ -293,7 +271,7 @@ export class HashGraph {
 
 	linearizeOperations(
 		origin: Hash = HashGraph.rootHash,
-		subgraph: ObjectAsSet<string> = new ObjectAsSet(this.vertices.keys()),
+		subgraph: ObjectSet<string> = new ObjectSet(this.vertices.keys()),
 	): Operation[] {
 		switch (this.semanticsType) {
 			case SemanticsType.pair:
@@ -307,7 +285,7 @@ export class HashGraph {
 
 	lowestCommonAncestorMultipleVertices(
 		hashes: Hash[],
-		visited: ObjectAsSet<Hash>,
+		visited: ObjectSet<Hash>,
 	): Hash {
 		if (hashes.length === 0) {
 			throw new Error("Vertex dependencies are empty");
@@ -340,7 +318,7 @@ export class HashGraph {
 	private lowestCommonAncestorPairVertices(
 		hash1: Hash,
 		hash2: Hash,
-		visited: ObjectAsSet<Hash>,
+		visited: ObjectSet<Hash>,
 		targetVertices: Hash[],
 	): Hash | undefined {
 		let currentHash1 = hash1;
@@ -468,7 +446,7 @@ export class HashGraph {
 		const visited = new Map<Hash, number>();
 		this.depthFirstSearch(
 			HashGraph.rootHash,
-			new ObjectAsSet(this.vertices.keys()),
+			new ObjectSet(this.vertices.keys()),
 			visited,
 		);
 		for (const vertex of this.getAllVertices()) {
