@@ -183,9 +183,9 @@ export class DRPObject implements IDRPObject {
 			vertexDependencies.length === 1
 				? vertexDependencies[0]
 				: this.hashGraph.lowestCommonAncestorMultipleVertices(
-					vertexDependencies,
-					subgraph,
-				);
+						vertexDependencies,
+						subgraph,
+					);
 		const linearizedOperations =
 			vertexDependencies.length === 1
 				? []
