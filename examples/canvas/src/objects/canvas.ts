@@ -1,13 +1,12 @@
 import {
 	ActionType,
-	type DRP,
-	type Operation,
+	BaseDRP,
 	type ResolveConflictsType,
 	SemanticsType,
 } from "@ts-drp/object";
 import { Pixel } from "./pixel";
 
-export class Canvas implements DRP {
+export class Canvas extends BaseDRP {
 	operations: string[] = ["splash", "paint"];
 	semanticsType: SemanticsType = SemanticsType.pair;
 
@@ -16,6 +15,7 @@ export class Canvas implements DRP {
 	canvas: Pixel[][];
 
 	constructor(width: number, height: number) {
+		super();
 		this.width = width;
 		this.height = height;
 		this.canvas = Array.from(new Array(width), () =>
@@ -66,26 +66,5 @@ export class Canvas implements DRP {
 
 	resolveConflicts(_): ResolveConflictsType {
 		return { action: ActionType.Nop };
-	}
-
-	mergeCallback(operations: Operation[]): void {
-		this.canvas = Array.from(new Array(this.width), () =>
-			Array.from(new Array(this.height), () => new Pixel()),
-		);
-		for (const op of operations) {
-			if (!op.value) continue;
-			switch (op.type) {
-				case "splash": {
-					const [offset, size, rgb] = op.value;
-					this._splash(offset, size, rgb);
-					break;
-				}
-				case "paint": {
-					const [offset, rgb] = op.value;
-					this._paint(offset, rgb);
-					break;
-				}
-			}
-		}
 	}
 }
