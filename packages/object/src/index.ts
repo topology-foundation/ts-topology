@@ -210,7 +210,7 @@ export class DRPObject implements IDRPObject {
 
 		for (const op of linearizedOperations) {
 			const args = Array.isArray(op.value) ? op.value : [op.value];
-			drp[op.type](...args)
+			drp[op.type](...args);
 		}
 		if (vertexOperation) {
 			const args = Array.isArray(vertexOperation.value)
