@@ -19,7 +19,8 @@
 		"build": "tsc -b",
 		"clean": "rm -rf dist/ node_modules/",
 		"prepack": "tsc -b",
-		"test": "vitest"
+		"test": "vitest",
+		"watch": "tsc -b -w"
 	},
 	"devDependencies": {
 		"@ts-drp/object": "0.4.0"
