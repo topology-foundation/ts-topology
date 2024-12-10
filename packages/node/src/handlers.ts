@@ -2,6 +2,7 @@ import type { Stream } from "@libp2p/interface";
 import { NetworkPb, streamToUint8Array } from "@ts-drp/network";
 import type { DRPObject, ObjectPb, Vertex } from "@ts-drp/object";
 import { type DRPNode, log } from "./index.js";
+import { VertexHashDecoder, VertexHashEncoder } from "./riblt/index.js";
 
 /*
   Handler for all DRP messages, including pubsub messages and direct messages
@@ -33,6 +34,18 @@ export async function drpMessagesHandler(
 				return;
 			}
 			syncHandler(node, message.sender, message.data);
+			break;
+		case NetworkPb.MessageType.MESSAGE_TYPE_SYNC_FIXED:
+			if (!stream) {
+				console.error("topology::node::messageHandler", "Stream is undefined");
+				return;
+			}
+			syncFixedHandler(
+				node,
+				stream.protocol ?? "/topology/message/0.0.1",
+				message.sender,
+				message.data,
+			);
 			break;
 		case NetworkPb.MessageType.MESSAGE_TYPE_SYNC_ACCEPT:
 			if (!stream) {
@@ -126,6 +139,78 @@ function syncHandler(node: DRPNode, sender: string, data: Uint8Array) {
 	node.networkNode.sendMessage(sender, message);
 }
 
+function syncFixedHandler(
+	node: DRPNode,
+	protocol: string,
+	sender: string,
+	data: Uint8Array,
+) {
+	const syncMessage = NetworkPb.SyncFixed.decode(data);
+	const object = node.objectStore.get(syncMessage.objectId);
+	if (!object) {
+		console.error("topology::node::syncFixedHandler", "Object not found");
+		return;
+	}
+
+	const encoder = new VertexHashEncoder();
+	for (const vertex of object.vertices) {
+		encoder.add(vertex.hash);
+	}
+
+	const remoteSymbols = syncMessage.symbols;
+	const localSymbols = encoder.getEncoded(remoteSymbols.length);
+
+	const decoder = new VertexHashDecoder();
+	for (let i = 0; i < remoteSymbols.length; i++) {
+		decoder.add(i, localSymbols[i], remoteSymbols[i]);
+	}
+
+	if (decoder.tryDecode()) {
+		// success
+		const localHashes = decoder.getDecodedLocal();
+		const remoteHashes = decoder.getDecodedRemote();
+
+		const requested: ObjectPb.Vertex[] = [];
+		for (const vertex of object.vertices) {
+			if (localHashes.includes(vertex.hash)) {
+				requested.push(vertex);
+			}
+		}
+
+		if (requested.length === 0 && remoteHashes.length === 0) return;
+
+		const message = NetworkPb.Message.create({
+			sender: node.networkNode.peerId,
+			type: NetworkPb.MessageType.MESSAGE_TYPE_SYNC_ACCEPT,
+			// add data here
+			data: NetworkPb.SyncAccept.encode(
+				NetworkPb.SyncAccept.create({
+					objectId: object.id,
+					requested: requested,
+					requesting: remoteHashes,
+				}),
+			).finish(),
+		});
+		node.networkNode.sendMessage(sender, message);
+	} else {
+		// fail
+		const size = remoteSymbols.length * 2;
+
+		const message = NetworkPb.Message.create({
+			sender: node.networkNode.peerId,
+			type: NetworkPb.MessageType.MESSAGE_TYPE_SYNC_FIXED,
+			// add data here
+			data: NetworkPb.SyncFixed.encode(
+				NetworkPb.SyncFixed.create({
+					objectId: object.id,
+					symbols: encoder.getEncoded(size),
+				}),
+			).finish(),
+		});
+		node.networkNode.sendMessage(sender, message);
+	}
+}
+
 /*
   data: { id: string, operations: {nonce: string, fn: string, args: string[] }[] }
   operations array contain the full remote operations array
@@ -157,9 +242,8 @@ function syncAcceptHandler(node: DRPNode, sender: string, data: Uint8Array) {
 
 	// send missing vertices
 	const requested: ObjectPb.Vertex[] = [];
-	for (const h of syncAcceptMessage.requesting) {
-		const vertex = object.vertices.find((v) => v.hash === h);
-		if (vertex) {
+	for (const vertex of object.vertices) {
+		if (syncAcceptMessage.requesting.includes(vertex.hash)) {
 			requested.push(vertex);
 		}
 	}
