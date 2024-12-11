@@ -18,7 +18,8 @@
 	"scripts": {
 		"build": "tsc -b",
 		"clean": "rm -rf dist/ node_modules/",
-		"prepack": "tsc -b"
+		"prepack": "tsc -b",
+		"watch": "tsc -b -w"
 	},
 	"dependencies": {
 		"loglevel": "^1.9.2",

@@ -19,7 +19,8 @@
 		"build": "tsc -b",
 		"clean": "rm -rf dist/ node_modules/",
 		"prepack": "tsc -b",
-		"test": "vitest"
+		"test": "vitest",
+		"watch": "tsc -b -w"
 	},
 	"devDependencies": {
 		"@libp2p/interface": "^2.1.3"

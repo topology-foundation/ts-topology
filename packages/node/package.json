@@ -21,7 +21,8 @@
 		"cli": "tsx ./src/run.ts",
 		"prebuild": "node -p \"'export const VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
 		"prepack": "tsc -b",
-		"test": "vitest"
+		"test": "vitest",
+		"watch": "tsc -b -w"
 	},
 	"devDependencies": {
 		"@bufbuild/protobuf": "^2.0.0",
