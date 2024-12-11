@@ -108,7 +108,9 @@ export class DRPNetworkNode {
 		this._node = await createLibp2p({
 			privateKey,
 			addresses: {
-				listen: this._config?.addresses ? this._config.addresses : ["/webrtc"],
+				listen: this._config?.addresses
+					? this._config.addresses
+					: ["/webrtc", "/p2p-circuit"],
 			},
 			connectionEncrypters: [noise()],
 			connectionGater: {
