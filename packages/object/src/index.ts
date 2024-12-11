@@ -209,10 +209,14 @@ export class DRPObject implements IDRPObject {
 		}
 
 		for (const op of linearizedOperations) {
-			drp[op.type](op.value);
+			const args = Array.isArray(op.value) ? op.value : [op.value];
+			drp[op.type](...args);
 		}
 		if (vertexOperation) {
-			drp[vertexOperation.type](vertexOperation.value);
+			const args = Array.isArray(vertexOperation.value)
+				? vertexOperation.value
+				: [vertexOperation.value];
+			drp[vertexOperation.type](...args);
 		}
 
 		const varNames: string[] = Object.keys(drp);
