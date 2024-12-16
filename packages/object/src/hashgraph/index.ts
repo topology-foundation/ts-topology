@@ -89,6 +89,7 @@ export class HashGraph {
 				value: null,
 			},
 			dependencies: [],
+			timestamp: 0,
 		};
 		this.vertices.set(HashGraph.rootHash, rootVertex);
 		this.frontier.push(HashGraph.rootHash);
@@ -107,6 +108,7 @@ export class HashGraph {
 			nodeId: this.nodeId,
 			operation: operation ?? { type: OperationType.NOP },
 			dependencies: deps,
+			timestamp: Date.now(),
 		};
 
 		this.vertices.set(hash, vertex);
