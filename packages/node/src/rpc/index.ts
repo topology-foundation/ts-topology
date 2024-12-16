@@ -1,4 +1,6 @@
 import * as grpc from "@grpc/grpc-js";
+import * as protoLoader from "@grpc/proto-loader";
+import * as reflection from "@grpc/reflection";
 
 import type { ServerUnaryCall, sendUnaryData } from "@grpc/grpc-js";
 import { type DRPNode, log } from "../index.js";
@@ -11,6 +13,11 @@ import type {
 	UnsubscribeDRPRequest,
 	UnsubscribeDRPResponse,
 } from "../proto/drp/node/v1/rpc_pb.js";
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const PROTO_PATH = path.resolve(__dirname, "../proto/topology/node/rpc.proto");
 
 export function init(node: DRPNode) {
 	function subscribeDRP(
@@ -70,7 +77,11 @@ export function init(node: DRPNode) {
 		callback(null, response);
 	}
 
+	const packageDefinition = protoLoader.loadSync(PROTO_PATH);
+	const reflectionService = new reflection.ReflectionService(packageDefinition);
+
 	const server = new grpc.Server();
+	reflectionService.addToServer(server);
 	server.addService(DRPRpcService, {
 		subscribeDRP,
 		unsubscribeDRP,
