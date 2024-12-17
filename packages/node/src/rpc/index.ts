@@ -15,9 +15,6 @@ import type {
 	UnsubscribeDRPRequest,
 	UnsubscribeDRPResponse,
 } from "../proto/drp/node/v1/rpc_pb.js";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const PROTO_PATH = path.resolve(__dirname, "../proto/topology/node/rpc.proto");
 
 export function init(node: DRPNode) {
 	function subscribeDRP(
@@ -77,7 +74,11 @@ export function init(node: DRPNode) {
 		callback(null, response);
 	}
 
-	const packageDefinition = protoLoader.loadSync(PROTO_PATH);
+	const protoPath = path.resolve(
+		dirname(fileURLToPath(import.meta.url)),
+		"../proto/drp/node/v1/rpc.proto",
+	);
+	const packageDefinition = protoLoader.loadSync(protoPath);
 	const reflectionService = new reflection.ReflectionService(packageDefinition);
 
 	const server = new grpc.Server();
