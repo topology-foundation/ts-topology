@@ -62,20 +62,11 @@ async function updateHandler(node: DRPNode, data: Uint8Array, sender: string) {
 		return false;
 	}
 
-	const [merged, _] = object.merge(
-		updateMessage.vertices.map((v) => {
-			return {
-				hash: v.hash,
-				nodeId: v.nodeId,
-				operation: {
-					type: v.operation?.type ?? "",
-					value: v.operation?.value,
-				},
-				dependencies: v.dependencies,
-				timestamp: v.timestamp,
-			};
-		}),
+	const verifiedVertices = verifyIncomingVertices(
+		object,
+		updateMessage.vertices,
 	);
+	const [merged, _] = object.merge(verifiedVertices);
 
 	if (!merged) {
 		await node.syncObject(updateMessage.objectId, sender);
@@ -219,4 +210,17 @@ export function drpObjectChangesHandler(
 		default:
 			log.error("::createObject: Invalid origin function");
 	}
+}
+
+export function verifyIncomingVertices(
+	object: DRPObject,
+	incomingVertices: ObjectPb.Vertex[],
+): Vertex[] {
+	const currentTimestamp = Date.now();
+
+	return incomingVertices.filter(
+		(vertex) =>
+			vertex.timestamp <= currentTimestamp &&
+			currentTimestamp - vertex.timestamp < object.vertexExpirationPeriod,
+	);
 }
