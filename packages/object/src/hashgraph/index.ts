@@ -147,7 +147,12 @@ export class HashGraph {
 	 * If the vertex already exists, return the hash of the existing vertex.
 	 * Throws an error if any of the dependencies are not present in the hashgraph.
 	 */
-	addVertex(operation: Operation, deps: Hash[], nodeId: string, timestamp?: number): Hash {
+	addVertex(
+		operation: Operation,
+		deps: Hash[],
+		nodeId: string,
+		timestamp?: number,
+	): Hash {
 		const hash = computeHash(nodeId, operation, deps);
 		if (this.vertices.has(hash)) {
 			return hash; // Vertex already exists
