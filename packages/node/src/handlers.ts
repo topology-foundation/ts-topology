@@ -62,7 +62,7 @@ async function updateHandler(node: DRPNode, data: Uint8Array, sender: string) {
 		return false;
 	}
 
-	const verifiedVertices = verifyIncomingVertices(
+	const verifiedVertices = cleanIncomingVertices(
 		object,
 		updateMessage.vertices,
 	);
@@ -130,18 +130,10 @@ function syncAcceptHandler(node: DRPNode, sender: string, data: Uint8Array) {
 		return;
 	}
 
-	const vertices: Vertex[] = syncAcceptMessage.requested.map((v) => {
-		return {
-			hash: v.hash,
-			nodeId: v.nodeId,
-			operation: {
-				type: v.operation?.type ?? "",
-				value: v.operation?.value,
-			},
-			dependencies: v.dependencies,
-			timestamp: v.timestamp,
-		};
-	});
+	const vertices: Vertex[] = cleanIncomingVertices(
+		object,
+		syncAcceptMessage.requested,
+	);
 
 	if (vertices.length !== 0) {
 		object.merge(vertices);
@@ -212,13 +204,26 @@ export function drpObjectChangesHandler(
 	}
 }
 
-export function verifyIncomingVertices(
+export function cleanIncomingVertices(
 	object: DRPObject,
 	incomingVertices: ObjectPb.Vertex[],
 ): Vertex[] {
 	const currentTimestamp = Date.now();
 
-	return incomingVertices.filter(
+	const vertices: Vertex[] = incomingVertices.map((v) => {
+		return {
+			hash: v.hash,
+			nodeId: v.nodeId,
+			operation: {
+				type: v.operation?.type ?? "",
+				value: v.operation?.value,
+			},
+			dependencies: v.dependencies,
+			timestamp: v.timestamp,
+		};
+	});
+
+	return vertices.filter(
 		(vertex) =>
 			vertex.timestamp <= currentTimestamp &&
 			currentTimestamp - vertex.timestamp < object.vertexExpirationPeriod,

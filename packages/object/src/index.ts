@@ -94,7 +94,8 @@ export class DRPObject implements IDRPObject {
 			Object.getOwnPropertyDescriptors(structuredClone(drp)),
 		);
 		this.vertices = this.hashGraph.getAllVertices();
-		this.vertexExpirationPeriod = config?.vertex_expiration_period ?? Number.POSITIVE_INFINITY;
+		this.vertexExpirationPeriod =
+			config?.vertex_expiration_period ?? Number.POSITIVE_INFINITY;
 	}
 
 	// This function is black magic, it allows us to intercept calls to the DRP object
