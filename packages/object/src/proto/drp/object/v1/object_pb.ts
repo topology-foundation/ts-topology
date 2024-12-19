@@ -23,6 +23,12 @@ export interface Vertex_Operation {
   value: any | undefined;
 }
 
+export interface CodedSymbol {
+  sum: Uint8Array;
+  checksum: Uint8Array;
+  count: number;
+}
+
 export interface DRPObjectBase {
   id: string;
   abi?: string | undefined;
@@ -214,6 +220,98 @@ export const Vertex_Operation: MessageFns<Vertex_Operation> = {
     const message = createBaseVertex_Operation();
     message.type = object.type ?? "";
     message.value = object.value ?? undefined;
+    return message;
+  },
+};
+
+function createBaseCodedSymbol(): CodedSymbol {
+  return { sum: new Uint8Array(0), checksum: new Uint8Array(0), count: 0 };
+}
+
+export const CodedSymbol: MessageFns<CodedSymbol> = {
+  encode(message: CodedSymbol, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.sum.length !== 0) {
+      writer.uint32(10).bytes(message.sum);
+    }
+    if (message.checksum.length !== 0) {
+      writer.uint32(18).bytes(message.checksum);
+    }
+    if (message.count !== 0) {
+      writer.uint32(24).int32(message.count);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): CodedSymbol {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCodedSymbol();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.sum = reader.bytes();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.checksum = reader.bytes();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.count = reader.int32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CodedSymbol {
+    return {
+      sum: isSet(object.sum) ? bytesFromBase64(object.sum) : new Uint8Array(0),
+      checksum: isSet(object.checksum) ? bytesFromBase64(object.checksum) : new Uint8Array(0),
+      count: isSet(object.count) ? globalThis.Number(object.count) : 0,
+    };
+  },
+
+  toJSON(message: CodedSymbol): unknown {
+    const obj: any = {};
+    if (message.sum.length !== 0) {
+      obj.sum = base64FromBytes(message.sum);
+    }
+    if (message.checksum.length !== 0) {
+      obj.checksum = base64FromBytes(message.checksum);
+    }
+    if (message.count !== 0) {
+      obj.count = Math.round(message.count);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CodedSymbol>, I>>(base?: I): CodedSymbol {
+    return CodedSymbol.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CodedSymbol>, I>>(object: I): CodedSymbol {
+    const message = createBaseCodedSymbol();
+    message.sum = object.sum ?? new Uint8Array(0);
+    message.checksum = object.checksum ?? new Uint8Array(0);
+    message.count = object.count ?? 0;
     return message;
   },
 };

@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { Vertex } from "../../object/v1/object_pb.js";
+import { CodedSymbol, Vertex } from "../../object/v1/object_pb.js";
 
 export const protobufPackage = "drp.network.v1";
 
@@ -16,7 +16,8 @@ export enum MessageType {
   MESSAGE_TYPE_SYNC = 2,
   MESSAGE_TYPE_SYNC_ACCEPT = 3,
   MESSAGE_TYPE_SYNC_REJECT = 4,
-  MESSAGE_TYPE_CUSTOM = 5,
+  MESSAGE_TYPE_SYNC_FIXED = 5,
+  MESSAGE_TYPE_CUSTOM = 6,
   UNRECOGNIZED = -1,
 }
 
@@ -38,6 +39,9 @@ export function messageTypeFromJSON(object: any): MessageType {
     case "MESSAGE_TYPE_SYNC_REJECT":
       return MessageType.MESSAGE_TYPE_SYNC_REJECT;
     case 5:
+    case "MESSAGE_TYPE_SYNC_FIXED":
+      return MessageType.MESSAGE_TYPE_SYNC_FIXED;
+    case 6:
     case "MESSAGE_TYPE_CUSTOM":
       return MessageType.MESSAGE_TYPE_CUSTOM;
     case -1:
@@ -59,6 +63,8 @@ export function messageTypeToJSON(object: MessageType): string {
       return "MESSAGE_TYPE_SYNC_ACCEPT";
     case MessageType.MESSAGE_TYPE_SYNC_REJECT:
       return "MESSAGE_TYPE_SYNC_REJECT";
+    case MessageType.MESSAGE_TYPE_SYNC_FIXED:
+      return "MESSAGE_TYPE_SYNC_FIXED";
     case MessageType.MESSAGE_TYPE_CUSTOM:
       return "MESSAGE_TYPE_CUSTOM";
     case MessageType.UNRECOGNIZED:
@@ -81,6 +87,11 @@ export interface Update {
 export interface Sync {
   objectId: string;
   vertexHashes: string[];
+}
+
+export interface SyncFixed {
+  objectId: string;
+  symbols: CodedSymbol[];
 }
 
 export interface SyncAccept {
@@ -334,6 +345,82 @@ export const Sync: MessageFns<Sync> = {
     const message = createBaseSync();
     message.objectId = object.objectId ?? "";
     message.vertexHashes = object.vertexHashes?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseSyncFixed(): SyncFixed {
+  return { objectId: "", symbols: [] };
+}
+
+export const SyncFixed: MessageFns<SyncFixed> = {
+  encode(message: SyncFixed, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.objectId !== "") {
+      writer.uint32(10).string(message.objectId);
+    }
+    for (const v of message.symbols) {
+      CodedSymbol.encode(v!, writer.uint32(18).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): SyncFixed {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSyncFixed();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.objectId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.symbols.push(CodedSymbol.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SyncFixed {
+    return {
+      objectId: isSet(object.objectId) ? globalThis.String(object.objectId) : "",
+      symbols: globalThis.Array.isArray(object?.symbols) ? object.symbols.map((e: any) => CodedSymbol.fromJSON(e)) : [],
+    };
+  },
+
+  toJSON(message: SyncFixed): unknown {
+    const obj: any = {};
+    if (message.objectId !== "") {
+      obj.objectId = message.objectId;
+    }
+    if (message.symbols?.length) {
+      obj.symbols = message.symbols.map((e) => CodedSymbol.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<SyncFixed>, I>>(base?: I): SyncFixed {
+    return SyncFixed.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<SyncFixed>, I>>(object: I): SyncFixed {
+    const message = createBaseSyncFixed();
+    message.objectId = object.objectId ?? "";
+    message.symbols = object.symbols?.map((e) => CodedSymbol.fromPartial(e)) || [];
     return message;
   },
 };
