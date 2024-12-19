@@ -16,6 +16,7 @@ export interface Vertex {
   nodeId: string;
   operation: Vertex_Operation | undefined;
   dependencies: string[];
+  timestamp: number;
 }
 
 export interface Vertex_Operation {
@@ -31,7 +32,7 @@ export interface DRPObjectBase {
 }
 
 function createBaseVertex(): Vertex {
-  return { hash: "", nodeId: "", operation: undefined, dependencies: [] };
+  return { hash: "", nodeId: "", operation: undefined, dependencies: [], timestamp: 0 };
 }
 
 export const Vertex: MessageFns<Vertex> = {
@@ -47,6 +48,9 @@ export const Vertex: MessageFns<Vertex> = {
     }
     for (const v of message.dependencies) {
       writer.uint32(34).string(v!);
+    }
+    if (message.timestamp !== 0) {
+      writer.uint32(40).int64(message.timestamp);
     }
     return writer;
   },
@@ -90,6 +94,14 @@ export const Vertex: MessageFns<Vertex> = {
           message.dependencies.push(reader.string());
           continue;
         }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.timestamp = longToNumber(reader.int64());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -107,6 +119,7 @@ export const Vertex: MessageFns<Vertex> = {
       dependencies: globalThis.Array.isArray(object?.dependencies)
         ? object.dependencies.map((e: any) => globalThis.String(e))
         : [],
+      timestamp: isSet(object.timestamp) ? globalThis.Number(object.timestamp) : 0,
     };
   },
 
@@ -124,6 +137,9 @@ export const Vertex: MessageFns<Vertex> = {
     if (message.dependencies?.length) {
       obj.dependencies = message.dependencies;
     }
+    if (message.timestamp !== 0) {
+      obj.timestamp = Math.round(message.timestamp);
+    }
     return obj;
   },
 
@@ -138,6 +154,7 @@ export const Vertex: MessageFns<Vertex> = {
       ? Vertex_Operation.fromPartial(object.operation)
       : undefined;
     message.dependencies = object.dependencies?.map((e) => e) || [];
+    message.timestamp = object.timestamp ?? 0;
     return message;
   },
 };
@@ -362,6 +379,17 @@ export type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function longToNumber(int64: { toString(): string }): number {
+  const num = globalThis.Number(int64.toString());
+  if (num > globalThis.Number.MAX_SAFE_INTEGER) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  if (num < globalThis.Number.MIN_SAFE_INTEGER) {
+    throw new globalThis.Error("Value is smaller than Number.MIN_SAFE_INTEGER");
+  }
+  return num;
+}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
