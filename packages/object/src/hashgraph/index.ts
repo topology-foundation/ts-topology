@@ -89,6 +89,7 @@ export class HashGraph {
 				value: null,
 			},
 			dependencies: [],
+			timestamp: 0,
 		};
 		this.vertices.set(HashGraph.rootHash, rootVertex);
 		this.frontier.push(HashGraph.rootHash);
@@ -107,6 +108,7 @@ export class HashGraph {
 			nodeId: this.nodeId,
 			operation: operation ?? { type: OperationType.NOP },
 			dependencies: deps,
+			timestamp: Date.now(),
 		};
 
 		this.vertices.set(hash, vertex);
@@ -145,16 +147,26 @@ export class HashGraph {
 	 * If the vertex already exists, return the hash of the existing vertex.
 	 * Throws an error if any of the dependencies are not present in the hashgraph.
 	 */
-	addVertex(operation: Operation, deps: Hash[], nodeId: string): Hash {
+	addVertex(
+		operation: Operation,
+		deps: Hash[],
+		nodeId: string,
+		timestamp: number,
+	): Hash {
 		const hash = computeHash(nodeId, operation, deps);
 		if (this.vertices.has(hash)) {
 			return hash; // Vertex already exists
 		}
 
 		if (
-			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
+			!deps.every((dep) => this.vertices.has(dep))
 		) {
 			throw new Error("Invalid dependency detected.");
+		}
+
+		const currentTimestamp = Date.now();
+		if (timestamp > currentTimestamp || !deps.every((dep) => this.vertices.get(dep)?.timestamp <= timestamp)) {
+			throw new Error("Invalid timestamp detected.");
 		}
 
 		const vertex: Vertex = {
@@ -162,6 +174,7 @@ export class HashGraph {
 			nodeId,
 			operation,
 			dependencies: deps,
+			timestamp,
 		};
 		this.vertices.set(hash, vertex);
 		this.frontier.push(hash);
