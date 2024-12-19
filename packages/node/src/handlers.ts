@@ -208,8 +208,6 @@ export function cleanIncomingVertices(
 	object: DRPObject,
 	incomingVertices: ObjectPb.Vertex[],
 ): Vertex[] {
-	const currentTimestamp = Date.now();
-
 	const vertices: Vertex[] = incomingVertices.map((v) => {
 		return {
 			hash: v.hash,
@@ -223,9 +221,5 @@ export function cleanIncomingVertices(
 		};
 	});
 
-	return vertices.filter(
-		(vertex) =>
-			vertex.timestamp <= currentTimestamp &&
-			currentTimestamp - vertex.timestamp < object.vertexExpirationPeriod,
-	);
+	return vertices;
 }

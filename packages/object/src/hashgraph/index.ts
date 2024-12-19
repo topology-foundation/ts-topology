@@ -151,7 +151,7 @@ export class HashGraph {
 		operation: Operation,
 		deps: Hash[],
 		nodeId: string,
-		timestamp?: number,
+		timestamp: number,
 	): Hash {
 		const hash = computeHash(nodeId, operation, deps);
 		if (this.vertices.has(hash)) {
@@ -159,9 +159,14 @@ export class HashGraph {
 		}
 
 		if (
-			!deps.every((dep) => this.forwardEdges.has(dep) || this.vertices.has(dep))
+			!deps.every((dep) => this.vertices.has(dep))
 		) {
 			throw new Error("Invalid dependency detected.");
+		}
+
+		const currentTimestamp = Date.now();
+		if (timestamp > currentTimestamp || !deps.every((dep) => this.vertices.get(dep)?.timestamp <= timestamp)) {
+			throw new Error("Invalid timestamp detected.");
 		}
 
 		const vertex: Vertex = {
@@ -169,7 +174,7 @@ export class HashGraph {
 			nodeId,
 			operation,
 			dependencies: deps,
-			timestamp: timestamp ?? Date.now(),
+			timestamp,
 		};
 		this.vertices.set(hash, vertex);
 		this.frontier.push(hash);
